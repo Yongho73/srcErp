@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html class="no-js" lang="ko">
+<HEAD>
+<meta charset="utf-8">
+<LINK href="../img/icon/dbv.ico" rel="shortcut icon" type="image/x-icon">
+
+<TITLE>XERP</TITLE>
+
+<LINK href="../css/dhtmlx/skin/dhtmlx.css" rel="stylesheet" type="text/css">
+<LINK href="../glyphicons/css/bootstrap-glyphicons.css" rel="stylesheet" type="text/css">
+
+<!-- jquery -->
+<SCRIPT src="../js/jquery-1.11.1.min.js"></SCRIPT>
+<SCRIPT src="../js/jquery-ui-custom.min.js"></SCRIPT>
+ 
+<!-- css -->
+<LINK href="../css/default.css" rel="stylesheet" type="text/css">
+<LINK href="../css/contents.css" rel="stylesheet" type="text/css">
+
+</HEAD>
+
+
+<body>
+	<!--컨텐츠-->
+		<div class="path_info" style="">
+            <ul id="menu_path" style=""><li><a class="home" href="#n"></a></li><li><a href="#"> 연말정산 </a></li><li><a href="#">세액감면및공제</a></li></ul>
+        </div>
+        
+		<DIV class="btn" style="float:right;text-align:right; vertical-align:middle;" title="저장">
+			<BUTTON class="btn_common02_new_red" id="btn_help" type="button" title="세액계산">
+				<SPAN class="glyphicon glyphicon-hourglass mr5"></SPAN>세액계산
+			</BUTTON>
+			<BUTTON class="btn_common02_new" id="btnRemove" type="button" title="닫기">
+				<SPAN class="glyphicon glyphicon-remove"></SPAN>
+			</BUTTON>
+		</DIV>
+		 
+      
+	<DIV class="search_box" style="width:100%; overflow:hidden;">
+		<TABLE style="width:100%;">
+			<TBODY>
+				<TR>
+					<td style="position:relative; vertical-align:middle;">
+					    
+						<div style="position:relative;display:inline-block;float:left;">
+							<label>귀속년도</LABEL>
+							 <input name="searchEregDt" class="input_calen" onkeyup="gf_AutoDate(event, this)" onkeypress="gf_AutoDate(event, this)" type="text" style="width: 40px;" maxlength="4" value="2019">
+						</div>
+						<div style="position:relative;display:inline-block;float:left;padding-left:50px;">
+							<label>귀속시작일</LABEL>
+							 <input name="searchEregDt" class="input_calen" onkeyup="gf_AutoDate(event, this)" onkeypress="gf_AutoDate(event, this)" type="text" style="width: 90px;" maxlength="10" value="2019-01-01">
+						</div>
+						<div style="position:relative;display:inline-block;float:left;padding-left:50px;">
+							<label>귀속종료일</LABEL>
+							 <input name="searchEregDt" class="input_calen" onkeyup="gf_AutoDate(event, this)" onkeypress="gf_AutoDate(event, this)" type="text" style="width:90px;" maxlength="10" value="2019-12-31">
+						</div>
+					<!-- 
+						<DIV class="btn2" style="position:relative;display:inline-block;float:right;">
+							<BUTTON id="btnSearch" type="button">
+								<SPAN class="glyphicon glyphicon-search f15"></SPAN>
+							</BUTTON>
+							<BUTTON id="btnClear" type="button">
+								<SPAN class="glyphicon glyphicon-refresh f15 mr5" style="color:#fff;margin-left:4px;"></SPAN>
+							</BUTTON>
+						</DIV>
+					-->
+					</td>
+				</TR>
+			</TBODY>
+		</TABLE>
+	</DIV>
+	<!--//search_box-->
+      
+       
+   
+    <div class="basic_div" style="padding:10px;">
+    	<ul class="tax_people_ul">
+    		<li><a href=""><span class="a"></span>인적공제</a></li>
+			<li><a href=""><span class="b"></span>신용,직불,교육</a></li>
+			<li><a href=""><span class="c"></span>전근무지공제(상세)</a></li>
+			<li><a href=""><span class="d"></span>기부금등록</a></li>
+			<li><a href=""><span class="e"></span>의료비명세서</a></li>
+			<li><a href=""><span class="f"></span>연금·저축</a></li>
+			<li><a href=""><span class="g"></span>월세액</a></li>
+			<li><a href=""><span class="h"></span>연금보험료공제</a></li>
+			<li><a href=""><span class="i"></span>특별소득공제</a></li>
+			<li><a href=""><span class="j"></span>그밖의소득공제</a></li>
+			<li class="active"><a href=""><span class="k"></span>세액감면및공제</a></li>
+			<li><a href=""><span class="l"></span>추가제출서류</a></li>
+    	</ul>
+    	
+    	<div class="" style="position:relative;">
+			<div style="float: right;position:relative;" class="mb5">
+				<button class="btn_common01_new_red how_save_btn" type="button"><SPAN class="glyphicon glyphicon-pencil mr5"></SPAN>작성방법</button>
+			</div>
+    	</div>
+    	
+    	
+    		<div class="detail_type024_sub type_bd" style="position:relative;">
+			<table>
+				<caption>그밖의소득공제</caption>
+				
+				<colgroup>
+					<col style="width:5%;min-width:70px;" />
+					<col style="width:8%;min-width:70px;" />
+					<col style="width:12%;min-width:150px;" />
+					<col style="width:10%;min-width:100px;" />
+					<col style="width:30%;min-width:250px;" />					
+					<col style="width:10%;min-width:100px;" />
+					<col style="width:25%;" />
+				</colgroup>
+				
+				<tbody>
+					<tr>
+						<td rowspan="5" class="ac cellgray">세액감면</td>
+						<td rowspan="4" class="ac cellgray">외국인<br>근로자</td>
+						<td class="ac cellgray">입국목적</td>
+						<td colspan="4" class="al">
+							<select title="구분" style="min-width:30px; display:inline-block;">
+							<option value="x" selected>X</option><option value="o">O</option></select> 정부간 협약 <select title="구분" style="min-width:30px; display:inline-block;">
+							<option value="" selected>X</option><option value="o">O</option></select> 기술도입계약<br>
+							<select title="구분" style="min-width:30px; display:inline-block;">
+							<option value="" selected>X</option><option value="o">O</option></select> 「조세특례제한법」상 감면 <select title="구분" style="min-width:30px; display:inline-block;">
+							<option value="" selected>X</option><option value="o">O</option></select> 조세조약 상 감면
+						</td>
+					</tr>
+					<tr>
+						<td class="ac cellgray">기술도입계약 또는<br>근로 제공일</td>
+						<td colspan="2" class="al"><input type="text" class="ar w100"></td>
+						<td class="ac cellgray">감면기간<br>만료일</td>
+						<td class="al"><input type="text" class="ar w100"></td>
+					</tr>
+					<tr>
+						<td class="ac cellgray">외국인 근로소득에<br>대한 감면</td>
+						<td class="ac cellgray">접수일</td>
+						<td class="al"><input type="text" class="ar w100"></td>
+						<td class="ac cellgray">제출일</td>
+						<td class="al"><input type="text" class="ar w100"></td>
+					</tr>
+					<tr>
+						<td class="ac cellgray">근로소득에 대한<br>조세조약 상 면제</td>
+						<td class="ac cellgray">접수일</td>
+						<td class="al"><input type="text" class="ar w100"></td>
+						<td class="ac cellgray">제출일</td>
+						<td class="al"><input type="text" class="ar w100"></td>
+					</tr>
+					
+					<tr>
+						<td colspan="2" class="ac cellgray">중소기업 취업자 감면</td>
+						<td class="ac cellgray">취업일</td>
+						<td class="al"><input type="text" class="ar w100"></td>
+						<td class="ac cellgray">감면기간 종료일</td>
+						<td class="al"><input type="text" class="ar w100"></td>
+					</tr>
+					
+					<tr>
+						<td rowspan="5" class="ac cellgray">★</td>
+						<th colspan="4" class="ac cellgray">공제종류</th>
+						<th colspan="2" class="ac cellgray">명세</th>
+					</tr>
+					<tr>
+						<td colspan="2" rowspan="4" class="ac cellgray">연금계좌</td>
+						<td colspan="2" class="ac cellgray">과학기술인공제</td>
+						<td class="ac cellgray">납입금액</td>
+						<td class="al"><input type="text" class="ar w100 readonly" readonly disabled="disabled"></td>
+					</tr>
+					<tr>
+						<td colspan="2" class="ac cellgray">「근로자퇴직급여 보장법」에 따른 </td>
+						<td class="ac cellgray">납입금액</td>
+						<td class="al"><input type="text" class="ar w100 readonly" readonly disabled="disabled"></td>
+					</tr>
+					<tr>
+						<td colspan="2" class="ac cellgray">연금저축</td>
+						<td class="ac cellgray">납입금액</td>
+						<td class="al"><input type="text" class="ar w100 readonly" readonly disabled="disabled"></td>
+					</tr>
+					<tr>
+						<th colspan="2" class="ac brddd">연금계좌 계</th>
+						<th class="ac brddd"></th>
+						<th class="al" style="padding-left:10px"><input type="text" class="ar w100 readonly" readonly disabled="disabled"></th>
+					</tr>
+					
+					
+				</tbody>
+				</table>
+		</div>
+		
+		
+
+</div>
+	
+</BODY>
+</HTML>

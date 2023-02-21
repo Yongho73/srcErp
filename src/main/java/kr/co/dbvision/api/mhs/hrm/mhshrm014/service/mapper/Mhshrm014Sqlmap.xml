@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mhs.hrm.mhshrm014.service.mapper.Mhshrm014Mapper">
+
+    <select id="selectMhshrm014List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm014.service.mapper.Mhshrm014Mapper.selectMhshrm014List */
+        SELECT
+               RSPOFC_CODE,
+               RSPOFC_NM,
+               FNC_DATESTR(USE_BEGIN_DE) AS USE_BEGIN_DE,
+               FNC_DATESTR(USE_END_DE) AS USE_END_DE,
+               USE_AT,
+               DECODE(USE_AT, '1', '사용', '0', '미사용', '미사용') AS USE_AT_NM,
+               SORT_ORDR,
+               RSPOFC_ALLWNC_AMT,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_RSPOFC_CODE A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="rspofcNm != null and rspofcNm != ''">
+               AND RSPOFC_NM LIKE '%' || #{rspofcNm} || '%'
+            </if>
+            <if test="useAt != null and useAt != ''">
+               AND USE_AT = #{useAt}
+            </if>
+        </trim>
+        
+        ORDER BY SORT_ORDR, RSPOFC_CODE
+    </select>
+
+    <select id="selectMhshrm014" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm014.service.mapper.Mhshrm014Mapper.selectMhshrm014 */
+        SELECT
+               RSPOFC_CODE,
+               RSPOFC_NM,
+               USE_BEGIN_DE,
+               USE_END_DE,
+               USE_AT,
+               SORT_ORDR AS OUTPT_ORDR,
+               RSPOFC_ALLWNC_AMT,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_RSPOFC_CODE A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="rspofcCode != null and rspofcCode != ''">
+                AND RSPOFC_CODE = #{rspofcCode}
+            </if>
+        </trim>
+    </select>
+    
+    <select id="selectMhshrm014RspofcCodeCombo" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm014.service.mapper.Mhshrm014Mapper.selectMhshrm014RspofcCodeCombo */
+        SELECT
+               RSPOFC_CODE,
+               RSPOFC_NM,
+               USE_BEGIN_DE,
+               USE_END_DE,
+               USE_AT,
+               SORT_ORDR AS OUTPT_ORDR,
+               RSPOFC_ALLWNC_AMT,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+         FROM MHS_RSPOFC_CODE A
+         WHERE USE_AT = '1'
+         ORDER BY SORT_ORDR, RSPOFC_CODE
+    </select>
+
+    <update id="saveMhshrm014" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm014.service.mapper.Mhshrm014Mapper.saveMhshrm014 */
+        MERGE INTO MHS_RSPOFC_CODE A
+             USING (SELECT
+                    #{rspofcCode} RSPOFC_CODE
+                    FROM DUAL) B
+                ON (
+                    A.RSPOFC_CODE = B.RSPOFC_CODE
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               RSPOFC_NM= #{rspofcNm},
+               USE_BEGIN_DE= REPLACE(#{useBeginDe},'-',''),
+               USE_END_DE= REPLACE(#{useEndDe},'-',''),
+               USE_AT= #{useAt},
+               SORT_ORDR= #{sortOrdr},
+               RSPOFC_ALLWNC_AMT= #{rspofcAllwncAmt},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               RSPOFC_CODE,
+               RSPOFC_NM,
+               USE_BEGIN_DE,
+               USE_END_DE,
+               USE_AT,
+               SORT_ORDR,
+               RSPOFC_ALLWNC_AMT,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{rspofcCode},
+               #{rspofcNm},
+               REPLACE(#{useBeginDe},'-',''),
+               REPLACE(#{useEndDe},'-',''),
+               #{useAt},
+               #{sortOrdr},
+               #{rspofcAllwncAmt},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deleteMhshrm014" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm014.service.mapper.Mhshrm014Mapper.deleteMhshrm014 */
+        DELETE FROM MHS_RSPOFC_CODE
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND RSPOFC_CODE = #{rspofcCode}
+        </trim>
+    </delete>
+
+    <select id="useCheckMhshrm014" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm014.service.mapper.Mhshrm014Mapper.useCheckMhshrm014 */
+        SELECT * FROM
+       (SELECT EMPNO AS USE_CHECK FROM MHS_EMP WHERE RSPOFC_CODE = #{rspofcCode} AND ROWNUM = '1'
+       UNION
+       SELECT GNFD_NO AS USE_CHECK FROM MHS_GNFD WHERE (BFCHG_RSPOFC_CODE = #{rspofcCode} 
+                                                        OR AFCHG_RSPOFC_CODE = #{rspofcCode})
+                                                        AND ROWNUM = '1'
+       )
+       WHERE ROWNUM = '1'
+    </select>
+</mapper>

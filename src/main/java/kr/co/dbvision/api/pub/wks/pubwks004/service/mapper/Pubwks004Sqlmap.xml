@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.pub.wks.pubwks004.service.mapper.Pubwks004Mapper">
+
+    <select id="userInformationPubwks004" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrd.pubwks004.service.mapper.Pubwks004Mapper.UserInformationMhshrd002List */
+        <trim>
+        SELECT
+               USER_ID,
+               EMPNO,
+               (SELECT KOR_NM FROM MHS_EMP B WHERE A.EMPNO = B.EMPNO) AS USER_NM,
+               (SELECT DEPT_KOR_NM FROM MHS_DEPT WHERE DEPT_CODE = (SELECT DEPT_CODE 
+                                                                    FROM MHS_EMP B 
+                                                                    WHERE A.EMPNO = B.EMPNO)) AS USER_DEPT_NM,
+               (SELECT DEPT_CODE FROM MHS_EMP B WHERE A.EMPNO = B.EMPNO) AS DEPT_NO
+       </trim>
+          FROM STM_USERS A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="regId != null and regId != ''">
+                AND USER_ID = #{regId}
+            </if>
+        </trim>
+    </select>
+    
+    
+    <select id="selectPubwks004List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.pub.wks.pubwks004.service.mapper.Pubwks004Mapper.selectPubwks004List */
+        SELECT
+               A.LAYOFF_NO,
+               (SELECT COUNT(*)
+                FROM MHS_LAYOFF
+                WHERE LAYOFF_NO = A.LAYOFF_NO
+                    AND
+                    <![CDATA[
+                    ELCTSCT_SE_SN > A.ELCTSCT_SE_SN
+                    ]]>) AS COPY_FLAG,
+               A.ELCTSCT_SE_SN,
+               A.EMPNO,
+               (SELECT C.DEPT_KOR_NM FROM MHS_DEPT C WHERE (SELECT B.DEPT_CODE FROM MHS_EMP B WHERE B.EMPNO=A.EMPNO)=C.DEPT_CODE) AS DEPT_NM,
+               (SELECT B.KOR_NM FROM MHS_EMP B WHERE B.EMPNO=A.EMPNO) AS EMP_NM,
+               SUBSTR(FNC_DATESTR(FNC_DATESTR(A.REQST_DE)), 1, 4)||'-'||SUBSTR(FNC_DATESTR(FNC_DATESTR(A.REQST_DE)), 6, 2)||'-'||SUBSTR(FNC_DATESTR(A.REQST_DE), 9, 2) AS REQST_DE,
+               SUBSTR(FNC_DATESTR(A.LAYOFF_BEGIN_DE), 1, 4)||'-'||SUBSTR(FNC_DATESTR(A.LAYOFF_BEGIN_DE), 6, 2)||'-'||SUBSTR(FNC_DATESTR(A.LAYOFF_BEGIN_DE), 9, 2) AS LAYOFF_BEGIN_DE,
+               SUBSTR(FNC_DATESTR(A.LAYOFF_END_DE), 1, 4)||'-'||SUBSTR(FNC_DATESTR(A.LAYOFF_END_DE), 6, 2)||'-'||SUBSTR(FNC_DATESTR(A.LAYOFF_END_DE), 9, 2) AS LAYOFF_END_DE,
+               (A.LAYOFF_DAYCNT||'일') AS LAYOFF_DAYCNT,
+               A.LAYOFF_DTLS,
+               A.EXTN_LAYOFF_NO,
+               A.LAYOFF_SE_CODE,
+               FNC_COMCODENM('C190',A.LAYOFF_SE_CODE) AS LAYOFF_SE_CODE_NM,
+               A.CNWKPD_INCLS_AT,
+               A.ATCHMNFL_NO,
+               A.ELCTSCT_DOC_NO,
+               A.ELCTSCT_STTUS_CODE,
+               FNC_COMCODENM('EA004',A.ELCTSCT_STTUS_CODE) AS ELCTSCT_STTUS_CODE_NM,
+               A.ELCTSCT_EMPNO,
+               A.REG_DT,
+               A.REG_ID,
+               A.UPT_DT,
+               A.UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_LAYOFF A, MHS_EMP B
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            A.EMPNO=B.EMPNO
+            AND A.EMPNO = (SELECT EMPNO FROM STM_USERS B WHERE B.USER_ID = #{regId})
+            <if test="deptCode != null and deptCode != ''">
+                AND B.DEPT_CODE = #{deptCode}
+            </if>
+            <if test="deptCodeNm != null and deptCodeNm != ''">
+                AND C.DEPT_KOR_NM = #{deptCodeNm}
+            </if>
+            <if test="empCode != null and empCode != ''">
+                AND A.EMPNO = #{empno}
+            </if>
+            <if test="empCodeNm != null and empCodeNm != ''">
+                AND B.KOR_NM = #{empCodeNm}
+            </if>
+            <if test="layoffSeCode != null and layoffSeCode != ''">
+                AND A.LAYOFF_SE_CODE = #{layoffSeCode}
+            </if>
+            <if test="elctsctSttusCode != null and elctsctSttusCode != ''">
+                AND A.ELCTSCT_STTUS_CODE = #{elctsctSttusCode}
+            </if>
+            <if test="layoffBeginDe != null and layoffBeginDe != '' || layoffEndDe != null and layoffEndDe != ''">
+                <![CDATA[
+                AND ((A.LAYOFF_BEGIN_DE >= #{layoffBeginDe} OR A.LAYOFF_END_DE >= #{layoffBeginDe})
+                AND (A.LAYOFF_BEGIN_DE <= #{layoffEndDe} OR A.LAYOFF_END_DE <= #{layoffEndDe}))
+                ]]>
+            </if>
+        </trim>
+        ORDER BY LAYOFF_NO DESC , ELCTSCT_SE_SN 
+    </select>
+
+    <select id="selectPubwks004" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.pub.wks.pubwks004.service.mapper.Pubwks004Mapper.selectPubwks004 */
+        SELECT
+               LAYOFF_NO,
+               ELCTSCT_SE_SN,
+               EMPNO,
+               REQST_DE,
+               LAYOFF_BEGIN_DE,
+               LAYOFF_END_DE,
+               LAYOFF_DAYCNT,
+               LAYOFF_DTLS,
+               EXTN_LAYOFF_NO,
+               LAYOFF_SE_CODE,
+               CNWKPD_INCLS_AT,
+               ATCHMNFL_NO,
+               ELCTSCT_DOC_NO,
+               ELCTSCT_STTUS_CODE,
+               ELCTSCT_EMPNO,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_LAYOFF A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="layoffNo != null and layoffNo != ''">
+                AND LAYOFF_NO = #{layoffNo}
+            </if>
+            <if test="elctsctSeSn != null and elctsctSeSn != ''">
+                AND ELCTSCT_SE_SN = #{elctsctSeSn}
+            </if>
+        </trim>
+    </select>
+
+    <update id="savePubwks004" parameterType="kr.co.dbvision.api.pub.wks.pubwks004.entity.Pubwks004">
+        /* kr.co.dbvision.api.pub.wks.pubwks004.service.mapper.Pubwks004Mapper.savePubwks004 */
+        MERGE INTO MHS_LAYOFF A
+             USING (SELECT
+                    #{layoffNo} LAYOFF_NO,
+                    #{elctsctSeSn} ELCTSCT_SE_SN
+                    FROM DUAL) B
+                ON (
+                    A.LAYOFF_NO = B.LAYOFF_NO AND 
+                    A.ELCTSCT_SE_SN = B.ELCTSCT_SE_SN
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               EMPNO= #{empno},
+               REQST_DE= REPLACE(#{reqstDe}, '-', ''),
+               LAYOFF_BEGIN_DE= REPLACE(#{layoffBeginDe}, '-', ''),
+               LAYOFF_END_DE= REPLACE(#{layoffEndDe}, '-', ''),
+               LAYOFF_DAYCNT= REPLACE(#{layoffDaycnt}, '일', ''),
+               LAYOFF_DTLS= #{layoffDtls},
+               EXTN_LAYOFF_NO= #{extnLayoffNo},
+               LAYOFF_SE_CODE= #{layoffSeCode},
+               CNWKPD_INCLS_AT= #{cnwkpdInclsAt},
+               ATCHMNFL_NO= #{atchmnflNo},
+               ELCTSCT_DOC_NO= #{elctsctDocNo},
+               ELCTSCT_STTUS_CODE= #{elctsctSttusCode},
+               ELCTSCT_EMPNO= #{elctsctEmpno},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{userId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               LAYOFF_NO,
+               ELCTSCT_SE_SN,
+               EMPNO,
+               REQST_DE,
+               LAYOFF_BEGIN_DE,
+               LAYOFF_END_DE,
+               LAYOFF_DAYCNT,
+               LAYOFF_DTLS,
+               EXTN_LAYOFF_NO,
+               LAYOFF_SE_CODE,
+               CNWKPD_INCLS_AT,
+               ATCHMNFL_NO,
+               ELCTSCT_DOC_NO,
+               ELCTSCT_STTUS_CODE,
+               ELCTSCT_EMPNO,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{layoffNo},
+               '1',
+               #{empno},
+               REPLACE(#{reqstDe}, '-', ''),
+               REPLACE(#{layoffBeginDe}, '-', ''),
+               REPLACE(#{layoffEndDe}, '-', ''),
+               REPLACE(#{layoffDaycnt}, '일', ''),
+               #{layoffDtls},
+               #{extnLayoffNo},
+               #{layoffSeCode},
+               #{cnwkpdInclsAt},
+               #{atchmnflNo},
+               #{elctsctDocNo},
+               #{elctsctSttusCode},
+               #{elctsctEmpno},
+               SYSDATE,
+               #{userId}
+        )
+    </update>
+
+    <delete id="deletePubwks004" parameterType="kr.co.dbvision.api.pub.wks.pubwks004.entity.Pubwks004">
+        /* kr.co.dbvision.api.pub.wks.pubwks004.service.mapper.Pubwks004Mapper.deletePubwks004 */
+        DELETE FROM MHS_LAYOFF
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND LAYOFF_NO = #{layoffNo}
+                AND ELCTSCT_SE_SN = #{elctsctSeSn}
+        </trim>
+    </delete>
+    
+    
+    
+    <select id="searchPubwks004ForExcel" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.pub.wks.pubwks004.service.mapper.Pubwks004Mapper.searchPubwks004ForExcel */
+        SELECT
+                A.LAYOFF_NO,
+               SUBSTR(FNC_DATESTR(FNC_DATESTR(A.REQST_DE)), 1, 4)||'-'||SUBSTR(FNC_DATESTR(FNC_DATESTR(A.REQST_DE)), 6, 2)||'-'||SUBSTR(FNC_DATESTR(A.REQST_DE), 9, 2) AS REQST_DE,
+                (SELECT C.DEPT_KOR_NM FROM MHS_DEPT C WHERE (SELECT B.DEPT_CODE FROM MHS_EMP B WHERE B.EMPNO=A.EMPNO)=C.DEPT_CODE) AS DEPT_KOR_NM,
+                A.EMPNO,
+                (SELECT B.KOR_NM FROM MHS_EMP B WHERE B.EMPNO=A.EMPNO) AS EMP_NM,
+                A.LAYOFF_SE_CODE,
+                FNC_COMCODENM('C190',A.LAYOFF_SE_CODE) AS LAYOFF_SE_CODE_NM,
+               SUBSTR(FNC_DATESTR(A.LAYOFF_BEGIN_DE), 1, 4)||'-'||SUBSTR(FNC_DATESTR(A.LAYOFF_BEGIN_DE), 6, 2)||'-'||SUBSTR(FNC_DATESTR(A.LAYOFF_BEGIN_DE), 9, 2) AS LAYOFF_BEGIN_DE,
+               SUBSTR(FNC_DATESTR(A.LAYOFF_END_DE), 1, 4)||'-'||SUBSTR(FNC_DATESTR(A.LAYOFF_END_DE), 6, 2)||'-'||SUBSTR(FNC_DATESTR(A.LAYOFF_END_DE), 9, 2) AS LAYOFF_END_DE,
+               (A.LAYOFF_DAYCNT||'일') AS LAYOFF_DAYCNT,
+               A.LAYOFF_DTLS,
+               A.ATCHMNFL_NO,
+               A.ELCTSCT_SE_SN,
+               A.EXTN_LAYOFF_NO,
+               A.CNWKPD_INCLS_AT,
+               A.ELCTSCT_DOC_NO,
+               A.ELCTSCT_STTUS_CODE,
+               FNC_COMCODENM('EA004',A.ELCTSCT_STTUS_CODE) AS ELCTSCT_STTUS_CODE_NM,
+               A.ELCTSCT_EMPNO,
+               A.REG_DT,
+               A.REG_ID,
+               A.UPT_DT,
+               A.UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_LAYOFF A, MHS_EMP B
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            A.EMPNO=B.EMPNO
+            AND A.EMPNO = #{empno}
+            
+            
+            <if test="layoffBeginDe != null and layoffBeginDe != '' || layoffEndDe != null and layoffEndDe != ''">
+                <![CDATA[
+                AND ((A.LAYOFF_BEGIN_DE >= #{layoffBeginDe} OR A.LAYOFF_END_DE >= #{layoffBeginDe})
+                AND (A.LAYOFF_BEGIN_DE <= #{layoffEndDe} OR A.LAYOFF_END_DE <= #{layoffEndDe}))
+                ]]>
+            </if>
+            <if test="layoffSeCode != null and layoffSeCode != ''">
+                AND A.LAYOFF_SE_CODE = #{layoffSeCode}
+            </if>
+            <if test="elctsctSttusCode != null and elctsctSttusCode != ''">
+                AND A.ELCTSCT_STTUS_CODE = #{elctsctSttusCode}
+            </if>
+            <if test="sRegDt != null and sRegDt != ''">
+                <![CDATA[
+                AND A.REG_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+                ]]>
+            </if>
+            <if test="eRegDt != null and eRegDt != ''">
+                <![CDATA[
+                AND A.REG_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+                ]]>
+             </if>
+        </trim>
+        ORDER BY REG_DT DESC
+    </select>
+    
+    <select id="selectElctsctSeSnCnt" parameterType="egovMapForNull" resultType="java.lang.Integer">
+        SELECT
+            COUNT(*)
+        FROM
+            MHS_LAYOFF
+        WHERE
+            LAYOFF_NO = #{layoffNo}
+            AND
+            <![CDATA[
+            ELCTSCT_SE_SN > #{elctsctSeSn}
+            ]]>
+    </select>
+    
+    <insert id="saveCopyPubwks004" parameterType="egovMapForNull">
+        INSERT INTO
+            MHS_LAYOFF
+            (
+				LAYOFF_NO,
+				ELCTSCT_SE_SN,
+				EMPNO,
+				REQST_DE,
+				LAYOFF_BEGIN_DE,
+				LAYOFF_END_DE,
+				LAYOFF_DAYCNT,
+				LAYOFF_DTLS,
+				EXTN_LAYOFF_NO,
+				LAYOFF_SE_CODE,
+				CNWKPD_INCLS_AT,
+				ATCHMNFL_NO,
+				REG_DT,
+				REG_ID
+            )
+            SELECT
+                LAYOFF_NO,
+                (SELECT (MAX(ELCTSCT_SE_SN) + 1)
+                 FROM MHS_LAYOFF
+                 WHERE LAYOFF_NO = #{layoffNo}),
+                 EMPNO,
+                 REQST_DE,
+                 LAYOFF_BEGIN_DE,
+				 LAYOFF_END_DE,
+				 LAYOFF_DAYCNT,
+				 LAYOFF_DTLS,
+				 EXTN_LAYOFF_NO,
+				 LAYOFF_SE_CODE,
+				 CNWKPD_INCLS_AT,
+				 ATCHMNFL_NO,
+				 SYSDATE,
+				 #{regId}
+		      FROM MHS_LAYOFF
+		      WHERE 
+		          LAYOFF_NO = #{layoffNo}
+		          AND
+		          ELCTSCT_SE_SN = #{elctsctSeSn}
+    </insert>
+</mapper>

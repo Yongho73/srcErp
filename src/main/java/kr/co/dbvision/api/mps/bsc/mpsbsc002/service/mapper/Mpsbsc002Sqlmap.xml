@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mps.bsc.mpsbsc002.service.mapper.Mpsbsc002Mapper">
+
+ <select id="selectComboMpsbsc002List" parameterType="egovMapForNull" resultType="egovMapForNull">
+     /* kr.co.dbvision.api.mps.bsc.mpsbsc002.service.mapper.Mpsbsc002Mapper.selectComboMpsbsc002List */
+        SELECT 
+            SALARYITEM_CODE AS KEY
+            ,SALARYITEM_NM ||' ' || FNC_COMCODENM ('C064',PYMNTDDC_SE)  AS VALUE 
+            ,FNC_DATESTR(USE_BEGIN_DE) AS USE_BEGIN_DE
+            ,FNC_DATESTR(USE_END_DE) AS USE_END_DE
+        FROM MPS_SALARYITEM
+        WHERE USE_AT ='1'
+        AND TO_CHAR(SYSDATE, 'YYYYMMDD') BETWEEN USE_BEGIN_DE AND USE_END_DE 
+        
+	       <if test="salaryitemCode != null and salaryitemCode != ''">
+	           AND SALARYITEM_CODE =  #{salaryitemCode}
+	       </if> 
+	       
+        ORDER BY SALARYITEM_CODE,PYMNTDDC_SE 
+    </select>
+    <select id="selectMpsbsc002List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.bsc.mpsbsc002.service.mapper.Mpsbsc002Mapper.selectMpsbsc002List */
+       SELECT
+               SALARYTY_CODE,
+               FNC_COMCODENM('C062', B.SALARYTY_CODE)  AS SALARYTY_NM,
+               B.SALARYITEM_CODE,
+               A.SALARYITEM_NM,
+               FNC_COMCODENM ('C064',PYMNTDDC_SE) AS PYMNTDDC_SE ,
+               LMT_AMT, 
+               STDR_AMT, 
+               B.TAXT_AT,
+               /* (SELECT FNC_COMCODENM('C116', B.TAXT_AT) FROM DUAL) TAXT_AT_NM, */
+               FNC_DATESTR(B.USE_BEGIN_DE) AS USE_BEGIN_DE,
+               FNC_DATESTR(A.USE_END_DE) AS USE_END_DE,
+               B.USE_AT,
+               B.AMT_STDR_REGIST_TRGET_AT,
+               B.APPLC_SE,
+               B.CALC_SE,
+               B.REG_DT,
+               B.REG_ID,
+               B.UPT_DT,
+               B.UPT_ID
+          FROM MPS_SALARYITEM A, MPS_ITEM_STDR B
+         WHERE A.SALARYITEM_CODE = B.SALARYITEM_CODE 
+         AND A.USE_BEGIN_DE = B.USE_BEGIN_DE
+          <if test="salarytyCode != null and salarytyCode != ''">
+              AND B.SALARYTY_CODE = #{salarytyCode}
+          </if>
+          <if test="salaryitemCode != null and salaryitemCode != ''">
+              AND B.SALARYITEM_CODE = #{salaryitemCode}
+          </if>
+          <if test="salaryitemNm != null and salaryitemNm != ''">
+              AND A.SALARYITEM_NM LIKE  #{salaryitemNm} || '%'
+          </if> 
+          <if test="stdrDe != null and stdrDe != ''">
+         	  AND REPLACE(#{stdrDe},'-','') BETWEEN B.USE_BEGIN_DE AND B.USE_END_DE 
+          </if> 
+          <if test="useAt != null and useAt != ''">
+              AND B.USE_AT =  #{useAt} 
+          </if> 
+
+         ORDER BY B.SALARYTY_CODE,  B.SALARYITEM_CODE
+    </select>
+
+    <select id="selectMpsbsc002" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.bsc.mpsbsc002.service.mapper.Mpsbsc002Mapper.selectMpsbsc002 */
+        SELECT
+               SALARYTY_CODE,
+               SALARYITEM_CODE,
+               LMT_AMT,
+               STDR_AMT,
+               TAXT_AT,
+               RVERS_YY,
+               TAXE_CODE,
+               USE_BEGIN_DE,
+               USE_AT,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               AMT_STDR_REGIST_TRGET_AT,
+               APPLC_SE,
+               CALC_SE,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MPS_ITEM_STDR A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="salarytyCode != null and salarytyCode != ''">
+                AND SALARYTY_CODE = #{salarytyCode}
+            </if>
+            <if test="salaryitemCode != null and salaryitemCode != ''">
+                AND SALARYITEM_CODE = #{salaryitemCode}
+            </if>
+	          <if test="useBeginDe != null and useBeginDe != ''">
+	         	  AND REPLACE(#{useBeginDe},'-','') BETWEEN USE_BEGIN_DE AND USE_END_DE 
+	          </if> 
+        </trim>
+    </select>
+
+    <update id="saveMpsbsc002" parameterType="kr.co.dbvision.api.mps.bsc.mpsbsc002.entity.Mpsbsc002">
+        /* kr.co.dbvision.api.mps.bsc.mpsbsc002.service.mapper.Mpsbsc002Mapper.saveMpsbsc002 */
+        MERGE INTO MPS_ITEM_STDR A
+             USING (SELECT
+                    #{salarytyCode} SALARYTY_CODE,
+                    #{salaryitemCode} SALARYITEM_CODE,
+                    REPLACE(#{useBeginDe}, '-', '') USE_BEGIN_DE
+                    FROM DUAL) B
+                ON (
+                    A.SALARYTY_CODE = B.SALARYTY_CODE AND 
+                    A.SALARYITEM_CODE = B.SALARYITEM_CODE AND
+                    A.USE_BEGIN_DE = B.USE_BEGIN_DE
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               LMT_AMT= #{lmtAmt},
+               STDR_AMT= #{stdrAmt},
+               TAXT_AT= #{taxtAt},
+               RVERS_YY= #{rversYy},
+               TAXE_CODE= #{taxeCode},
+               USE_AT= #{useAt},
+               AMT_STDR_REGIST_TRGET_AT= #{amtStdrRegistTrgetAt},
+               APPLC_SE= #{applcSe},
+               CALC_SE= #{calcSe},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               SALARYTY_CODE,
+               SALARYITEM_CODE,
+               LMT_AMT,
+               STDR_AMT,
+               TAXT_AT,
+               RVERS_YY,
+               TAXE_CODE,
+               USE_BEGIN_DE,
+               USE_END_DE,
+               USE_AT,
+               AMT_STDR_REGIST_TRGET_AT,
+               APPLC_SE,
+               CALC_SE,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{salarytyCode},
+               #{salaryitemCode},
+               #{lmtAmt},
+               #{stdrAmt},
+               #{taxtAt},
+               #{rversYy},
+               #{taxeCode},
+               REPLACE(#{useBeginDe},'-',''),
+               REPLACE(#{useEndDe},'-',''),
+               #{useAt},
+               #{amtStdrRegistTrgetAt},
+               #{applcSe},
+               #{calcSe},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deleteMpsbsc002" parameterType="kr.co.dbvision.api.mps.bsc.mpsbsc002.entity.Mpsbsc002">
+        /* kr.co.dbvision.api.mps.bsc.mpsbsc002.service.mapper.Mpsbsc002Mapper.deleteMpsbsc002 */
+        DELETE FROM MPS_ITEM_STDR
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND SALARYTY_CODE = #{salarytyCode}
+                AND SALARYITEM_CODE = #{salaryitemCode}
+        </trim>
+    </delete>
+   
+    <update id="deleteMpsbsc002ByApplcsStdr" parameterType="kr.co.dbvision.api.mps.bsc.mpsbsc002.entity.Mpsbsc002">
+        UPDATE MPS_APPLCS_STDR
+        SET         DELETE_AT = '1',
+                         UPT_DT = SYSDATE,
+                         UPT_ID = #{uptId}       
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND SALARYTY_CODE = #{salarytyCode}
+                AND SALARYITEM_CODE = #{salaryitemCode}
+        </trim>
+    </update>
+     <update id="saveMpsbsc002ByApplcsStdr" parameterType="kr.co.dbvision.api.mps.bsc.mpsbsc002.entity.Mpsbsc002">
+        /* kr.co.dbvision.api.mps.bsc.mpsbsc002.service.mapper.Mpsbsc002Mapper.saveMpsbsc002ByApplcsStdr */
+        MERGE INTO MPS_APPLCS_STDR A
+             USING (SELECT
+                    #{salarytyCode} SALARYTY_CODE,
+                    #{salaryitemCode} SALARYITEM_CODE,
+                    #{applcSe} APPLC_SE,
+                    #{calcSe} CALC_SE
+                    FROM DUAL) B
+                ON (
+                    A.SALARYTY_CODE = B.SALARYTY_CODE AND 
+                    A.SALARYITEM_CODE = B.SALARYITEM_CODE  AND
+                    A.APPLC_SE = B.APPLC_SE AND
+                    A.CALC_SE   = B.CALC_SE
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+               DELETE_AT = '0',
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+        WHEN NOT MATCHED THEN
+        INSERT (
+               APPLC_STDR_SN,
+               SALARYTY_CODE,
+               SALARYITEM_CODE,               
+               APPLC_SE,
+               CALC_SE,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+              (SELECT NVL(MAX(APPLC_STDR_SN),0) +1 FROM MPS_APPLCS_STDR),
+               #{salarytyCode},
+               #{salaryitemCode},
+               #{applcSe},
+               #{calcSe},
+               SYSDATE,
+               #{regId}
+        )
+    </update>
+    
+    
+</mapper>

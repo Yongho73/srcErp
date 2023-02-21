@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mhs.hrm.mhshrmpop.service.mapper.MhshrmpopMapper">
+
+    <select id="selectMhsDeptList" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrmpop.service.impl.MhshrmpopMapper.selectMhsDeptList */
+        SELECT
+               DEPT_CODE,
+               DEPT_KOR_NM,
+               DEPT_ENG_NM,
+               DEPT_ABRV,
+               BPLC_CODE,
+               FNC_DATESTR(UPPER_DEPT_CODE) AS UPPER_DEPT_CODE,
+               DEPT_LVL,
+               ORGNZT_LVL,
+               DEPT_TELNO,
+               DEPT_FAX_TELNO,
+               FNC_DATESTR(USE_BEGIN_DE) AS USE_BEGIN_DE,
+               USE_AT,
+               DEPT_SE,
+               OUTPT_ORDR,
+               TO_CHAR(REG_DT,'YYYY-MM-DD HH24:MI:SS') AS REG_DT,
+               REG_ID,
+               TO_CHAR(UPT_DT,'YYYY-MM-DD HH24:MI:SS') AS UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_DEPT A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="deptCode != null and deptCode != ''">
+                AND DEPT_CODE = #{deptCode}
+            </if>
+ 
+            <if test="sRegDt != null and sRegDt != ''">
+                <![CDATA[
+                AND REG_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+                ]]>
+            </if>
+            <if test="eRegDt != null and eRegDt != ''">
+                <![CDATA[
+                AND REG_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+                ]]>
+             </if>
+        </trim>
+    </select>
+
+    <select id="selectMhsDept" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrmpop.service.impl.MhshrmpopMapper.selectMhsDept */
+        SELECT
+               DEPT_CODE,
+               DEPT_KOR_NM,
+               DEPT_ENG_NM,
+               DEPT_ABRV,
+               BPLC_CODE,
+               FNC_DATESTR(UPPER_DEPT_CODE) AS UPPER_DEPT_CODE,
+               DEPT_LVL,
+               ORGNZT_LVL,
+               DEPT_TELNO,
+               DEPT_FAX_TELNO,
+               FNC_DATESTR(USE_BEGIN_DE) AS USE_BEGIN_DE,
+               USE_AT,
+               DEPT_SE,
+               OUTPT_ORDR,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_DEPT A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="deptCode != null and deptCode != ''">
+                AND DEPT_CODE = #{deptCode}
+            </if>
+        </trim>
+    </select>
+
+</mapper>

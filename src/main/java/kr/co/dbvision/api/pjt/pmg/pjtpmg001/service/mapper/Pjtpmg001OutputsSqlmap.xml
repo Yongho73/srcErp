@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.pjt.pmg.pjtpmg001.service.mapper.Pjtpmg001PjtOutputsMapper">
+
+    <select id="selectPjtOutputsTreeList" parameterType="egovMapForNull" resultType="egovMapForNull">
+		/* kr.co.dbvision.api.pjt.pmg.pjtpmg001.service.mapper.Pjtpmg001PjtOutputsMapper.selectMtaRequstList */
+		SELECT B.*,
+		
+		       (SELECT COUNT(1)
+                  FROM PJT_PROJECT_OUTPUT
+                 WHERE OUTPUT_DETAIL_CODE = B.ID
+                   AND PROJECT_SN = #{projectSn}) AS PJT_OUTPUTS_CHECK_ALL_POPUP
+		       
+		  FROM (SELECT OUTPUT_CODE AS ID,
+		               'ROOT' AS PARENT,
+		               OUTPUT_CODENM AS OUTPUTS_NM,
+		               'M' AS OUTPUTS_GB,
+		               OUTPT_SN
+		          FROM PJT_OUTPUT_INFO
+		         WHERE OUTPUT_SE = #{outputSe}
+		        UNION ALL
+		        SELECT OUTPUT_DETAIL_CODE    AS ID,
+		               OUTPUT_CODE           AS PARENT,
+		               OUTPUT_DETAIL_CODE_NM AS OUTPUTS_NM,
+		               DECODE(((SELECT COUNT(OUTPUT_CODE)
+                                  FROM PJT_OUTPUT_INFO
+                                 WHERE OUTPUT_CODE = A.OUTPUT_CODE
+                                   AND OUTPUT_SE = #{outputSe})), 0, DECODE(LENGTH(OUTPUT_CODE),4,'P','M') , 'M') AS OUTPUTS_GB,
+		               OUTPT_SN
+		          FROM PJT_OUTPUT_DETAILINFO A
+		         WHERE SUBSTR(OUTPUT_DETAIL_CODE, 0, 2) IN (SELECT OUTPUT_CODE FROM PJT_OUTPUT_INFO WHERE OUTPUT_SE = #{outputSe})) B
+		 ORDER BY B.OUTPT_SN  
+    </select>
+    
+    <select id="selectStepList" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg001.service.mapper.Pjtpmg001PjtOutputsMapper.selectStepList */
+        SELECT OUTPUT_CODE, 
+               OUTPUT_CODENM 
+          FROM PJT_OUTPUT_INFO 
+         WHERE OUTPUT_SE = #{outputSe}
+      ORDER BY OUTPT_SN
+    </select>
+    
+    <select id="selectStepDetailList" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg001.service.mapper.Pjtpmg001PjtOutputsMapper.selectStepDetailList */
+        SELECT OUTPUT_DETAIL_CODE, 
+               OUTPUT_DETAIL_CODE_NM
+          FROM PJT_OUTPUT_DETAILINFO 
+         WHERE OUTPUT_CODE = #{outputCode}
+    </select> 
+    
+    <select id="selectPjtProjectOututList" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg001.service.mapper.Pjtpmg001PjtOutputsMapper.selectPjtProjectOututList */
+        SELECT OUTPUT_DETAIL_CODE, 
+               (SELECT OUTPUT_DETAIL_CODE_NM 
+                  FROM PJT_OUTPUT_DETAILINFO 
+                 WHERE OUTPUT_CODE = A.OUTPUT_CODE
+                   AND OUTPUT_DETAIL_CODE = A.OUTPUT_DETAIL_CODE) AS OUTPUT_DETAIL_CODE_NM,
+               OUTPUT_CN,
+               PROGRS_RT,
+               NVL(PLAN_DAYCNT,0) AS PLAN_DAYCNT,
+               COMPT_AT,
+               ATCHMNFL,
+               OUTPUT_SN,
+               PROJECT_SN
+          FROM PJT_PROJECT_OUTPUT A
+         WHERE OUTPUT_CODE = #{outputCode}
+           AND PROJECT_SN = #{projectSn}
+    </select>
+    
+    <update id="savePjtProjectOutut" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg001.service.mapper.Pjtpmg001PjtOutputsMapper.savePjtProjectOutut */
+        MERGE INTO PJT_PROJECT_OUTPUT A
+             USING (SELECT
+                    #{outputSn} OUTPUT_SN,
+                    #{projectSn} PROJECT_SN
+                    FROM DUAL) B
+                ON (
+                    A.OUTPUT_SN = B.OUTPUT_SN AND 
+                    A.PROJECT_SN = B.PROJECT_SN
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               OUTPUT_CODE= #{outputCode},
+               OUTPUT_DETAIL_CODE= #{outputDetailCode},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               OUTPUT_SN,
+               PROJECT_SN,
+               OUTPUT_CODE,
+               OUTPUT_DETAIL_CODE,
+               WRITE_DT,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{outputSn},
+               #{projectSn},
+               #{outputCode},
+               #{outputDetailCode},
+               TO_CHAR(SYSDATE, 'YYYYMMDD'),
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+    
+    <update id="updatePjtProjectOutut" parameterType="kr.co.dbvision.api.pjt.pmg.pjtpmg001.entity.Pjtpmg001">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg001.service.mapper.Pjtpmg001PjtOutputsMapper.updatePjtProjectOutut */        
+        UPDATE PJT_PROJECT_OUTPUT SET
+               
+               OUTPUT_CN= #{outputCn},
+               PROGRS_RT= #{progrsRt},
+               PLAN_DAYCNT= #{planDaycnt},
+               COMPT_AT= #{comptAt},               
+               ATCHMNFL= #{atchmnfl},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+               
+        WHERE OUTPUT_SN = #{outputSn}
+          AND PROJECT_SN = #{projectSn}
+
+    </update>
+
+    <delete id="deletePjtProjectOutut" parameterType="kr.co.dbvision.api.pjt.pmg.pjtpmg001.entity.Pjtpmg001">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg001.service.mapper.Pjtpmg001PjtOutputsMapper.deletePjtProjectOutut */
+        DELETE FROM PJT_PROJECT_OUTPUT
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND OUTPUT_SN = #{outputSn}
+                AND PROJECT_SN = #{projectSn}
+        </trim>
+    </delete>   
+
+</mapper>

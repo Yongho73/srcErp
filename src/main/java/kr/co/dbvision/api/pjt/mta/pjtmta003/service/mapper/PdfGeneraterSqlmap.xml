@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.pjt.mta.pjtmta003.service.mapper.PdfGeneraterMapper">
+	
+    <select id="selectProjectInfo" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.pjt.mta.pjtmta003.service.mapper.PdfGeneraterMapper/selectProjectInfo */
+		SELECT 
+		        NVL(A.PROJECT_SN, ' ') AS PROJECT_SN,
+		        NVL(REPLACE(REPLACE(B.PROJECT_NM, '''', ''), ' ', ''),' ') AS PDF_NM,
+		        NVL(B.PROJECT_NM, ' ') AS PROJECT_NM,
+                NVL((SELECT BCNC_NM FROM STM_CUSTOMER WHERE BCNC_CODE = B.BCNC_CODE),' ') AS BCNC_NM,
+		        FNC_DATESTR(A.REPORT_YM) AS REPORT_YM,
+		        NVL(FNC_DATESTR(A.REPORT_STR_DT), FNC_DATESTR(A.REPORT_YM)||'-01') AS REPORT_STR_DT,
+                NVL(FNC_DATESTR(A.REPORT_END_DT), TO_CHAR(LAST_DAY(TO_DATE(A.REPORT_YM, 'YYYYMM')), 'YYYY-MM-DD')) AS REPORT_END_DT,
+		        NVL((SELECT NEXT_MT_REPORT FROM PJT_MNTNCE_REPORT WHERE REPORT_YM = (TO_NUMBER(A.REPORT_YM)-1) AND PROJECT_SN = A.PROJECT_SN),' ') AS NOW_MT_REPORT,
+		        NVL(A.NEXT_MT_REPORT, ' ') AS NEXT_MT_REPORT,
+		        NVL((SELECT KOR_NM FROM MHS_EMP WHERE EMPNO = A.WRITER), ' ') AS WRITER_NM,
+		        FNC_DATESTR(A.WRITE_DT) AS WRITE_DT,
+		        NVL(A.NONSOLUT_DESC, ' ') AS NONSOLUT_DESC,
+		        NVL(A.ISSUE_DESC, ' ') AS ISSUE_DESC
+		        
+		        
+		FROM	PJT_MNTNCE_REPORT A, PJT_PROJECT B
+		WHERE	A.PROJECT_SN = B.PROJECT_SN
+		        
+		        AND A.PROJECT_SN = #{projectSn}
+		        AND A. REPORT_YM = REPLACE(#{reportYm}, '-', '')
+		
+		
+    </select>
+    
+    <select id="selectRequstList" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.pjt.mta.pjtmta003.service.mapper.PdfGeneraterMapper.selectRequstList */
+		     <![CDATA[
+		     SELECT *
+		        FROM (SELECT B.REQUST_SN, B.PROJECT_SN, 
+		               NVL(B.REQUST_MENU, '&nbsp;') AS REQUST_MENU,
+		                 NVL(B.REQUST_CN,'&nbsp;') AS REQUST_CN,
+		                 NVL(TO_CHAR(B.REQUST_DT, 'MM.DD'),'&nbsp;') AS REQUST_DT,
+		                 NVL(LISTAGG(A.OPERT_CN, '<br/>') WITHIN GROUP(ORDER BY A.OPERT_SN, A.REQUST_SN, A.PROJECT_SN),'&nbsp;') AS OPERT_CN,
+		                 NVL(TO_CHAR(B.COMPT_DE, 'MM.DD'),'&nbsp;') AS COMPT_DE
+		            FROM
+		                (SELECT REQUST_SN, PROJECT_SN, OPERT_CN AS OPERT_CN, OPERT_SN
+		                FROM PJT_MNTNCE_OPERT WHERE  PROJECT_SN = #{projectSn}) A,
+		                PJT_MNTNCE_REQUST B
+		            WHERE B.PROJECT_SN = #{projectSn}
+		
+		                       AND TO_CHAR(B.COMPT_DE, 'YYYYMMDD') >= NVL((SELECT REPORT_STR_DT FROM PJT_MNTNCE_REPORT WHERE REPORT_YM = REPLACE(#{reportYm}, '-', '') AND PROJECT_SN = #{projectSn}), REPLACE(#{reportYm}, '-', '')||'01')
+		                       AND TO_CHAR(B.COMPT_DE, 'YYYYMMDD') <= NVL((SELECT REPORT_END_DT FROM PJT_MNTNCE_REPORT WHERE REPORT_YM = REPLACE(#{reportYm}, '-', '') AND PROJECT_SN = #{projectSn}), REPLACE(#{reportYm}, '-', '')||'31')
+		
+		                       AND PRINT_YM = REPLACE(#{reportYm}, '-', '')
+		                       AND PRINT_CHK = 1
+		 
+		                        AND B.REQUST_SN = A.REQUST_SN(+)
+		            GROUP BY  B.REQUST_SN, B.PROJECT_SN, NVL(B.REQUST_MENU, ''), B.REQUST_MENU, '', 
+		                     B.REQUST_CN, NVL(B.REQUST_CN,''), TO_CHAR(B.REQUST_DT, 'MM.DD'), B.REQUST_DT, 'MM.DD', 
+		                     TO_CHAR(B.COMPT_DE, 'MM.DD'), NVL(TO_CHAR(B.REQUST_DT, 'MM.DD'),''), B.COMPT_DE, 'MM.DD', NVL(TO_CHAR(B.COMPT_DE, 'MM.DD'),''))
+		      ORDER BY TO_DATE(REQUST_DT, 'mm.dd'), TO_DATE(COMPT_DE, 'mm.dd')
+		     ]]>
+    </select>
+    
+
+</mapper>

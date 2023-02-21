@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.ets.bst.etsbst002.service.mapper.Etsbst002Mapper">
+
+    <select id="selectEtsbst002List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.ets.bst.etsbst002.service.mapper.Etsbst002Mapper.selectEtsbst002List */
+        SELECT
+               NO_SETTING_NO,
+               SETTING_CODE,
+               INPUT_TEXT,
+               REG_ID,
+               REG_DT,
+               UPT_ID,
+               UPT_DT,
+               APPLC_YY,
+               USE_AT,
+               TIT,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM SGN_DOCNO_SETTING A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="tit != null and tit != ''">
+                AND TIT LIKE '%' || #{tit} || '%'
+            </if>
+            <if test="sRegDt != null and sRegDt != ''">
+                <![CDATA[
+                AND REG_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+                ]]>
+            </if>
+            <if test="eRegDt != null and eRegDt != ''">
+                <![CDATA[
+                AND REG_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+                ]]>
+             </if>
+        </trim>
+        
+        ORDER BY TIT
+    </select>
+
+    <select id="selectEtsbst002" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.ets.bst.etsbst002.service.mapper.Etsbst002Mapper.selectEtsbst002 */
+        SELECT
+               NO_SETTING_NO,
+               SETTING_CODE,
+               INPUT_TEXT,
+               REG_ID,
+               REG_DT,
+               UPT_ID,
+               UPT_DT,
+               APPLC_YY,
+               USE_AT,
+               TIT,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM SGN_DOCNO_SETTING A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="noSettingNo != null and noSettingNo != ''">
+                AND NO_SETTING_NO = #{noSettingNo}
+            </if>
+        </trim>
+    </select>
+
+    <update id="saveEtsbst002" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.ets.bst.etsbst002.service.mapper.Etsbst002Mapper.saveEtsbst002 */
+        MERGE INTO SGN_DOCNO_SETTING A
+             USING (SELECT
+                    #{noSettingNo} NO_SETTING_NO
+                    FROM DUAL) B
+                ON (
+                    A.NO_SETTING_NO = B.NO_SETTING_NO
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               SETTING_CODE= #{settingCode},
+               INPUT_TEXT= #{inputText},
+               APPLC_YY= #{applcYy},
+               USE_AT= #{useAt},
+               TIT= #{tit},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               NO_SETTING_NO,
+               SETTING_CODE,
+               INPUT_TEXT,
+               APPLC_YY,
+               USE_AT,
+               TIT,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{noSettingNo},
+               #{settingCode},
+               #{inputText},
+               #{applcYy},
+               #{useAt},
+               #{tit},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deleteEtsbst002" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.ets.bst.etsbst002.service.mapper.Etsbst002Mapper.deleteEtsbst002 */
+        DELETE FROM SGN_DOCNO_SETTING
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND NO_SETTING_NO = #{noSettingNo}
+        </trim>
+    </delete>
+</mapper>

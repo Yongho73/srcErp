@@ -1,0 +1,349 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mps.ins.mpsins003.service.mapper.Mpsins003Mapper">
+
+    <select id="selectMpsins003List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.ins.mpsins003.service.mapper.Mpsins003Mapper.selectMpsins003List */
+         SELECT 
+                (SELECT TO_CHAR((TO_DATE(B.STTEMNT_DE,'YYYY-MM-DD')),'YYYY-MM-DD') FROM MPS_SLNRC_STMT B WHERE A.EMPNO = B.EMPNO ) AS STTEMNT_DE , 
+                EMPNO AS EMPNO, 
+                KOR_NM AS KOR_NM, 
+                HFFS_SE AS HFFS_SE ,
+                DECODE(A.IHIDNUM,NULL,'',SUBSTR(A.IHIDNUM,1,6)||'-*******') AS IHIDNUM,  
+                TO_CHAR((TO_DATE(ECNY_DE,'YYYY-MM-DD')),'YYYY-MM-DD') AS ECNY_DE , 
+                TO_CHAR((TO_DATE(RETIRE_DE,'YYYY-MM-DD')),'YYYY-MM-DD') AS RETIRE_DE,
+                (SELECT B.PROCESS_AT  FROM MPS_SLNRC_STMT B WHERE A.EMPNO = B.EMPNO ) AS PROCESS_AT , 
+                (SELECT B.LOST_PROCESS_AT  FROM MPS_SLNRC_STMT B WHERE A.EMPNO = B.EMPNO ) AS LOST_PROCESS_AT , 
+                (SELECT TO_CHAR((TO_DATE(B.LOST_STTEMNT_DE,'YYYY-MM-DD')),'YYYY-MM-DD')  FROM MPS_SLNRC_STMT B WHERE A.EMPNO = B.EMPNO ) AS LOST_STTEMNT_DE, 
+                (SELECT B.NPN_AT  FROM MPS_SLNRC_STMT B WHERE A.EMPNO = B.EMPNO ) AS NPN_AT,
+                (SELECT B.HLTHINS_AT  FROM MPS_SLNRC_STMT B WHERE A.EMPNO = B.EMPNO ) AS HLTHINS_AT , 
+                (SELECT B.EPIS_AT  FROM MPS_SLNRC_STMT B WHERE A.EMPNO = B.EMPNO ) AS EPIS_AT, 
+                (SELECT B.IACI_AT  FROM MPS_SLNRC_STMT B WHERE A.EMPNO = B.EMPNO ) AS IACI_AT
+           FROM MHS_EMP A
+<!--          SELECT -->
+<!--                TO_CHAR((TO_DATE(A.STTEMNT_DE,'YYYY-MM-DD')),'YYYY-MM-DD') AS STTEMNT_DE, -->
+<!--                A.EMPNO, -->
+<!--                B.KOR_NM, -->
+<!--                B.HFFS_SE, -->
+<!--                B.IHIDNUM, -->
+<!--                TO_CHAR((TO_DATE(B.ECNY_DE,'YYYY-MM-DD')),'YYYY-MM-DD') AS ECNY_DE, -->
+<!--                TO_CHAR((TO_DATE(B.RETIRE_DE,'YYYY-MM-DD')),'YYYY-MM-DD') AS RETIRE_DE, -->
+<!--                A.PROCESS_AT, -->
+<!--                A.LOST_PROCESS_AT, -->
+<!--                A.LOST_STTEMNT_DE, -->
+<!--                A.NPN_AT, -->
+<!--                A.HLTHINS_AT, -->
+<!--                A.EPIS_AT, -->
+<!--                A.IACI_AT -->
+<!--           FROM ( -->
+<!--                 SELECT  -->
+<!--                         STTEMNT_DE AS STTEMNT_DE,  -->
+<!--                         EMPNO AS EMPNO ,   -->
+<!--                         '' AS KOR_NM,  -->
+<!--                         '' AS HFFS_SE,  -->
+<!--                         '' AS IHIDNUM,  -->
+<!--                         '' AS ECNY_DE ,  -->
+<!--                         '' AS RETIRE_DE , -->
+<!--                         PROCESS_AT AS PROCESS_AT,  -->
+<!--                         LOST_PROCESS_AT AS LOST_PROCESS_AT,  -->
+<!--                         LOST_STTEMNT_DE AS LOST_STTEMNT_DE,  -->
+<!--                         NPN_AT AS NPN_AT, -->
+<!--                         HLTHINS_AT AS HLTHINS_AT,  -->
+<!--                         EPIS_AT AS EPIS_AT, -->
+<!--                         IACI_AT AS IACI_AT -->
+<!--                 FROM MPS_SLNRC_STMT  -->
+<!--                 UNION  -->
+<!--                 SELECT '' AS STTEMNT_DE ,  -->
+<!--                        EMPNO AS EMPNO,  -->
+<!--                        KOR_NM AS KOR_NM,  -->
+<!--                        HFFS_SE AS HFFS_SE ,  -->
+<!--                        IHIDNUM AS IHIDNUM,  -->
+<!--                        TO_CHAR((TO_DATE(ECNY_DE,'YYYY-MM-DD')),'YYYY-MM-DD') AS ECNY_DE ,  -->
+<!--                        TO_CHAR((TO_DATE(RETIRE_DE,'YYYY-MM-DD')),'YYYY-MM-DD') AS RETIRE_DE, -->
+<!--                        '' AS PROCESS_AT ,  -->
+<!--                        '' AS LOST_PROCESS_AT ,  -->
+<!--                        '' AS LOST_STTEMNT_DE,  -->
+<!--                        '' AS NPN_AT, -->
+<!--                        '' AS HLTHINS_AT ,  -->
+<!--                        '' AS EPIS_AT,  -->
+<!--                        '' AS IACI_AT -->
+<!--                  FROM MHS_EMP -->
+<!--                 ) A , MHS_EMP B  -->
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="empno != null and empno != ''">
+                AND A.EMPNO = #{empno}
+            </if>
+            <if test="hffsSe != null and hffsSe != ''">
+                AND A.HFFS_SE = #{hffsSe}
+            </if>
+            <if test="deptCodeNm != null and deptCodeNm != ''">
+                AND FNC_GETDEPTNM(B.DEPT_CODE) = #{deptCodeNm}
+            </if>
+            <if test="stDate != null and stDate != ''">
+                <![CDATA[
+                AND ECNY_DE >= TO_DATE(#{stDate} || '000000','YYYY-MM-DDHH24MISS')
+                ]]>
+            </if>
+            <if test="edDate != null and edDate != ''">
+                <![CDATA[
+                AND ECNY_DE <= TO_DATE(#{edDate} || '235959','YYYY-MM-DDHH24MISS')
+                ]]>
+             </if>
+        </trim>
+     ORDER BY A.EMPNO
+    </select>
+
+    <select id="selectMpsins003" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.ins.mpsins003.service.mapper.Mpsins003Mapper.selectMpsins003 */
+        SELECT
+               STTEMNT_DE,
+               EMPNO,
+               NPN_ACQS_DE,
+               HLTHINS_ACQS_DE,
+               EPIS_ACQS_DE,
+               NPN_AT,
+               HLTHINS_AT,
+               EPIS_AT,
+               IACI_AT,
+               PROCESS_AT,
+               MARM_NPN_AMT,
+               NPN_LABRR_AMT,
+               NPN_BPRPRR_AMT,
+               MARM_HISR_AMT,
+               HEALTH_LABRR_AMT,
+               HEALTH_BPRPRR_AMT,
+               RCPER_LABRR_AMT,
+               RCPER_BPRPRR_AMT,
+               MARM_EPIS_AMT,
+               LABOR_LABRR_AMT,
+               LABOR_BPRPRR_AMT,
+               LABOR_STABLE_AMT,
+               IACI_BPRPRR_AMT,
+               MNTHLY_AMT_BEYEAR_AMT,
+               MNTHLY_AMT_MT,
+               LTCI_RDCXPT_AT,
+               NPN_POSTPNE_AT,
+               HLTHINS_POSTPNE_AT,
+               EPIS_POSTPNE_AT,
+               IACI_POSTPNE_AT,
+               UNPAID_RECKN_DE,
+               PAY_RE_DE,
+               MTINCOME_AMT,
+               MONDECL_RESN_CN,
+               POSTPNE_RESN_CN,
+               POSTPNE_SDT,
+               POSTPNE_EDT,
+               POSTPNE_TRMNATDE,
+               BFCHG_CN,
+               AFCHG_CN,
+               INSRNC_CANCEL_NO,
+               PAYPOSTPNE_SE_CODE,
+               CHANGE_SE_CODE,
+               CHANGE_INSRNC_CODE,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               LOST_STTEMNT_DE,
+               NPN_LOST_DE,
+               HLTHINS_LOST_DE,
+               EPIS_LOST_DE,
+               LOST_PROCESS_AT,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MPS_SLNRC_STMT A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="empno != null and empno != ''">
+                AND EMPNO = #{empno}
+            </if>
+        </trim>
+    </select>
+
+    <update id="saveMpsins003" parameterType="kr.co.dbvision.api.mps.ins.mpsins003.entity.Mpsins003">
+        /* kr.co.dbvision.api.mps.ins.mpsins003.service.mapper.Mpsins003Mapper.saveMpsins003 */
+        MERGE INTO MPS_SLNRC_STMT A
+             USING (SELECT
+                    #{empno} EMPNO
+                    FROM DUAL) B
+                ON (
+                    A.EMPNO = B.EMPNO
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               STTEMNT_DE= REPLACE(#{sttemntDe},'-',''),
+               NPN_ACQS_DE= REPLACE(#{npnAcqsDe},'-',''),
+               HLTHINS_ACQS_DE= REPLACE(#{hlthinsAcqsDe},'-',''),
+               EPIS_ACQS_DE= REPLACE(#{episAcqsDe},'-',''),
+               NPN_AT= #{npnAt},
+               HLTHINS_AT= #{hlthinsAt},
+               EPIS_AT= #{episAt},
+               IACI_AT= #{iaciAt},
+               PROCESS_AT= #{processAt},
+               MARM_NPN_AMT= #{marmNpnAmt},
+               NPN_LABRR_AMT= #{npnLabrrAmt},
+               NPN_BPRPRR_AMT= #{npnBprprrAmt},
+               MARM_HISR_AMT= #{marmHisrAmt},
+               HEALTH_LABRR_AMT= #{healthLabrrAmt},
+               HEALTH_BPRPRR_AMT= #{healthBprprrAmt},
+               RCPER_LABRR_AMT= #{rcperLabrrAmt},
+               RCPER_BPRPRR_AMT= #{rcperBprprrAmt},
+               MARM_EPIS_AMT= #{marmEpisAmt},
+               LABOR_LABRR_AMT= #{laborLabrrAmt},
+               LABOR_BPRPRR_AMT= #{laborBprprrAmt},
+               LABOR_STABLE_AMT= #{laborStableAmt},
+               IACI_BPRPRR_AMT= #{iaciBprprrAmt},
+               MNTHLY_AMT_BEYEAR_AMT= #{mnthlyAmtBeyearAmt},
+               MNTHLY_AMT_MT= #{mnthlyAmtMt},
+               LTCI_RDCXPT_AT= #{ltciRdcxptAt},
+               NPN_POSTPNE_AT= #{npnPostpneAt},
+               HLTHINS_POSTPNE_AT= #{hlthinsPostpneAt},
+               EPIS_POSTPNE_AT= #{episPostpneAt},
+               IACI_POSTPNE_AT= #{iaciPostpneAt},
+               UNPAID_RECKN_DE= REPLACE(#{unpaidRecknDe},'-',''),
+               PAY_RE_DE= REPLACE(#{payReDe},'-',''),
+               MTINCOME_AMT= #{mtincomeAmt},
+               MONDECL_RESN_CN= #{mondeclResnCn},
+               POSTPNE_RESN_CN= #{postpneResnCn},
+               POSTPNE_SDT= #{postpneSdt},
+               POSTPNE_EDT= #{postpneEdt},
+               POSTPNE_TRMNATDE= #{postpneTrmnatde},
+               BFCHG_CN= #{bfchgCn},
+               AFCHG_CN= #{afchgCn},
+               INSRNC_CANCEL_NO= #{insrncCancelNo},
+               PAYPOSTPNE_SE_CODE= #{paypostpneSeCode},
+               CHANGE_SE_CODE= #{changeSeCode},
+               CHANGE_INSRNC_CODE= #{changeInsrncCode},
+               LOST_STTEMNT_DE= REPLACE(#{lostSttemntDe},'-',''),
+               NPN_LOST_DE= REPLACE(#{npnLostDe},'-',''),
+               HLTHINS_LOST_DE= REPLACE(#{hlthinsLostDe},'-',''),
+               EPIS_LOST_DE= REPLACE(#{episLostDe},'-',''),
+               LOST_PROCESS_AT= #{lostProcessAt},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               STTEMNT_DE,
+               EMPNO,
+               NPN_ACQS_DE,
+               HLTHINS_ACQS_DE,
+               EPIS_ACQS_DE,
+               NPN_AT,
+               HLTHINS_AT,
+               EPIS_AT,
+               IACI_AT,
+               PROCESS_AT,
+               MARM_NPN_AMT,
+               NPN_LABRR_AMT,
+               NPN_BPRPRR_AMT,
+               MARM_HISR_AMT,
+               HEALTH_LABRR_AMT,
+               HEALTH_BPRPRR_AMT,
+               RCPER_LABRR_AMT,
+               RCPER_BPRPRR_AMT,
+               MARM_EPIS_AMT,
+               LABOR_LABRR_AMT,
+               LABOR_BPRPRR_AMT,
+               LABOR_STABLE_AMT,
+               IACI_BPRPRR_AMT,
+               MNTHLY_AMT_BEYEAR_AMT,
+               MNTHLY_AMT_MT,
+               LTCI_RDCXPT_AT,
+               NPN_POSTPNE_AT,
+               HLTHINS_POSTPNE_AT,
+               EPIS_POSTPNE_AT,
+               IACI_POSTPNE_AT,
+               UNPAID_RECKN_DE,
+               PAY_RE_DE,
+               MTINCOME_AMT,
+               MONDECL_RESN_CN,
+               POSTPNE_RESN_CN,
+               POSTPNE_SDT,
+               POSTPNE_EDT,
+               POSTPNE_TRMNATDE,
+               BFCHG_CN,
+               AFCHG_CN,
+               INSRNC_CANCEL_NO,
+               PAYPOSTPNE_SE_CODE,
+               CHANGE_SE_CODE,
+               CHANGE_INSRNC_CODE,
+               LOST_STTEMNT_DE,
+               NPN_LOST_DE,
+               HLTHINS_LOST_DE,
+               EPIS_LOST_DE,
+               LOST_PROCESS_AT,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               REPLACE(#{sttemntDe},'-',''),
+               #{empno},
+               REPLACE(#{npnAcqsDe},'-',''),
+               REPLACE(#{hlthinsAcqsDe},'-',''),
+               REPLACE(#{episAcqsDe},'-',''),
+               #{npnAt},
+               #{hlthinsAt},
+               #{episAt},
+               #{iaciAt},
+               #{processAt},
+               #{marmNpnAmt},
+               #{npnLabrrAmt},
+               #{npnBprprrAmt},
+               #{marmHisrAmt},
+               #{healthLabrrAmt},
+               #{healthBprprrAmt},
+               #{rcperLabrrAmt},
+               #{rcperBprprrAmt},
+               #{marmEpisAmt},
+               #{laborLabrrAmt},
+               #{laborBprprrAmt},
+               #{laborStableAmt},
+               #{iaciBprprrAmt},
+               #{mnthlyAmtBeyearAmt},
+               #{mnthlyAmtMt},
+               #{ltciRdcxptAt},
+               #{npnPostpneAt},
+               #{hlthinsPostpneAt},
+               #{episPostpneAt},
+               #{iaciPostpneAt},
+               REPLACE(#{unpaidRecknDe},'-',''),
+               REPLACE(#{payReDe},'-',''),
+               #{mtincomeAmt},
+               #{mondeclResnCn},
+               #{postpneResnCn},
+               #{postpneSdt},
+               #{postpneEdt},
+               #{postpneTrmnatde},
+               #{bfchgCn},
+               #{afchgCn},
+               #{insrncCancelNo},
+               #{paypostpneSeCode},
+               #{changeSeCode},
+               #{changeInsrncCode},
+               REPLACE(#{lostSttemntDe},'-',''),
+               REPLACE(#{npnLostDe},'-',''),
+               REPLACE(#{hlthinsLostDe},'-',''),
+               REPLACE(#{episLostDe},'-',''),
+               #{lostProcessAt},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deleteMpsins003" parameterType="kr.co.dbvision.api.mps.ins.mpsins003.entity.Mpsins003">
+        /* kr.co.dbvision.api.mps.ins.mpsins003.service.mapper.Mpsins003Mapper.deleteMpsins003 */
+        DELETE FROM MPS_SLNRC_STMT
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND EMPNO = #{empno}
+        </trim>
+    </delete>
+</mapper>

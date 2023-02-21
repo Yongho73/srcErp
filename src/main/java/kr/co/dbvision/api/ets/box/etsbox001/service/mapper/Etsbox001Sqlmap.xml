@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.ets.box.etsbox001.service.mapper.Etsbox001Mapper">
+
+    <select id="selectEtsbox001List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.ets.box.etsbox001.service.mapper.Etsbox001Mapper.selectEtsbox001List */
+        SELECT
+               SANCTN_NO,
+               RAIS_NO,
+               (SELECT RAISNM FROM SGN_DOC_RAIS WHERE RAIS_NO = A.RAIS_NO) AS RAISNM,	--양식명
+               DOC_TIT,
+               DRAFTER_EMPNO,
+               (SELECT KOR_NM FROM MHS_EMP WHERE EMPNO = A.DRAFTER_EMPNO) AS DRAFTER_EMPNM,	--기안자 이름
+               DRFT_REQUSTDT,
+               DOC_NO,
+               TO_CHAR(DRFT_DE, 'YYYY-MM-DD HH24:MI') AS DRFT_DE,
+               SANCTN_COMPTDT,
+               REG_ID,
+               REG_DT,
+               UPT_ID,
+               UPT_DT,
+               EMRGNCY_SANCTN_AT,
+               SANCTN_SUMRY,
+               ATCHMNFL,
+               DOC_STTUS_CODE,
+               (SELECT CODE_KOR_NM FROM STM_CODE WHERE CODEKIND_CODE = 'EA003' AND CODE = A.DOC_STTUS_CODE) AS DOC_STTUS_CODE_NM,	-- 문서상태 코드명
+               OTHBC_SE_CODE,
+               DBX_NO,
+               DRAFTER_DEPT_CODE,
+               SANCTN_TY_CODE,
+               (SELECT CODE_KOR_NM FROM STM_CODE WHERE CODEKIND_CODE = 'EA001' AND CODE = A.SANCTN_TY_CODE) AS SANCTN_TY_CODE_NM,	--결재유형명
+               CTOTHBC_RESN_CODE,
+               DCMN_CODE,
+               READNG_AUTHOR_CODE,
+               DOC_PRSRV_TMLMT_CODE,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM SGN_SANCTN_DOC A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="docNo != null and docNo != ''">
+                AND DOC_NO = #{docNo}
+            </if>
+            <if test="raisNm != null and raisNm != ''">
+                AND RAIS_NO IN (SELECT RAIS_NO FROM SGN_DOC_RAIS WHERE RAISNM LIKE '%'||#{raisNm}||'%')
+            </if>
+            <if test="docTit != null and docTit != ''">
+                AND DOC_TIT LIKE '%'||#{docTit}||'%'
+            </if>
+            <if test="drftStrDe != null and drftStrDe != ''">
+            	<![CDATA[
+                AND TO_CHAR(DRFT_DE, 'YYYYMMDD') >= REPLACE(#{drftStrDe}, '-', '')
+                ]]>
+            </if>
+            <if test="drftEndDe != null and drftEndDe != ''">
+            	<![CDATA[
+                AND TO_CHAR(DRFT_DE, 'YYYYMMDD') <= REPLACE(#{drftEndDe}, '-', '')
+                ]]>
+            </if>
+            <if test="drafterEmpno != null and drafterEmpno != ''">
+                AND DRAFTER_EMPNO = #{drafterEmpno}
+            </if>
+            <if test="drafterEmpnm != null and drafterEmpnm != ''">
+                AND DRAFTER_EMPNO IN (SELECT EMPNO FROM MHS_EMP WHERE KOR_NM LIKE '%'||#{drafterEmpnm}||'%')
+            </if>
+            <if test="deptCode != null and deptCode != ''">
+                AND DRAFTER_DEPT_CODE = #{deptCode}
+            </if>
+            <if test="docSttusCode != null and docSttusCode != ''">
+                AND DOC_STTUS_CODE = #{docSttusCode}
+            </if>
+            <if test="sRegDt != null and sRegDt != ''">
+                <![CDATA[
+                AND REG_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+                ]]>
+            </if>
+            <if test="eRegDt != null and eRegDt != ''">
+                <![CDATA[
+                AND REG_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+                ]]>
+             </if>
+        </trim>
+    </select>
+
+    <select id="selectEtsbox001" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.ets.box.etsbox001.service.mapper.Etsbox001Mapper.selectEtsbox001 */
+        SELECT
+               SANCTN_NO,
+               RAIS_NO,
+               DOC_TIT,
+               DRAFTER_EMPNO,
+               DRFT_REQUSTDT,
+               DOC_NO,
+               DRFT_DE,
+               SANCTN_COMPTDT,
+               REG_ID,
+               REG_DT,
+               UPT_ID,
+               UPT_DT,
+               EMRGNCY_SANCTN_AT,
+               SANCTN_SUMRY,
+               ATCHMNFL,
+               DOC_STTUS_CODE,
+               OTHBC_SE_CODE,
+               DBX_NO,
+               DRAFTER_DEPT_CODE,
+               SANCTN_TY_CODE,
+               CTOTHBC_RESN_CODE,
+               DCMN_CODE,
+               READNG_AUTHOR_CODE,
+               DOC_PRSRV_TMLMT_CODE,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM SGN_SANCTN_DOC A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="sanctnNo != null and sanctnNo != ''">
+                AND SANCTN_NO = #{sanctnNo}
+            </if>
+        </trim>
+    </select>
+
+    <update id="saveEtsbox001" parameterType="kr.co.dbvision.api.ets.box.etsbox001.entity.Etsbox001">
+        /* kr.co.dbvision.api.ets.box.etsbox001.service.mapper.Etsbox001Mapper.saveEtsbox001 */
+        MERGE INTO SGN_SANCTN_DOC A
+             USING (SELECT
+                    #{sanctnNo} SANCTN_NO
+                    FROM DUAL) B
+                ON (
+                    A.SANCTN_NO = B.SANCTN_NO
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               RAIS_NO= #{raisNo},
+               DOC_TIT= #{docTit},
+               DRAFTER_EMPNO= #{drafterEmpno},
+               DRFT_REQUSTDT= #{drftRequstdt},
+               DOC_NO= #{docNo},
+               DRFT_DE= REPLACE(#{drftDe},'-',''),
+               SANCTN_COMPTDT= #{sanctnComptdt},
+               EMRGNCY_SANCTN_AT= #{emrgncySanctnAt},
+               SANCTN_SUMRY= #{sanctnSumry},
+               ATCHMNFL= #{atchmnfl},
+               DOC_STTUS_CODE= #{docSttusCode},
+               OTHBC_SE_CODE= #{othbcSeCode},
+               DBX_NO= #{dbxNo},
+               DRAFTER_DEPT_CODE= REPLACE(#{drafterDeptCode},'-',''),
+               SANCTN_TY_CODE= #{sanctnTyCode},
+               CTOTHBC_RESN_CODE= #{ctothbcResnCode},
+               DCMN_CODE= #{dcmnCode},
+               READNG_AUTHOR_CODE= #{readngAuthorCode},
+               DOC_PRSRV_TMLMT_CODE= #{docPrsrvTmlmtCode},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               SANCTN_NO,
+               RAIS_NO,
+               DOC_TIT,
+               DRAFTER_EMPNO,
+               DRFT_REQUSTDT,
+               DOC_NO,
+               DRFT_DE,
+               SANCTN_COMPTDT,
+               EMRGNCY_SANCTN_AT,
+               SANCTN_SUMRY,
+               ATCHMNFL,
+               DOC_STTUS_CODE,
+               OTHBC_SE_CODE,
+               DBX_NO,
+               DRAFTER_DEPT_CODE,
+               SANCTN_TY_CODE,
+               CTOTHBC_RESN_CODE,
+               DCMN_CODE,
+               READNG_AUTHOR_CODE,
+               DOC_PRSRV_TMLMT_CODE,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{sanctnNo},
+               #{raisNo},
+               #{docTit},
+               #{drafterEmpno},
+               #{drftRequstdt},
+               #{docNo},
+               REPLACE(#{drftDe},'-',''),
+               #{sanctnComptdt},
+               #{emrgncySanctnAt},
+               #{sanctnSumry},
+               #{atchmnfl},
+               #{docSttusCode},
+               #{othbcSeCode},
+               #{dbxNo},
+               REPLACE(#{drafterDeptCode},'-',''),
+               #{sanctnTyCode},
+               #{ctothbcResnCode},
+               #{dcmnCode},
+               #{readngAuthorCode},
+               #{docPrsrvTmlmtCode},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deleteEtsbox001" parameterType="kr.co.dbvision.api.ets.box.etsbox001.entity.Etsbox001">
+        /* kr.co.dbvision.api.ets.box.etsbox001.service.mapper.Etsbox001Mapper.deleteEtsbox001 */
+        DELETE FROM SGN_SANCTN_DOC
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND SANCTN_NO = #{sanctnNo}
+        </trim>
+    </delete>
+</mapper>

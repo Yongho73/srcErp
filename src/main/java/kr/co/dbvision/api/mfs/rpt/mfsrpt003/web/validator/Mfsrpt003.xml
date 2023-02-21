@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE form-validation PUBLIC
+    "-//Apache Software Foundation//DTD Commons Validator Rules Configuration 1.1//EN"
+    "http://jakarta.apache.org/commons/dtds/validator_1_1.dtd">
+
+<form-validation>
+
+    <formset>
+        <form name="Mfsrpt003">
+            <field property="acctSlipNo" depends="required">
+                <arg0 key="계정 전표 번호는"/>
+            </field>
+        </form>
+    </formset>
+
+</form-validation>

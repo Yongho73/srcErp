@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE form-validation PUBLIC
+    "-//Apache Software Foundation//DTD Commons Validator Rules Configuration 1.1//EN"
+    "http://jakarta.apache.org/commons/dtds/validator_1_1.dtd">
+
+<form-validation>
+
+    <formset>
+        <form name="Mpsbsc012">
+            <field property="applcYy" depends="required">
+                <arg0 key="적용 년도는"/>
+            </field>
+            <field property="lwltAmt" depends="required">
+                <arg0 key="적용할 세액의 월소득하한액(금액 이상 적용) 는"/>
+            </field>
+            <field property="uplmtAmt" depends="required">
+                <arg0 key="적용할 세액의 월소득상한액(금액 미만 적용)는"/>
+            </field>
+        </form>
+    </formset>
+
+</form-validation>

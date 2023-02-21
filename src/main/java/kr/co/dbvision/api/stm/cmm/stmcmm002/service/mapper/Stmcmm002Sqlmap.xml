@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.stm.cmm.stmcmm002.service.mapper.Stmcmm002Mapper">
+
+	<select id="selectMenuSearchList" parameterType="egovMapForNull" resultType="egovMapForNull">
+	    /* kr.co.dbvision.api.stm.cmm.stmcmm002.service.impl.Stmcmm002Mapper.selectMenuSearchList */ 
+		SELECT A.MENU_ID       AS ID,
+		       A.UPPER_MENU_ID AS PARENT_ID,
+		       A.MENU_NM       AS TEXT,
+		       A.ENM		   AS TEXT_ENG,
+		       A.THIRD		   AS TEXT_THIRD,
+		       A.MENU_SE, 
+		       A.ORDR,
+		       A.UPPER_MENU_ID,
+		       A.MENU_USE_AT
+		      -- ,A.MAKE_AT      AS MAKE_AT
+		  FROM STM_MENU A
+		 WHERE A.MENU_USE_AT = '1'
+		   AND A.MENU_SE = 'P'
+		   
+		   <choose>
+		   <when test='locale.equals("kor")'>		   
+		   AND A.MENU_NM LIKE '%' || #{menuNm} || '%'
+		   </when>
+		   <when test='locale.equals("third")'>
+		   AND A.THIRD LIKE '%' || #{menuNm} || '%'
+		   </when>		   
+		   <otherwise>
+		   AND A.ENM LIKE '%' || #{menuNm} || '%'
+		   </otherwise>		   
+		   </choose>		   
+		   
+		   AND A.UPPER_MENU_ID != 'CHF000000'
+		   AND A.MENU_ID IN (SELECT MENU_ID
+		                       FROM STM_USERMENU
+		                      WHERE USER_ID = #{userId}
+		                        AND DELETE_AT = '0')
+	  ORDER BY A.ORDR
+	</select>
+
+	<select id="selectFavMenuList" parameterType="egovMapForNull" resultType="egovMapForNull">
+		/* kr.co.dbvision.api.stm.cmm.stmcmm002.service.impl.Stmcmm002Mapper.selectFavMenuList */ 
+		SELECT A.MENU_ID       AS ID,
+		       A.UPPER_MENU_ID AS PARENT_ID,
+		       A.MENU_NM       AS TEXT,
+		       A.ENM		   AS TEXT_ENG,
+		       A.THIRD		   AS TEXT_THIRD,
+		       A.MENU_DC, 
+		       A.MENU_SE,
+		       B.SORT_ORDR     ORDR
+		  FROM STM_MENU A, STM_FAVMENU B
+		 WHERE A.MENU_ID = B.MENU_ID
+		   AND B.USER_ID = #{userId}
+		   <if test="menuId != null and menuId !=''">
+		   AND B.MENU_ID = #{menuId}
+		   </if>
+		   AND A.MENU_SE = 'P'
+		   AND A.MENU_USE_AT = '1'		 
+		 ORDER BY B.SORT_ORDR
+	
+	</select>
+	
+	<select id="selectFirstProgramMenuId" parameterType="egovMapForNull" resultType="String">
+	    /* kr.co.dbvision.api.stm.cmm.stmcmm002.service.impl.Stmcmm002Mapper.selectFirstProgramMenuId */ 
+		SELECT MENU_ID
+		  FROM STM_MENU
+		 WHERE MENU_USE_AT = '1'
+		   AND MENU_SE = 'P'
+		   AND ROWNUM = 1
+		   AND MENU_ID IN (SELECT MENU_ID
+		                     FROM STM_USERMENU
+		                    WHERE USER_ID = #{userId}
+		                      AND DELETE_AT = '0')
+		 START WITH UPPER_MENU_ID = #{upMenuId}
+   CONNECT BY PRIOR MENU_ID = UPPER_MENU_ID
+  ORDER SIBLINGS BY ORDR
+	</select>
+	
+	<select id="selectMenuPath" parameterType="egovMapForNull" resultType="egovMapForNull">
+		  /* kr.co.dbvision.api.stm.cmm.stmcmm002.service.impl.Stmcmm002Mapper.selectMenuPath */ 
+		  SELECT SYS_CONNECT_BY_PATH(MENU_ID,' > ') AS MENU_PATH,
+                 SUBSTR(SYS_CONNECT_BY_PATH(MENU_NM,' > '), INSTR(SYS_CONNECT_BY_PATH(MENU_NM,' > '),'>', 3) ) AS PATH, 
+		         SUBSTR(SYS_CONNECT_BY_PATH(ENM,' > '), INSTR(SYS_CONNECT_BY_PATH(ENM,' > '),'>', 3) ) AS PATH_ENG,
+		  	     SUBSTR(SYS_CONNECT_BY_PATH(THIRD,' > '), INSTR(SYS_CONNECT_BY_PATH(THIRD,' > '),'>', 3) ) AS PATH_THIRD
+		    FROM STM_MENU
+		   WHERE MENU_ID = #{menuId}
+		   START WITH UPPER_MENU_ID IS NULL 
+CONNECT BY PRIOR MENU_ID = UPPER_MENU_ID
+	</select>
+	
+	<select id="selectConnectByPath" parameterType="egovMapForNull" resultType="String">
+		   /* kr.co.dbvision.api.stm.cmm.stmcmm002.service.impl.Stmcmm002Mapper.selectConnectByPath */ 
+		  SELECT SYS_CONNECT_BY_PATH(MENU_ID,'|') AS CONNECT_BY_PATH  
+		    FROM STM_MENU
+		   WHERE MENU_ID = #{menuId}
+		   START WITH UPPER_MENU_ID IS NULL 
+CONNECT BY PRIOR MENU_ID = UPPER_MENU_ID
+	</select>
+	
+	<select id="selectProgrmId" parameterType="egovMapForNull" resultType="String">
+		   /* kr.co.dbvision.api.stm.cmm.stmcmm002.service.impl.Stmcmm002Mapper.selectProgrmId */ 
+		  SELECT PROGRM_ID
+		    FROM STM_MENU
+		   WHERE MENU_ID = #{menuId}		  
+	</select>
+	
+
+	<insert id="insertFavMenu" parameterType="egovMapForNull">
+		/* kr.co.dbvision.api.stm.cmm.stmcmm002.service.impl.Stmcmm002Mapper.insertFavMenu */ 
+		INSERT INTO STM_FAVMENU
+		  (USER_ID, MENU_ID, SORT_ORDR, REG_DT, REG_ID)
+		VALUES
+		  (#{userId},
+		   #{menuId},
+		   (SELECT NVL(MAX(SORT_ORDR) + 1, 1) FROM STM_FAVMENU),
+		   SYSDATE,
+		   #{userId})	 
+	</insert>
+	
+	<delete id="deleteFavMenu" parameterType="egovMapForNull">
+		/* kr.co.dbvision.api.stm.cmm.stmcmm002.service.impl.Stmcmm002Mapper.deleteFavMenu */ 
+		DELETE FROM STM_FAVMENU
+		 WHERE MENU_ID = #{menuId}
+		   AND USER_ID = #{userId} 
+	</delete>
+</mapper>

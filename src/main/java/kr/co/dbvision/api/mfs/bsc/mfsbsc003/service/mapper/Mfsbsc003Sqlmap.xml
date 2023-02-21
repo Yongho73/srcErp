@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mfs.bsc.mfsbsc003.service.mapper.Mfsbsc003Mapper">
+
+    <select id="selectMfsbsc003List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mfs.bsc.mfsbsc003.service.mapper.Mfsbsc003Mapper.selectMfsbsc003List */
+        SELECT
+               ACNUT_NO,
+               BPLC_CODE,
+               DPST_KIND,
+               DPST_NM,
+               DPSTR_NM,
+               BANK_CODE,
+               BANK_NM,
+               ESTBL_BHF,
+               FNC_DATESTR(ESTBL_DE) AS ESTBL_DE,
+               FNC_DATESTR(EXPRTN_DE) AS EXPRTN_DE,
+               FNC_DATESTR(TRMNAT_DE) AS TRMNAT_DE,
+               INTR_RT,
+               BASS_BNKB_AT,
+               RM,
+               USE_AT,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID
+          FROM MFS_DEPOSIT A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="acnutNo != null and acnutNo != ''">
+                AND REGEXP_REPLACE(ACNUT_NO, '[^0-9]+')  like  '%'|| REGEXP_REPLACE(#{acnutNo}, '[^0-9]+') || '%'
+            </if>
+            <if test="useAt != null and useAt != ''">
+                AND USE_AT = #{useAt}
+            </if>
+        </trim>
+        ORDER BY BPLC_CODE, BANK_CODE
+    </select>
+
+    <select id="selectMfsbsc003" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mfs.bsc.mfsbsc003.service.mapper.Mfsbsc003Mapper.selectMfsbsc003 */
+        SELECT
+               ACNUT_NO,
+               BPLC_CODE,
+               DPST_KIND,
+               DPST_NM,
+               DPSTR_NM,
+               BANK_CODE,
+               BANK_NM,
+               ESTBL_BHF,
+               FNC_DATESTR(ESTBL_DE) AS ESTBL_DE,
+               FNC_DATESTR(EXPRTN_DE) AS EXPRTN_DE,
+               FNC_DATESTR(TRMNAT_DE) AS TRMNAT_DE,
+               INTR_RT,
+               BASS_BNKB_AT,
+               RM,
+               USE_AT,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MFS_DEPOSIT A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="acnutNo != null and acnutNo != ''">
+                AND ACNUT_NO = #{acnutNo}
+            </if>
+        </trim>
+    </select>
+
+    <update id="saveMfsbsc003" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mfs.bsc.mfsbsc003.service.mapper.Mfsbsc003Mapper.saveMfsbsc003 */
+        MERGE INTO MFS_DEPOSIT A
+             USING (SELECT
+                    #{acnutNo} ACNUT_NO
+                    FROM DUAL) B
+                ON (
+                    A.ACNUT_NO = B.ACNUT_NO
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               BPLC_CODE= #{bplcCode},
+               DPST_KIND= #{dpstKind},
+               DPST_NM= #{dpstNm},
+               DPSTR_NM= #{dpstrNm},
+               BANK_CODE= #{bankCode},
+               BANK_NM= #{bankNm},
+               ESTBL_BHF= #{estblBhf},
+               ESTBL_DE= #{estblDe},
+               EXPRTN_DE= #{exprtnDe},
+               TRMNAT_DE= #{trmnatDe},
+               INTR_RT= #{intrRt},
+               BASS_BNKB_AT= #{bassBnkbAt},
+               RM= #{rm},
+               USE_AT= #{useAt},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               ACNUT_NO,
+               BPLC_CODE,
+               DPST_KIND,
+               DPST_NM,
+               DPSTR_NM,
+               BANK_CODE,
+               BANK_NM,
+               ESTBL_BHF,
+               ESTBL_DE,
+               EXPRTN_DE,
+               TRMNAT_DE,
+               INTR_RT,
+               BASS_BNKB_AT,
+               RM,
+               USE_AT,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{acnutNo},
+               #{bplcCode},
+               #{dpstKind},
+               #{dpstNm},
+               #{dpstrNm},
+               #{bankCode},
+               #{bankNm},
+               #{estblBhf},
+               #{estblDe},
+               #{exprtnDe},
+               #{trmnatDe},
+               #{intrRt},
+               #{bassBnkbAt},
+               #{rm},
+               #{useAt},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deleteMfsbsc003" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mfs.bsc.mfsbsc003.service.mapper.Mfsbsc003Mapper.deleteMfsbsc003 */
+        DELETE FROM MFS_DEPOSIT
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND ACNUT_NO = #{acnutNo}
+        </trim>
+    </delete>
+    
+    <update  id="updateBassBnkbAtMfsbsc003" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mfs.bsc.mfsbsc003.service.mapper.Mfsbsc003Mapper.deleteMfsbsc003 */
+        UPDATE MFS_DEPOSIT SET  
+            BASS_BNKB_AT ='0'
+         WHERE BPLC_CODE =#{bplcCode}
+    </update>
+      
+    
+</mapper>

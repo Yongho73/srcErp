@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.stm.qes.stmqes001.service.mapper.Stmqes001Mapper">
+
+    <select id="selectStmqes001List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.stm.qes.stmqes001.service.mapper.Stmqes001Mapper.selectStmqes001List */
+        SELECT
+               QESTNAR_CODE,
+               QESTNAR_NM,
+               USE_AT,
+               TO_CHAR((TO_DATE(QESTNAR_SDT,'YYYY-MM-DD')),'YYYY-MM-DD') AS QESTNAR_SDT,
+               TO_CHAR((TO_DATE(QESTNAR_EDT,'YYYY-MM-DD')),'YYYY-MM-DD') AS QESTNAR_EDT,
+               RM,
+               UPDT_POSBL_AT,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM STM_QESTNAR A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="qestnarNm != null and qestnarNm != ''">
+                AND QESTNAR_NM = #{qestnarNm}
+            </if>
+            <if test="useAt != null and useAt != ''">
+                AND USE_AT = #{useAt}
+            </if>
+            <if test="qestnarSdt != null and qestnarSdt != ''">
+                <![CDATA[
+                AND QESTNAR_SDT >= TO_DATE(#{qestnarSdt} || '000000','YYYY-MM-DDHH24MISS')
+                ]]>
+            </if>
+            <if test="qestnarEdt != null and qestnarEdt != ''">
+                <![CDATA[
+                AND QESTNAR_EDT <= TO_DATE(#{qestnarEdt} || '235959','YYYY-MM-DDHH24MISS')
+                ]]>
+             </if>
+        </trim>
+    </select>
+
+    <select id="selectStmqes001" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.stm.qes.stmqes001.service.mapper.Stmqes001Mapper.selectStmqes001 */
+        SELECT
+               QESTNAR_CODE,
+               QESTNAR_NM,
+               USE_AT,
+               QESTNAR_SDT,
+               QESTNAR_EDT,
+               RM,
+               UPDT_POSBL_AT,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM STM_QESTNAR A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="qestnarCode != null and qestnarCode != ''">
+                AND QESTNAR_CODE = #{qestnarCode}
+            </if>
+        </trim>
+    </select>
+
+    <update id="saveStmqes001" parameterType="kr.co.dbvision.api.stm.qes.stmqes001.entity.Stmqes001">
+        /* kr.co.dbvision.api.stm.qes.stmqes001.service.mapper.Stmqes001Mapper.saveStmqes001 */
+        MERGE INTO STM_QESTNAR A
+             USING (SELECT
+                    #{qestnarCode} QESTNAR_CODE
+                    FROM DUAL) B
+                ON (
+                    A.QESTNAR_CODE = B.QESTNAR_CODE
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               QESTNAR_NM= #{qestnarNm},
+               USE_AT= #{useAt},
+               QESTNAR_SDT= REPLACE(#{qestnarSdt},'-',''),
+               QESTNAR_EDT= REPLACE(#{qestnarEdt},'-',''),
+               RM= #{rm},
+               UPDT_POSBL_AT= #{updtPosblAt},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               QESTNAR_CODE,
+               QESTNAR_NM,
+               USE_AT,
+               QESTNAR_SDT,
+               QESTNAR_EDT,
+               RM,
+               UPDT_POSBL_AT,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{qestnarCode},
+               #{qestnarNm},
+               #{useAt},
+               REPLACE(#{qestnarSdt},'-',''),
+               REPLACE(#{qestnarEdt},'-',''),
+               #{rm},
+               #{updtPosblAt},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deleteStmqes001" parameterType="kr.co.dbvision.api.stm.qes.stmqes001.entity.Stmqes001">
+        /* kr.co.dbvision.api.stm.qes.stmqes001.service.mapper.Stmqes001Mapper.deleteStmqes001 */
+        DELETE FROM STM_QESTNAR
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND QESTNAR_CODE = #{qestnarCode}
+        </trim>
+    </delete>
+</mapper>

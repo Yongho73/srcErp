@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html class="no-js" lang="ko">
+<HEAD>
+<meta charset="utf-8">
+<LINK href="../img/icon/dbv.ico" rel="shortcut icon" type="image/x-icon">
+
+<TITLE>XERP</TITLE>
+
+<LINK href="../css/dhtmlx/skin/dhtmlx.css" rel="stylesheet" type="text/css">
+<LINK href="../glyphicons/css/bootstrap-glyphicons.css" rel="stylesheet" type="text/css">
+
+<!-- jquery -->
+<SCRIPT src="../js/jquery-1.11.1.min.js"></SCRIPT>
+<SCRIPT src="../js/jquery-ui-custom.min.js"></SCRIPT>
+ 
+<!-- css -->
+<LINK href="../css/default.css" rel="stylesheet" type="text/css">
+<LINK href="../css/contents.css" rel="stylesheet" type="text/css">
+
+</HEAD>
+
+<body>
+	<!--컨텐츠-->
+		<div class="path_info" style="">
+            <ul id="menu_path" style=""><li><a class="home" href="#n"></a></li><li><a href="#"> 연말정산 </a></li><li><a href="#"> 연말정산매체생성</a></li></ul>
+        </div>
+        
+		<DIV class="btn" style="float:right;text-align:right; vertical-align:middle;" title="저장">
+			<BUTTON class="btn_common02_new" id="btnRemove" type="button" title="닫기">
+				<SPAN class="glyphicon glyphicon-remove"></SPAN>
+			</BUTTON>
+		</DIV>
+	
+       
+   
+    <div class="basic_div" style="padding:10px; clear:both;margin:0 auto;width:400px;">
+    	
+    	
+    	<div class="mb5" style="position:relative;">
+    		<div style="float: right;position:relative;">
+				<button class="btn_common01_new mb5" type="button">연말정산매체생성</button>
+				<button class="btn_common01_new mb5" type="button">의료매체생성</button>
+			</div>
+    	</div>
+    	
+    	<div class="detail_type024_sub">
+			<table>
+				<caption>인적공제</caption>
+				
+				<colgroup>
+					<col style="width:30%;min-width:70px;" />
+					<col style="width:70%;min-width:70px;" />
+				</colgroup>
+				
+				<tbody>
+					<tr>
+						<th class="ar brddd">귀속년도</th>
+						<td class="al">
+							<select title="귀속년도" style="min-width:70px">
+								<option value="2017" selected>2017</option>
+								<option value="2016">2016</option>
+							</select>
+						</td>
+					</tr>		
+					<tr>
+						<th class="ar brddd">자료제출일자</th>
+						<td class="al"><input name="searchEregDt" class="input_calen" onkeyup="gf_AutoDate(event, this)" onkeypress="gf_AutoDate(event, this)" type="text" style="width: 90px;text-align:left;" maxlength="10" value="2019-12-18"></td>
+					</tr>
+					<tr>
+						<th class="ar brddd">담당자</th>
+						<td class="al"><input type="text" class="al w60 readonly" value="160201" readonly disabled="disabled">&nbsp;<input type="text" class="al w80 readonly" value="홍길동" readonly disabled="disabled">
+							<button class="btn_common03" id="btnCodeSearch" type="button">
+                    		<span class="glyphicon  glyphicon glyphicon-search"> </span></button>
+                		</td>
+					</tr>
+					<tr>
+						<td colspan="2">* 자료제출일자 : 국세청에 신고될 일자<br>* 담당자 : 국세청 홈텍스에 기재될 제출담당자</td>
+					</tr>
+					
+				</tbody>
+				
+				</table>
+				
+				<div style="margin:7px 0; text-align:center;">
+					<button class="btn_common01_new" type="button">연말정산매체생성</button>
+					<button class="btn_common01_new" type="button">의료매체생성</button>
+				</div>
+		    	
+			</div>
+				
+    </div>
+	
+	
+</BODY>
+</HTML>

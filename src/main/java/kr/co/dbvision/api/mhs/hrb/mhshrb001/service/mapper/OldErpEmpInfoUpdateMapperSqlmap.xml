@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mhs.hrb.mhshrb001.service.mapper.OldErpEmpInfoUpdateMapper">
+
+    <select id="selectAtachFileInfo" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrb.mhshrb001.service.mapper.OldErpEmpInfoUpdateMapper.selectAtachFileInfo */
+		SELECT FILE_SN ATCH_FILE_ID,			   
+			   STRE_FLPTH FILE_COURS,
+			   STRE_FILE_NM FIL_STORE_FILE_NM,
+			   ORGINL_FILE_NM FILE_ORG_FILE_NM,
+			   FILE_SIZE FILE_SIZE,
+			   FILE_EXTSN_NM FILE_EXT
+		  FROM STM_ATCHMNFL
+		 WHERE FILE_SN = #{photoAtchmnflNo}
+    </select>
+
+    <insert id="insertPhoto" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrb.mhshrb001.service.mapper.OldErpEmpInfoUpdateMapper.insertPhoto */
+        MERGE INTO DBVISION_ERP.A_PHOTO USING DUAL ON (EMP_NO = #{empNo})
+        WHEN MATCHED THEN 
+			UPDATE SET UPT_DT = SYSDATE, UPT_ID = #{regId}
+		WHEN NOT MATCHED THEN
+			INSERT (EMP_NO, IMG_CLS, FILE_KEY, REG_DT, REG_ID)
+			VALUES (#{empNo}, '1', '01'||#{empNo}, SYSDATE, #{regId})
+    </insert>
+    
+    <insert id="insertPhotoIntra" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrb.mhshrb001.service.mapper.OldErpEmpInfoUpdateMapper.insertPhoto */
+        MERGE INTO DBVISION_INTRA.X_FILES USING DUAL ON (ATCH_FILE_ID = #{atchFileId})
+        WHEN MATCHED THEN 
+			UPDATE SET USE_LDT = SYSDATE, USE_LID = #{regId}
+		WHEN NOT MATCHED THEN
+			INSERT (
+			ATCH_FILE_ID,
+			FILE_SN,
+			FILE_COURS,
+			FIL_STORE_FILE_NM,
+			FILE_ORG_FILE_NM,
+			FILE_SIZE,
+			FILE_EXT,
+			USE_LID,
+			USE_LDT			
+			)
+			VALUES (
+			#{atchFileId},
+			'1',
+			#{fileCours},
+			#{filStoreFileNm},
+			#{fileOrgFileNm},
+			#{fileSize},
+			#{fileExt},
+			#{regId},
+			SYSDATE
+			)
+    </insert>
+
+    <insert id="insertMhsEmpMain" parameterType="EgovMapForNull">
+    	/* kr.co.dbvision.api.mhs.hrb.mhshrb001.service.mapper.OldErpEmpInfoUpdateMapper.insertMhsEmpMain */
+		MERGE INTO DBVISION_ERP.A_EMPLOYEE USING DUAL ON (EMP_NO = #{empNo})
+        WHEN MATCHED THEN 
+			UPDATE SET 
+			        KOR_NM = #{korNm}, 
+			        ENG_NM = #{engNm}, 
+			        CHA_NM = #{chaNm}, 
+			        BIRTH_DT = #{birthDt}, 
+			        ENTER_DT = #{enterDt}, 
+			        RETIRE_DT = #{retireDt},
+			        DUTY_CD = #{dutyCd}, 
+			        CHIKC_CD = #{chikcCd}, 
+			        COMP_CD = #{compCd}, 
+			        DEPT_CD = #{deptCd}, 
+			        ADD_DEPTCD = #{addDeptcd}, 
+			        DISP_DEPTCD = #{dispDeptcd}, 
+			        SEX = #{sex}, 
+			        CALSUN_YN = #{calsunYn}, 
+			        CUR_STATUS = #{curStatus}, 
+			        EMP_CLS = #{empCls}, 
+			        POSITION_CD = #{positionCd}, 
+			        GRADE_CD = #{gradeCd},
+			        EMP_STATE = #{empStatus},
+					RETIRE_DESC = #{retireDesc},
+					ACTION_DT = #{actionDt},
+			        MARRY_YN = '0',
+					LESION_CLS = '0',
+					NOJO_YN = '0',
+					ENTERTYPE_CD = '0003',
+			        UPT_DT = SYSDATE, 
+			        UPT_ID = #{regId}
+		WHEN NOT MATCHED THEN
+			INSERT (EMP_NO, 
+			        KOR_NM, 
+			        ENG_NM, 
+			        CHA_NM, 
+			        BIRTH_DT, 
+			        ENTER_DT, 
+			        RETIRE_DT, 
+			        JUMIN_NO, 
+			        DUTY_CD, 
+			        CHIKC_CD, 
+			        COMP_CD, 
+			        DEPT_CD, 
+			        ADD_DEPTCD, 
+			        DISP_DEPTCD, 
+			        SEX, 
+			        CALSUN_YN, 
+			        CUR_STATUS, 
+			        EMP_CLS, 
+			        POSITION_CD, 
+			        GRADE_CD,
+			        EMP_STATE,
+			        MARRY_YN,
+					LESION_CLS,
+					NOJO_YN,
+					ENTERTYPE_CD,
+					RETIRE_DESC,
+					ACTION_DT,
+			        REG_DT,			        
+			        REG_ID)
+	        VALUES (#{empNo},	        	         
+			        #{korNm}, 
+			        #{engNm},
+			        #{chaNm},
+			        #{birthDt}, 
+			        #{enterDt},
+			        #{retireDt}, 
+			        #{juminNo},
+			        #{dutyCd},
+			        #{chikcCd}, 
+			        #{compCd},
+			        #{deptCd},
+			        #{addDeptcd}, 
+			        #{dispDeptcd}, 
+			        #{sex},
+			        #{calsunYn}, 
+			        #{curStatus}, 
+			        #{empCls},
+			        #{positionCd}, 
+			        #{gradeCd},
+			        #{empStatus},
+			        '0',
+			        '0',
+			        '0',
+			        '0003',
+			        #{retireDesc},
+			        #{actionDt},
+			        SYSDATE,		        
+			        #{regId})
+    </insert>
+    
+    <delete id="deleteMhsPhoto" parameterType="EgovMapForNull">
+   		DELETE FROM DBVISION_ERP.A_PHOTO WHERE EMP_NO = #{empNo}
+    </delete>
+    
+    <delete id="deleteMhsEmpMain" parameterType="EgovMapForNull">
+   		DELETE FROM DBVISION_ERP.A_EMPLOYEE WHERE EMP_NO = #{empNo}
+    </delete>
+</mapper>

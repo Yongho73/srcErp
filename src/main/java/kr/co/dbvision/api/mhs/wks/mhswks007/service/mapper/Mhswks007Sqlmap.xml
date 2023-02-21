@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mhs.wks.mhswks007.service.mapper.Mhswks007Mapper">
+
+    <select id="selectMhswks007List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.wks.mhswks007.service.mapper.Mhswks007Mapper.selectMhswks007List */
+        SELECT
+               LAYOFF_NO,
+               EMPNO,
+               FNC_DATESTR(REQST_DE) AS REQST_DE,
+               FNC_DATESTR(LAYOFF_BEGIN_DE) AS LAYOFF_BEGIN_DE,
+               FNC_DATESTR(LAYOFF_END_DE) AS LAYOFF_END_DE,
+               LAYOFF_DAYCNT,
+               LAYOFF_DTLS,
+               EXTN_LAYOFF_NO,
+               LAYOFF_SE_CODE,
+               CNWKPD_INCLS_AT,
+               ATCHMNFL_NO,
+               SANCTN_DOC_NO,
+               SANCTN_STTUS_CODE,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_LAYOFF A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="layoffNo != null and layoffNo != ''">
+                AND LAYOFF_NO = #{layoffNo}
+            </if>
+            <if test="sRegDt != null and sRegDt != ''">
+                <![CDATA[
+                AND REG_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+                ]]>
+            </if>
+            <if test="eRegDt != null and eRegDt != ''">
+                <![CDATA[
+                AND REG_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+                ]]>
+             </if>
+        </trim>
+    </select>
+
+    <select id="selectMhswks007" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.wks.mhswks007.service.mapper.Mhswks007Mapper.selectMhswks007 */
+        SELECT
+               LAYOFF_NO,
+               EMPNO,
+               REQST_DE,
+               LAYOFF_BEGIN_DE,
+               LAYOFF_END_DE,
+               LAYOFF_DAYCNT,
+               LAYOFF_DTLS,
+               EXTN_LAYOFF_NO,
+               LAYOFF_SE_CODE,
+               CNWKPD_INCLS_AT,
+               ATCHMNFL_NO,
+               SANCTN_DOC_NO,
+               SANCTN_STTUS_CODE,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_LAYOFF A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="layoffNo != null and layoffNo != ''">
+                AND LAYOFF_NO = #{layoffNo}
+            </if>
+        </trim>
+    </select>
+
+    <update id="saveMhswks007" parameterType="kr.co.dbvision.api.mhs.wks.mhswks007.entity.Mhswks007">
+        /* kr.co.dbvision.api.mhs.wks.mhswks007.service.mapper.Mhswks007Mapper.saveMhswks007 */
+        MERGE INTO MHS_LAYOFF A
+             USING (SELECT
+                    #{layoffNo} LAYOFF_NO
+                    FROM DUAL) B
+                ON (
+                    A.LAYOFF_NO = B.LAYOFF_NO
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               EMPNO= #{empno},
+               REQST_DE= #{reqstDe},
+               LAYOFF_BEGIN_DE= #{layoffBeginDe},
+               LAYOFF_END_DE= #{layoffEndDe},
+               LAYOFF_DAYCNT= #{layoffDaycnt},
+               LAYOFF_DTLS= #{layoffDtls},
+               EXTN_LAYOFF_NO= #{extnLayoffNo},
+               LAYOFF_SE_CODE= #{layoffSeCode},
+               CNWKPD_INCLS_AT= #{cnwkpdInclsAt},
+               ATCHMNFL_NO= #{atchmnflNo},
+               SANCTN_DOC_NO= #{sanctnDocNo},
+               SANCTN_STTUS_CODE= #{sanctnSttusCode},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               LAYOFF_NO,
+               EMPNO,
+               REQST_DE,
+               LAYOFF_BEGIN_DE,
+               LAYOFF_END_DE,
+               LAYOFF_DAYCNT,
+               LAYOFF_DTLS,
+               EXTN_LAYOFF_NO,
+               LAYOFF_SE_CODE,
+               CNWKPD_INCLS_AT,
+               ATCHMNFL_NO,
+               SANCTN_DOC_NO,
+               SANCTN_STTUS_CODE,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{layoffNo},
+               #{empno},
+               #{reqstDe},
+               #{layoffBeginDe},
+               #{layoffEndDe},
+               #{layoffDaycnt},
+               #{layoffDtls},
+               #{extnLayoffNo},
+               #{layoffSeCode},
+               #{cnwkpdInclsAt},
+               #{atchmnflNo},
+               #{sanctnDocNo},
+               #{sanctnSttusCode},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deleteMhswks007" parameterType="kr.co.dbvision.api.mhs.wks.mhswks007.entity.Mhswks007">
+        /* kr.co.dbvision.api.mhs.wks.mhswks007.service.mapper.Mhswks007Mapper.deleteMhswks007 */
+        DELETE FROM MHS_LAYOFF
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND LAYOFF_NO = #{layoffNo}
+        </trim>
+    </delete>
+</mapper>

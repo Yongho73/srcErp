@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.stm.bsc.stmbsc006.service.mapper.Stmbsc006Mapper">
+
+    <!-- function 생성  : 재생성 ALTER function [dbo].[FNC_GET_COL_SN_INFO] : mssql 전용 -->
+    <update id="createFunctionStmbsc006" parameterType="HashMap">
+        /* kr.co.dbvision.api.stm.bsc.stmbsc006.service.mapper.Stmbsc006Mapper.createFunctionStmbsc006 */
+        ${sql}
+    </update>
+    
+    <!-- [FNC_GET_COL_SN_INFO] 대신 : mssql 전용 -->
+    <select id="selectGetMaxNumberStmbsc006" parameterType="egovMapForNull" resultType="String">
+        /* kr.co.dbvision.api.stm.bsc.stmbsc006.service.mapper.Stmbsc006Mapper.selectGetMaxNumberStmbsc006 */
+        SELECT 
+            MAX(${relItemNm}) as MAX_NUMBER 
+        FROM ${relTblNm}
+    </select>
+
+    <!-- 자동채번설정 목록을 조회한다. ( function 생성  용 : 테이블명, 컬럼명 조회) : mssql 전용 -->
+    <select id="selectStmbsc006AllList" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.stm.bsc.stmbsc006.service.mapper.Stmbsc006Mapper.selectStmbsc006AllList */
+        SELECT
+               REL_TBL_NM,
+               REL_ITEM_NM
+          FROM STM_NUM_RULE A
+          WHERE REL_TBL_NM IN (SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_CATALOG = 'xerp')
+          AND REL_ITEM_NM IN (SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_CATALOG = 'xerp' AND TABLE_NAME = UPPER(REL_TBL_NM))
+        ORDER BY NUMBERING_NM
+    </select>
+    
+    <select id="selectStmbsc006List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.stm.bsc.stmbsc006.service.mapper.Stmbsc006Mapper.selectStmbsc006List */
+        SELECT
+               REL_TBL_NM,
+               REL_ITEM_NM,
+               NUMBERING_NM,
+               PREFIX_USE_AT,
+               PREFIX_SE_CODE,
+               PREFIX_NM,
+               YY_USE_AT,
+               YY_LT_CODE,
+               (CASE WHEN YY_LT_CODE = '4' THEN 'YYYY' WHEN YY_LT_CODE = '2' THEN 'YY' ELSE '' END) AS YY_USE_CODE_NM,
+               MT_USE_AT,
+               DE_USE_AT,
+               SE_USE_AT,
+               SUFFIX_NM,
+               SN_USE_AT,
+               SN_LT,
+               NUMBERING_FOM,
+               USE_AT,
+               UPDT_AT,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               --DBO.FNC_GET_COL_SN_INFO(REL_TBL_NM,REL_ITEM_NM) AS MAX_NUMBER,
+               '' AS MAX_NUMBER,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM STM_NUM_RULE A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="numberingNm != null and numberingNm != ''">
+                AND NUMBERING_NM LIKE '%'|| #{numberingNm} ||'%'
+            </if>
+            <if test="useAt != null and useAt != ''">
+                AND USE_AT = #{useAt}
+            </if>
+            <if test="sRegDt != null and sRegDt != ''">
+                <![CDATA[
+                AND REG_DT >= CONVERT(DATETIME, #{sRegDt} + ' 00:00:00')
+                ]]>
+            </if>
+            <if test="eRegDt != null and eRegDt != ''">
+                <![CDATA[
+                AND REG_DT <= CONVERT(DATETIME, #{eRegDt} + ' 23:59:59')
+                ]]>
+             </if>
+        </trim>
+        ORDER BY NUMBERING_NM
+    </select>
+    
+    <select id="selectStmbsc006ListForExcel" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.stm.bsc.stmbsc006.service.mapper.Stmbsc006Mapper.selectStmbsc006ListForExcel */
+        SELECT
+               NUMBERING_NM,
+               NUMBERING_FOM,
+               REL_TBL_NM,
+               REL_ITEM_NM,
+               DBO.FNC_GET_COL_SN_INFO(REL_TBL_NM,REL_ITEM_NM) AS MAX_NUMBER,
+               (CASE WHEN PREFIX_USE_AT='1' THEN '사용' WHEN PREFIX_USE_AT='0' THEN '미사용' ELSE '미사용' END) AS PREFIX_USE_AT,
+               PREFIX_NM,
+               (CASE WHEN YY_USE_AT='1' THEN '사용' WHEN YY_USE_AT='0' THEN '미사용' ELSE '미사용' END) AS YY_USE_AT,
+               (CASE WHEN YY_LT_CODE='4' YYYY '사용' WHEN YY_LT_CODE='2' THEN 'YY' ELSE '' END) AS YY_LT_CODE,
+               (CASE WHEN MT_USE_AT='1' THEN '사용' WHEN MT_USE_AT='0' THEN '미사용' ELSE '미사용' END) AS MT_USE_AT,
+               (CASE WHEN DE_USE_AT='1' THEN '사용' WHEN DE_USE_AT='0' THEN '미사용' ELSE '미사용' END) AS DE_USE_AT,
+               (CASE WHEN SE_USE_AT='1' THEN '사용' WHEN SE_USE_AT='0' THEN '미사용' ELSE '미사용' END) AS SE_USE_AT,
+               (CASE WHEN SN_USE_AT='1' THEN '사용' WHEN SN_USE_AT='0' THEN '미사용' ELSE '미사용' END) AS SN_USE_AT,
+               SN_LT,
+               (CASE WHEN USE_AT='1' THEN '사용' WHEN USE_AT='0' THEN '미사용' ELSE '미사용' END) AS USE_AT,
+               (CASE WHEN UPDT_AT='1' THEN '사용' WHEN UPDT_AT='0' THEN '미사용' ELSE '미사용' END) AS UPDT_AT,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM STM_NUM_RULE A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="numberingNm != null and numberingNm != ''">
+                AND NUMBERING_NM LIKE '%'|| #{numberingNm} ||'%'
+            </if>
+            <if test="useAt != null and useAt != ''">
+                AND USE_AT = #{useAt}
+            </if>
+            <if test="sRegDt != null and sRegDt != ''">
+                <![CDATA[
+                AND REG_DT >= CONVERT(DATETIME, #{sRegDt} + ' 00:00:00')
+                ]]>
+            </if>
+            <if test="eRegDt != null and eRegDt != ''">
+                <![CDATA[
+                AND REG_DT <= CONVERT(DATETIME, #{eRegDt} + ' 23:59:59')
+                ]]>
+             </if>
+        </trim>
+        ORDER BY NUMBERING_NM
+    </select>
+
+    <select id="selectStmbsc006" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.stm.bsc.stmbsc006.service.mapper.Stmbsc006Mapper.selectStmbsc006 */
+        SELECT
+               REL_TBL_NM,
+               REL_ITEM_NM,
+               NUMBERING_NM,
+               PREFIX_USE_AT,
+               PREFIX_SE_CODE,
+               PREFIX_NM,
+               YY_USE_AT,
+               YY_LT_CODE,
+               MT_USE_AT,
+               DE_USE_AT,
+               SE_USE_AT,
+               SUFFIX_NM,
+               SN_USE_AT,
+               SN_LT,
+               NUMBERING_FOM,
+               USE_AT,
+               UPDT_AT,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID
+		 	   ,(SELECT MAX(${relItemNm}) FROM ${relTblNm} ) AS MAX_NUMBER     /* 해당테이블에 값이 존재하는지 여부 체크 */
+          FROM STM_NUM_RULE A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="relTblNm != null and relTblNm != ''">
+                AND REL_TBL_NM = #{relTblNm}
+            </if>
+            <if test="relItemNm != null and relItemNm != ''">
+                AND REL_ITEM_NM = #{relItemNm}
+            </if>
+        </trim>
+    </select>
+
+    <update id="saveStmbsc006" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.stm.bsc.stmbsc006.service.mapper.Stmbsc006Mapper.saveStmbsc006 */
+        MERGE INTO STM_NUM_RULE A
+             USING (SELECT
+                    #{relTblNm} REL_TBL_NM,
+                    #{relItemNm} REL_ITEM_NM
+                    ) B
+                ON (
+                    A.REL_TBL_NM = B.REL_TBL_NM AND 
+                    A.REL_ITEM_NM = B.REL_ITEM_NM
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               NUMBERING_NM= #{numberingNm},
+               PREFIX_USE_AT= #{prefixUseAt},
+               PREFIX_SE_CODE= #{prefixSeCode},
+               PREFIX_NM= #{prefixNm},
+               YY_USE_AT= #{yyUseAt},
+               YY_LT_CODE= #{yyLtCode},
+               MT_USE_AT= #{mtUseAt},
+               DE_USE_AT= #{deUseAt},
+               SE_USE_AT= #{seUseAt},
+               SUFFIX_NM= #{suffixNm},
+               SN_USE_AT= #{snUseAt},
+               SN_LT= #{snLt},
+               NUMBERING_FOM= #{numberingFom},
+               USE_AT= #{useAt},
+               UPDT_AT= #{updtAt},
+               UPT_DT = GETDATE(),
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               REL_TBL_NM,
+               REL_ITEM_NM,
+               NUMBERING_NM,
+               PREFIX_USE_AT,
+               PREFIX_SE_CODE,
+               PREFIX_NM,
+               YY_USE_AT,
+               YY_LT_CODE,
+               MT_USE_AT,
+               DE_USE_AT,
+               SE_USE_AT,
+               SUFFIX_NM,
+               SN_USE_AT,
+               SN_LT,
+               NUMBERING_FOM,
+               USE_AT,
+               UPDT_AT,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{relTblNm},
+               #{relItemNm},
+               #{numberingNm},
+               #{prefixUseAt},
+               #{prefixSeCode},
+               #{prefixNm},
+               #{yyUseAt},
+               #{yyLtCode},
+               #{mtUseAt},
+               #{deUseAt},
+               #{seUseAt},
+               #{suffixNm},
+               #{snUseAt},
+               #{snLt},
+               #{numberingFom},
+               #{useAt},
+               #{updtAt},
+               GETDATE(),
+               #{regId}
+
+        );
+    </update>
+
+    <delete id="deleteStmbsc006" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.stm.bsc.stmbsc006.service.mapper.Stmbsc006Mapper.deleteStmbsc006 */
+        DELETE FROM STM_NUM_RULE
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND REL_TBL_NM = #{relTblNm}
+                AND REL_ITEM_NM = #{relItemNm}
+        </trim>
+    </delete>
+    
+    
+    <select id="selectStmbsc006TableList" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.stm.bsc.stmbsc006.service.mapper.Stmbsc006Mapper.selectStmbsc006TableList */
+
+		SELECT 
+		      TABLE_NAME AS TBL_KEY,
+              TABLE_NAME AS VALUE
+		  FROM INFORMATION_SCHEMA.TABLES 
+		 WHERE TABLE_CATALOG = 'xerp'
+        ORDER BY TABLE_NAME
+    </select>
+
+    <select id="selectStmbsc006TableColList" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.stm.bsc.stmbsc006.service.mapper.Stmbsc006Mapper.selectStmbsc006TableColList */
+        SELECT 
+		    COLUMN_NAME AS TBL_KEY,
+		    COLUMN_NAME AS VALUE
+		FROM INFORMATION_SCHEMA.COLUMNS
+		WHERE TABLE_CATALOG = 'xerp'
+		
+           <if test="paramNm != null and paramNm != ''">
+               AND TABLE_NAME =UPPER(#{paramNm})
+           </if>
+           
+		ORDER BY COLUMN_NAME
+    </select>
+    
+    <select id="selectGetNumberStmbsc006" parameterType="egovMapForNull" resultType="String">
+        /* kr.co.dbvision.api.stm.bsc.stmbsc006.service.mapper.Stmbsc006Mapper.selectgetNumberStmbsc006 */
+        SELECT 
+        	LPAD(ISNULL(MAX(SUBSTRING(${relItemNm},-${snLt})),0) + 1,${snLt},'0') as NEW_NUMBER 
+        	CONVERT(VARCHAR(100), REPLICATE('0', ${snLt}-LEN(ISNULL(MAX(SUBSTRING(${relItemNm},-${snLt},${snLt})),0) + 1))) + CONVERT(VARCHAR(100),(ISNULL(MAX(SUBSTRING(${relItemNm},-${snLt},${snLt})),0) + 1)) as NEW_NUMBER 
+        FROM ${relTblNm}
+        WHERE 1=1
+             <if test='relTblNm.equals("STM_CUST")'>
+                 AND CUST_NO like 'CUST'||'%'  /* 번호규칙이 일관되지 않을 경우 예외 처리 */
+            </if>           
+         
+    </select>
+    
+    
+</mapper>

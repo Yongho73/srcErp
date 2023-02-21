@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mhs.hrb.mhshrb001.service.mapper.Mhshrb001MapperTab4Gnfd">
+
+	<!-- 발령 Tab 4 -->
+	<select id="selectMhsEmpGnfd" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrb.mhshrb999.service.mapper.Mhshrb001MapperTab4Gnfd.selectMhsEmpGnfd */
+        SELECT
+               GNFD_NO,
+               EMPNO,
+               FNC_GETKORNM(EMPNO) AS EMP_NM,
+               GNFD_CODE,
+               FNC_DATESTR(GNFD_DE) AS GNFD_DE,
+               --FNC_COMCODENM('C257',GNFD_CODE) AS GNFD_SE,
+               FNC_DATESTR(GNFD_BEGIN_DE) AS GNFD_BEGIN_DE,
+               FNC_DATESTR(GNFD_END_DE) AS GNFD_END_DE,
+               PROCESS_AT,
+               --BFCHG_BPLC,
+               --AFCHG_BPLC,
+               
+               BFCHG_DEPT_CODE,
+               AFCHG_DEPT_CODE,
+               FNC_GETDEPTNM(BFCHG_DEPT_CODE) AS BFCHG_DEPT_NM,
+               FNC_GETDEPTNM(AFCHG_DEPT_CODE) AS AFCHG_DEPT_NM,
+               
+               BFCHG_OFCPS_CODE,
+               AFCHG_OFCPS_CODE,
+               --FNC_COMCODENM('C252',BFCHG_OFCPS_CODE) AS BFCHG_OFCPS_CODE,
+               --FNC_COMCODENM('C252',AFCHG_OFCPS_CODE) AS AFCHG_OFCPS_CODE,
+               BFCHG_JSSFC_CODE,
+               AFCHG_JSSFC_CODE,
+               --FNC_COMCODENM('C197',BFCHG_JSSFC_CODE) AS BFCHG_JSSFC_CODE,
+               --FNC_COMCODENM('C197',AFCHG_JSSFC_CODE) AS AFCHG_JSSFC_CODE,
+               BFCHG_JBLN_CODE,
+               AFCHG_JBLN_CODE,
+               BFCHG_SRCLS_CODE,
+               AFCHG_SRCLS_CODE,
+               --FNC_COMCODENM('C285',BFCHG_SRCLS_CODE) AS BFCHG_SRCLS_CODE,
+               --FNC_COMCODENM('C285',AFCHG_SRCLS_CODE) AS AFCHG_SRCLS_CODE,
+               BFCHG_RSPOFC_CODE,
+               AFCHG_RSPOFC_CODE,
+               HDADPT_DEPT_CODE,
+               FNC_GETDEPTNM(HDADPT_DEPT_CODE) AS HDADPT_DEPT_NM,
+               HDADPT_AT,
+               
+               GNFD_DTLS,
+               SANCTN_STTUS_CODE AS SANCTN_CODE,
+               SANCTN_DOC_NO AS SANCTN_NO,
+               
+               '' AS BFCHG_UPPER_DEPT_CODE,
+               '' AS BFCHG_UPPER_DEPT_CODE_NM,
+               '' AS AFCHG_UPPER_DEPT_CODE,
+               '' AS AFCHG_UPPER_DEPT_CODE_NM,
+            	   
+               --BFCHG_CLSF_CODE,
+               --AFCHG_CLSF_CODE,
+               --BFCHG_DUTY_CODE,
+               --AFCHG_DUTY_CODE,
+               --FNC_COMCODENM('C289',BFCHG_DUTY_CODE) AS BFCHG_DUTY_CODE,
+               --FNC_COMCODENM('C289',AFCHG_DUTY_CODE) AS AFCHG_DUTY_CODE,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+              
+          FROM MHS_GNFD A
+
+         WHERE EMPNO = #{empno}
+         ORDER BY EMPNO, GNFD_NO DESC, GNFD_DE DESC
+    </select>
+
+    <update id="saveMhsEmpGnfd" parameterType="kr.co.dbvision.api.mhs.hrb.mhshrb001.entity.Mhshrb001_TAB4">
+        /* kr.co.dbvision.api.mhs.hrb.mhshrb001.service.impl.Mhshrb001MapperTab4Gnfd.saveMhsEmpGnfd */
+        <selectKey resultType="int" keyProperty="gnfdSnNew" order="BEFORE">
+  			SELECT SUBSTR(REPLACE(#{gnfdDe},'-',''),1,6) || LPAD(TO_CHAR(NVL(TO_NUMBER(SUBSTR(MAX(GNFD_SN),7,11)),0) + 1),4,'0') AS gnfdSnNew
+  			FROM MHS_GNFD
+  			WHERE EMPNO = #{empno}
+              AND SUBSTR(GNFD_SN,1,6) = SUBSTR(REPLACE(#{gnfdDe},'-',''),1,6)
+  		</selectKey>
+  
+        MERGE INTO MHS_GNFD A
+             USING (SELECT
+                    #{empno} EMPNO,
+                    REPLACE(#{gnfdDe},'-','') GNFD_DE,
+                    #{gnfdSn} GNFD_SN
+                    FROM DUAL) B
+                ON (
+                    A.EMPNO = B.EMPNO AND 
+                    A.GNFD_DE = B.GNFD_DE AND 
+                    A.gnfdSn = B.gnfdSn
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               /*GNFD_NO= #{gnfdNo},*/
+               GNFD_CODE= #{gnfdCode},
+               PROCESS_AT= #{processAt},
+               BFCHG_BPLC= #{bfchgBplc},
+               AFCHG_BPLC= #{afchgBplc},
+               BFCHG_DEPT_CODE= #{bfchgDeptCode},
+               BFCHG_CLSF_CODE= #{bfchgClsfCode},
+               BFCHG_OFCPS_CODE= #{bfchgOfcpsCode},
+               BFCHG_JSSFC_CODE= #{bfchgJssfcCode},
+               BFCHG_SRCLS_CODE= #{bfchgSrclsCode},
+               BFCHG_DUTY_CODE = #{bfchgDutyCode},
+               BFCHG_RSPOFC_CODE = #{bfchgRspofcCode},
+               AFCHG_DEPT_CODE= #{afchgDeptCode},
+               AFCHG_CLSF_CODE= #{afchgClsfCode},
+               AFCHG_OFCPS_CODE= #{afchgOfcpsCode},
+               AFCHG_JSSFC_CODE= #{afchgJssfcCode},
+               AFCHG_SRCLS_CODE= #{afchgSrclsCode},
+               AFCHG_DUTY_CODE = #{afchgDutyCode},
+               AFCHG_RSPOFC_CODE = #{afchgRspofcCode},
+               GNFD_BEGIN_DE= #{gnfdBeginDe},
+               GNFD_END_DE= #{gnfdEndDe},
+               HDADPT_DEPT_CODE= #{hdadptDeptCode},
+               HDADPT_AT= #{hdadptAt},
+               GNFD_DTLS= #{gnfdDtls},
+               
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+	            EMPNO,
+	            GNFD_DE,
+	            GNFD_SN,
+	            /*GNFD_NO,*/
+	            GNFD_CODE,
+	            PROCESS_AT,
+	            BFCHG_BPLC,
+	            AFCHG_BPLC,
+	            BFCHG_DEPT_CODE,
+	            BFCHG_CLSF_CODE,
+	            BFCHG_OFCPS_CODE,
+	            BFCHG_JSSFC_CODE,
+	            BFCHG_SRCLS_CODE,
+	            BFCHG_DUTY_CODE,
+	            BFCHG_RSPOFC_CODE,
+	            AFCHG_DEPT_CODE,
+	            AFCHG_CLSF_CODE,
+	            AFCHG_OFCPS_CODE,
+	            AFCHG_JSSFC_CODE,
+	            AFCHG_SRCLS_CODE,
+	            AFCHG_DUTY_CODE,
+	            AFCHG_RSPOFC_CODE,
+	            GNFD_BEGIN_DE,
+	            GNFD_END_DE,
+	            HDADPT_DEPT_CODE,
+	            HDADPT_AT,
+	            GNFD_DTLS,
+	            
+	            REG_DT,
+	            REG_ID
+	        )
+	        VALUES
+	        (
+	            #{empno},
+	            REPLACE(#{gnfdDe},'-',''),
+	            #{gnfdSnNew},
+	            /*#{gnfdNo},*/
+	            #{gnfdCode},
+	            #{processAt},
+	            #{bfchgBplc},
+	            #{afchgBplc},
+	            #{bfchgDeptCode},
+	            #{bfchgClsfCode},
+	            #{bfchgOfcpsCode},
+	            #{bfchgJssfcCode},
+	            #{bfchgSrclsCode},
+	            #{bfchgDutyCode},
+	            #{bfchgRspofcCode},
+	            #{afchgDeptCode},
+	            #{afchgClsfCode},
+	            #{afchgOfcpsCode},
+	            #{afchgJssfcCode},
+	            #{afchgSrclsCode},
+	            #{afchgDutyCode},
+	            #{afchgRspofcCode},
+	            #{gnfdBeginDe},
+	            #{gnfdEndDe},
+	            #{hdadptDeptCode},
+	            #{hdadptAt},
+	            #{gnfdDtls},
+	            
+	             SYSDATE,
+	            #{regId}
+	        )
+    </update>    
+    
+    <delete id="deleteMhsEmpGnfd" parameterType="kr.co.dbvision.api.mhs.hrb.mhshrb001.entity.Mhshrb001_TAB4">
+        /* kr.co.dbvision.api.mhs.hrb.mhshrb999.service.mapper.Mhshrb001MapperTab4Gnfd.deleteMhsEmpGnfd */
+        DELETE FROM MHS_GNFD
+         WHERE EMPNO = #{empno}
+                AND GNFD_DE = REPLACE(#{gnfdDe},'-','')
+                AND GNFD_NO = #{gnfdNo}
+    </delete>
+ 
+</mapper>

@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mps.cal.mpscal022.service.mapper.MpscalFamilyMapper">
+
+    <select id="selectMpscalFamilyList" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.cal.mpscal022.service.mapper.MpscalFamilyMapper.selectMpscalFamilyList */
+        SELECT
+               A.EMPNO,
+               A.FAMILY_SN,
+               A.FAMILY_CODE,
+               B.FAMILY_RELATE_NM,
+               A.YNDEXCCLC_RELATE_CODE,
+               A.YNDEXCCLC_TRGET_AT,
+               A.FAMILY_NM,
+               A.IHIDNUM AS IHIDNUM_OL,
+               DECODE(A.IHIDNUM,NULL,'',SUBSTR(A.IHIDNUM,1,6)||'-*******') AS IHIDNUM,
+               A.BRTHDY,
+               A.LIVTGT_AT,
+               A.SUPORT_AT,
+               A.ALLWNC_TRGET_AT,
+               A.LSCHOL_SE_CODE,
+               A.OCCP_NM,
+               A.OFCPS_NM,
+               A.MBTLNUM,
+               A.DSPSN_AT,
+               A.DSPSN_NO,
+               A.DSPSN_SE_CODE,
+               A.SRSILL_AT,
+               FNC_COMCODENM('C152',A.DSPSN_SE_CODE) AS DSPSN_SE_CODE_NM,
+               FNC_COMCODENM('C290',A.DSPSN_NO) AS DSPSN_NO_NM,
+               A.REG_DT,
+               A.REG_ID,
+               A.UPT_DT,
+               A.UPT_ID,
+               A.WRC_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_FAMILY A , MHS_FAMILYCODE B
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+               A.FAMILY_CODE = B.FAMILY_CODE
+            <if test="empno != null and empno != ''">
+                AND EMPNO = #{empno}
+            </if>
+            <if test="familySn != null and familySn != ''">
+                AND FAMILY_SN = #{familySn}
+            </if>
+            <if test="sRegDt != null and sRegDt != ''">
+                <![CDATA[
+                AND REG_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+                ]]>
+            </if>
+            <if test="eRegDt != null and eRegDt != ''">
+                <![CDATA[
+                AND REG_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+                ]]>
+             </if>
+        </trim>
+    </select>
+
+    <select id="selectMpscalFamily" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.cal.mpscal022.service.mapper.MpscalFamilyMapper.selectMpscalFamily */
+        SELECT
+               EMPNO,
+               FAMILY_SN,
+               YNDEXCCLC_RELATE_CODE,
+               YNDEXCCLC_TRGET_AT,
+               FAMILY_CODE,
+               FAMILY_NM,
+               IHIDNUM,
+               BRTHDY,
+               LIVTGT_AT,
+               SUPORT_AT,
+               ALLWNC_TRGET_AT,
+               LSCHOL_SE_CODE,
+               WRC_NM,
+               OCCP_NM,
+               OFCPS_NM,
+               MBTLNUM,
+               DSPSN_AT,
+               DSPSN_NO,
+               DSPSN_SE_CODE,
+               SRSILL_AT,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_FAMILY A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="empno != null and empno != ''">
+                AND EMPNO = #{empno}
+            </if>
+            <if test="familySn != null and familySn != ''">
+                AND FAMILY_SN = #{familySn}
+            </if>
+        </trim>
+    </select>
+
+    <update id="saveMpscalFamily" parameterType="kr.co.dbvision.api.mps.cal.mpscal022.entity.MpscalFamily">
+        /* kr.co.dbvision.api.mps.cal.mpscal022.service.mapper.MpscalFamilyMapper.saveMpscalFamily */
+        MERGE INTO MHS_FAMILY A
+             USING (SELECT
+                    #{empno} EMPNO,
+                    #{familySn} FAMILY_SN
+                    FROM DUAL) B
+                ON (
+                    A.EMPNO = B.EMPNO AND 
+                    A.FAMILY_SN = B.FAMILY_SN
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               YNDEXCCLC_RELATE_CODE= #{yndexcclcRelateCode},
+               YNDEXCCLC_TRGET_AT= #{yndexcclcTrgetAt},
+               FAMILY_CODE= #{familyCode},
+               FAMILY_NM= #{familyNm},
+               IHIDNUM= #{ihidnum},
+               BRTHDY= #{brthdy},
+               LIVTGT_AT= #{livtgtAt},
+               SUPORT_AT= #{suportAt},
+               ALLWNC_TRGET_AT= #{allwncTrgetAt},
+               LSCHOL_SE_CODE= #{lscholSeCode},
+               WRC_NM= #{wrcNm},
+               OCCP_NM= #{occpNm},
+               OFCPS_NM= #{ofcpsNm},
+               MBTLNUM= #{mbtlnum},
+               DSPSN_AT= #{dspsnAt},
+               DSPSN_NO= #{dspsnNo},
+               DSPSN_SE_CODE= #{dspsnSeCode},
+               SRSILL_AT= #{srsillAt},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               EMPNO,
+               FAMILY_SN,
+               YNDEXCCLC_RELATE_CODE,
+               YNDEXCCLC_TRGET_AT,
+               FAMILY_CODE,
+               FAMILY_NM,
+               IHIDNUM,
+               BRTHDY,
+               LIVTGT_AT,
+               SUPORT_AT,
+               ALLWNC_TRGET_AT,
+               LSCHOL_SE_CODE,
+               WRC_NM,
+               OCCP_NM,
+               OFCPS_NM,
+               MBTLNUM,
+               DSPSN_AT,
+               DSPSN_NO,
+               DSPSN_SE_CODE,
+               SRSILL_AT,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{empno},
+               #{familySnNew},
+               #{yndexcclcRelateCode},
+               #{yndexcclcTrgetAt},
+               #{familyCode},
+               #{familyNm},
+               #{ihidnum},
+               #{brthdy},
+               #{livtgtAt},
+               #{suportAt},
+               #{allwncTrgetAt},
+               #{lscholSeCode},
+               #{wrcNm},
+               #{occpNm},
+               #{ofcpsNm},
+               #{mbtlnum},
+               #{dspsnAt},
+               #{dspsnNo},
+               #{dspsnSeCode},
+               #{srsillAt},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deleteMpscalFamily" parameterType="kr.co.dbvision.api.mps.cal.mpscal022.entity.MpscalFamily">
+        /* kr.co.dbvision.api.mps.cal.mpscal022.service.mapper.MpscalFamilyMapper.deleteMpscalFamily */
+        DELETE FROM MHS_FAMILY
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND EMPNO = #{empno}
+                AND FAMILY_SN = #{familySn}
+        </trim>
+    </delete>
+</mapper>

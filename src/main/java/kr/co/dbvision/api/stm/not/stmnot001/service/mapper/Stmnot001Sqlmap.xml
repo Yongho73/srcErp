@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.stm.not.stmnot001.service.mapper.Stmnot001Mapper">
+
+    <select id="selectStmnot001List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.stm.not.stmnot001.service.mapper.Stmnot001Mapper.selectStmnot001List */
+        SELECT
+               NOTICE_ID,
+               NOTICE_KIND,
+               NOTICE_TRGET_SE,
+               NOTICE_TIT,
+               NOTICE_CN,
+               WRITER_ID,
+               (SELECT KOR_NM FROM MHS_EMP WHERE EMPNO = WRITER_ID) AS WRITER_NM,
+               ATCHMNFL_NO,
+               OPEN_AT,
+               DECODE(OPEN_AT, '1', '공개', '0', '비공개', '비공개') AS OPEN_AT_NM,
+               INQIRE_CO,
+               DELETE_AT,
+               DELETE_ID,
+               DELETE_DT,
+               TO_CHAR(REG_DT, 'YYYY-MM-DD HH24:MI:SS') AS REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM,
+               (SELECT COUNT(NOTICE_TRGET_ID) 
+                       FROM STM_ERP_NOTICE_BOARD_NOTICE_TR 
+                       WHERE NOTICE_ID = A.NOTICE_ID 
+                       AND NOTICE_TRGET_SE =  '002') AS TRGET_EMP_CNT,
+               (SELECT KOR_NM 
+                       FROM MHS_EMP
+                       WHERE EMPNO = (SELECT NOTICE_TRGET_ID 
+                                          FROM STM_ERP_NOTICE_BOARD_NOTICE_TR 
+                                          WHERE NOTICE_ID = A.NOTICE_ID AND NOTICE_TRGET_SE =  '002' AND  ROWNUM = '1')) AS TRGET_EMP_NM,
+                (SELECT COUNT(NOTICE_TRGET_ID) 
+                       FROM STM_ERP_NOTICE_BOARD_NOTICE_TR 
+                       WHERE NOTICE_ID = A.NOTICE_ID 
+                       AND NOTICE_TRGET_SE =  '003') AS TRGET_DEPT_CNT,
+               (SELECT DEPT_KOR_NM 
+                       FROM MHS_DEPT
+                       WHERE DEPT_CODE = (SELECT NOTICE_TRGET_ID 
+                                          FROM STM_ERP_NOTICE_BOARD_NOTICE_TR 
+                                          WHERE NOTICE_ID = A.NOTICE_ID AND NOTICE_TRGET_SE =  '003' AND  ROWNUM = '1')) AS TRGET_DEPT_NM,
+                (SELECT COUNT(NOTICE_TRGET_ID) 
+                       FROM STM_ERP_NOTICE_BOARD_NOTICE_TR 
+                       WHERE NOTICE_ID = A.NOTICE_ID 
+                       AND NOTICE_TRGET_SE =  '004') AS TRGET_GROUP_CNT,
+               (SELECT CODE_KOR_NM 
+                       FROM STM_CODE
+                       WHERE CODEKIND_CODE = (SELECT NOTICE_TRGET_ID 
+                                          FROM STM_ERP_NOTICE_BOARD_NOTICE_TR 
+                                          WHERE NOTICE_ID = A.NOTICE_ID AND NOTICE_TRGET_SE =  '004' AND  ROWNUM = '1')) AS TRGET_GROUP_NM
+
+          FROM STM_ERP_NOTICE_BOARD A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="noticeCn != null and noticeCn != ''">
+                AND (NOTICE_TIT LIKE '%'||#{noticeCn}||'%' OR NOTICE_CN LIKE '%'||#{noticeCn}||'%')
+            </if>
+            <if test="deptCode != null and deptCode != ''">
+                AND NOTICE_ID IN (SELECT NOTICE_ID FROM STM_ERP_NOTICE_BOARD_NOTICE_TR WHERE NOTICE_TRGET_ID LIKE '%'||#{deptCode}||'%' AND NOTICE_TRGET_SE = '003')
+            </if>
+            <if test="deptKorNm != null and deptKorNm != ''">
+                AND NOTICE_ID IN (SELECT NOTICE_ID FROM STM_ERP_NOTICE_BOARD_NOTICE_TR WHERE NOTICE_TRGET_ID IN (SELECT ORGNZT_CODE
+                                                                                                                   FROM MHS_ORGNZT
+                                                                                                                   WHERE ORGNZT_NM LIKE '%'||#{deptKorNm}||'%')
+                                                                                                                    AND NOTICE_TRGET_SE = '003')
+            </if>
+            <if test="empno != null and empno != ''">
+                AND NOTICE_ID IN (SELECT NOTICE_ID FROM STM_ERP_NOTICE_BOARD_NOTICE_TR WHERE NOTICE_TRGET_ID LIKE '%'||#{empno}||'%' AND NOTICE_TRGET_SE = '002')
+            </if>
+            <if test="empNm != null and empNm != ''">
+                AND NOTICE_ID IN (SELECT NOTICE_ID FROM STM_ERP_NOTICE_BOARD_NOTICE_TR WHERE NOTICE_TRGET_ID IN (SELECT EMPNO
+                                                                                                                   FROM MHS_EMP
+                                                                                                                   WHERE KOR_NM LIKE '%'||#{empNm}||'%')
+                                                                                                                    AND NOTICE_TRGET_SE = '002')
+            </if>
+            <if test="sRegDt != null and sRegDt != ''">
+                <![CDATA[
+                AND REG_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+                ]]>
+            </if>
+            <if test="eRegDt != null and eRegDt != ''">
+                <![CDATA[
+                AND REG_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+                ]]>
+             </if>
+        </trim>
+    </select>
+
+    <select id="selectStmnot001" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.stm.not.stmnot001.service.mapper.Stmnot001Mapper.selectStmnot001 */
+        SELECT
+               NOTICE_ID,
+               NOTICE_KIND,
+               NOTICE_TRGET_SE,
+               NOTICE_TIT,
+               NOTICE_CN,
+               WRITER_ID,
+               (SELECT KOR_NM FROM MHS_EMP WHERE EMPNO = WRITER_ID) AS WRITER_NM
+               ATCHMNFL_NO,
+               OPEN_AT,
+               INQIRE_CO,
+               DELETE_AT,
+               DELETE_ID,
+               DELETE_DT,
+               TO_CHAR(REG_DT, 'YYYY-MM-DD HH24:MI:SS') AS REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM STM_ERP_NOTICE_BOARD A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="noticeId != null and noticeId != ''">
+                AND NOTICE_ID = #{noticeId}
+            </if>
+        </trim>
+    </select>
+    
+    <select id="findStmnot001" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.stm.not.stmnot001.service.mapper.Stmnot001Mapper.findStmnot001 */
+        SELECT
+               NOTICE_ID,
+               NOTICE_KIND,
+               NOTICE_TRGET_SE,
+               NOTICE_TIT,
+               NOTICE_CN,
+               WRITER_ID,
+               (SELECT KOR_NM FROM MHS_EMP WHERE EMPNO = WRITER_ID) AS WRITER_NM,
+               ATCHMNFL_NO,
+               OPEN_AT,
+               INQIRE_CO,
+               DELETE_AT,
+               DELETE_ID,
+               DELETE_DT,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM STM_ERP_NOTICE_BOARD A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="noticeId != null and noticeId != ''">
+                AND NOTICE_ID = #{noticeId}
+            </if>
+            <if test="noticeIdSn != null and noticeIdSn != ''">
+                AND NOTICE_ID_SN = #{noticeIdSn}
+            </if>
+        </trim>
+    </select>
+    
+    <select id="gridStmnot001" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.stm.not.stmnot001.service.mapper.Stmnot001Mapper.gridStmnot001 */
+        SELECT
+               NOTICE_ID,
+               NOTICE_ID_SN,
+               NOTICE_TRGET_SE,
+               DECODE(NOTICE_TRGET_SE,'002',(SELECT USER_NM FROM STM_USERS B WHERE A.NOTICE_TRGET_ID = B.USER_ID),
+                               '003',(SELECT ORGNZT_NM FROM MHS_ORGNZT C WHERE A.NOTICE_TRGET_ID = C.ORGNZT_CODE),
+                               '004',(SELECT CODE_KOR_NM AS ROLE_NM FROM STM_CODE D WHERE D.CODEKIND_CODE = 'C008' AND D.CODE = A.NOTICE_TRGET_ID)
+                               ) AS NOTICE_TRGET_ID_NM,
+               NOTICE_TRGET_ID,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM STM_ERP_NOTICE_BOARD_NOTICE_TR A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="noticeId != null and noticeId != ''">
+                AND NOTICE_ID = #{noticeId}
+            </if>
+            <if test="noticeIdSn != null and noticeIdSn != ''">
+                AND NOTICE_ID_SN = #{noticeIdSn}
+            </if>
+            <if test="sRegDt != null and sRegDt != ''">
+                <![CDATA[
+                AND REG_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+                ]]>
+            </if>
+            <if test="eRegDt != null and eRegDt != ''">
+                <![CDATA[
+                AND REG_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+                ]]>
+             </if>
+        </trim>
+        ORDER BY REG_DT
+    </select>
+
+    <update id="saveStmnot001" parameterType="egovMapForNull">
+        /* kr.co.dbvision.api.stm.not.stmnot001.service.mapper.Stmnot001Mapper.saveStmnot001 */
+        MERGE INTO STM_ERP_NOTICE_BOARD A
+             USING (SELECT
+                    #{noticeId} NOTICE_ID
+                    FROM DUAL) B
+                ON (
+                    A.NOTICE_ID = B.NOTICE_ID
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               NOTICE_KIND= #{noticeKind},
+               NOTICE_TRGET_SE= #{noticeTrgetSe},
+               NOTICE_TIT= #{noticeTit},
+               NOTICE_CN= #{noticeCn},
+               WRITER_ID= #{writerId},
+               ATCHMNFL_NO= #{atchmnflNo},
+               OPEN_AT= #{openAt},
+               INQIRE_CO= #{inqireCo},
+               DELETE_AT= #{deleteAt},
+               DELETE_ID= #{deleteId},
+               DELETE_DT= #{deleteDt},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               NOTICE_ID,
+               NOTICE_KIND,
+               NOTICE_TRGET_SE,
+               NOTICE_TIT,
+               NOTICE_CN,
+               WRITER_ID,
+               ATCHMNFL_NO,
+               OPEN_AT,
+               INQIRE_CO,
+               DELETE_AT,
+               DELETE_ID,
+               DELETE_DT,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               (SELECT NVL(MAX(NOTICE_ID)+1,0) FROM STM_ERP_NOTICE_BOARD),
+               #{noticeKind},
+               #{noticeTrgetSe},
+               #{noticeTit},
+               #{noticeCn},
+               #{writerId},
+               #{atchmnflNo},
+               #{openAt},
+               0,
+               #{deleteAt},
+               #{deleteId},
+               #{deleteDt},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deleteStmnot001" parameterType="kr.co.dbvision.api.stm.not.stmnot001.entity.Stmnot001">
+        /* kr.co.dbvision.api.stm.not.stmnot001.service.mapper.Stmnot001Mapper.deleteStmnot001 */
+        DELETE FROM STM_ERP_NOTICE_BOARD
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND NOTICE_ID = #{noticeId}
+        </trim>
+    </delete>
+    
+    <update id="saveStmnot001Popup" parameterType="kr.co.dbvision.api.stm.not.stmnot001.entity.Stmnot001">
+        /* kr.co.dbvision.api.stm.not.stmnot001.service.mapper.Stmnot001Mapper.saveStmnot001Popup */
+        MERGE INTO STM_ERP_NOTICE_BOARD_NOTICE_TR A
+             USING (SELECT
+                    #{noticeId} NOTICE_ID,
+                    #{noticeIdSn} NOTICE_ID_SN
+                    FROM DUAL) B
+                ON (
+                    A.NOTICE_ID = B.NOTICE_ID AND 
+                    A.NOTICE_ID_SN = B.NOTICE_ID_SN
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               NOTICE_TRGET_SE= #{noticeTrgetSe},
+               NOTICE_TRGET_ID= #{noticeTrgetId},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               NOTICE_ID,
+               NOTICE_ID_SN,
+               NOTICE_TRGET_SE,
+               NOTICE_TRGET_ID,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{noticeId},
+               (SELECT NVL(MAX(NOTICE_ID_SN)+1,0) FROM STM_ERP_NOTICE_BOARD_NOTICE_TR WHERE NOTICE_ID = #{noticeId}),
+               #{noticeTrgetSe},
+               #{noticeTrgetId},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deleteStmnot001Popup" parameterType="kr.co.dbvision.api.stm.not.stmnot001.entity.Stmnot001">
+        /* kr.co.dbvision.api.stm.not.stmnot001.service.mapper.Stmnot001Mapper.deleteStmnot001Popup */
+        DELETE FROM STM_ERP_NOTICE_BOARD_NOTICE_TR
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND NOTICE_ID = #{noticeId}
+                AND NOTICE_ID_SN = #{noticeIdSn}
+        </trim>
+    </delete>
+</mapper>

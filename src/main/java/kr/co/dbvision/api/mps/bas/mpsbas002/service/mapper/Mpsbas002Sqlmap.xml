@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mps.bas.mpsbas002.service.mapper.Mpsbas002Mapper">
+
+    <select id="selectMpsSnlrcTariffList" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.bas.mpsbas002.service.impl.Mpsbas002Mapper.selectMpsSnlrcTariffList */
+        SELECT
+               FNC_DATESTR(CHANGE_DE) AS CHANGE_DE,
+               NPN_LABRR_RT,
+               NPN_BSNM_RT,
+               NPN_LWLT_AMT,
+               NPN_UPLMT_AMT,
+               HLTHINS_LABRR_RT,
+               HLTHINS_BSNM_RT,
+               LTCI_HLTHINS_RT,
+               LTCI_LABRR_RT,
+               LTCI_BSNM_RT,
+               EMPLYMINSRNC_LABRR_RT,
+               EMPLYMINSRNC_BSNM_RT,
+               TO_CHAR(REG_DT,'YYYY-MM-DD HH24:MI:SS') AS REG_DT,
+               REG_ID,
+               TO_CHAR(UPT_DT,'YYYY-MM-DD HH24:MI:SS') AS UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MPS_SNLRC_TARIFF A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="changeDe != null and changeDe != ''">
+                AND CHANGE_DE = #{changeDe}
+            </if>
+ 
+            <if test="sRegDt != null and sRegDt != ''">
+                <![CDATA[
+                AND REG_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+                ]]>
+            </if>
+            <if test="eRegDt != null and eRegDt != ''">
+                <![CDATA[
+                AND REG_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+                ]]>
+             </if>
+        </trim>
+    </select>
+
+    <select id="selectMpsSnlrcTariff" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.bas.mpsbas002.service.impl.Mpsbas002Mapper.selectMpsSnlrcTariff */
+        SELECT
+               FNC_DATESTR(CHANGE_DE) AS CHANGE_DE,
+               NPN_LABRR_RT,
+               NPN_BSNM_RT,
+               NPN_LWLT_AMT,
+               NPN_UPLMT_AMT,
+               HLTHINS_LABRR_RT,
+               HLTHINS_BSNM_RT,
+               LTCI_HLTHINS_RT,
+               LTCI_LABRR_RT,
+               LTCI_BSNM_RT,
+               EMPLYMINSRNC_LABRR_RT,
+               EMPLYMINSRNC_BSNM_RT,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MPS_SNLRC_TARIFF A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="changeDe != null and changeDe != ''">
+                AND CHANGE_DE = #{changeDe}
+            </if>
+        </trim>
+    </select>
+
+    <insert id="insertMpsSnlrcTariff" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mps.bas.mpsbas002.service.impl.Mpsbas002Mapper.insertMpsSnlrcTariff */
+        INSERT INTO MPS_SNLRC_TARIFF
+        (
+            CHANGE_DE,
+            NPN_LABRR_RT,
+            NPN_BSNM_RT,
+            NPN_LWLT_AMT,
+            NPN_UPLMT_AMT,
+            HLTHINS_LABRR_RT,
+            HLTHINS_BSNM_RT,
+            LTCI_HLTHINS_RT,
+            LTCI_LABRR_RT,
+            LTCI_BSNM_RT,
+            EMPLYMINSRNC_LABRR_RT,
+            EMPLYMINSRNC_BSNM_RT,
+            REG_DT,
+            REG_ID
+        )
+        VALUES
+        (
+            #{changeDe},
+            #{npnLabrrRt},
+            #{npnBsnmRt},
+            #{npnLwltAmt},
+            #{npnUplmtAmt},
+            #{hlthinsLabrrRt},
+            #{hlthinsBsnmRt},
+            #{ltciHlthinsRt},
+            #{ltciLabrrRt},
+            #{ltciBsnmRt},
+            #{emplyminsrncLabrrRt},
+            #{emplyminsrncBsnmRt},
+            SYSDATE,
+            #{regId}
+        )
+    </insert>
+
+    <update id="updateMpsSnlrcTariff" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mps.bas.mpsbas002.service.impl.Mpsbas002Mapper.updateMpsSnlrcTariff */
+        UPDATE MPS_SNLRC_TARIFF SET
+
+               NPN_LABRR_RT= #{npnLabrrRt},
+               NPN_BSNM_RT= #{npnBsnmRt},
+               NPN_LWLT_AMT= #{npnLwltAmt},
+               NPN_UPLMT_AMT= #{npnUplmtAmt},
+               HLTHINS_LABRR_RT= #{hlthinsLabrrRt},
+               HLTHINS_BSNM_RT= #{hlthinsBsnmRt},
+               LTCI_HLTHINS_RT= #{ltciHlthinsRt},
+               LTCI_LABRR_RT= #{ltciLabrrRt},
+               LTCI_BSNM_RT= #{ltciBsnmRt},
+               EMPLYMINSRNC_LABRR_RT= #{emplyminsrncLabrrRt},
+               EMPLYMINSRNC_BSNM_RT= #{emplyminsrncBsnmRt},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+               AND CHANGE_DE = #{changeDe}
+        </trim>
+    </update>
+
+    <delete id="deleteMpsSnlrcTariff" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mps.bas.mpsbas002.service.impl.Mpsbas002Mapper.deleteMpsSnlrcTariff */
+        DELETE FROM MPS_SNLRC_TARIFF
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND CHANGE_DE = #{changeDe}
+        </trim>
+    </delete>
+</mapper>

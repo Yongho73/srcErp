@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mhs.hrm.mhshrm008.service.mapper.Mhshrm008Mapper">
+
+    <select id="selectMhsDeptList" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm008.service.impl.Mhshrm008Mapper.selectMhsDeptList */
+        SELECT
+               DEPT_CODE,
+               DEPT_KOR_NM,
+               DEPT_ENG_NM,
+               DEPT_ABRV,
+               BPLC_CODE,
+               FNC_DATESTR(UPPER_DEPT_CODE) AS UPPER_DEPT_CODE,
+               DEPT_LVL,
+               ORGNZT_LVL,
+               DEPT_TELNO,
+               DEPT_FAX_TELNO,
+               FNC_DATESTR(USE_BEGIN_DE) AS USE_BEGIN_DE,
+               USE_AT,
+               DEPT_SE,
+               OUTPT_ORDR,
+               TO_CHAR(REG_DT,'YYYY-MM-DD HH24:MI:SS') AS REG_DT,
+               REG_ID,
+               TO_CHAR(UPT_DT,'YYYY-MM-DD HH24:MI:SS') AS UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_DEPT A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="deptKorNm != null and deptKorNm != ''">
+                AND DEPT_KOR_NM  LIKE '%' || #{deptKorNm} || '%' 
+            </if>
+ 
+            <if test="deptCode != null and deptCode != ''">
+                AND DEPT_CODE  LIKE '%' || #{deptCode} || '%' 
+            </if>
+ 
+        </trim>
+    </select>
+
+    <select id="selectMhsDept" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm008.service.impl.Mhshrm008Mapper.selectMhsDept */
+        SELECT
+               DEPT_CODE,
+               DEPT_KOR_NM,
+               DEPT_ENG_NM,
+               DEPT_ABRV,
+               BPLC_CODE,
+               FNC_DATESTR(UPPER_DEPT_CODE) AS UPPER_DEPT_CODE,
+               DEPT_LVL,
+               ORGNZT_LVL,
+               DEPT_TELNO,
+               DEPT_FAX_TELNO,
+               FNC_DATESTR(USE_BEGIN_DE) AS USE_BEGIN_DE,
+               USE_AT,
+               DEPT_SE,
+               OUTPT_ORDR,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_DEPT A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="deptCode != null and deptCode != ''">
+                AND DEPT_CODE = #{deptCode}
+            </if>
+        </trim>
+    </select>
+
+    <insert id="insertMhsDept" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm008.service.impl.Mhshrm008Mapper.insertMhsDept */
+        INSERT INTO MHS_DEPT
+        (
+            DEPT_CODE,
+            DEPT_KOR_NM,
+            DEPT_ENG_NM,
+            DEPT_ABRV,
+            BPLC_CODE,
+            UPPER_DEPT_CODE,
+            DEPT_LVL,
+            ORGNZT_LVL,
+            DEPT_TELNO,
+            DEPT_FAX_TELNO,
+            USE_BEGIN_DE,
+            USE_AT,
+            DEPT_SE,
+            OUTPT_ORDR,
+            REG_DT,
+            REG_ID
+        )
+        VALUES
+        (
+            #{deptCode},
+            #{deptKorNm},
+            #{deptEngNm},
+            #{deptAbrv},
+            #{bplcCode},
+            #{upperDeptCode},
+            #{deptLvl},
+            #{orgnztLvl},
+            #{deptTelno},
+            #{deptFaxTelno},
+            #{useBeginDe},
+            #{useAt},
+            #{deptSe},
+            #{outptOrdr},
+            SYSDATE,
+            #{regId}
+        )
+    </insert>
+
+    <update id="updateMhsDept" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm008.service.impl.Mhshrm008Mapper.updateMhsDept */
+        UPDATE MHS_DEPT SET
+
+               DEPT_KOR_NM= #{deptKorNm},
+               DEPT_ENG_NM= #{deptEngNm},
+               DEPT_ABRV= #{deptAbrv},
+               BPLC_CODE= #{bplcCode},
+               UPPER_DEPT_CODE= #{upperDeptCode},
+               DEPT_LVL= #{deptLvl},
+               ORGNZT_LVL= #{orgnztLvl},
+               DEPT_TELNO= #{deptTelno},
+               DEPT_FAX_TELNO= #{deptFaxTelno},
+               USE_BEGIN_DE= #{useBeginDe},
+               USE_AT= #{useAt},
+               DEPT_SE= #{deptSe},
+               OUTPT_ORDR= #{outptOrdr},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+               AND DEPT_CODE = #{deptCode}
+        </trim>
+    </update>
+
+    <delete id="deleteMhsDept" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm008.service.impl.Mhshrm008Mapper.deleteMhsDept */
+        DELETE FROM MHS_DEPT
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND DEPT_CODE = #{deptCode}
+        </trim>
+    </delete>
+</mapper>

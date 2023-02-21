@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html class="no-js" lang="ko">
+<HEAD>
+<meta charset="utf-8">
+<LINK href="../img/icon/dbv.ico" rel="shortcut icon" type="image/x-icon">
+
+<TITLE>XERP</TITLE>
+
+<LINK href="../css/dhtmlx/skin/dhtmlx.css" rel="stylesheet" type="text/css">
+<LINK href="../glyphicons/css/bootstrap-glyphicons.css" rel="stylesheet" type="text/css">
+
+<!-- jquery -->
+<SCRIPT src="../js/jquery-1.11.1.min.js"></SCRIPT>
+<SCRIPT src="../js/jquery-ui-custom.min.js"></SCRIPT>
+ 
+<!-- css -->
+
+<LINK href="../css/default.css" rel="stylesheet" type="text/css">
+<LINK href="../css/contents.css" rel="stylesheet" type="text/css">
+<LINK href="../css/table.css" rel="stylesheet" type="text/css">
+
+</HEAD>
+
+
+<body>
+	<!--컨텐츠-->
+		<div class="path_info" style="">
+            <ul id="menu_path" style=""><li><a class="home" href="#n"></a></li><li><a href="#"> 프로젝트관리 </a></li><li><a href="#"> 프로젝트관리</a></li></ul>
+        </div>
+        
+        <DIV class="btn" style="float:right;text-align:right; vertical-align:middle;" title="저장">
+				<BUTTON class="btn_common02_new" id="btnDelete" type="button">
+					<SPAN class="glyphicon glyphicon-ok"></SPAN> 저장
+				</BUTTON>
+				<BUTTON class="btn_common02_new" id="btn_help" type="button" title="도움말">
+					<SPAN class="glyphicon glyphicon-question-sign"></SPAN>
+				</BUTTON>
+				<BUTTON class="btn_common02_new" id="btnRemove" type="button" title="닫기">
+					<SPAN class="glyphicon glyphicon-remove"></SPAN>
+				</BUTTON>
+			</DIV>
+      
+       
+    <div class="project_tit_div">
+    	<ul class="project_tit_ul">
+    		<li class="project_tit_li">2020년 서울시 급여관리시스템 통합 재개발</li>
+    		<li>홍길동<span class="ml5">대리</span><span class="ml5">02-1234-5678</span></li>
+    	</ul>    
+    </div>
+    
+    <div class="project_tab2_div mt10">
+		<ul class="project_tab2">
+			<a href=""><li class="">기본사항</li></a>
+			<a href=""><li class="">인력</li></a>
+			<a href=""><li class="">예산</li></a>
+			<a href=""><li class="active">협력계약</li></a>
+			<a href=""><li class="">이슈위험</li></a>
+			<a href=""><li class="">산출물</li></a>
+		</ul>
+	</div>
+	
+	<DIV class="mt10">
+			
+		
+		<div class="" style="display:inline-block;width:37%; float:left;margin-right:10px;border:1px solid red;">
+			dhtml 영역
+		</div>
+		
+		<div class="detail_type022" style="width:60%; float:right;">
+			<table>
+				<caption>프로젝트 기본사항</caption>
+				
+				<colgroup>
+					<col style="width:100px;min-width:100px;" />
+					<col style="width:150px;min-width:150px;" />
+					<col style="width:100px;min-width:100px;" />
+					<col style="width:150px;min-width:150px;" />
+					<col style="width:100px;min-width:100px;" />
+					<col style="width:150px;min-width:150px;">
+				</colgroup>
+				<tbody>
+					<tr>
+						<th><label>계약일자</label></th>
+						<td><input type="text" title="계약일자"></td>
+						<th><label>계약사명</label></th>
+						<td><input type="text" title="계약사명" style="width:100px"><button class="btn_common03" id="btnCodeSearch" type="button">
+                    		<span class="glyphicon  glyphicon glyphicon-search"> </span>
+                			</button></td>
+						<th><label>계약금액</label></th>
+						<td><input type="text" title="계약금액"></td>
+					</tr>
+					<tr>
+						<th><label>담당자명</label></th>
+						<td><input type="text" title="담당자명"></td>
+						<th><label>직위</label></th>
+						<td><input type="text" title="직위"></td>
+						<th><label>연락처</label></th>
+						<td><input type="text" title="연락처"></td>
+					</tr>
+					<tr>
+						<th><label>휴대전화</label></th>
+						<td><input type="text" title="휴대전화"></td>
+						<th><label>이메일</label></th>
+						<td colspan="3"><input type="text" title="이메일" style="width:98%"></td>
+					</tr>
+					<tr>
+						<th><label>부가세포함여부</label></th>
+						<td class="al"><div class="checks etrans">
+							  <input type="checkbox" id="ex_chk10"> 
+							  <label for="ex_chk10"></label> 
+							</div>
+						</td>
+						<th><label>계약기간</label></th>
+						<td colspan="3" class="al"><input type="text" title="계약기간" style="width:80px"> ~ <input type="text" title="계약기간" style="width:80px"></td>
+					</tr>	
+					<tr>
+						<th>계약내용</th>
+						<td colspan="5"><textarea id="txtBox" title="내용" style="width:98%;height:60px;"></textarea></td>						
+					</tr>
+
+				</tbody>
+			</table>
+		</div><!--//baseForm-->
+	</div>
+	
+	
+	
+	
+</BODY>
+</HTML>

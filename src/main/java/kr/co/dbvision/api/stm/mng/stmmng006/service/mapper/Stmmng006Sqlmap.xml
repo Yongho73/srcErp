@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.stm.mng.stmmng006.service.mapper.Stmmng006Mapper">
+
+    <select id="selectUser" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.stm.mng.stmmng006.service.impl.Stmmng006Mapper.selectUser */
+        SELECT USER_ID,
+               A.EMPNO,
+               USER_NM,
+               USER_IP,
+               EMPL_AT,
+               A.USE_AT,
+               C.DEPT_KOR_NM AS DEPT_NM,
+               CASE WHEN A.USE_AT ='1' THEN '사용중' ELSE '중지' END USE_AT_NM,
+               (SELECT LISTAGG(SC.CODE_KOR_NM, ',') WITHIN GROUP(ORDER BY SR.ROLE_CODE) 
+                  FROM STM_ROLEUSER SR , STM_CODE SC
+                 WHERE SR.ROLE_CODE = SC.CODE
+                   AND SR.USER_ID = A.USER_ID) ROLE_NM
+          FROM STM_USERS A, MHS_EMP B ,MHS_DEPT C
+          WHERE A.EMPNO =B.EMPNO
+          AND B.DEPT_CODE =C.DEPT_CODE
+          AND B.BPLC_CODE =C.BPLC_CODE
+               
+           <if test="userNm != null and userNm != ''">
+              AND A.USER_NM like '%' || #{userNm} || '%'
+           </if>
+           <if test="userId != null and userId != ''">
+              AND A.USER_ID like '%' || #{userId} || '%'
+           </if>
+             
+      ORDER BY USER_ID
+      
+    </select>
+
+    <select id="selectMenu" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.stm.mng.stmmng006.service.impl.Stmmng006Mapper.selectMenu */
+        SELECT NVL(UPPER_MENU_ID, 'ROOT') AS UPPER_MENU_ID,
+               MENU_ID,
+               MENU_NM,
+               MENU_SE,
+               ORDR,
+               (SELECT PCKAGE_NM FROM STM_PROGRM WHERE PROGRM_ID = A.MENU_ID) AS PCKAGE_NM,
+               (SELECT SUB_PCKAGE_ID FROM STM_PROGRM WHERE PROGRM_ID = A.MENU_ID) AS SUB_PCKAGE_ID,
+               PROGRM_ID,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+          FROM STM_MENU A
+         WHERE MENU_USE_AT = '1'
+         START WITH MENU_ID = 'CHF000000'
+        CONNECT BY PRIOR MENU_ID = UPPER_MENU_ID
+         ORDER SIBLINGS BY ORDR
+    </select>
+
+    <select id="selectUserMenu" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.stm.mng.stmmng006.service.impl.Stmmng006Mapper.selectUserMenu */
+        SELECT * FROM (
+        SELECT NVL(UPPER_MENU_ID,'ROOT') AS UPPER_MENU_ID,
+               MENU_ID,
+               MENU_NM,
+               MENU_SE,
+               ORDR,
+               (SELECT PCKAGE_NM FROM STM_PROGRM WHERE PROGRM_ID = A.MENU_ID) AS PCKAGE_NM,
+               (SELECT SUB_PCKAGE_ID FROM STM_PROGRM WHERE PROGRM_ID = A.MENU_ID) AS SUB_PCKAGE_ID,
+               PROGRM_ID,
+               #{userId} USER_ID,
+               NVL((SELECT USER_NM FROM STM_USERS WHERE USER_ID = #{userId} AND ROWNUM = 1),'0') AS USER_NM,
+               NVL((SELECT INQIRE_AUTHOR_AT FROM STM_USERMENU WHERE USER_ID = #{userId} AND MENU_ID = A.MENU_ID),'0') AS INQIRE_AUTHOR_AT,
+               NVL((SELECT REGIST_AUTHOR_AT FROM STM_USERMENU WHERE USER_ID = #{userId} AND MENU_ID = A.MENU_ID),'0') AS REGIST_AUTHOR_AT,
+               NVL((SELECT UPDT_AUTHOR_AT FROM STM_USERMENU WHERE USER_ID = #{userId} AND MENU_ID = A.MENU_ID),'0') AS UPDT_AUTHOR_AT,
+               NVL((SELECT DELETE_AUTHOR_AT FROM STM_USERMENU WHERE USER_ID = #{userId} AND MENU_ID = A.MENU_ID),'0') AS DELETE_AUTHOR_AT,
+               NVL((SELECT PRNTNG_AUTHOR_AT FROM STM_USERMENU WHERE USER_ID = #{userId} AND MENU_ID = A.MENU_ID),'0') AS PRNTNG_AUTHOR_AT,
+               NVL((SELECT EXCEL_AUTHOR_AT FROM STM_USERMENU WHERE USER_ID = #{userId} AND MENU_ID = A.MENU_ID),'0') AS EXCEL_AUTHOR_AT,
+               NVL((SELECT DATA_AUTHOR_SE FROM STM_USERMENU WHERE USER_ID = #{userId} AND MENU_ID = A.MENU_ID),'0') AS DATA_AUTHOR_SE,
+               DECODE((SELECT DELETE_AT FROM STM_USERMENU WHERE USER_ID = #{userId} AND MENU_ID = A.MENU_ID), '0', '1', '0') AS MENU_AT,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+          FROM STM_MENU A
+         WHERE MENU_USE_AT = '1'         
+         START WITH MENU_ID = 'CHF000000'
+    CONNECT BY PRIOR MENU_ID = UPPER_MENU_ID ORDER SIBLINGS BY ORDR) A
+         WHERE A.MENU_ID != 'CHF000000'
+    </select>
+
+    <select id="selectUserMenuOnly" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.stm.mng.stmmng006.service.impl.Stmmng006Mapper.selectUserMenuOnly */
+        SELECT MENU_ID
+          FROM STM_USERMENU A
+         WHERE USER_ID = #{userId}
+    </select>
+
+    <select id="selectUserMenuDetail" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.stm.mng.stmmng006.service.impl.Stmmng006Mapper.selectUserMenuDetail */
+        SELECT USER_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = #{userId} AND ROWNUM = 1) AS USER_NM,
+               MENU_ID,
+               INQIRE_AUTHOR_AT,
+               REGIST_AUTHOR_AT,
+               UPDT_AUTHOR_AT,
+               DELETE_AUTHOR_AT,
+               PRNTNG_AUTHOR_AT,
+               EXCEL_AUTHOR_AT,
+               DATA_AUTHOR_SE,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+          FROM STM_USERMENU A
+         WHERE USER_ID = #{userId}
+           AND MENU_ID = #{menuId}
+    </select>
+
+    <insert id="insertUserMenu" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.stm.mng.stmmng006.service.impl.Stmmng006Mapper.insertUserMenu */
+        INSERT INTO STM_USERMENU (
+               USER_ID,
+               MENU_ID,
+               INQIRE_AUTHOR_AT,
+               REGIST_AUTHOR_AT,
+               UPDT_AUTHOR_AT,
+               DELETE_AUTHOR_AT,
+               PRNTNG_AUTHOR_AT,
+               EXCEL_AUTHOR_AT,
+               DATA_AUTHOR_SE,
+               DELETE_AT,
+               REG_DT,
+               REG_ID
+        ) VALUES (
+                #{userId}
+               ,#{menuId}
+               ,#{inqireAuthorAt}
+               ,#{registAuthorAt}
+               ,#{updtAuthorAt}
+               ,#{deleteAuthorAt}
+               ,#{prntngAuthorAt}
+               ,#{excelAuthorAt}
+               ,#{dataAuthorSe}
+               ,#{deleteAt}
+               ,SYSDATE
+               ,#{regId}
+        )
+    </insert>
+
+    <update id="updateUserMenu" parameterType="EgovMapForNull">
+       /* kr.co.dbvision.api.stm.mng.stmmng006.service.impl.Stmmng006Mapper.updateUserMenu */
+       MERGE INTO STM_USERMENU A USING (SELECT #{userId} USER_ID, #{menuId} MENU_ID FROM DUAL) B 
+          ON (A.USER_ID = B.USER_ID AND A.MENU_ID = B.MENU_ID)
+        WHEN MATCHED THEN
+	        UPDATE SET
+	               INQIRE_AUTHOR_AT = #{inqireAuthorAt},
+	               REGIST_AUTHOR_AT = #{registAuthorAt},
+	               UPDT_AUTHOR_AT = #{updtAuthorAt},
+	               DELETE_AUTHOR_AT = #{deleteAuthorAt},
+	               PRNTNG_AUTHOR_AT = #{prntngAuthorAt},
+	               EXCEL_AUTHOR_AT = #{excelAuthorAt},
+	               DATA_AUTHOR_SE = #{dataAuthorSe},
+	               DELETE_AT = '0',
+	               UPT_DT = SYSDATE,
+	               UPT_ID = #{uptId}
+        WHEN NOT MATCHED THEN                
+	        INSERT (
+	               USER_ID,
+	               MENU_ID,
+	               INQIRE_AUTHOR_AT,
+	               REGIST_AUTHOR_AT,
+	               UPDT_AUTHOR_AT,
+	               DELETE_AUTHOR_AT,
+	               PRNTNG_AUTHOR_AT,
+	               EXCEL_AUTHOR_AT,
+	               DATA_AUTHOR_SE,
+	               DELETE_AT,
+	               REG_DT,
+	               REG_ID
+	        ) VALUES (
+	                #{userId}
+	               ,#{menuId}
+	               ,#{inqireAuthorAt}
+	               ,#{registAuthorAt}
+	               ,#{updtAuthorAt}
+	               ,#{deleteAuthorAt}
+	               ,#{prntngAuthorAt}
+	               ,#{excelAuthorAt}
+	               ,#{dataAuthorSe}
+	               ,'0'
+	               ,SYSDATE
+	               ,#{regId}
+	        )
+    </update>
+
+    <delete id="deleteUserMenu" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.stm.mng.stmmng006.service.impl.Stmmng006Mapper.deleteUserMenu */
+        DELETE FROM STM_USERMENU 
+         WHERE USER_ID = #{userId}         
+           AND MENU_ID = #{menuId}       	 
+    </delete>
+    
+    <delete id="deleteUserMenuAll" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.stm.mng.stmmng006.service.impl.Stmmng006Mapper.deleteUserMenuAll */
+        DELETE FROM STM_USERMENU
+         WHERE USER_ID = #{userId}          
+    </delete>
+
+</mapper>

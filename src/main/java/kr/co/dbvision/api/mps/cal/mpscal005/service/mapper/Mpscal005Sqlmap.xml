@@ -1,0 +1,388 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mps.cal.mpscal005.service.mapper.Mpscal005Mapper">
+    
+    <select id="selectMpscalEmpList" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.cal.mpscal013.service.mapper.Mpscal013Mapper.selectMpscalEmpList */
+               SELECT
+                        A.APPLC_YM,
+                        A.PYMNT_SN,
+                        A.EMPNO,
+                        A.EMP_SE_CODE,
+                        A.ACNUT_NO,
+                        A.BANK_CODE,
+                        A.DPSTR_NM,
+                        B.BPLC_CODE,
+                        FNC_GETCLSFNM(B.CLSF_CODE) AS CLSF_CODE_NM,
+                        B.KOR_NM,
+                        FNC_GETDEPTNM(B.DEPT_CODE) AS DEPT_CODE_NM,
+                        TO_CHAR(TO_DATE(B.ECNY_DE),'YYYY-MM-DD') AS ECNY_DE,
+                        TO_CHAR(TO_DATE(B.RETIRE_DE),'YYYY-MM-DD') AS RETIRE_DE,
+                        B.OFCPS_CODE,
+                        FNC_COMCODENM('C252',B.OFCPS_CODE) AS OFCPS_CODE_NM,  
+                        FNC_COMCODENM('C068',B.EMPL_SE) AS EMPL_SE_NM,
+                        FNC_GETJSSFCNM(B.JSSFC_CODE) AS JSSFC_CODE_NM,
+                        FNC_COMCODENM('C103',B.JBLN_CODE) AS DTY_CODE_NM,
+                        FNC_GETRSPOFCNM(B.RSPOFC_CODE) AS RSPOFC_CODE_NM,
+                        FNC_COMCODENM('C285',B.SRCLS_CODE) AS SRCLS_CODE_NM,
+                        FNC_COMCODENM('C067',B.SALARY_APRP_CODE) AS SALARY_APRP_CODE_NM
+                   FROM MPS_SALARY_TRGTER A, MHS_EMP B
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                    A.EMPNO = B.EMPNO
+<!--                 AND B.HFFS_SE = 'J01'  재직인 list -->
+            <if test="applcYm != null and applcYm != ''">
+                AND A.APPLC_YM = REPLACE(#{applcYm}, '-', '')
+            </if>
+            <if test="empno != null and empno != ''">
+                AND A.EMPNO = #{empno}
+            </if>
+            <if test="pymntSn != null and pymntSn != ''">
+                AND A.PYMNT_SN = #{pymntSn}
+            </if>
+            <if test="korNm != null and korNm != ''">
+                AND B.KOR_NM = #{korNm}
+            </if>
+            <if test="deptCode != null and deptCode != ''">
+               AND B.DEPT_CODE = #{deptCode}
+            </if>
+            <if test="deptCodeNm != null and deptCodeNm != ''">
+                AND FNC_GETDEPTNM(B.DEPT_CODE) = #{deptCodeNm}
+            </if>
+        </trim>
+             ORDER BY A.EMPNO
+    </select>
+    
+    <select id="selectMpscal005List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.cal.mpscal005.service.mapper.Mpscal005Mapper.selectMpscal005List */
+        SELECT
+               B.APPLC_YM,
+               B.PYMNT_SN,
+               B.EMPNO,
+               B.SALARYTY_CODE,
+               FNC_COMCODENM('C062', B.SALARYTY_CODE)  AS SALARYTY_NM,
+               B.SALARYITEM_CODE,
+               B.TOT_SALARY_AMT,
+               B.TAXT_AMT,
+               B.TAXE_STTEMNT_AMT,
+               B.TAXE_STMT_EXCL_AMT,
+               B.ACNUT_SE_CODE,
+               A.SALARYITEM_NM,
+               FNC_COMCODENM ('C064',a.PYMNTDDC_SE) AS PYMNTDDC_SE
+               
+         FROM MPS_SALARYITEM A, MPS_SALARY_PYMNT B
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND A.SALARYITEM_CODE = B.SALARYITEM_CODE 
+                AND A.PYMNTDDC_SE = 001
+            <if test="pymntSn != null and pymntSn != ''">
+                AND PYMNT_SN = #{pymntSn}
+            </if>
+            <if test="empno != null and empno != ''">
+                AND B.EMPNO = #{empno}
+            </if>
+            <if test="applcYm != null and applcYm != ''">
+               AND B.APPLC_YM = REPLACE(#{applcYm}, '-', '')
+            </if>
+        </trim>
+    </select>
+    
+    <select id="selectMpscal005ItemList" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.cal.mpscal005.service.mapper.Mpscal005Mapper.selectMpscal005ItemList */
+        SELECT
+               B.APPLC_YM,
+               B.PYMNT_SN,
+               B.EMPNO,
+               B.SALARYTY_CODE,
+               FNC_COMCODENM('C062', B.SALARYTY_CODE)  AS SALARYTY_NM,
+               B.SALARYITEM_CODE,
+               B.TOT_SALARY_AMT,
+               B.TAXT_AMT,
+               B.TAXE_STTEMNT_AMT,
+               B.TAXE_STMT_EXCL_AMT,
+               B.ACNUT_SE_CODE,
+               A.SALARYITEM_NM,
+               FNC_COMCODENM ('C064',a.PYMNTDDC_SE) AS PYMNTDDC_SE
+               
+         FROM MPS_SALARYITEM A, MPS_SALARY_PYMNT B
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND A.SALARYITEM_CODE = B.SALARYITEM_CODE 
+                AND A.PYMNTDDC_SE = 002
+            <if test="pymntSn != null and pymntSn != ''">
+                AND PYMNT_SN = #{pymntSn}
+            </if>
+            <if test="empno != null and empno != ''">
+                AND B.EMPNO = #{empno}
+            </if>
+            <if test="applcYm != null and applcYm != ''">
+               AND B.APPLC_YM = REPLACE(#{applcYm}, '-', '')
+            </if>
+        </trim>
+    </select>
+    
+    <select id="selectMpscal005SUM" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.cal.mpscal005.service.mapper.Mpscal005Mapper.selectMpscal005SUM */
+        SELECT '과세/비과세' AS GB,
+               SUM(DECODE(C.TAXT_AT,'N',(CASE WHEN NVL(B.TOT_SALARY_AMT,0) = C.LMT_AMT THEN 0 ELSE (B.TOT_SALARY_AMT - C.LMT_AMT) END),B.TOT_SALARY_AMT)) AS AMT1,
+               SUM(DECODE(C.TAXT_AT,'N',(CASE WHEN NVL(B.TOT_SALARY_AMT,0) = C.LMT_AMT THEN B.TOT_SALARY_AMT ELSE C.LMT_AMT END),0)) AS AMT2
+          FROM MPS_SALARYITEM A, MPS_SALARY_PYMNT B, MPS_ITEM_STDR C , MHS_EMP D
+          
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                  AND A.SALARYITEM_CODE = B.SALARYITEM_CODE
+                  AND A.PYMNTDDC_SE = '001'
+                  AND B.SALARYTY_CODE = C.SALARYTY_CODE
+                  AND B.SALARYITEM_CODE = C.SALARYITEM_CODE
+                  AND B.EMPNO = D.EMPNO
+            <if test="pymntSn != null and pymntSn != ''">
+                AND B.PYMNT_SN = #{pymntSn}
+            </if>
+            <if test="applcYm != null and applcYm != ''">
+                AND B.APPLC_YM = REPLACE(#{applcYm}, '-', '')
+            </if>
+            <if test="empno != null and empno != ''">
+                AND B.EMPNO = #{empno}
+            </if>
+        </trim>
+    </select>
+    
+
+    <select id="selectMpscal005" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.cal.mpscal005.service.mapper.Mpscal005Mapper.selectMpscal005 */
+        SELECT
+               APPLC_YM,
+               PYMNT_SN,
+               EMPNO,
+               SALARYTY_CODE,
+               SALARYITEM_CODE,
+               TOT_SALARY_AMT,
+               TAXT_AMT,
+               TAXE_STTEMNT_AMT,
+               TAXE_STMT_EXCL_AMT,
+               ACNUT_SE_CODE,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MPS_SALARY_PYMNT A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="applcYm != null and applcYm != ''">
+                AND APPLC_YM = #{applcYm}
+            </if>
+            <if test="pymntSn != null and pymntSn != ''">
+                AND PYMNT_SN = #{pymntSn}
+            </if>
+            <if test="empno != null and empno != ''">
+                AND EMPNO = #{empno}
+            </if>
+            <if test="salarytyCode != null and salarytyCode != ''">
+                AND SALARYTY_CODE = #{salarytyCode}
+            </if>
+            <if test="salaryitemCode != null and salaryitemCode != ''">
+                AND SALARYITEM_CODE = #{salaryitemCode}
+            </if>
+        </trim>
+    </select>
+    <select id="selectMpscalSUM" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.cal.mpscal005.service.mapper.Mpscal005Mapper.selectMpscalSUM */
+            SELECT '과세비과세' AS GB,B.SALARYTY_CODE,'' AS SALARYITEM_CODE,
+                    SUM(DECODE(C.TAXT_AT,'N',(CASE WHEN NVL(B.TOT_SALARY_AMT,0) = C.LMT_AMT THEN 0 ELSE (B.TOT_SALARY_AMT - C.LMT_AMT) END),B.TOT_SALARY_AMT)) AS total_A01,
+                    SUM(DECODE(C.TAXT_AT,'N',(CASE WHEN NVL(B.TOT_SALARY_AMT,0) = C.LMT_AMT THEN B.TOT_SALARY_AMT ELSE C.LMT_AMT END),0)) AS total_A02 
+              FROM MPS_SALARYITEM A, MPS_SALARY_PYMNT B, MPS_ITEM_STDR C
+             WHERE B.APPLC_YM = REPLACE(#{applcYm}, '-', '')
+               AND B.PYMNT_SN = #{pymntSn}
+               AND A.SALARYITEM_CODE = B.SALARYITEM_CODE
+               AND A.PYMNTDDC_SE = '001'
+               AND B.SALARYTY_CODE = C.SALARYTY_CODE
+               AND B.SALARYITEM_CODE = C.SALARYITEM_CODE
+          GROUP BY B.SALARYTY_CODE
+         UNION ALL
+            SELECT '지급합' AS GB,B.SALARYTY_CODE,'' AS SALARYITEM_CODE,
+                   SUM(B.TOT_SALARY_AMT) AS total_B01, 0 AS total_B02    
+              FROM MPS_SALARYITEM A, MPS_SALARY_PYMNT B, MPS_ITEM_STDR C
+             WHERE B.APPLC_YM = REPLACE(#{applcYm}, '-', '')
+               AND B.PYMNT_SN = #{pymntSn}
+               AND A.SALARYITEM_CODE = B.SALARYITEM_CODE
+               AND A.PYMNTDDC_SE = '001'
+               AND B.SALARYTY_CODE = C.SALARYTY_CODE
+               AND B.SALARYITEM_CODE = C.SALARYITEM_CODE
+          GROUP BY B.SALARYTY_CODE
+         UNION ALL
+            SELECT '공제내역' AS GB,B.SALARYTY_CODE,B.SALARYITEM_CODE,
+                   SUM(B.TOT_SALARY_AMT) AS total_C01, 0 AS total_C02
+              FROM MPS_SALARYITEM A, MPS_SALARY_PYMNT B
+             WHERE B.APPLC_YM = REPLACE(#{applcYm}, '-', '')
+               AND B.PYMNT_SN = #{pymntSn}
+               AND A.SALARYITEM_CODE = B.SALARYITEM_CODE
+               AND A.PYMNTDDC_SE = '002'
+          GROUP BY B.SALARYTY_CODE,B.SALARYITEM_CODE
+         UNION ALL
+            SELECT '공제합' AS GB,B.SALARYTY_CODE,'SUM' AS SALARYITEM_CODE,
+                   SUM(B.TOT_SALARY_AMT) AS total_D01, 0 AS total_D02
+              FROM MPS_SALARYITEM A, MPS_SALARY_PYMNT B
+             WHERE B.APPLC_YM = REPLACE(#{applcYm}, '-', '')
+               AND B.PYMNT_SN = #{pymntSn}
+               AND A.SALARYITEM_CODE = B.SALARYITEM_CODE
+               AND A.PYMNTDDC_SE = '002'
+          GROUP BY B.SALARYTY_CODE
+    </select>
+
+    <update id="saveMpscal005" parameterType="kr.co.dbvision.api.mps.cal.mpscal005.entity.Mpscal005">
+        /* kr.co.dbvision.api.mps.cal.mpscal005.service.mapper.Mpscal005Mapper.saveMpscal005 */
+        MERGE INTO MPS_SALARY_PYMNT A
+             USING (SELECT
+                    #{applcYm} APPLC_YM,
+                    #{pymntSn} PYMNT_SN,
+                    #{empno} EMPNO,
+                    #{salarytyCode} SALARYTY_CODE,
+                    #{salaryitemCode} SALARYITEM_CODE
+                    FROM DUAL) B
+                ON (
+                    A.APPLC_YM = B.APPLC_YM AND 
+                    A.PYMNT_SN = B.PYMNT_SN AND 
+                    A.EMPNO = B.EMPNO AND 
+                    A.SALARYTY_CODE = B.SALARYTY_CODE AND 
+                    A.SALARYITEM_CODE = B.SALARYITEM_CODE
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               TOT_SALARY_AMT= #{totSalaryAmt},
+               TAXT_AMT= #{taxtAmt},
+               TAXE_STTEMNT_AMT= #{taxeSttemntAmt},
+               TAXE_STMT_EXCL_AMT= #{taxeStmtExclAmt},
+               ACNUT_SE_CODE= #{acnutSeCode},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               APPLC_YM,
+               PYMNT_SN,
+               EMPNO,
+               SALARYTY_CODE,
+               SALARYITEM_CODE,
+               TOT_SALARY_AMT,
+               TAXT_AMT,
+               TAXE_STTEMNT_AMT,
+               TAXE_STMT_EXCL_AMT,
+               ACNUT_SE_CODE,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{applcYm},
+               #{pymntSn},
+               #{empno},
+               #{salarytyCode},
+               #{salaryitemCode},
+               #{totSalaryAmt},
+               #{taxtAmt},
+               #{taxeSttemntAmt},
+               #{taxeStmtExclAmt},
+               #{acnutSeCode},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+    <update id="saveMpscalItem" parameterType="kr.co.dbvision.api.mps.cal.mpscal005.entity.Mpscal005">
+        /* kr.co.dbvision.api.mps.cal.mpscal005.service.mapper.Mpscal005Mapper.saveMpscalItem */
+        MERGE INTO MPS_SALARY_PYMNT A
+             USING (SELECT
+                    #{applcYm} APPLC_YM,
+                    #{pymntSn} PYMNT_SN,
+                    #{empno} EMPNO,
+                    #{salarytyCode} SALARYTY_CODE,
+                    #{salaryitemCode} SALARYITEM_CODE
+                    FROM DUAL) B
+                ON (
+                    A.APPLC_YM = B.APPLC_YM AND 
+                    A.PYMNT_SN = B.PYMNT_SN AND 
+                    A.EMPNO = B.EMPNO AND 
+                    A.SALARYTY_CODE = B.SALARYTY_CODE AND 
+                    A.SALARYITEM_CODE = B.SALARYITEM_CODE
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               TOT_SALARY_AMT= #{totSalaryAmt},
+               TAXT_AMT= #{taxtAmt},
+               TAXE_STTEMNT_AMT= #{taxeSttemntAmt},
+               TAXE_STMT_EXCL_AMT= #{taxeStmtExclAmt},
+               ACNUT_SE_CODE= #{acnutSeCode},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               APPLC_YM,
+               PYMNT_SN,
+               EMPNO,
+               SALARYTY_CODE,
+               SALARYITEM_CODE,
+               TOT_SALARY_AMT,
+               TAXT_AMT,
+               TAXE_STTEMNT_AMT,
+               TAXE_STMT_EXCL_AMT,
+               ACNUT_SE_CODE,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{applcYm},
+               #{pymntSn},
+               #{empno},
+               #{salarytyCode},
+               #{salaryitemCode},
+               #{totSalaryAmt},
+               #{taxtAmt},
+               #{taxeSttemntAmt},
+               #{taxeStmtExclAmt},
+               #{acnutSeCode},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deleteMpscal005" parameterType="kr.co.dbvision.api.mps.cal.mpscal005.entity.Mpscal005">
+        /* kr.co.dbvision.api.mps.cal.mpscal005.service.mapper.Mpscal005Mapper.deleteMpscal005 */
+        DELETE FROM MPS_SALARY_PYMNT
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND APPLC_YM = #{applcYm}
+                AND PYMNT_SN = #{pymntSn}
+                AND EMPNO = #{empno}
+                AND SALARYTY_CODE = #{salarytyCode}
+                AND SALARYITEM_CODE = #{salaryitemCode}
+        </trim>
+    </delete>
+    
+    <parameterMap id="spCalc" type="hashmap">
+        <parameter property="applcYm" javaType="String" jdbcType="VARCHAR" mode="IN"/>
+        <parameter property="pymntSn" javaType="String" jdbcType="VARCHAR" mode="IN"/>
+        <parameter property="empno" javaType="String" jdbcType="VARCHAR" mode="IN"/>
+        <parameter property="regId" javaType="String" jdbcType="VARCHAR" mode="IN"/>
+        <parameter property="asReturnCode" javaType="String" jdbcType="VARCHAR" mode="OUT" />
+        <parameter property="asReturnString" javaType="String" jdbcType="VARCHAR" mode="OUT" />
+    </parameterMap>
+ 
+    <select id="MPS_PYMNTDE" parameterMap="spCalc" resultType="egovMapForNull" statementType="CALLABLE">
+        <![CDATA[
+            { CALL SP_MPS_PAYCALC(?,?,?,?,?,?) }
+        ]]>
+    </select>
+   
+</mapper>
+
+

@@ -1,0 +1,505 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mps.bsc.mpsbsc006.service.mapper.Mpsbsc006Mapper">
+
+    <select id="selectComboYearMpsbsc006List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.bsc.mpsbsc006.service.mapper.Mpsbsc006Mapper.selectComboYearMpsbsc006List */
+        SELECT 
+        APPLC_YY AS KEY, 
+        APPLC_YY AS VALUE 
+        FROM
+        (
+                SELECT TO_CHAR(SYSDATE, 'YYYY') AS APPLC_YY FROM DUAL
+                UNION            
+                SELECT
+                       SUBSTR(APPLC_YM, 1, 4) AS APPLC_YY
+                  FROM MPS_PYMNTDE A
+                  GROUP  BY SUBSTR(APPLC_YM, 1 ,4)
+        ) ORDER BY 1 DESC
+                
+    </select>
+
+
+     <select id="selectMpsbsc006MonthList" parameterType="egovMapForNull" resultType="egovMapForNull">
+     /* kr.co.dbvision.api.mps.bsc.mpsbsc006.service.mapper.Mpsbsc006Mapper.selectMpsbsc006MonthList */
+        <![CDATA[
+            SELECT
+                 SUBSTR(BELONG_YM, 1, 4) AS BELONG_YY,
+                 SUBSTR(BELONG_YM, 5, 8) ||'월' AS BELONG_MM
+                 ,BELONG_YM
+            FROM
+            (SELECT TO_CHAR(TO_DATE(#{belongYy}||'01', 'YYYYMM' )+LEVEL-1, 'YYYYMM') AS BELONG_YM
+             FROM DUAL
+             CONNECT BY LEVEL <= (TO_DATE(#{belongYy}||'12', 'YYYYMM') - TO_DATE(#{belongYy}||'01', 'YYYYMM')+ 1))
+             WHERE SUBSTR(BELONG_YM, 1, 4) = #{belongYy}
+             GROUP BY BELONG_YM
+             ORDER BY BELONG_YM ASC
+         ]]>     
+     </select>
+
+
+    <select id="selectMpsbsc006List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.bsc.mpsbsc006.service.mapper.Mpsbsc006Mapper.selectMpsbsc006List */
+        SELECT
+               TO_CHAR(TO_DATE(APPLC_YM, 'YYYYMM' ), 'YYYY-MM') AS APPLC_YM,
+               PYMNT_SN,
+               TO_CHAR(TO_DATE(STDD_DE), 'YYYY-MM-DD') AS STDD_DE,
+               TO_CHAR(TO_DATE(PYMNT_DE), 'YYYY-MM-DD') AS PYMNT_DE,
+               JSSFC_CODE,
+               FNC_GETJSSFCNM(JSSFC_CODE) AS JSSFC_CODE_NM,
+               ACNUT_SE_CODE,
+               PYMNT_DTLS,
+               SALARYTY_CODE,
+               FNC_COMCODENM('C062', SALARYTY_CODE) AS SALARYTY_CODE_NM,
+               CLOS_AT,
+               OTHBC_AT,
+               OTHBC_DT,
+               JSSFC_CODE,
+               ACNUT_SE_CODE
+          FROM MPS_PYMNTDE A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="belongYm != null and belongYm != ''">
+                AND APPLC_YM  = #{belongYm} 
+            </if>
+            <if test="applcYm != null and applcYm != ''">
+                AND APPLC_YM  = REPLACE(#{applcYm}, '-','')
+            </if>
+            <if test="salarytyCode != null and salarytyCode != ''">
+                AND SALARYTY_CODE  = #{salarytyCode}
+            </if>
+            <if test="stDate != null and stDate != ''">
+                <![CDATA[
+                AND PYMNT_DE >= TO_DATE(#{stDate} || '000000','YYYY-MM-DDHH24MISS')
+                ]]>
+            </if>
+            <if test="edDate != null and edDate != ''">
+                <![CDATA[
+                AND PYMNT_DE <= TO_DATE(#{edDate} || '235959','YYYY-MM-DDHH24MISS')
+                ]]>
+             </if>
+        </trim>
+        ORDER BY PYMNT_SN
+    </select>
+    
+    <select id="selectMpsbsc006closAtList" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.bsc.mpsbsc006.service.mapper.Mpsbsc006Mapper.selectMpsbsc006closAtList */
+        SELECT
+               TO_CHAR(TO_DATE(APPLC_YM, 'YYYYMM' ), 'YYYY-MM') AS APPLC_YM,
+               PYMNT_SN,
+               PYMNT_DE,
+               TO_CHAR(TO_DATE(PYMNT_DE), 'YYYY-MM-DD') AS POP_PYMNT_DE,
+               JSSFC_CODE,
+               FNC_GETJSSFCNM(JSSFC_CODE) AS JSSFC_CODE_NM,
+               ACNUT_SE_CODE,
+               PYMNT_DTLS,
+               SALARYTY_CODE,
+               FNC_COMCODENM('C062', SALARYTY_CODE) AS SALARYTY_CODE_NM,
+               CLOS_AT,
+               OTHBC_AT,
+               OTHBC_DT,
+               JSSFC_CODE,
+               ACNUT_SE_CODE
+          FROM MPS_PYMNTDE A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                CLOS_AT  = 0 
+            <if test="applcYm != null and applcYm != ''">
+                AND APPLC_YM  = REPLACE(#{applcYm}, '-','')
+            </if>
+        </trim>
+        ORDER BY PYMNT_SN
+    </select>
+    
+
+
+    <select id="selectItemListMpsbsc006" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.bsc.mpsbsc006.service.mapper.Mpsbsc006Mapper.selectItemListMpsbsc006 */
+        SELECT
+             A.APPLC_YM
+            ,PYMNT_AT
+            ,A.SALARYTY_CODE
+            ,A.PYMNT_SN
+            ,B.SALARYITEM_NM
+            ,B.SALARYITEM_CODE
+            ,FNC_COMCODENM('C062', A.SALARYTY_CODE) AS SALARYTY_CODE_NM
+        FROM MPS_PYMNTTY A, MPS_SALARYITEM B
+        WHERE A.SALARYITEM_CODE(+) =  B.SALARYITEM_CODE
+        AND B.USE_AT = '1'
+           <if test="applcYm != null and applcYm != ''">
+               AND APPLC_YM  = #{applcYm} 
+           </if>
+               AND PYMNT_SN  = #{pymntSn}
+        ORDER BY B.OUTPT_ORDR
+        
+    </select>
+
+    <select id="selectNewItemListMpsbsc006" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.bsc.mpsbsc006.service.mapper.Mpsbsc006Mapper.selectNewItemListMpsbsc006 */
+        
+        SELECT 
+              A.SALARYITEM_CODE
+             ,A.SALARYITEM_NM 
+             ,FNC_COMCODENM('C064', A.PYMNTDDC_SE) AS PYMNTDDC_SE_NM
+             ,A.OUTPT_ORDR
+             ,B.SALARYTY_CODE
+             ,FNC_COMCODENM('C062', B.SALARYTY_CODE) AS SALARYTY_CODE_NM
+             ,'1' PYMNT_AT 
+        FROM MPS_SALARYITEM A ,MPS_ITEM_STDR B
+        WHERE  A.SALARYITEM_CODE = B.SALARYITEM_CODE
+          AND A.USE_AT = '1' 
+          AND B.USE_AT = '1'
+            AND B.SALARYTY_CODE IN 
+                <foreach item="item" index="index" collection="salarytyCodeList" open="(" separator="," close=")"> 
+                #{item} 
+                </foreach>
+        ORDER BY B.SALARYTY_CODE,A.OUTPT_ORDR
+                
+     </select> 
+     
+      <select id="getPymntSnMpsbsc006" parameterType="egovMapForNull" resultType="String">
+        /* kr.co.dbvision.api.mps.bsc.mpsbsc006.service.mapper.Mpsbsc006Mapper.getPymntSnMpsbsc006 */
+        
+         SELECT NVL(MAX(PYMNT_SN),0) +1 AS  PYMNT_SN FROM MPS_PYMNTDE WHERE APPLC_YM = REPLACE(#{applcYm},'-','')
+     </select>
+     
+     <select id="getMaxMpsbsc006" parameterType="egovMapForNull" resultType="String">
+        /* kr.co.dbvision.api.mps.bsc.mpsbsc006.service.mapper.Mpsbsc006Mapper.getMaxMpsbsc006 */
+        
+         SELECT MAX(PYMNT_DE) AS PYMNT_DE
+           FROM MPS_PYMNTDE 
+<!--           WHERE APPLC_YM = REPLACE(#{applcYm},'-','') -->
+          WHERE JSSFC_CODE = #{jssfcCode}
+            AND SALARYTY_CODE = #{salarytyCode}
+     </select>   
+        
+
+    <select id="selectMpsbsc006" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.bsc.mpsbsc006.service.mapper.Mpsbsc006Mapper.selectMpsbsc006 */
+        SELECT
+               APPLC_YM,
+               PYMNT_SN,
+               PYMNT_DE,
+               PYMNT_DTLS,
+               CLOS_AT,
+               OTHBC_AT,
+               OTHBC_DT,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MPS_PYMNTDE A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="applcYm != null and applcYm != ''">
+                AND APPLC_YM = #{applcYm}
+            </if>
+            <if test="pymntSn != null and pymntSn != ''">
+                AND PYMNT_SN = #{pymntSn}
+            </if>
+        </trim>
+    </select>
+
+    <update id="saveMpsbsc006" parameterType="kr.co.dbvision.api.mps.bsc.mpsbsc006.entity.Mpsbsc006">
+        /* kr.co.dbvision.api.mps.bsc.mpsbsc006.service.mapper.Mpsbsc006Mapper.saveMpsbsc006 */
+        MERGE INTO MPS_PYMNTDE A
+             USING (SELECT
+                    REPLACE(#{applcYm},'-','') APPLC_YM,
+                    #{pymntSn} PYMNT_SN
+                    FROM DUAL) B
+                ON (
+                    A.APPLC_YM = B.APPLC_YM AND 
+                    A.PYMNT_SN = B.PYMNT_SN
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+			   STDD_DE= REPLACE(#{stddDe},'-',''),
+               PYMNT_DE= REPLACE(#{pymntDe},'-',''),
+               PYMNT_DTLS= #{pymntDtls},
+               SALARYTY_CODE= #{salarytyCode},
+               CLOS_AT= #{closAt},
+               OTHBC_AT= #{othbcAt},
+               OTHBC_DT= #{othbcDt},
+               JSSFC_CODE= #{jssfcCode},
+               ACNUT_SE_CODE= #{acnutSeCode},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               APPLC_YM,
+               PYMNT_SN,
+               STDD_DE,
+               PYMNT_DE,
+               PYMNT_DTLS,
+               SALARYTY_CODE,
+               CLOS_AT,
+               OTHBC_AT,
+               OTHBC_DT,
+               JSSFC_CODE,
+               ACNUT_SE_CODE,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               REPLACE(#{applcYm},'-',''),
+               #{pymntSn},
+               REPLACE(#{stddDe},'-',''),
+               REPLACE(#{pymntDe},'-',''),
+               #{pymntDtls},
+               #{salarytyCode},
+               #{closAt},
+               #{othbcAt},
+               #{othbcDt},
+               #{jssfcCode},
+               #{acnutSeCode},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <update id="saveSalaryItemMpsbsc006" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mps.bsc.mpsbsc006.service.mapper.Mpsbsc006Mapper.saveSalaryItemMpsbsc006 */
+
+         MERGE INTO MPS_PYMNTTY A
+             USING (SELECT
+                    REPLACE(#{applcYm},'-','') APPLC_YM,
+                    #{pymntSn} PYMNT_SN,
+                    #{salarytyCode} SALARYTY_CODE,
+                    #{salaryitemCode} SALARYITEM_CODE
+                    FROM DUAL) B
+                ON (
+                    A.APPLC_YM = B.APPLC_YM AND 
+                    A.PYMNT_SN = B.PYMNT_SN AND
+                    A.SALARYTY_CODE = B.SALARYTY_CODE  AND
+                    A.SALARYITEM_CODE = B.SALARYITEM_CODE
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+               PYMNT_AT= #{pymntAt},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+               APPLC_YM,
+               PYMNT_SN, 
+               SALARYTY_CODE, 
+               SALARYITEM_CODE, 
+               PYMNT_AT, 
+               REG_DT, 
+               REG_ID
+        ) VALUES (
+               REPLACE(#{applcYm},'-',''),
+               #{pymntSn},
+               #{salarytyCode},
+               #{salaryitemCode},
+               #{pymntAt},
+               SYSDATE,
+               #{regId}
+        )      
+        
+    </update>
+    
+    <update id="saveSalaryItem2Mpsbsc006" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mps.bsc.mpsbsc006.service.mapper.Mpsbsc006Mapper.saveSalaryItem2Mpsbsc006 */
+
+         MERGE INTO MPS_PYMNTTY A
+             USING (SELECT
+                    REPLACE(#{applcYm},'-','') APPLC_YM,
+                    #{pymntSn} PYMNT_SN,
+                    #{salarytyCode} SALARYTY_CODE,
+                    #{salaryitemCode2} SALARYITEM_CODE
+                    FROM DUAL) B
+                ON (
+                    A.APPLC_YM = B.APPLC_YM AND 
+                    A.PYMNT_SN = B.PYMNT_SN AND
+                    A.SALARYTY_CODE = B.SALARYTY_CODE  AND
+                    A.SALARYITEM_CODE = B.SALARYITEM_CODE
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+               PYMNT_AT= #{pymntAt},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+               APPLC_YM,
+               PYMNT_SN, 
+               SALARYTY_CODE, 
+               SALARYITEM_CODE, 
+               PYMNT_AT, 
+               REG_DT, 
+               REG_ID
+        ) VALUES (
+               REPLACE(#{applcYm},'-',''),
+               #{pymntSn},
+               #{salarytyCode},
+               #{salaryitemCode2},
+               #{pymntAt},
+               SYSDATE,
+               #{regId}
+        )      
+        
+    </update>
+
+    <delete id="deleteMpsbsc006" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mps.bsc.mpsbsc006.service.mapper.Mpsbsc006Mapper.deleteMpsbsc006 */
+        DELETE FROM MPS_PYMNTDE
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND APPLC_YM = REPLACE(#{applcYm},'-','') 
+                AND PYMNT_SN = #{pymntSn}
+        </trim>
+    </delete>
+    
+    <delete id="deleteSalaryItemMpsbsc006" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mps.bsc.mpsbsc006.service.mapper.Mpsbsc006Mapper.deleteSalaryItemMpsbsc006 */
+        DELETE FROM MPS_PYMNTTY
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND APPLC_YM = #{applcYm}
+                AND PYMNT_SN = #{pymntSn}
+                AND SALARYTY_CODE = #{salarytyCode}
+                AND SALARYITEM_CODE = #{salaryitemCode}
+        </trim>
+    </delete>
+    
+    <delete id="deleteSalaryItem2Mpsbsc006" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mps.bsc.mpsbsc006.service.mapper.Mpsbsc006Mapper.deleteSalaryItem2Mpsbsc006 */
+        DELETE FROM MPS_PYMNTTY
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND APPLC_YM = #{applcYm}
+                AND PYMNT_SN = #{pymntSn}
+                AND SALARYTY_CODE = #{salarytyCode}
+                AND SALARYITEM_CODE = #{salaryitemCode2}
+        </trim>
+    </delete>
+    
+    <select id="selectMpsbscItemList" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.bsc.mpsbsc006.service.mapper.Mpsbsc006Mapper.selectMpsbscItemList */
+        
+        SELECT
+        #{pymntSn} AS PYMNT_SN,                           
+        #{salarytyCode} AS SALARYTY_CODE,
+        REPLACE(#{applcYm},'-','') AS  APPLC_YM,
+        A.*
+        FROM
+        (
+        SELECT
+        MAX(CHK) AS CHK,
+        MAX(SALARYITEM_CODE) SALARYITEM_CODE,
+        MAX(SALARYITEM_NM) AS SALARYITEM_NM,
+        MAX(CHK2) AS CH2,
+        MAX(SALARYITEM_CODE2) AS SALARYITEM_CODE2,
+        MAX(SALARYITEM_NM2)SALARYITEM_NM2 
+        FROM (
+            SELECT  ROWNUM AS GUBUN, A.*
+            FROM (   
+                SELECT 
+                    DECODE(A.SALARYITEM_CODE, B.SALARYITEM_CODE, '1','0') AS CHK,
+                    B.SALARYITEM_CODE AS SALARYITEM_CODE,
+                    C.SALARYITEM_NM AS SALARYITEM_NM,
+                    C.OUTPT_ORDR AS OUTPT_ORDR,                   
+                    '' AS CHK2,
+                    '' AS SALARYITEM_CODE2,
+                    '' AS SALARYITEM_NM2,
+                    '' AS PYMNT_SN2,
+                    '' AS SALARYTY_CODE2  ,
+                    C.OUTPT_ORDR AS OUTPT_ORDR2
+                FROM MPS_PYMNTTY A,  MPS_ITEM_STDR B, MPS_SALARYITEM C
+                WHERE A.APPLC_YM(+)  = REPLACE(#{applcYm},'-','')  
+                AND A.PYMNT_SN(+) = #{pymntSn}
+                AND A.SALARYITEM_CODE(+) = B.SALARYITEM_CODE
+                AND B.SALARYITEM_CODE = C.SALARYITEM_CODE
+                AND B.SALARYTY_CODE = #{salarytyCode}
+                AND B.USE_AT = '1'            
+                AND C.PYMNTDDC_SE = '001'   
+                ORDER BY C.OUTPT_ORDR
+            )  A     
+            UNION ALL
+                SELECT  ROWNUM AS GUBUN, A.*
+                    FROM (
+                        SELECT 
+                        '' AS CHK,
+                        '' AS SALARYITEM_CODE,
+                        '' AS SALARYITEM_NM,
+                        C.OUTPT_ORDR AS OUTPT_ORDR,
+              
+                DECODE(A.SALARYITEM_CODE, B.SALARYITEM_CODE, '1','0') AS CHK2,
+                    B.SALARYITEM_CODE AS SALARYITEM_CODE2,
+                    C.SALARYITEM_NM  AS SALARYITEM_NM2,
+                    '1' AS PYMNT_SN2,
+                    '001' AS SALARYTY_CODE2,
+                    C.OUTPT_ORDR  AS OUTPT_ORDR2           
+                    FROM MPS_PYMNTTY A,  MPS_ITEM_STDR B, MPS_SALARYITEM C
+                    WHERE A.APPLC_YM(+)  = REPLACE(#{applcYm},'-','') 
+                    AND A.PYMNT_SN(+) = #{pymntSn}
+                    AND A.SALARYITEM_CODE(+) = B.SALARYITEM_CODE
+                    AND B.SALARYITEM_CODE = C.SALARYITEM_CODE
+                    AND B.SALARYTY_CODE = #{salarytyCode}
+                    AND B.USE_AT = '1'            
+                    AND C.PYMNTDDC_SE = '002'    
+                    ORDER BY C.OUTPT_ORDR
+                    ) A 
+            )
+            GROUP BY GUBUN 
+            ORDER BY GUBUN
+        )  A
+    </select>
+
+    <update id="insertCopyApplcYy" parameterType="EgovMapForNull">
+     /* kr.co.dbvision.api.mps.bsc.mpsbsc006.service.mapper.Mpsbsc006Mapper.insertCopyApplcYy */
+        INSERT INTO MPS_PYMNTTY (
+           APPLC_YM, PYMNT_SN, SALARYTY_CODE, SALARYITEM_CODE, PYMNT_AT, 
+           REG_DT, REG_ID, UPT_DT, UPT_ID 
+           ) 
+       SELECT
+           #{applcYm}, A.PYMNT_SN, A.SALARYTY_CODE, A.SALARYITEM_CODE, A.PYMNT_AT, 
+           SYSDATE AS REG_DT, A.REG_ID, A.UPT_DT, A.UPT_ID
+         FROM MPS_PYMNTTY A
+        WHERE A.PYMNT_SN = #{pymntSn} 
+          AND A.APPLC_YM = REPLACE(#{applcYy},'-','')
+    </update>
+    
+    <delete id="deleteApplcYyYear" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mps.bsc.mpsbsc006.service.mapper.Mpsbsc006Mapper.deleteApplcYyYear */
+        DELETE FROM MPS_PYMNTTY WHERE APPLC_YM = REPLACE(#{applcYm},'-','') AND PYMNT_SN = #{pymntSn} 
+    </delete>
+    
+    <update id="insertCopyTrgter" parameterType="EgovMapForNull">
+     /* kr.co.dbvision.api.mps.bsc.mpsbsc006.service.mapper.Mpsbsc006Mapper.insertCopyTrgter */
+        INSERT INTO MPS_SALARY_TRGTER (
+           APPLC_YM, PYMNT_SN, EMPNO, EMP_SE_CODE, ACNUT_NO, BANK_CODE, DPSTR_NM, BPLC_CODE, DEPT_CODE, CLSF_CODE,
+           RSPOFC_CODE , DTY_CODE, SRCLS_CODE, JSSFC_CODE, REG_DT, REG_ID, UPT_DT, UPT_ID 
+           ) 
+       SELECT
+           #{applcYm}, A.PYMNT_SN, A.EMPNO, A.EMP_SE_CODE, 
+                (SELECT   C.ACNUTNO  FROM  MHS_ACNUT C 
+                 WHERE ACNUT_SE_CODE = NVL((SELECT SALARYTY_CODE FROM MPS_PYMNTDE WHERE APPLC_YM = A.APPLC_YM AND PYMNT_SN = A.PYMNT_SN),'001')
+                 AND   A.EMPNO = C.EMPNO
+                ) AS ACNUT_NO,
+                A.BANK_CODE, A.DPSTR_NM, A.BPLC_CODE, A.DEPT_CODE, A.CLSF_CODE,
+           A.RSPOFC_CODE , A.DTY_CODE, A.SRCLS_CODE, #{jssfcCode}, SYSDATE AS REG_DT, A.REG_ID, A.UPT_DT, A.UPT_ID
+         FROM MPS_SALARY_TRGTER A
+        WHERE A.PYMNT_SN = #{pymntSn} 
+          AND A.APPLC_YM = REPLACE(#{applcYy},'-','')
+    </update>
+    
+    <delete id="deleteApplcTrgter" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mps.bsc.mpsbsc006.service.mapper.Mpsbsc006Mapper.deleteApplcTrgter */
+        DELETE FROM MPS_SALARY_TRGTER WHERE APPLC_YM = REPLACE(#{applcYm},'-','') AND PYMNT_SN = #{pymntSn} 
+    </delete>
+    
+    
+</mapper>

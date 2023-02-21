@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.stm.qes.stmqes001.service.mapper.StmqesTrgetMapper">
+
+    <select id="selectStmqesTrgetList" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.stm.qes.stmqes001.service.mapper.StmqesTrgetMapper.selectStmqesTrgetList */
+        SELECT
+               QESTNAR_CODE,
+               QESTNAR_TRGET_SN,
+               TRGET_SE,
+               TRGTER_ID,
+               DECODE(TRGET_SE,'002',(SELECT USER_NM FROM STM_USERS B WHERE A.TRGTER_ID = B.USER_ID),
+                               '003',(SELECT ORGNZT_NM FROM MHS_ORGNZT C WHERE A.TRGTER_ID = C.ORGNZT_CODE),
+                               '004',(SELECT CODE_KOR_NM AS ROLE_NM FROM STM_CODE D WHERE D.CODEKIND_CODE = 'C008' AND D.CODE = A.TRGTER_ID)
+                               ) AS KOR_NM,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM STM_QESTNAR_TRGET A
+        
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            QESTNAR_CODE = #{qestnarCode}
+<!--             AND  TRGET_SE = #{trgetSe} -->
+        </trim>
+    </select>
+    
+    <select id="selectStmqesTrget" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.stm.qes.stmqes001.service.mapper.StmqesTrgetMapper.selectStmqesTrget */
+        SELECT
+               QESTNAR_CODE,
+               QESTNAR_TRGET_SN,
+               TRGET_SE,
+               TRGTER_ID,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM STM_QESTNAR_TRGET A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="qestnarCode != null and qestnarCode != ''">
+                AND QESTNAR_CODE = #{qestnarCode}
+            </if>
+            <if test="qestnarTrgetSn != null and qestnarTrgetSn != ''">
+                AND QESTNAR_TRGET_SN = #{qestnarTrgetSn}
+            </if>
+        </trim>
+    </select>
+
+    <update id="saveStmqesTrget" parameterType="kr.co.dbvision.api.stm.qes.stmqes001.entity.StmqesTrget">
+        /* kr.co.dbvision.api.stm.qes.stmqes001.service.mapper.StmqesTrgetMapper.saveStmqesTrget */
+        MERGE INTO STM_QESTNAR_TRGET A
+             USING (SELECT
+                    #{qestnarCode} QESTNAR_CODE,
+                    #{qestnarTrgetSn} QESTNAR_TRGET_SN
+                    FROM DUAL) B
+                ON (
+                    A.QESTNAR_CODE = B.QESTNAR_CODE AND 
+                    A.QESTNAR_TRGET_SN = B.QESTNAR_TRGET_SN
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               TRGET_SE= #{trgetSe},
+               TRGTER_ID= #{trgterId},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               QESTNAR_CODE,
+               QESTNAR_TRGET_SN,
+               TRGET_SE,
+               TRGTER_ID,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{qestnarCode},
+               (SELECT TO_NUMBER(NVL(MAX(QESTNAR_TRGET_SN), '0')) + 1 FROM STM_QESTNAR_TRGET WHERE QESTNAR_CODE = #{qestnarCode}),
+               #{trgetSe},
+               #{trgterId},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deleteStmqesTrget" parameterType="kr.co.dbvision.api.stm.qes.stmqes001.entity.StmqesTrget">
+        /* kr.co.dbvision.api.stm.qes.stmqes001.service.mapper.StmqesTrgetMapper.deleteStmqesTrget */
+        DELETE FROM STM_QESTNAR_TRGET
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND QESTNAR_CODE = #{qestnarCode}
+                AND QESTNAR_TRGET_SN = #{qestnarTrgetSn}
+        </trim>
+    </delete>
+    
+</mapper>

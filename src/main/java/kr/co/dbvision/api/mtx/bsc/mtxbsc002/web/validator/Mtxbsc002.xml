@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE form-validation PUBLIC
+    "-//Apache Software Foundation//DTD Commons Validator Rules Configuration 1.1//EN"
+    "http://jakarta.apache.org/commons/dtds/validator_1_1.dtd">
+
+<form-validation>
+
+    <formset>
+        <form name="Mtxbsc002">
+            <field property="earnerNo" depends="required">
+                <arg0 key="소득자번호(규칙에 의한 일련번호 생성)는"/>
+            </field>
+        </form>
+    </formset>
+
+</form-validation>

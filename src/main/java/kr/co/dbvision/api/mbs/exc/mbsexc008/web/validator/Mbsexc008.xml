@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE form-validation PUBLIC
+    "-//Apache Software Foundation//DTD Commons Validator Rules Configuration 1.1//EN"
+    "http://jakarta.apache.org/commons/dtds/validator_1_1.dtd">
+
+<form-validation>
+
+    <formset>
+        <form name="Mbsexc008">
+            <field property="bugtYy" depends="required">
+                <arg0 key="예산 년도는"/>
+            </field>
+            <field property="bugtCd" depends="required">
+                <arg0 key="예산 코드는"/>
+            </field>
+            <field property="corpCd" depends="required">
+                <arg0 key="법인 코드는"/>
+            </field>
+        </form>
+    </formset>
+
+</form-validation>

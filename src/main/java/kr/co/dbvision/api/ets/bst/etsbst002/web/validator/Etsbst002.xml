@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE form-validation PUBLIC
+    "-//Apache Software Foundation//DTD Commons Validator Rules Configuration 1.1//EN"
+    "http://jakarta.apache.org/commons/dtds/validator_1_1.dtd">
+
+<form-validation>
+
+    <formset>
+        <form name="Etsbst002">
+            <field property="noSettingNo" depends="required">
+                <arg0 key="번호 설정 번호는"/>
+            </field>
+        </form>
+    </formset>
+
+</form-validation>

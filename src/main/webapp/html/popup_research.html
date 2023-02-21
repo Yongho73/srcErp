@@ -1,0 +1,1767 @@
+<html class="no-js" lang="ko"><head>
+
+<!-- meta -->
+
+
+<meta charset="UTF-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="Content-Script-Type" content="text/javascript; charet=utf-8">
+<meta http-equiv="Content-Style-Type" content="text/css; charet=utf-8">
+<meta name="HandheldFriendly" content="True">
+<meta http-equiv="cleartype" content="on">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta http-equiv="Expires" content="-1">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Cache-Control" content="no-cache">
+<meta property="og:title" content="DBVision-XERP">
+<!-- <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, minimum-scale=1.0, user-scalable=yes" />-->
+<meta name="keywords" content="DBVision-XERP">
+<meta name="description" content="DBVision-XERP">
+
+<link href="/xerp/img/icon/dbv.ico" rel="shortcut icon" type="image/x-icon">
+<!-- title -->
+
+
+<title>XERP</title>
+
+
+
+
+<link type="text/css" rel="stylesheet" href="/xerp/glyphicons/css/bootstrap-glyphicons.css">
+
+
+ 
+<!-- js -->
+
+
+<script>
+var gv_ServerApiUrl = "http://localhost:8080/xerp";
+var gv_FadeTime = "0";
+var gv_Passphrase = "rDTJnaU4CZopjVwRf8eI5ftiklBFjveIQGS0N02aoTE=";
+var gv_ContextPath = "/xerp";
+</script>
+
+<!-- jquery -->
+<script src="/xerp/js/jquery-1.11.1.min.js"></script>
+<script src="/xerp/js/jquery-ui-custom.min.js"></script>
+<!-- bpopup -->
+<script src="/xerp/js/jquery.bpopup.js"></script>
+<script src="/xerp/js/jquery.blockUI.js"></script>
+<!-- multi file upload -->
+<script src="/xerp/js/jquery.fileupload.js"></script>
+<!-- websocket -->
+<script src="/xerp/js/sockjs-0.3.4.js"></script>
+<!-- validation -->
+<script src="/xerp/js/validation/jquery.validate.js"></script>
+<script src="/xerp/js/validation/localization/messages_ko.js"></script>
+<!-- number -->
+<script src="/xerp/js/jquery.number.js"></script>
+<!-- jquery.form.js -->
+<script src="/xerp/js/jquery.form.js"></script>
+
+<!-- CryptoJS v3.1.2 -->
+<script src="/xerp/js/CryptoJSv3.1.2/rollups/aes.js"></script>
+<script src="/xerp/js/CryptoJSv3.1.2/rollups/sha256.js"></script>
+
+<!-- dhtmlxtree -->
+<link rel="stylesheet" type="text/css" href="/xerp/css/dhtmlx/codebase/dhtmlxtree.css">
+<script src="/xerp/js/dhtmlx/codebase/dhtmlxtree.js"></script>
+<!-- dhtmlxtreeview -->
+<link rel="stylesheet" type="text/css" href="/xerp/css/dhtmlx/codebase/dhtmlxtreeview.css">
+<script src="/xerp/js/dhtmlx/codebase/dhtmlxtreeview.js"></script>
+<!-- dhtmlx grid -->
+<link rel="stylesheet" type="text/css" href="/xerp/css/dhtmlx/codebase/dhtmlxgrid.css">
+<script src="/xerp/js/dhtmlx/codebase/dhtmlxgrid.js"></script>
+<!-- dhtmlxwindows -->
+<link rel="stylesheet" type="text/css" href="/xerp/css/dhtmlx/codebase/dhtmlxwindows.css">
+<script src="/xerp/js/dhtmlx/codebase/dhtmlxwindows.js"></script>
+<!-- dhtmlxcombo -->
+<link rel="stylesheet" type="text/css" href="/xerp/css/dhtmlx/codebase/dhtmlxcombo.css">
+<script src="/xerp/js/dhtmlx/codebase/dhtmlxcombo.js"></script>
+<!-- dhtmlxtreegrid -->
+<script src="/xerp/js/dhtmlx/codebase/dhtmlxtreegrid.js"></script>
+<!-- dhtmlxcalender -->
+<link rel="stylesheet" type="text/css" href="/xerp/css/dhtmlx/codebase/dhtmlxcalendar.css">
+<script src="/xerp/js/dhtmlx/codebase/dhtmlxcalendar.js"></script>
+<!-- dhtmlxchart -->
+<link rel="stylesheet" type="text/css" href="/xerp/css/dhtmlx/codebase/dhtmlxchart.css">
+<script src="/xerp/js/dhtmlx/codebase/dhtmlxchart.js"></script>
+<!-- dhtmlxchart -->
+<link rel="stylesheet" type="text/css" href="/xerp/css/dhtmlx/codebase/dhtmlxtabbar.css">
+<script src="/xerp/js/dhtmlx/codebase/dhtmlxtabbar.js"></script>
+
+<!-- core js -->
+<script src="/xerp/js/core/comCore.js"></script>
+<script src="/xerp/js/core/comConvention.js"></script>
+<script src="/xerp/js/core/comTransaction.js"></script>
+<script src="/xerp/js/core/comEnv.js"></script>
+<script src="/xerp/js/core/comPopup.js"></script>
+<script src="/xerp/js/core/comDhtmlx.js"></script>
+<script src="/xerp/js/core/comEnvSetting.js"></script>
+
+<!-- editor -->
+<script src="/xerp/editor/smartEditor/js/HuskyEZCreator.js"></script>
+
+<!-- datepicker -->
+<!-- 년월달력때문에 사용 --> 
+<link rel="stylesheet" type="text/css" href="/xerp/css/common/jquery/ui/1.11.0/themes/smoothness/jquery-ui.css">
+<link rel="stylesheet" type="text/css" href="/xerp/css/common/jquery/yearpicker.css">
+<script src="/xerp/js/xerp/yearpicker.js"></script>
+<script src="/xerp/js/xerp/jquery.mtz.monthpicker.js"></script>
+
+<!-- global message -->
+<script>
+var gv_TitRegist    = gf_LocaleTrans('default','titRegist');        //등록
+var gv_TitUpdate    = gf_LocaleTrans('default','titUpdate');        //수정
+var gv_TitSelect    = gf_LocaleTrans('default','titSelect');        //선택
+var gv_TitNum       = gf_LocaleTrans('default','titNum');           //번호
+var gv_MsgDelete    = gf_LocaleTrans('default','msgDelete');        //삭제
+var gv_MsgDeleteErr = gf_LocaleTrans('default','msgDeleteErr');     //삭제시오류
+var gv_MsgNoData    = gf_LocaleTrans('default','msgNoData');        //조회된데이타가 졶재하지 않습니다.
+var gv_MsgSave      = gf_LocaleTrans('default','msgSave');          //저장 되었습니다.
+var gv_MsgRegist    = gf_LocaleTrans('default','msgRegist');        //등록 되었습니다.
+var gv_MsgUpdate    = gf_LocaleTrans('default','msgUpdate');        //수정 하였습니다.
+var gv_BtnSave      = gf_LocaleTrans('default','btnSave');          //저장
+var gv_BtnUpdate    = gf_LocaleTrans('default','btnUpdate');        //수정
+var gv_QueDelete    = gf_LocaleTrans('default','queDelete');        //삭제하시겠습니까? 
+var gv_MsgDelKey    = gf_LocaleTrans('default','msgDelKey');        //삭제할 key를 선택해 주세요
+var gv_QueCopy      = gf_LocaleTrans('default','queCopy');          //복사하시겠습니까? 
+var gv_QueSave      = gf_LocaleTrans('default','queSave');          //저장 하시겠습니까? 
+var gv_MsgExist     = gf_LocaleTrans('default','msgExist');         //이미 등록된 데이타가 존재합니다.
+
+//날짜 생성
+var gv_ComDate          = new Date();
+var gv_ComYear          = gv_ComDate.getFullYear();
+var gv_ComPreYear       = (gv_ComDate.getFullYear())-1;                                         //-1년 
+var gv_ComMon           = ("00" + (gv_ComDate.getMonth() + 1)).slice(-2);
+var gv_ComDay           = ("00" + gv_ComDate.getDate()).slice(-2);
+var gv_ComPreMonDate    = new Date(gv_ComYear, gv_ComMon -2, gv_ComDay);
+var gv_ComPreMonYyyy    = gv_ComPreMonDate.getFullYear();
+var gv_ComPreMonMm      = ("00" + (gv_ComPreMonDate.getMonth() + 1)).slice(-2);
+var gv_ComPreMonDd      = ("00" +  gv_ComPreMonDate.getDate()).slice(-2);
+var gv_Preyeardate      = gv_ComPreYear + "-" + gv_ComMon + "-" + gv_ComDay;                     //작년
+var gv_Firstdate        = gv_ComYear + "-01-01";                                            //올해 1월1일
+var gv_LastYeardate     = gv_ComYear + "-12-31";                                            //올해 12월31일
+var gv_Predate          = gv_ComPreMonYyyy + "-" + gv_ComPreMonMm + "-" + gv_ComPreMonDd;      //한달전
+var gv_Curdate          = gv_ComYear + "-" + gv_ComMon + "-" + gv_ComDay;                   //오늘
+var gv_Initdate         = gv_ComYear + "-" + gv_ComMon +"-01";                              //매윌1일
+var gv_Lastdate         = gv_ComYear + "-" + gv_ComMon + "-" + (new Date(gv_ComYear, gv_ComMon, 0)).getDate();   //월말
+var gv_DayOfWeek        = gv_ComDate.getUTCDay();                                              //첫 번째 요일
+var gv_CurYymm          = gv_ComYear + "-" + gv_ComMon;                                          //현재 년월
+var gv_Locale           = gf_GetSysConfig("langSeCode");
+
+
+//
+// 화면에서 backspace로 이동되는 현상 막기
+$(document).unbind('keydown').bind('keydown', function (event) {
+    var doPrevent = false;
+    if (event.keyCode === 8) 
+    {
+        var d = event.srcElement || event.target;
+        if ((d.tagName.toUpperCase()   === 'INPUT' && 
+            (d.type.toUpperCase()      === 'TEXT'     || 
+             d.type.toUpperCase()      === 'PASSWORD' || 
+             d.type.toUpperCase()      === 'FILE'     || 
+             d.type.toUpperCase()      === 'EMAIL' )) || 
+             d.tagName.toUpperCase()   === 'TEXTAREA') 
+        {
+            doPrevent = d.readOnly || d.disabled;
+        }
+        else 
+        {
+            doPrevent = true;
+        }
+    }
+    if (doPrevent) {
+        event.preventDefault();
+    }
+});
+</script>
+
+
+<!-- css -->
+<link type="text/css" rel="stylesheet" href="/xerp/axicon/axicon.min.css">
+<link type="text/css" rel="stylesheet" href="/xerp/css/table.css">   
+<link type="text/css" rel="stylesheet" href="/xerp/css/default.css">
+<link type="text/css" rel="stylesheet" href="/xerp/css/iframe.css">
+<link type="text/css" rel="stylesheet" href="/xerp/css/contents.css">
+<!--
+<script type="text/javascript">
+$(function() {
+    gf_CheckButtonAuth();
+});
+-->
+</script>
+
+
+<link type="text/css" rel="stylesheet" href="chrome-extension://dagdlcijhfbmgkjokkjicnnfimlebcll/style.css"><script type="text/javascript" charset="utf-8" src="chrome-extension://dagdlcijhfbmgkjokkjicnnfimlebcll/page_context.js"></script></head>
+<body screen_capture_injected="true" class=" dhxwins_vp_material" style="position: static;">
+<div class="body">
+<!-- header -->
+
+
+    
+
+
+<!-- 다음(DAUM) 주소 POPUP용 -->
+<script src="https://ssl.daumcdn.net/dmaps/map_js_init/postcode.v2.js"></script><script charset="UTF-8" type="text/javascript" src="http://t1.daumcdn.net/postcode/api/core/200421/1587459050284/200421.js"></script>
+
+<script>
+
+var gBplcCode = "1000";  //사업장 코드 , Sample 에서는 1000으로 고정, 실제 프로그램에서는 화면에서 받아서 사용
+
+$(function() {
+    if(init()){   // 초기화
+        //
+    }
+});
+
+function init(){
+    //사원 선택 Popup(1)
+    $('#sampleForm #btnEmpCodeSearch').unbind('click').bind('click', function(event){
+        gf_EmpPopup("sampleForm","empCode","empCodeNm", gBplcCode, "Y", "fn_CallbackPopEmp1");  // form ID, 사원코드가 들어갈 tag의 ID, 사원명이 들어갈 tag의 ID, 사업장ID, Popup 오픈 시 넘겨받은 검색어로 검색할 지 여부, 콜백함수
+    });
+    //사원 입력 후 Enter 이벤트
+    $('#empCode').unbind('keydown').bind('keydown',function(event) {
+        if (event.keyCode == 13)  {
+            $('#empCodeNm').focus();
+        }
+    });
+    $('#empCodeNm').unbind('keydown').bind('keydown',function(event) {
+        if (event.keyCode == 13)  {
+            fn_SearchEmpCode("1");
+        }
+    });
+    
+    //사원 선택 Popup(2)
+    $('#sampleForm #btnEmpCodeSearch2').unbind('click').bind('click', function(event){
+        gf_Emp2Popup("sampleForm","empCode2","empCodeNm2", gBplcCode, "Y", "fn_CallbackPopEmp2");  // form ID, 사원코드가 들어갈 tag의 ID, 사원명이 들어갈 tag의 ID, 사업장ID, Popup 오픈 시 넘겨받은 검색어로 검색할 지 여부, 콜백함수
+    });
+    //사원2 입력 후 Enter 이벤트
+    $('#empCode2').unbind('keydown').bind('keydown',function(event) {
+        if (event.keyCode == 13)  {
+            $('#empCodeNm2').focus();
+        }
+    });
+    $('#empCodeNm2').unbind('keydown').bind('keydown',function(event) {
+        if (event.keyCode == 13)  {
+            fn_SearchEmpCode("2");
+        }
+    });
+    
+    //부서 선택 Popup
+    $('#sampleForm #btnDeptCodeSearch').unbind('click').bind('click', function(event){
+        gf_DeptPopup("sampleForm","deptCode","deptCodeNm", gBplcCode, "Y", "fn_CallbackPopDept");  // form ID, 부서코드가 들어갈 tag의 ID, 부서명이 들어갈 tag의 ID, 사업장ID, Popup 오픈 시 넘겨받은 검색어로 검색할 지 여부, 콜백함수
+    });
+    //부서 입력 후 Enter 이벤트
+    $('#deptCode').unbind('keydown').bind('keydown',function(event) {
+        if (event.keyCode == 13)  {
+            $('#deptCodeNm').focus();
+        }
+    });
+    $('#deptCodeNm').unbind('keydown').bind('keydown',function(event) {
+        if (event.keyCode == 13)  {
+            fn_SearchDeptCode();
+        }
+    });
+    
+    //거래처 선택 Popup
+    $('#sampleForm #btnBcncCodeSearch').unbind('click').bind('click', function(event){
+        gf_CompPopup("sampleForm","bcncCode","bcncNm", gBplcCode, "Y", "fn_CallbackPopComp");  // form ID, 거래처코드가 들어갈 tag의 ID, 거래처명이 들어갈 tag의 ID, 사업장ID, Popup 오픈 시 넘겨받은 검색어로 검색할 지 여부, 콜백함수
+    });
+    //거래처 입력 후 Enter 이벤트
+    $('#bcncCode').unbind('keydown').bind('keydown',function(event) {
+        if (event.keyCode == 13)  {
+            $('#bcncNm').focus();
+        }
+    });
+    $('#bcncNm').unbind('keydown').bind('keydown',function(event) {
+        if (event.keyCode == 13)  {
+            fn_SearchBcncCode();
+            //alert($('#bcncNm').val());
+        }
+    });
+    
+    //주소 선택 Popup : 다음 DAUM
+    $('#sampleForm #btnAddrSearch_Daum').unbind('click').bind('click', function(event){
+        execDaumPostcode("sampleForm","zip", "adres", "detailAdres");
+        //fn_CompPopup("sampleForm","zip_Daum","addr_Daum", "addrInfo", "Y");  // form ID, 우편번호가 들어갈 tag의 ID, 주소가 들어갈 tag의 ID, 주소정보가 들어갈 변수의 ID, Popup 오픈 시 넘겨받은 검색어로 검색할 지 여부
+    });
+    //주소 선택 Popup : 행안부 - juso.go.kr
+    $('#sampleForm #btnAddrSearch').unbind('click').bind('click', function(event){
+        gf_ZipPopup("sampleForm","zip01","adres01", "detailAdres01", "fn_CallbackPopAddr");  // form ID, 우편번호가 들어갈 tag의 ID, 주소가 들어갈 tag의 ID, 상세주소가 들어갈 tag의 ID, 콜백
+    });
+}
+
+//사원
+function value1(){
+    alert($empInfo.empno + " : " + $empInfo.korNm);
+    /*
+    $empInfo.empno             = 사원번호
+    $empInfo.korNm            = 성명
+    $empInfo.rspofcCodeNm     = 직책
+    $empInfo.engNm            = 영문 명
+    $empInfo.deptCode          = 부서 코드 
+    $empInfo.deptCodeNm        = 부서 명
+    $empInfo.chcrtNm           = 한자 명
+    $empInfo.ecnyDe               = 입사 일자
+    $empInfo.retireDe          = 퇴직 일자
+    $empInfo.ihidnum          = 주민등록번호
+    $empInfo.nltyCode         = 국적 코드
+    $empInfo.nltyCodeNm        = 국적 코드 명
+    $empInfo.jssfcCode         = 직종 코드
+    $empInfo.jssfcCodeNm       = 직종 코드 명
+    $empInfo.srclsCode         = 호봉 코드
+    $empInfo.clsfCode          = 직급 코드
+    $empInfo.clsfCodeNm        = 직급 코드 명
+    $empInfo.ofcpsCode         = 직위 코드
+    $empInfo.ofcpsCodeNm       = 직위 코드 명
+    $empInfo.rspofcCode        = 직책 코드
+    $empInfo.zip              = 우편번호
+    $empInfo.ownhomAdres       = 자택 주소
+    $empInfo.ownhomDetailAdres = 자택 상세 주소
+    $empInfo.ownhomEngAdres    = 자택 영문 주소
+    $empInfo.ownhomTelno       = 자택 전화번호
+    $empInfo.lxtnTelno         = 내선 전화번호
+    $empInfo.mbtlnum           = 휴대폰번호
+    $empInfo.email            = 이메일
+    $empInfo.brthdy               = 생년월일
+    $empInfo.slrcldAt          = 양력 여부
+    $empInfo.mrrgAt               = 결혼 여부
+    $empInfo.mrrgAtNm          = 결혼 여부 명
+    $empInfo.hdadptDeptCode    = 겸임 부서 코드
+    $empInfo.emplSe               = 사원 구분
+    $empInfo.emplSeNm          = 사원 구분 명
+    $empInfo.hffsSe               = 재직 구분
+    $empInfo.hffsSeNm         = 재직 구분 명
+    $empInfo.retireSe          = 퇴직 구분
+    $empInfo.retireSeNm        = 퇴직 구분 명
+    $empInfo.sexdstnSe         = 성별 구분
+    $empInfo.sexdstnSeNm       = 성별 구분 명
+    //$empInfo.empnmSe           = 채용 구분
+    //$empInfo.empnmSeNm         = 채용 구분 명
+    $empInfo.cashierAt         = 출납담당 여부
+    $empInfo.hdadptAt          = 겸임 여부
+    $empInfo.dprlrAt           = 부서장 여부
+    $empInfo.lbunSbscrbAt      = 노조 가입 여부
+    $empInfo.lbunSbscrbAtNm    = 노조 가입 여부 명
+    $empInfo.mutaidSbscrbAt    = 상조 가입 여부
+    $empInfo.dispWorkbAt       = 파견 근무 여부
+    $empInfo.natvfrgnSeCode    = 내외국인 구분 코드
+    $empInfo.natvfrgnSeCodeNm  = 내외국인 구분 코드 명
+    $empInfo.ecnySeCode        = 입사 구분 코드
+    $empInfo.ecnySeCodeNm      = 입사 구분 코드 명
+    $empInfo.bplcCode          = 사업장코드
+    $empInfo.bplcCodeNm        = 사업장코드 명
+    $empInfo.salpeakAt         = 임금피크제 여부
+    $empInfo.flexbizAt         = 유연근무제 여부
+    $empInfo.ansalsysAt        = 연봉제 여부
+    $empInfo.deptEngNm        = 부서 영문 명
+    $empInfo.deptAbrv         = 부서 약어
+    $empInfo.upperDeptCode     = 상위 부서 코드
+    $empInfo.upperDeptNm       = 상위 부서 명
+    $empInfo.deptLvl          = 부서 레벨
+    $empInfo.orgnztLvl        = 조직 레벨
+    $empInfo.deptTelno        = 부서 전화번호
+    $empInfo.deptFaxTelno      = 부서 FAX 전화번호
+    $empInfo.useBeginDe           = 사용 시작 일자
+    $empInfo.useAt            = 사용 여부
+    $empInfo.deptSe               = 부서 구분
+    $empInfo.sortOrdr         = 출력 순서
+    $empInfo.upperDeptAt       = 상위부서 존재 여부
+    */
+}
+
+function value1_1(){
+    gf_FormSetValue('sampleForm', 'empCode', '', 'text');
+    gf_FormSetValue('sampleForm', 'empCodeNm', '', 'text');
+    gf_FormSetValue('sampleForm', 'empCode2', '', 'text');
+    gf_FormSetValue('sampleForm', 'empCodeNm2', '', 'text');
+    $empInfo = {};
+}
+
+function fn_CallbackPopEmp1(data){
+    console.log(data.empno + " : " + data.korNm);
+    /*
+    data.empno             = 사원번호
+    data.korNm            = 성명
+    data.rspofcCodeNm     = 직책
+    data.engNm            = 영문 명
+    data.deptCode          = 부서 코드 
+    data.deptCodeNm        = 부서 명
+    data.chcrtNm           = 한자 명
+    data.ecnyDe               = 입사 일자
+    data.retireDe          = 퇴직 일자
+    data.ihidnum          = 주민등록번호
+    data.nltyCode         = 국적 코드
+    data.nltyCodeNm        = 국적 코드 명
+    data.jssfcCode         = 직종 코드
+    data.jssfcCodeNm       = 직종 코드 명
+    data.srclsCode         = 호봉 코드
+    data.clsfCode          = 직급 코드
+    data.clsfCodeNm        = 직급 코드 명
+    data.ofcpsCode         = 직위 코드
+    data.ofcpsCodeNm       = 직위 코드 명
+    data.rspofcCode        = 직책 코드
+    data.zip              = 우편번호
+    data.ownhomAdres       = 자택 주소
+    data.ownhomDetailAdres = 자택 상세 주소
+    data.ownhomEngAdres    = 자택 영문 주소
+    data.ownhomTelno       = 자택 전화번호
+    data.lxtnTelno         = 내선 전화번호
+    data.mbtlnum           = 휴대폰번호
+    data.email            = 이메일
+    data.brthdy               = 생년월일
+    data.slrcldAt          = 양력 여부
+    data.mrrgAt               = 결혼 여부
+    data.mrrgAtNm          = 결혼 여부 명
+    data.hdadptDeptCode    = 겸임 부서 코드
+    data.emplSe               = 사원 구분
+    data.emplSeNm          = 사원 구분 명
+    data.hffsSe               = 재직 구분
+    data.hffsSeNm         = 재직 구분 명
+    data.retireSe          = 퇴직 구분
+    data.retireSeNm        = 퇴직 구분 명
+    data.sexdstnSe         = 성별 구분
+    data.sexdstnSeNm       = 성별 구분 명
+    //data.empnmSe           = 채용 구분
+    //data.empnmSeNm         = 채용 구분 명
+    data.cashierAt         = 출납담당 여부
+    data.hdadptAt          = 겸임 여부
+    data.dprlrAt           = 부서장 여부
+    data.lbunSbscrbAt      = 노조 가입 여부
+    data.lbunSbscrbAtNm    = 노조 가입 여부 명
+    data.mutaidSbscrbAt    = 상조 가입 여부
+    data.dispWorkbAt       = 파견 근무 여부
+    data.natvfrgnSeCode    = 내외국인 구분 코드
+    data.natvfrgnSeCodeNm  = 내외국인 구분 코드 명
+    data.ecnySeCode        = 입사 구분 코드
+    data.ecnySeCodeNm      = 입사 구분 코드 명
+    data.bplcCode          = 사업장코드
+    data.bplcCodeNm        = 사업장코드 명
+    data.salpeakAt         = 임금피크제 여부
+    data.flexbizAt         = 유연근무제 여부
+    data.ansalsysAt        = 연봉제 여부
+    data.deptEngNm        = 부서 영문 명
+    data.deptAbrv         = 부서 약어
+    data.upperDeptCode     = 상위 부서 코드
+    data.upperDeptNm       = 상위 부서 명
+    data.deptLvl          = 부서 레벨
+    data.orgnztLvl        = 조직 레벨
+    data.deptTelno        = 부서 전화번호
+    data.deptFaxTelno      = 부서 FAX 전화번호
+    data.useBeginDe           = 사용 시작 일자
+    data.useAt            = 사용 여부
+    data.deptSe               = 부서 구분
+    data.sortOrdr         = 출력 순서
+    data.upperDeptAt       = 상위부서 존재 여부
+
+    data.jblnCode          = 직렬 코드
+    data.jblnCodeNm        = 직렬 코드 명 
+    data.dtyCode           = 직무 코드
+    data.dtyCodeNm         = 직무 코드 명
+    data.emgncTelno        = 비상전화번호
+    data.indvdlEmail       = 개인 이메일
+    data.hdadptDeptCodeNm  = 겸임 부서 명
+    data.dispDeptCode      = 파견 부서 코드
+    data.dispDeptCodeNm    = 파견 부서 명
+    data.babyShrtenWorkAt  = 육아 단축 근무 여부
+    data.salaryAprpCode    = 급여 책정 코드
+    data.salaryAprpCodeNm  = 급여 책정 코드 명
+    data.apntcSdt          = 수습 시작일자
+    data.apntcEdt          = 수습 종료일자
+    data.incmtaxrtCode     = 소득세율 코드
+    data.incmtaxrtCodeNm   = 소득세율 코드 명
+    */
+}
+
+//사원(2)
+function value12(){
+    alert($empInfo.empno + " : " + $empInfo.korNm);
+    /*
+    $empInfo.empno             = 사원번호
+    $empInfo.korNm            = 성명
+    $empInfo.rspofcCodeNm     = 직책
+    $empInfo.engNm            = 영문 명
+    $empInfo.deptCode          = 부서 코드 
+    $empInfo.deptCodeNm        = 부서 명
+    $empInfo.chcrtNm           = 한자 명
+    $empInfo.ecnyDe               = 입사 일자
+    $empInfo.retireDe          = 퇴직 일자
+    $empInfo.ihidnum          = 주민등록번호
+    $empInfo.nltyCode         = 국적 코드
+    $empInfo.nltyCodeNm        = 국적 코드 명
+    $empInfo.jssfcCode         = 직종 코드
+    $empInfo.jssfcCodeNm       = 직종 코드 명
+    $empInfo.srclsCode         = 호봉 코드
+    $empInfo.clsfCode          = 직급 코드
+    $empInfo.clsfCodeNm        = 직급 코드 명
+    $empInfo.ofcpsCode         = 직위 코드
+    $empInfo.ofcpsCodeNm       = 직위 코드 명
+    $empInfo.rspofcCode        = 직책 코드
+    $empInfo.zip              = 우편번호
+    $empInfo.ownhomAdres       = 자택 주소
+    $empInfo.ownhomDetailAdres = 자택 상세 주소
+    $empInfo.ownhomEngAdres    = 자택 영문 주소
+    $empInfo.ownhomTelno       = 자택 전화번호
+    $empInfo.lxtnTelno         = 내선 전화번호
+    $empInfo.mbtlnum           = 휴대폰번호
+    $empInfo.email            = 이메일
+    $empInfo.brthdy               = 생년월일
+    $empInfo.slrcldAt          = 양력 여부
+    $empInfo.mrrgAt               = 결혼 여부
+    $empInfo.mrrgAtNm          = 결혼 여부 명
+    $empInfo.hdadptDeptCode    = 겸임 부서 코드
+    $empInfo.emplSe               = 사원 구분
+    $empInfo.emplSeNm          = 사원 구분 명
+    $empInfo.hffsSe               = 재직 구분
+    $empInfo.hffsSeNm         = 재직 구분 명
+    $empInfo.retireSe          = 퇴직 구분
+    $empInfo.retireSeNm        = 퇴직 구분 명
+    $empInfo.sexdstnSe         = 성별 구분
+    $empInfo.sexdstnSeNm       = 성별 구분 명
+    //$empInfo.empnmSe           = 채용 구분
+    //$empInfo.empnmSeNm         = 채용 구분 명
+    $empInfo.cashierAt         = 출납담당 여부
+    $empInfo.hdadptAt          = 겸임 여부
+    $empInfo.dprlrAt           = 부서장 여부
+    $empInfo.lbunSbscrbAt      = 노조 가입 여부
+    $empInfo.lbunSbscrbAtNm    = 노조 가입 여부 명
+    $empInfo.mutaidSbscrbAt    = 상조 가입 여부
+    $empInfo.dispWorkbAt       = 파견 근무 여부
+    $empInfo.natvfrgnSeCode    = 내외국인 구분 코드
+    $empInfo.natvfrgnSeCodeNm  = 내외국인 구분 코드 명
+    $empInfo.ecnySeCode        = 입사 구분 코드
+    $empInfo.ecnySeCodeNm      = 입사 구분 코드 명
+    $empInfo.bplcCode          = 사업장코드
+    $empInfo.bplcCodeNm        = 사업장코드 명
+    $empInfo.salpeakAt         = 임금피크제 여부
+    $empInfo.flexbizAt         = 유연근무제 여부
+    $empInfo.ansalsysAt        = 연봉제 여부
+    $empInfo.deptEngNm        = 부서 영문 명
+    $empInfo.deptAbrv         = 부서 약어
+    $empInfo.upperDeptCode     = 상위 부서 코드
+    $empInfo.upperDeptNm       = 상위 부서 명
+    $empInfo.deptLvl          = 부서 레벨
+    $empInfo.orgnztLvl        = 조직 레벨
+    $empInfo.deptTelno        = 부서 전화번호
+    $empInfo.deptFaxTelno      = 부서 FAX 전화번호
+    $empInfo.useBeginDe           = 사용 시작 일자
+    $empInfo.useAt            = 사용 여부
+    $empInfo.deptSe               = 부서 구분
+    $empInfo.sortOrdr         = 출력 순서
+    $empInfo.upperDeptAt       = 상위부서 존재 여부
+
+    $empInfo.jblnCode          = 직렬 코드
+    $empInfo.jblnCodeNm        = 직렬 코드 명 
+    $empInfo.dtyCode           = 직무 코드
+    $empInfo.dtyCodeNm         = 직무 코드 명
+    $empInfo.emgncTelno        = 비상전화번호
+    $empInfo.indvdlEmail       = 개인 이메일
+    $empInfo.hdadptDeptCodeNm  = 겸임 부서 명
+    $empInfo.dispDeptCode      = 파견 부서 코드
+    $empInfo.dispDeptCodeNm    = 파견 부서 명
+    $empInfo.babyShrtenWorkAt  = 육아 단축 근무 여부
+    $empInfo.salaryAprpCode    = 급여 책정 코드
+    $empInfo.salaryAprpCodeNm  = 급여 책정 코드 명
+    $empInfo.apntcSdt          = 수습 시작일자
+    $empInfo.apntcEdt          = 수습 종료일자
+    $empInfo.incmtaxrtCode     = 소득세율 코드
+    $empInfo.incmtaxrtCodeNm   = 소득세율 코드 명
+    */
+}
+
+function value1_2(){
+    gf_FormSetValue('sampleForm', 'empCode', '', 'text');
+    gf_FormSetValue('sampleForm', 'empCodeNm', '', 'text');
+    gf_FormSetValue('sampleForm', 'empCode2', '', 'text');
+    gf_FormSetValue('sampleForm', 'empCodeNm2', '', 'text');
+    $empInfo = {};
+}
+
+function fn_CallbackPopEmp2(data){
+    console.log(data.empno + " : " + data.korNm);
+    /*
+    data.empno             = 사원번호
+    data.korNm            = 성명
+    data.rspofcCodeNm     = 직책
+    data.engNm            = 영문 명
+    data.deptCode          = 부서 코드 
+    data.deptCodeNm        = 부서 명
+    data.chcrtNm           = 한자 명
+    data.ecnyDe               = 입사 일자
+    data.retireDe          = 퇴직 일자
+    data.ihidnum          = 주민등록번호
+    data.nltyCode         = 국적 코드
+    data.nltyCodeNm        = 국적 코드 명
+    data.jssfcCode         = 직종 코드
+    data.jssfcCodeNm       = 직종 코드 명
+    data.srclsCode         = 호봉 코드
+    data.clsfCode          = 직급 코드
+    data.clsfCodeNm        = 직급 코드 명
+    data.ofcpsCode         = 직위 코드
+    data.ofcpsCodeNm       = 직위 코드 명
+    data.rspofcCode        = 직책 코드
+    data.zip              = 우편번호
+    data.ownhomAdres       = 자택 주소
+    data.ownhomDetailAdres = 자택 상세 주소
+    data.ownhomEngAdres    = 자택 영문 주소
+    data.ownhomTelno       = 자택 전화번호
+    data.lxtnTelno         = 내선 전화번호
+    data.mbtlnum           = 휴대폰번호
+    data.email            = 이메일
+    data.brthdy               = 생년월일
+    data.slrcldAt          = 양력 여부
+    data.mrrgAt               = 결혼 여부
+    data.mrrgAtNm          = 결혼 여부 명
+    data.hdadptDeptCode    = 겸임 부서 코드
+    data.emplSe               = 사원 구분
+    data.emplSeNm          = 사원 구분 명
+    data.hffsSe               = 재직 구분
+    data.hffsSeNm         = 재직 구분 명
+    data.retireSe          = 퇴직 구분
+    data.retireSeNm        = 퇴직 구분 명
+    data.sexdstnSe         = 성별 구분
+    data.sexdstnSeNm       = 성별 구분 명
+    //data.empnmSe           = 채용 구분
+    //data.empnmSeNm         = 채용 구분 명
+    data.cashierAt         = 출납담당 여부
+    data.hdadptAt          = 겸임 여부
+    data.dprlrAt           = 부서장 여부
+    data.lbunSbscrbAt      = 노조 가입 여부
+    data.lbunSbscrbAtNm    = 노조 가입 여부 명
+    data.mutaidSbscrbAt    = 상조 가입 여부
+    data.dispWorkbAt       = 파견 근무 여부
+    data.natvfrgnSeCode    = 내외국인 구분 코드
+    data.natvfrgnSeCodeNm  = 내외국인 구분 코드 명
+    data.ecnySeCode        = 입사 구분 코드
+    data.ecnySeCodeNm      = 입사 구분 코드 명
+    data.bplcCode          = 사업장코드
+    data.bplcCodeNm        = 사업장코드 명
+    data.salpeakAt         = 임금피크제 여부
+    data.flexbizAt         = 유연근무제 여부
+    data.ansalsysAt        = 연봉제 여부
+    data.deptEngNm        = 부서 영문 명
+    data.deptAbrv         = 부서 약어
+    data.upperDeptCode     = 상위 부서 코드
+    data.upperDeptNm       = 상위 부서 명
+    data.deptLvl          = 부서 레벨
+    data.orgnztLvl        = 조직 레벨
+    data.deptTelno        = 부서 전화번호
+    data.deptFaxTelno      = 부서 FAX 전화번호
+    data.useBeginDe           = 사용 시작 일자
+    data.useAt            = 사용 여부
+    data.deptSe               = 부서 구분
+    data.sortOrdr         = 출력 순서
+    data.upperDeptAt       = 상위부서 존재 여부
+
+    data.jblnCode          = 직렬 코드
+    data.jblnCodeNm        = 직렬 코드 명 
+    data.dtyCode           = 직무 코드
+    data.dtyCodeNm         = 직무 코드 명
+    data.emgncTelno        = 비상전화번호
+    data.indvdlEmail       = 개인 이메일
+    data.hdadptDeptCodeNm  = 겸임 부서 명
+    data.dispDeptCode      = 파견 부서 코드
+    data.dispDeptCodeNm    = 파견 부서 명
+    data.babyShrtenWorkAt  = 육아 단축 근무 여부
+    data.salaryAprpCode    = 급여 책정 코드
+    data.salaryAprpCodeNm  = 급여 책정 코드 명
+    data.apntcSdt          = 수습 시작일자
+    data.apntcEdt          = 수습 종료일자
+    data.incmtaxrtCode     = 소득세율 코드
+    data.incmtaxrtCodeNm   = 소득세율 코드 명
+    */
+}
+
+//--사원 입력 후 Enter 이벤트
+function fn_SearchEmpCode(gubun){
+    var empno = "";
+    var korNm = "";
+    
+    if(gubun == "1"){
+        empno = gf_FormGetValue('sampleForm', 'empCode', 'text');
+        korNm = gf_FormGetValue('sampleForm', 'empCodeNm', 'text');
+    }
+    else {
+        empno = gf_FormGetValue('sampleForm', 'empCode2', 'text');
+        korNm = gf_FormGetValue('sampleForm', 'empCodeNm2', 'text');
+    }
+    
+    var jsonParameter = {
+            empno     : empno,
+            korNm     : korNm,
+            bplcCode  : gBplcCode
+    };
+    gf_Transaction(gubun, 'emp/searchEmp', jsonParameter, 'fn_CallbackSearchEmpCode', false, 'GET');
+}
+function fn_CallbackSearchEmpCode (strSvcID, targetID, data){
+    var totCnt = data.data.records.length;
+    //alert(totCnt);
+    if(!gf_IsNull(data.data.records) && totCnt == 1){
+        //단건
+        var data = data.data.records[0];
+        if(strSvcID == "1"){
+            gf_FormSetValue('sampleForm', 'empCode', data.empno, 'text');
+            gf_FormSetValue('sampleForm', 'empCodeNm', data.korNm, 'text');
+        }
+        else {
+            gf_FormSetValue('sampleForm', 'empCode2', data.empno, 'text');
+            gf_FormSetValue('sampleForm', 'empCodeNm2', data.korNm, 'text');
+        }
+    }
+    else {
+        //Popup 호출
+        if(strSvcID == "1"){
+            fn_EmpPopup("sampleForm","empCode","empCodeNm", gBplcCode, "Y");
+        } else {
+            fn_Emp2Popup("sampleForm","empCode2","empCodeNm2", gBplcCode, "Y");
+        }
+    }
+}
+
+//부서
+function value2(){
+    alert($deptInfo.deptCode + " : " + $deptInfo.deptKorNm);
+    /*
+    $deptInfo.deptCode      = 부서코드
+    $deptInfo.deptKorNm     = 부서 한글 명
+    $deptInfo.deptEngNm     = 부서 영문 명
+    $deptInfo.deptAbrv      = 부서 약어
+    $deptInfo.bplcCode      = 사업장 코드
+    $deptInfo.bplcNm        = 사업장 명
+    $deptInfo.upperDeptCode = 상위 부서 코드
+    $deptInfo.upperDeptNm   = 상위 부서 명
+    $deptInfo.deptLvl       = 부서 레벨
+    $deptInfo.orgnztLvl     = 조직 레벨
+    $deptInfo.deptTelno     = 부서 전화번호
+    $deptInfo.deptFaxTelno  = 부서 FAX 전화번호
+    $deptInfo.useBeginDe    = 사용 시작 일자
+    $deptInfo.useAt         = 사용 여부
+    $deptInfo.deptSe        = 부서 구분
+    $deptInfo.sortOrdr      = 출력 순서
+    $deptInfo.upperDeptAt   = 상위부서 존재 여부
+    */
+}
+
+function value2_1(){
+    gf_FormSetValue('sampleForm', 'deptCode', '', 'text');
+    gf_FormSetValue('sampleForm', 'deptCodeNm', '', 'text');
+    $deptInfo = {};
+}
+
+function fn_CallbackPopDept(data){
+    console.log(data.deptCode + " : " + data.deptKorNm);
+    /*
+    data.deptCode      = 부서코드
+    data.deptKorNm  = 부서 한글 명
+    data.deptEngNm  = 부서 영문 명
+    data.deptAbrv       = 부서 약어
+    data.bplcCode       = 사업장 코드
+    data.bplcNm         = 사업장 명
+    data.upperDeptCode = 상위 부서 코드
+    data.upperDeptNm   = 상위 부서 명
+    data.deptLvl        = 부서 레벨
+    data.orgnztLvl  = 조직 레벨
+    data.deptTelno  = 부서 전화번호
+    data.deptFaxTelno  = 부서 FAX 전화번호
+    data.useBeginDe    = 사용 시작 일자
+    data.useAt      = 사용 여부
+    data.deptSe         = 부서 구분
+    data.sortOrdr       = 출력 순서
+    data.upperDeptAt   = 상위부서 존재 여부
+    */
+}
+
+//--부서 입력 후 Enter 이벤트
+function fn_SearchDeptCode(){
+    var deptCode = gf_FormGetValue('sampleForm', 'deptCode', 'text');
+    var deptKorNm = gf_FormGetValue('sampleForm', 'deptCodeNm', 'text');
+    var jsonParameter = {
+            deptCode : deptCode,
+            deptKorNm : deptKorNm,
+            useAt : '1',
+            bplcCode : gBplcCode
+    };
+    gf_Transaction('list_type01', 'dept/searchDeptCode', jsonParameter, 'fn_CallbackSearchDeptCode', false, 'GET');
+}
+function fn_CallbackSearchDeptCode (strSvcID, targetID, data){
+    var totCnt = data.data.records.length;
+    //alert(totCnt);
+    if(!gf_IsNull(data.data.records) && totCnt == 1){
+        //단건
+        var data = data.data.records[0];
+        gf_FormSetValue('sampleForm', 'deptCode', data.deptCode, 'text');
+        gf_FormSetValue('sampleForm', 'deptCodeNm', data.deptKorNm, 'text');
+
+    } 
+    else {
+        //Popup 호출
+        fn_DeptPopup("sampleForm","deptCode","deptCodeNm", gBplcCode, "Y"); 
+    }
+}
+
+//거래처
+function value3(){
+    //거래처 선택 결과
+    alert($customerInfo.bcncCode + " : " + $customerInfo.bcncNm);
+    /*
+     $customerInfo.bcncCode        = 거래처코드
+     $customerInfo.bcncNm          = 거래처명
+     $customerInfo.bplcCode        = 사업장 코드
+     $customerInfo.bcncSe          = 거래처 구분
+     $customerInfo.bizrno          = 사업자번호
+     $customerInfo.ceoNm           = 대표자
+     $customerInfo.induty          = 업종
+     $customerInfo.bizcnd          = 업태
+     $customerInfo.bankCode        = 은행 코드
+     $customerInfo.bankNm          = 은행명
+     $customerInfo.acnutNo         = 계좌번호
+     $customerInfo.dpstrNm         = 예금주
+     $customerInfo.cprSe           = 법인 구분
+     $customerInfo.nltyCode        = 국적 코드
+     $customerInfo.areaNm          = 지역 명
+     $customerInfo.postCode        = 우편 코드
+     $customerInfo.adres           = 주소
+     $customerInfo.addr2           = 주소상세
+     $customerInfo.telno           = 전화번호
+     $customerInfo.faxNo           = 팩스 번호
+     $customerInfo.homepage        = HOMEPAGE
+     $customerInfo.purchsAt        = 매입 여부
+     $customerInfo.saleofficAt     = 매출처 여부
+     $customerInfo.bcncscaleSe     = 거래처규모 구분
+     $customerInfo.taxtSe          = 과세 구분
+     $customerInfo.bcncCn          = 거래처 내용
+     $customerInfo.fondDe          = 설립 일자
+     $customerInfo.capitalAmt      = 자본 금액
+     $customerInfo.yySaleAmt       = 년 매출 금액
+     $customerInfo.emplCo          = 사원 수
+     $customerInfo.tradeNo         = 무역업등록 번호
+     $customerInfo.crncyCode       = 통화 코드
+     $customerInfo.useAt           = 사용 여부
+     $customerInfo.dsrprAt         = 장애인기업 여부
+     $customerInfo.womanAt         = 여성대표기업 여부
+     $customerInfo.foreignAt       = 외자기업 여부
+     $customerInfo.serhandicapAt   = 중증장애인기업 여부
+     $customerInfo.socialentrprsAt = 사회적기업 여부
+     $customerInfo.dspsnStdAt      = 장애자 표준 여부
+     $customerInfo.greenAt         = 녹색제품 여부
+     $customerInfo.technologyAt    = 기술개발제품 여부
+    */
+}
+
+function value3_1(){
+    gf_FormSetValue('sampleForm', 'bcncCode', '', 'text');
+    gf_FormSetValue('sampleForm', 'bcncNm', '', 'text');
+    $customerInfo = {};
+}
+
+var fn_CallbackPopComp = function(data) {
+    console.log(" Callback : " + data.bcncCode + " , " + data.bcncNm);
+    /*
+     data.bcncCode        = 거래처코드
+     data.bcncNm           = 거래처명
+     data.bplcCode     = 사업장 코드
+     data.bcncSe           = 거래처 구분
+     data.bizrno           = 사업자번호
+     data.ceoNm            = 대표자
+     data.induty           = 업종
+     data.bizcnd           = 업태
+     data.bankCode     = 은행 코드
+     data.bankNm           = 은행명
+     data.acnutNo          = 계좌번호
+     data.dpstrNm          = 예금주
+     data.cprSe            = 법인 구분
+     data.nltyCode        = 국적 코드
+     data.areaNm          = 지역 명
+     data.postCode        = 우편 코드
+     data.adres           = 주소
+     data.addr2           = 주소상세
+     data.telno           = 전화번호
+     data.faxNo           = 팩스 번호
+     data.homepage        = HOMEPAGE
+     data.purchsAt        = 매입 여부
+     data.saleofficAt     = 매출처 여부
+     data.bcncscaleSe     = 거래처규모 구분
+     data.taxtSe          = 과세 구분
+     data.bcncCn          = 거래처 내용
+     data.fondDe          = 설립 일자
+     data.capitalAmt      = 자본 금액
+     data.yySaleAmt       = 년 매출 금액
+     data.emplCo          = 사원 수
+     data.tradeNo         = 무역업등록 번호
+     data.crncyCode       = 통화 코드
+     data.useAt           = 사용 여부
+     data.dsrprAt         = 장애인기업 여부
+     data.womanAt         = 여성대표기업 여부
+     data.foreignAt       = 외자기업 여부
+     data.serhandicapAt   = 중증장애인기업 여부
+     data.socialentrprsAt = 사회적기업 여부
+     data.dspsnStdAt      = 장애자 표준 여부
+     data.greenAt         = 녹색제품 여부
+     data.technologyAt    = 기술개발제품 여부
+    */
+};
+
+//--거래처 입력 후 Enter 이벤트
+function fn_SearchBcncCode(){
+    var bcncCode = gf_FormGetValue('sampleForm', 'bcncCode', 'text');
+    var bcncNm = gf_FormGetValue('sampleForm', 'bcncNm', 'text');
+    var jsonParameter = {
+            bcncCode : bcncCode,
+            bcncNm   : bcncNm,
+            useAt    : 'Y',
+            bplcCode : gBplcCode
+    };
+    gf_Transaction('list_type01', 'comp/searchComp', jsonParameter, 'fn_CallbackSearchBcncCode', false, 'GET');
+}
+function fn_CallbackSearchBcncCode (strSvcID, targetID, data){
+    var totCnt = data.data.records.length;
+    //alert(totCnt);
+    if(!gf_IsNull(data.data.records) && totCnt == 1){
+        //단건
+        var data = data.data.records[0];
+        gf_FormSetValue('sampleForm', 'bcncCode', data.bcncCode, 'text');
+        gf_FormSetValue('sampleForm', 'bcncNm', data.bcncNm, 'text');
+
+    } 
+    else {
+        //Popup 호출
+        fn_CompPopup("sampleForm","bcncCode","bcncNm", gBplcCode, "Y");
+    }
+    /*else if(!gf_IsNull(data.data.records) && totCnt > 1){
+        //여러건 = Popup 호출
+        fn_CompPopup("sampleForm","bcncCode","bcncNm", gBplcCode, "Y");
+    } else {
+        //데이터 없음
+        gf_FormSetValue('sampleForm', 'bcncCode', '', 'text');
+        gf_FormSetValue('sampleForm', 'bcncNm', '', 'text');
+        gf_DivMsgAlert(gv_MsgNoData);
+    }*/
+}
+
+
+
+//주소 : 다음 DAUM
+function value4(){
+    alert(gf_FormGetValue('sampleForm', 'zip', 'text') + " : " + gf_FormGetValue('sampleForm', 'adres', 'text') + " : " + gf_FormGetValue('sampleForm', 'detailAdres', 'text'));
+}
+
+function value4_1(){
+    gf_FormSetValue('sampleForm', 'zip', '', 'text');
+    gf_FormSetValue('sampleForm', 'adres', '', 'text');
+    gf_FormSetValue('sampleForm', 'detailAdres', '', 'text');
+}
+
+//주소 : 행안부 - juso.go.kr
+function value5(){
+    alert($addrInfo.zipno + " : " + $addrInfo.roadAddr1 + " : " + $addrInfo.roadAddr2 + " : " + $addrInfo.roadAddrDetail);
+    /*
+    $addrInfo.zipno          = 우편번호
+    $addrInfo.FullAddr       = 도로명주소(전체)
+    $addrInfo.roadAddr1      = 도로명주소1
+    $addrInfo.roadAddr2      = 도로명주소2
+    $addrInfo.roadAddrDetail = 도로명 상세주소
+    $addrInfo.engAddr        = 영문주소
+    $addrInfo.jibunAddr      = 지번주소
+    $addrInfo.admCd          = 행정구역코드
+    $addrInfo.rnMgtSn        = 도로명코드
+    $addrInfo.bdMgtSn        = 건물관리번호
+    $addrInfo.detBdNmList    = 상세건물명
+    $addrInfo.bdNm           = 건물명
+    $addrInfo.bdKdcd         = 공동주택여부(1 : 공동주택, 0 : 비공동주택)
+    $addrInfo.siNm           = 시도명
+    $addrInfo.sggNm          = 시군구명
+    $addrInfo.emdNm          = 읍면동명
+    $addrInfo.liNm           = 법정리명
+    $addrInfo.rn             = 도로명
+    $addrInfo.udrtYn         = 지하여부(0 : 지상, 1 : 지하)
+    $addrInfo.buldMnnm       = 건물본번
+    $addrInfo.buldSlno       = 건물부번
+    $addrInfo.mtYn           = 산여부(0 : 대지, 1 : 산)
+    $addrInfo.lnbrMnnm       = 지번본번(번지)
+    $addrInfo.lnbrSlno       = 지번부번(호)
+    $addrInfo.emdNo          = 읍면동일련번호
+    */
+}
+
+function value5_1(){
+    gf_FormSetValue('sampleForm', 'zip01', '', 'text');
+    gf_FormSetValue('sampleForm', 'adres01', '', 'text');
+    gf_FormSetValue('sampleForm', 'detailAdres01', '', 'text');
+    $addrInfo = {};
+}
+
+function fn_CallbackPopAddr(data){
+    console.log(data.zipno + " : " + data.roadAddr1 + " : " + data.roadAddr2 + " : " + data.roadAddrDetail);
+    /*
+    data.zipno          = 우편번호
+    data.FullAddr       = 도로명주소(전체)
+    data.roadAddr1      = 도로명주소1
+    data.roadAddr2      = 도로명주소2
+    data.roadAddrDetail = 도로명 상세주소
+    data.engAddr        = 영문주소
+    data.jibunAddr      = 지번주소
+    data.admCd          = 행정구역코드
+    data.rnMgtSn        = 도로명코드
+    data.bdMgtSn        = 건물관리번호
+    data.detBdNmList    = 상세건물명
+    data.bdNm           = 건물명
+    data.bdKdcd         = 공동주택여부(1 : 공동주택, 0 : 비공동주택)
+    data.siNm           = 시도명
+    data.sggNm          = 시군구명
+    data.emdNm          = 읍면동명
+    data.liNm           = 법정리명
+    data.rn             = 도로명
+    data.udrtYn         = 지하여부(0 : 지상, 1 : 지하)
+    data.buldMnnm       = 건물본번
+    data.buldSlno       = 건물부번
+    data.mtYn           = 산여부(0 : 대지, 1 : 산)
+    data.lnbrMnnm       = 지번본번(번지)
+    data.lnbrSlno       = 지번부번(호)
+    data.emdNo          = 읍면동일련번호
+    */
+}
+</script>
+
+<div class="dhxwin_hdr">Popup 샘플</div>
+<div class="list_type01">
+    <form id="sampleForm">
+        <br>
+        <table style="vertical-align: middle; width:950px;">
+            <colgroup>
+                <col width="200">
+                <col width="10">
+                <col width="590">
+                <col width="150">
+            </colgroup>
+            <tbody><tr>
+                <th>사원 Popp(1)</th>
+                <td></td>
+                <td>
+                    <input type="text" name="empCode" id="empCode" maxlength="15" style="width: 80px;">
+                    <input type="text" name="empCodeNm" id="empCodeNm" style="width: 250px;">
+                    <button type="button" id="btnEmpCodeSearch" class="btn_common03">
+                    <span class="glyphicon  glyphicon glyphicon-search"> </span>
+                    </button>
+                </td>
+                <td><a href="javascript:value1();">[확인]</a> <a href="javascript:value1_1();">[변수초기화]</a></td>
+            </tr>
+            <tr>
+                <th>사원 Popp(2)</th>
+                <td></td>
+                <td>
+                    <input type="text" name="empCode2" id="empCode2" maxlength="15" style="width: 80px;">
+                    <input type="text" name="empCodeNm2" id="empCodeNm2" style="width: 250px;">
+                    <button type="button" id="btnEmpCodeSearch2" class="btn_common03">
+                    <span class="glyphicon  glyphicon glyphicon-search"> </span>
+                    </button>
+                </td>
+                <td><a href="javascript:value12();">[확인]</a> <a href="javascript:value1_2();">[변수초기화]</a></td>
+            </tr>
+            <tr>
+                <th>부서 Popp</th>
+                <td></td>
+                <td>
+                    <input type="text" name="deptCode" id="deptCode" maxlength="15" style="width: 80px;">
+                    <input type="text" name="deptCodeNm" id="deptCodeNm" style="width: 250px;">
+                    <button type="button" id="btnDeptCodeSearch" class="btn_common03">
+                    <span class="glyphicon  glyphicon glyphicon-search"> </span>
+                    </button>
+                </td>
+                <td><a href="javascript:value2();">[확인]</a> <a href="javascript:value2_1();">[변수초기화]</a></td>
+            </tr>
+            <tr>
+                <th>거래처 Popp</th>
+                <td></td>
+                <td>
+                    <input type="text" name="bcncCode" id="bcncCode" maxlength="15" style="width: 80px;">
+                    <input type="text" name="bcncNm" id="bcncNm" style="width: 250px;">
+                    <button type="button" id="btnBcncCodeSearch" class="btn_common03">
+                    <span class="glyphicon  glyphicon glyphicon-search"> </span>
+                    </button>
+                </td>
+                <td><a href="javascript:value3();">[확인]</a> <a href="javascript:value3_1();">[변수초기화]</a></td>
+            </tr>
+            <tr>
+                <th>주소 Popp (DAUM)</th>
+                <td></td>
+                <td>
+                    <input type="text" name="zip" id="zip" maxlength="10" style="width: 80px;" readonly="">
+                    <input type="text" name="adres" id="adres" style="width: 250px;">
+                    <input type="text" name="detailAdres" id="detailAdres" style="width: 185px;">
+                    <button type="button" id="btnAddrSearch_Daum" class="btn_common03">
+                    <span class="glyphicon  glyphicon glyphicon-search"> </span>
+                    </button>
+                </td>
+                <td><a href="javascript:value4();">[확인]</a> <a href="javascript:value4_1();">[변수초기화]</a></td>
+            </tr>
+            <tr>
+                <th>주소 Popp (JUSO)</th>
+                <td></td>
+                <td>
+                    <input type="text" name="zip01" id="zip01" maxlength="10" style="width: 80px;" readonly="">
+                    <input type="text" name="adres01" id="adres01" style="width: 250px;">
+                    <input type="text" name="detailAdres01" id="detailAdres01" style="width: 185px;">
+                    <button type="button" id="btnAddrSearch" class="btn_common03">
+                    <span class="glyphicon  glyphicon glyphicon-search"> </span>
+                    </button>
+                </td>
+                <td><a href="javascript:value5();">[확인]</a> <a href="javascript:value5_1();">[변수초기화]</a></td>
+            </tr>
+    
+                                                        
+
+
+
+
+</tbody></table></form></div></div><div class="dhxwin_active" style="z-index: 105; left: 464px; top: 237px; width: 900px; height: 550px; transform: translate(0px, 0px);"><div class="dhxwin_hdr" style="z-index: 0;"><div class="dhxwin_icon"></div><div class="dhxwin_text" style="padding-left: 19px; padding-right: 92px;"><div class="dhxwin_text_inside">교육 훈련 만족도 설문</div></div><div class="dhxwin_btns"><div title="Help" class="dhxwin_button dhxwin_button_help" style="display: none;"></div><div title="Stick" class="dhxwin_button dhxwin_button_stick" style="display: none;"></div><div title="Park" class="dhxwin_button dhxwin_button_park"></div><div title="Min/Max" class="dhxwin_button dhxwin_button_minmax"></div><div title="Close" class="dhxwin_button dhxwin_button_close"></div></div></div><div class="dhxwin_brd" style="left: 0px; top: 48px; width: 896px; height: 500px; cursor: w-resize;"></div><div class="dhx_cell_wins" style="left: 2px; top: 48px; width: 896px; height: 500px;"><div class="dhx_cell_cont_wins" style="left: 0px; top: 0px; width: 896px; height: 500px;"><div style="position:relative;width:100%;height:100%;overflow:auto;">
+<script>
+var dhxTreeMenuPopupEmp2;
+var dhxGridEmpPopup2;
+var chkStmBizplcCode; //사업장 변경 여부 체크
+var evId_StmBizplc = 0; //사업장 변경 여부 체크
+var eventIdEmpPopup = [];
+
+var gformIdPopupEmp2;
+var gcodeIdPopupEmp2;
+var gcodeNmIdPopupEmp2;
+var gempInfo2;
+
+var gBplcCode = '1000'
+
+$(function() {  
+    cf_InitParamPopupMenu();
+    cf_SetComponentsPopupMenu();
+    cf_SetEventListenerPopupMenu();
+    cf_SetBindingPopupMenu();
+    cf_InitFormPopupMenu();
+});
+
+
+function cf_InitParamPopupMenu(){
+    gf_ComboCode('divPopupHffsSeComboEmp2', 'searchComboHffsSe', 'searchComboHffsSe', 'search', 'C278', '' , '', '', 'asc', '');    //재직구분
+    gf_FormSetValue('searchForm', 'searchComboHffsSe', 'J01', 'combo');
+}
+
+function cf_SetComponentsPopupMenu(){
+    var formId     = $("#empPopup2").attr("formId");
+    var codeId     = $("#empPopup2").attr("codeId");
+    var codeNmId   = $("#empPopup2").attr("codeNmId");
+    var empInfo    = $("#empPopup2").attr("empInfo");
+    var searchFlag = $("#empPopup2").attr("searchFlag");
+    
+    var obj = "";
+    
+    if(typeof searchFlag != "undefined" && typeof codeId != "undefined" && searchFlag == "Y" && codeId != ""){
+        obj = '#' + formId + " #" + codeId;
+        gf_FormSetValue('searchForm', 'popupEmpNo', $.trim($(obj).val()), 'text');
+    }
+    else {
+        gf_FormSetValue('searchForm', 'popupEmpNo', '', 'text');
+    }
+    
+    if(typeof searchFlag != "undefined" && typeof codeNmId != "undefined" && searchFlag == "Y" && codeNmId != ""){
+        obj = '#' + formId + " #" + codeNmId;
+        gf_FormSetValue('searchForm', 'popupKorNm', $.trim($(obj).val()), 'text');
+    }
+    else {
+        gf_FormSetValue('searchForm', 'popupKorNm', '', 'text');
+    }
+    
+    gformIdPopupEmp2 = formId;
+    gcodeIdPopupEmp2 = codeId;
+    gcodeNmIdPopupEmp2 = codeNmId;
+    gempInfo2 = empInfo;
+    
+    var dhxGridMhsDeptListInfo = [];
+    dhxGridMhsDeptListInfo.push(gf_MakeDhxGridHeader(gf_LocaleTrans('default', 'titDeptCode'), '80', 'center', 'str', 'ro', false ,'deptCode', '')); // 부서 코드
+    //dhxGridMhsDeptListInfo.push(gf_MakeDhxGridHeader(gf_LocaleTrans('default', 'titDeptKorNm'), '270', 'left', 'str', 'tree', false, 'deptKorNm', '')); // 부서 한글 명
+    dhxGridMhsDeptListInfo.push(gf_MakeDhxGridHeader("부서명", '270', 'left', 'str', 'tree', false, 'deptKorNm', '')); // 부서 한글 명
+    dhxTreeMenuPopupEmp2 = gf_MakeDhxGrid('gridPopupMenu', dhxGridMhsDeptListInfo, true, false, false);
+    dhxTreeMenuPopupEmp2.enableAutoWidth(true);
+    dhxTreeMenuPopupEmp2.attachEvent("onRowSelect", function(rId, cInd){
+        //console.log("부서코드 : " + dhxTreeMenuPopupEmp2.cells(rId, 0).getValue());
+        //console.log("부서명 : " + dhxTreeMenuPopupEmp2.cells(rId, 1).getValue());
+        searchEmp (dhxTreeMenuPopupEmp2.cells(rId, 0).getValue());
+    });
+    
+    var dhxGridTreeMenuInfo = [];
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader(gf_LocaleTrans('default', 'titNum'),   '50', 'center', 'int', 'edn', false, 'num', '')); // 번호
+    //dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader(gf_LocaleTrans('default', 'titEmpNo'), '80', 'center', 'str', 'ro', false ,'empno', '')); // 사원번호
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader("사원번호", '80', 'center', 'str', 'ro', false ,'empno', '')); // 사원번호
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader(gf_LocaleTrans('default', 'titEmpNm'), '150', 'center', 'str', 'ro', false ,'korNm', '')); // 성명
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader(gf_LocaleTrans('default', 'titPositionCode'), '90', 'center', 'str', 'ro', false ,'rspofcCodeNm', '')); // 직책
+    //dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader(gf_LocaleTrans('default', 'titDeptKorNm'), '*', 'center', 'str', 'ro', false ,'deptCodeNm', '')); // 부서 명 
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader("부서명", '*', 'center', 'str', 'ro', false ,'deptCodeNm', '')); // 부서명
+    
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false ,'engNm', '')); // 영문 명
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false ,'deptCode', '')); // 부서 코드
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false ,'chcrtNm', '')); // 한자 명
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false ,'ecnyDe', '')); // 입사 일자 
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false ,'retireDe', '')); // 퇴직 일자
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false ,'ihidnum', '')); // 주민등록번호 
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false ,'nltyCode', '')); // 국적 코드
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false ,'nltyCodeNm', '')); // 국적 코드 명
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false ,'jssfcCode', '')); // 직종 코드
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false ,'jssfcCodeNm', '')); // 직종 코드 명 
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false ,'srclsCode', '')); // 호봉 코드
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false ,'clsfCode', '')); // 직급 코드 
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false ,'clsfCodeNm', '')); // 직급 코드 명 
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false ,'ofcpsCode', '')); // 직위 코드
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false ,'ofcpsCodeNm', '')); // 직위 코드 명 
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false ,'rspofcCode', '')); // 직책 코드
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false ,'zip', '')); // 우편번호
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false ,'ownhomAdres', '')); // 자택 주소 
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false ,'ownhomDetailAdres', '')); // 자택 상세 주소
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false ,'ownhomEngAdres', '')); // 자택 영문 주소 
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false ,'ownhomTelno', '')); // 자택 전화번호
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false ,'lxtnTelno', '')); // 내선 전화번호 
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false ,'mbtlnum', '')); // 휴대폰번호 
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false ,'email', '')); // 이메일 
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false ,'brthdy', '')); // 생년월일 
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false ,'slrcldAt', '')); // 양력 여부
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false ,'mrrgAt', '')); // 결혼 여부 
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false ,'mrrgAtNm', '')); // 결혼 여부 명
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false ,'hdadptDeptCode', '')); // 겸임 부서 코드
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false ,'emplSe', '')); // 사원 구분
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false ,'emplSeNm', '')); // 사원 구분 명
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false ,'hffsSe', '')); // 재직 구분
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false ,'hffsSeNm', '')); // 재직 구분 명 
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false ,'retireSe', '')); // 퇴직 구분
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false ,'retireSeNm', '')); // 퇴직 구분 명
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false ,'sexdstnSe', '')); // 성별 구분
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false ,'sexdstnSeNm', '')); // 성별 구분 명
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false ,'empnmSe', '')); // 채용 구분 -삭제
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false ,'empnmSeNm', '')); // 채용 구분 명-삭제
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false ,'cashierAt', '')); // 출납담당 여부
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false ,'hdadptAt', '')); // 겸임 여부
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false ,'dprlrAt', '')); // 부서장 여부
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false ,'lbunSbscrbAt', '')); // 노조 가입 여부
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false ,'lbunSbscrbAtNm', '')); // 노조 가입 여부 명
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false ,'mutaidSbscrbAt', '')); // 상조 가입 여부
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false ,'dispWorkbAt', '')); // 파견 근무 여부 
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false ,'natvfrgnSeCode', '')); // 내외국인 구분 코드
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false ,'natvfrgnSeCodeNm', '')); // 내외국인 구분 코드 명
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false ,'ecnySeCode', '')); // 입사 구분 코드 
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false ,'ecnySeCodeNm', '')); // 입사 구분 코드 명
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false ,'bplcCode', '')); // 사업장코드 
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false ,'bplcCodeNm', '')); // 사업장코드 명 
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false ,'salpeakAt', '')); // 임금피크제 여부
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false ,'flexbizAt', '')); // 유연근무제 여부
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false ,'ansalsysAt', '')); // 연봉제 여부
+    
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false, 'deptEngNm', '')); // 부서 영문 명
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false, 'deptAbrv', '')); // 부서 약어
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false, 'upperDeptCode', '')); // 상위 부서 코드
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false, 'upperDeptNm', '')); // 상위 부서 명
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false, 'deptLvl', '')); // 부서 레벨
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false, 'orgnztLvl', '')); // 조직 레벨
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false, 'deptTelno', '')); // 부서 전화번호
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false, 'deptFaxTelno', '')); // 부서 FAX 전화번호
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false, 'useBeginDe', '')); // 사용 시작 일자
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false, 'useAt', '')); // 사용 여부
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false, 'deptSe', '')); // 부서 구분
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false, 'sortOrdr', '')); // 출력 순서 
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false, 'upperDeptAt', '')); // 상위부서 존재 여부
+
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false, 'jblnCode', '')); // 직렬 코드
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false, 'jblnCodeNm', '')); // 직렬 코드 명
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false, 'dtyCode', '')); // 직무 코드
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false, 'dtyCodeNm', '')); // 직무 코드 명 
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false, 'emgncTelno', '')); // 비상전화번호
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false, 'indvdlEmail', '')); // 개인 이메일
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false, 'hdadptDeptCodeNm', '')); // 겸임 부서 명
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false, 'dispDeptCode', '')); // 파견 부서 코드
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false, 'dispDeptCodeNm', '')); // 파견 부서 명
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false, 'babyShrtenWorkAt', '')); // 육아 단축 근무 여부
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false, 'salaryAprpCode', '')); // 급여 책정 코드
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false, 'salaryAprpCodeNm', '')); // 급여 책정 코드 명
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false, 'apntcSdt', '')); // 수습 시작일자
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false, 'apntcEdt', '')); // 수습 종료일자
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false, 'incmtaxrtCode', '')); // 소득세율 코드
+    dhxGridTreeMenuInfo.push(gf_MakeDhxGridHeader('', '0', 'center', 'str', 'ro', false, 'incmtaxrtCodeNm', '')); // 소득세율 코드 명
+    
+    dhxGridEmpPopup2 = gf_MakeDhxGrid('gridPopupMenuEmp', dhxGridTreeMenuInfo, false, false, false);
+}
+
+function cf_SetEventListenerPopupMenu(){
+    var eventId;
+    $('#searchForm input, select, button, textarea').unbind('keypress').bind('keypress',function() { 
+        if(event.charCode == 13) { $('#btnEmpPopupSearch').click(); event.preventDefault(); return true; } //if(this.id == "bizcndSaveFormMhshrb000") 으로 걸러서 별도 처리  
+        else return true; 
+    }); 
+    //조회
+    $('#btnEmpPopupSearch').unbind('click').bind('click', function() {
+        fn_SearchPopupEmp();
+    });
+    //초기화
+    $('#btnEmpPupupInit').unbind('click').bind('click', function() {
+        $('#searchForm').resetForm();
+        gf_FormSetValue('searchForm', 'searchComboHffsSe', 'J01', 'combo');
+        cf_InitFormPopupMenu()
+    });
+    //닫기
+    $('#btnEmpPupupClose').unbind('click').bind('click', function() {
+        $('#empPopup2 .b-close').click();
+    });
+    
+    $('#searchComboStmBizplcEmp2').unbind('change').bind('change', function() {
+        fn_SearchPopupDept();
+    });
+    
+    $('#btnEmpPupupOk2').unbind('click').bind('click', function() {
+        var selectedId = dhxGridEmpPopup2.getSelectedRowId();
+        fn_SearchEmpOk2(selectedId);
+    });
+    
+    dhxGridEmpPopup2.attachEvent("onRowDblClicked", function(rId,cInd){
+        fn_SearchEmpOk2(rId);
+    });
+    eventId = dhxTreeMenuPopupEmp2.attachEvent("onEditCell", function(stage, rId, cInd, nValue, oValue){
+        if(cInd == gf_GetDhxGridColumId(dhxTreeMenuPopupEmp2, 'deptKorNm')) { return false; }     
+        return true;
+    });
+    eventIdEmpPopup.push(eventId);
+}
+
+function cf_SetBindingPopupMenu(){
+    fn_SearchPopupDept();
+}
+
+function cf_InitFormPopupMenu(){
+    $('#popupKorNm').focus();
+}
+
+function fn_SearchPopupDept(){
+        var jsonParameter = {
+                bplcCode  : gBplcCode
+        };
+        
+        dhxTreeMenuPopupEmp2.clearAll();
+        dhxGridEmpPopup2.clearAll();
+        gf_NoFoundDataOnGridMsg('gridPopupMenuEmp');
+        
+        gf_Transaction('gridPopupMenu', 'dept/searchDept', jsonParameter, 'fn_CallbackSearchGridListDeptPopup', false, 'GET');
+}
+
+function fn_SearchPopupEmp(){
+    var selectedId = dhxTreeMenuPopupEmp2.getSelectedRowId();
+    var jsonParameter = {
+            empno     : gf_FormGetValue('searchForm', 'popupEmpNo', 'text'),
+            korNm     : gf_FormGetValue('searchForm', 'popupKorNm', 'text'),
+            hffsSe    : gf_FormGetValue('searchForm', 'searchComboHffsSe', 'combo'),
+            deptCode  : dhxTreeMenuPopupEmp2.cells(selectedId, 0).getValue(),
+            bplcCode  : gBplcCode
+    };
+    gf_Transaction('gridPopupMenuEmp', 'emp/searchDeptEmp', jsonParameter, 'fn_CallbackSearchGridListEmp', false, 'GET');
+}
+
+function fn_CallbackSearchGridListDeptPopup (strSvcID, targetID, data){
+    
+    var totCnt = data.data.records.length;
+    if(!gf_IsNull(data.data.records) && totCnt > 0){
+        
+        var menus = data.data.records;
+        var menuList = [];
+        var menuObj = {};
+        var count = 0;
+        var rootStr = "";
+        
+        for (var i=0; i < totCnt; i++) {
+            var menu = menus[i];
+            //console.log(" forEach count : " + count);
+            //console.log(" menu : " + menu);
+            if(menu.useAt == "1" && menu.DeptCode != ""){
+                rootStr = menu.DeptCodeAt;
+            }
+            menuObj = {};
+            menuObj.id = menu.deptCode;
+            menuObj.parentId = menu.DeptCodeAt;
+            menuObj.deptCode = menu.deptCode;
+            menuObj.deptKorNm = menu.deptKorNm;
+            menuObj.deptEngNm = menu.deptEngNm;
+            menuObj.sortOrdr = menu.sortOrdr;
+
+            if(menu.upperDeptAt = '1') {
+                menuObj.deptKorNm = {
+                    value: menu.deptKorNm,
+                    image: 'folder.gif'
+                };
+            } else {
+                menuObj.deptKorNm = menu.deptKorNm;
+            }
+    
+            menuList[i] = menuObj;
+        }
+        
+        var menuTree = gf_TreeModel(menuList, rootStr);
+        dhxTreeMenuPopupEmp2.parse(JSON.stringify(menuTree),'js');
+        //fn_roleMenuDisabledAll();
+        dhxTreeMenuPopupEmp2.expandAll();
+        dhxTreeMenuPopupEmp2.selectCell(0,1);
+        //searchEmp (dhxTreeMenuPopupEmp2.cells(0, 0).getValue());
+        gf_NoFoundDataOnGridMsgRemove('gridPopupMenu');
+        fn_SearchPopupEmp();
+    } else {
+        //gf_DivMsgAlert(gv_MsgNoData);
+        gf_NoFoundDataOnGridMsg('gridPopupMenu'); 
+    }
+    $("#spanCnt").text(totCnt);
+    cf_SetEventListenerPopupMenu();
+}
+
+function searchEmp (deptCode) {
+    var jsonParameter = {
+            empno     : gf_FormGetValue('searchForm', 'popupEmpNo', 'text'),
+            korNm     : gf_FormGetValue('searchForm', 'popupKorNm', 'text'),
+            hffsSe    : gf_FormGetValue('searchForm', 'searchComboHffsSe', 'combo'),
+            deptCode  : deptCode,
+            bplcCode  : gBplcCode
+    };
+    gf_Transaction('gridPopupMenuEmp', 'emp/searchDeptEmp', jsonParameter, 'fn_CallbackSearchGridListEmp', false, 'GET');
+}
+
+function fn_CallbackSearchGridListEmp (strSvcID, targetID, data){
+    dhxGridEmpPopup2.clearAll();
+    if(!gf_IsNull(data.data.records)){
+        dhxGridEmpPopup2.parse(data.data.records, 'js');
+        gf_NoFoundDataOnGridMsgRemove('gridPopupMenuEmp');
+    } else {
+        //gf_DivMsgAlert(gv_MsgNoData);
+        gf_NoFoundDataOnGridMsg('gridPopupMenuEmp'); 
+    }
+    $("#spanCntEmp").text(gf_NumberWithCommas(data.data.records.length));
+    cf_SetEventListenerPopupMenu();
+}
+
+function fn_SearchEmpOk2(rId){
+    
+     var obj = "";
+     if(gformIdPopupEmp2 != "" && gcodeIdPopupEmp2 != ""){
+         obj = '#' + gformIdPopupEmp2 + " #" + gcodeIdPopupEmp2;
+         $(obj).val(dhxGridEmpPopup2.cells(rId, 1).getValue()).change();   //사원번호
+     } 
+     if(gformIdPopupEmp2 != "" && gcodeNmIdPopupEmp2 != ""){
+         obj = '#' + gformIdPopupEmp2 + " #" + gcodeNmIdPopupEmp2;
+         $(obj).val(dhxGridEmpPopup2.cells(rId, 2).getValue()).change();   //사원명
+    }
+     
+     /*
+    console.log("사원번호 : " + dhxGridEmpPopup2.cells(rId, 1).getValue());
+    console.log("성명 : " + dhxGridEmpPopup2.cells(rId, 2).getValue());
+    console.log("직책 : " + dhxGridEmpPopup2.cells(rId, 3).getValue());
+    console.log("부서 한글 명 : " + dhxGridEmpPopup2.cells(rId, 4).getValue());
+    console.log("영문 명 : " + dhxGridEmpPopup2.cells(rId, 5).getValue());
+    console.log("부서코드 : " + dhxGridEmpPopup2.cells(rId, 6).getValue());
+    console.log("한자 명 : " + dhxGridEmpPopup2.cells(rId, 7).getValue());
+    console.log("입사 일자  : " + dhxGridEmpPopup2.cells(rId, 8).getValue());
+    console.log("퇴직 일자  : " + dhxGridEmpPopup2.cells(rId, 9).getValue());
+    console.log("주민등록번호   : " + dhxGridEmpPopup2.cells(rId, 10).getValue());
+    console.log("국적 코드   : " + dhxGridEmpPopup2.cells(rId, 11).getValue());
+    console.log("국적 코드 명   : " + dhxGridEmpPopup2.cells(rId, 12).getValue());
+    console.log("직종 코드   : " + dhxGridEmpPopup2.cells(rId, 13).getValue());
+    console.log("직종 코드 명   : " + dhxGridEmpPopup2.cells(rId, 14).getValue());
+    console.log("호봉 코드   : " + dhxGridEmpPopup2.cells(rId, 15).getValue());
+    console.log("직급 코드   : " + dhxGridEmpPopup2.cells(rId, 16).getValue());
+    console.log("직급 코드 명   : " + dhxGridEmpPopup2.cells(rId, 17).getValue());
+    console.log("직위 코드   : " + dhxGridEmpPopup2.cells(rId, 18).getValue());
+    console.log("직위 코드 명   : " + dhxGridEmpPopup2.cells(rId, 19).getValue());
+    console.log("직책 코드   : " + dhxGridEmpPopup2.cells(rId, 20).getValue());
+    console.log("우편번호   : " + dhxGridEmpPopup2.cells(rId, 21).getValue());
+    console.log("자택 주소   : " + dhxGridEmpPopup2.cells(rId, 22).getValue());
+    console.log("자택 상세 주소  : " + dhxGridEmpPopup2.cells(rId, 23).getValue());
+    console.log("자택 영문 주소  : " + dhxGridEmpPopup2.cells(rId, 24).getValue());
+    console.log("자택 전화번호   : " + dhxGridEmpPopup2.cells(rId, 25).getValue());
+    console.log("내선 전화번호   : " + dhxGridEmpPopup2.cells(rId, 26).getValue());
+    console.log("휴대폰번호   : " + dhxGridEmpPopup2.cells(rId, 27).getValue());
+    console.log("이메일   : " + dhxGridEmpPopup2.cells(rId, 28).getValue());
+    console.log("생년월일   : " + dhxGridEmpPopup2.cells(rId, 29).getValue());
+    console.log("양력 여부   : " + dhxGridEmpPopup2.cells(rId, 30).getValue());
+    console.log("결혼 여부   : " + dhxGridEmpPopup2.cells(rId, 31).getValue());
+    console.log("결혼 여부 명   : " + dhxGridEmpPopup2.cells(rId, 32).getValue());
+    console.log("겸임 부서 코드   : " + dhxGridEmpPopup2.cells(rId, 33).getValue());
+    console.log("사원 구분   : " + dhxGridEmpPopup2.cells(rId, 34).getValue());
+    console.log("사원 구분 명   : " + dhxGridEmpPopup2.cells(rId, 35).getValue());
+    console.log("재직 구분   : " + dhxGridEmpPopup2.cells(rId, 36).getValue());
+    console.log("재직 구분 명   : " + dhxGridEmpPopup2.cells(rId, 37).getValue());
+    console.log("퇴직 구분   : " + dhxGridEmpPopup2.cells(rId, 38).getValue());
+    console.log("퇴직 구분 명   : " + dhxGridEmpPopup2.cells(rId, 39).getValue());
+    console.log("성별 구분   : " + dhxGridEmpPopup2.cells(rId, 40).getValue());
+    console.log("성별 구분 명   : " + dhxGridEmpPopup2.cells(rId, 41).getValue());
+    //console.log("채용 구분   : " + dhxGridEmpPopup2.cells(rId, 42).getValue());
+    //console.log("채용 구분 명   : " + dhxGridEmpPopup2.cells(rId, 43).getValue());
+    console.log("출납담당 여부   : " + dhxGridEmpPopup2.cells(rId, 44).getValue());
+    console.log("겸임 여부   : " + dhxGridEmpPopup2.cells(rId, 45).getValue());
+    console.log("부서장 여부   : " + dhxGridEmpPopup2.cells(rId, 46).getValue());
+    console.log("노조 가입 여부   : " + dhxGridEmpPopup2.cells(rId, 47).getValue());
+    console.log("노조 가입 여부 명   : " + dhxGridEmpPopup2.cells(rId, 48).getValue());
+    console.log("상조 가입 여부   : " + dhxGridEmpPopup2.cells(rId, 49).getValue());
+    console.log("파견 근무 여부   : " + dhxGridEmpPopup2.cells(rId, 50).getValue());
+    console.log("내외국인 구분 코드   : " + dhxGridEmpPopup2.cells(rId, 51).getValue());
+    console.log("내외국인 구분 코드 명   : " + dhxGridEmpPopup2.cells(rId, 52).getValue());
+    console.log("입사 구분 코드   : " + dhxGridEmpPopup2.cells(rId, 53).getValue());
+    console.log("입사 구분 코드 명   : " + dhxGridEmpPopup2.cells(rId, 54).getValue());
+    console.log("사업장코드   : " + dhxGridEmpPopup2.cells(rId, 55).getValue());
+    console.log("사업장코드 명   : " + dhxGridEmpPopup2.cells(rId, 56).getValue());
+    console.log("임금피크제 여부   : " + dhxGridEmpPopup2.cells(rId, 57).getValue());
+    console.log("유연근무제 여부   : " + dhxGridEmpPopup2.cells(rId, 58).getValue());
+    console.log("연봉제 여부   : " + dhxGridEmpPopup2.cells(rId, 59).getValue());
+    
+    console.log("부서 영문 명 : " + dhxGridEmpPopup2.cells(rId, 60).getValue());
+    console.log("부서 약어 : " + dhxGridEmpPopup2.cells(rId, 61).getValue());
+    console.log("상위 부서 코드 : " + dhxGridEmpPopup2.cells(rId, 62).getValue());
+    console.log("상위 부서 명 : " + dhxGridEmpPopup2.cells(rId, 63).getValue());
+    console.log("부서 레벨 : " + dhxGridEmpPopup2.cells(rId, 64).getValue());
+    console.log("조직 레벨 : " + dhxGridEmpPopup2.cells(rId, 65).getValue());
+    console.log("부서 전화번호 : " + dhxGridEmpPopup2.cells(rId, 66).getValue());
+    console.log("부서 FAX 전화번호 : " + dhxGridEmpPopup2.cells(rId, 67).getValue());
+    console.log("사용 시작 일자 : " + dhxGridEmpPopup2.cells(rId, 68).getValue());
+    console.log("사용 여부 : " + dhxGridEmpPopup2.cells(rId, 69).getValue());
+    console.log("부서 구분 : " + dhxGridEmpPopup2.cells(rId, 70).getValue());
+    console.log("출력 순서 : " + dhxGridEmpPopup2.cells(rId, 71).getValue());
+    console.log("상위부서 존재 여부 : " + dhxGridEmpPopup2.cells(rId, 72).getValue());
+
+    console.log("직렬 코드 : " + dhxGridEmpPopup2.cells(rId, 73).getValue());
+    console.log("직렬 코드 명 : " + dhxGridEmpPopup2.cells(rId, 74).getValue());
+    console.log("직무 코드 : " + dhxGridEmpPopup2.cells(rId, 75).getValue());
+    console.log("직무 코드 명 : " + dhxGridEmpPopup2.cells(rId, 76).getValue());
+    console.log("비상전화번호 : " + dhxGridEmpPopup2.cells(rId, 77).getValue());
+    console.log("개인 이메일 : " + dhxGridEmpPopup2.cells(rId, 78).getValue());
+    console.log("겸임 부서 명 : " + dhxGridEmpPopup2.cells(rId, 79).getValue());
+    console.log("파견 부서 코드 : " + dhxGridEmpPopup2.cells(rId, 80).getValue());
+    console.log("파견 부서 명 : " + dhxGridEmpPopup2.cells(rId, 81).getValue());
+    console.log("육아 단축 근무 여부 : " + dhxGridEmpPopup2.cells(rId, 82).getValue());
+    console.log("급여 책정 코드 : " + dhxGridEmpPopup2.cells(rId, 83).getValue());
+    console.log("급여 책정 코드 명 : " + dhxGridEmpPopup2.cells(rId, 84).getValue());
+    console.log("수습 시작일자 : " + dhxGridEmpPopup2.cells(rId, 85).getValue());
+    console.log("수습 종료일자 : " + dhxGridEmpPopup2.cells(rId, 86).getValue());
+    console.log("소득세율 코드 : " + dhxGridEmpPopup2.cells(rId, 87).getValue());
+    console.log("소득세율 코드 명 : " + dhxGridEmpPopup2.cells(rId, 88).getValue());
+    */
+         
+    if(gempInfo2 != ""){
+        obj = eval("$" + gempInfo2);
+        if(typeof obj == "object"){
+            obj.empno             = dhxGridEmpPopup2.cells(rId, 1).getValue();    //사원번호
+            obj.korNm             = dhxGridEmpPopup2.cells(rId, 2).getValue();    //성명
+            obj.rspofcCodeNm      = dhxGridEmpPopup2.cells(rId, 3).getValue();    //직책
+            obj.deptCodeNm        = dhxGridEmpPopup2.cells(rId, 4).getValue();    //부서 명
+            
+            obj.engNm             = dhxGridEmpPopup2.cells(rId, 5).getValue();    //영문 명
+            obj.deptCode          = dhxGridEmpPopup2.cells(rId, 6).getValue();    //부서 코드 
+            obj.chcrtNm           = dhxGridEmpPopup2.cells(rId, 7).getValue();    //한자 명
+            obj.ecnyDe            = dhxGridEmpPopup2.cells(rId, 8).getValue();    //입사 일자
+            obj.retireDe          = dhxGridEmpPopup2.cells(rId, 9).getValue();    //퇴직 일자
+            obj.ihidnum           = dhxGridEmpPopup2.cells(rId, 10).getValue();   //주민등록번호
+            obj.nltyCode          = dhxGridEmpPopup2.cells(rId, 11).getValue();   //국적 코드
+            obj.nltyCodeNm        = dhxGridEmpPopup2.cells(rId, 12).getValue();   //국적 코드 명
+            obj.jssfcCode         = dhxGridEmpPopup2.cells(rId, 13).getValue();   //직종 코드
+            obj.jssfcCodeNm       = dhxGridEmpPopup2.cells(rId, 14).getValue();   //직종 코드 명
+            obj.srclsCode         = dhxGridEmpPopup2.cells(rId, 15).getValue();   //호봉 코드
+            obj.clsfCode          = dhxGridEmpPopup2.cells(rId, 16).getValue();   //직급 코드
+            obj.clsfCodeNm        = dhxGridEmpPopup2.cells(rId, 17).getValue();   //직급 코드 명
+            obj.ofcpsCode         = dhxGridEmpPopup2.cells(rId, 18).getValue();   //직위 코드
+            obj.ofcpsCodeNm       = dhxGridEmpPopup2.cells(rId, 19).getValue();   //직위 코드 명
+            obj.rspofcCode        = dhxGridEmpPopup2.cells(rId, 20).getValue();   //직책 코드
+            obj.zip               = dhxGridEmpPopup2.cells(rId, 21).getValue();   //우편번호
+            obj.ownhomAdres       = dhxGridEmpPopup2.cells(rId, 22).getValue();   //자택 주소
+            obj.ownhomDetailAdres = dhxGridEmpPopup2.cells(rId, 23).getValue();   //자택 상세 주소
+            obj.ownhomEngAdres    = dhxGridEmpPopup2.cells(rId, 24).getValue();   //자택 영문 주소
+            obj.ownhomTelno       = dhxGridEmpPopup2.cells(rId, 25).getValue();   //자택 전화번호
+            obj.lxtnTelno         = dhxGridEmpPopup2.cells(rId, 26).getValue();   //내선 전화번호
+            obj.mbtlnum           = dhxGridEmpPopup2.cells(rId, 27).getValue();   //휴대폰번호
+            obj.email             = dhxGridEmpPopup2.cells(rId, 28).getValue();   //이메일
+            obj.brthdy            = dhxGridEmpPopup2.cells(rId, 29).getValue();   //생년월일
+            obj.slrcldAt          = dhxGridEmpPopup2.cells(rId, 30).getValue();   //양력 여부
+            obj.mrrgAt            = dhxGridEmpPopup2.cells(rId, 31).getValue();   //결혼 여부
+            obj.mrrgAtNm          = dhxGridEmpPopup2.cells(rId, 32).getValue();   //결혼 여부 명
+            obj.hdadptDeptCode    = dhxGridEmpPopup2.cells(rId, 33).getValue();   //겸임 부서 코드
+            obj.emplSe            = dhxGridEmpPopup2.cells(rId, 34).getValue();   //사원 구분
+            obj.emplSeNm          = dhxGridEmpPopup2.cells(rId, 35).getValue();   //사원 구분 명
+            obj.hffsSe            = dhxGridEmpPopup2.cells(rId, 36).getValue();   //재직 구분
+            obj.hffsSeNm          = dhxGridEmpPopup2.cells(rId, 37).getValue();   //재직 구분 명
+            obj.retireSe          = dhxGridEmpPopup2.cells(rId, 38).getValue();   //퇴직 구분
+            obj.retireSeNm        = dhxGridEmpPopup2.cells(rId, 39).getValue();   //퇴직 구분 명
+            obj.sexdstnSe         = dhxGridEmpPopup2.cells(rId, 40).getValue();   //성별 구분
+            obj.sexdstnSeNm       = dhxGridEmpPopup2.cells(rId, 41).getValue();   //성별 구분 명
+            //obj.empnmSe           = dhxGridEmpPopup2.cells(rId, 42).getValue();   //채용 구분
+            //obj.empnmSeNm         = dhxGridEmpPopup2.cells(rId, 43).getValue();   //채용 구분 명
+            obj.cashierAt         = dhxGridEmpPopup2.cells(rId, 44).getValue();   //출납담당 여부
+            obj.hdadptAt          = dhxGridEmpPopup2.cells(rId, 45).getValue();   //겸임 여부
+            obj.dprlrAt           = dhxGridEmpPopup2.cells(rId, 46).getValue();   //부서장 여부
+            obj.lbunSbscrbAt      = dhxGridEmpPopup2.cells(rId, 47).getValue();   //노조 가입 여부
+            obj.lbunSbscrbAtNm    = dhxGridEmpPopup2.cells(rId, 48).getValue();   //노조 가입 여부 명
+            obj.mutaidSbscrbAt    = dhxGridEmpPopup2.cells(rId, 49).getValue();   //상조 가입 여부
+            obj.dispWorkbAt       = dhxGridEmpPopup2.cells(rId, 50).getValue();   //파견 근무 여부
+            obj.natvfrgnSeCode    = dhxGridEmpPopup2.cells(rId, 51).getValue();   //내외국인 구분 코드
+            obj.natvfrgnSeCodeNm  = dhxGridEmpPopup2.cells(rId, 52).getValue();   //내외국인 구분 코드 명
+            obj.ecnySeCode        = dhxGridEmpPopup2.cells(rId, 53).getValue();   //입사 구분 코드
+            obj.ecnySeCodeNm      = dhxGridEmpPopup2.cells(rId, 54).getValue();   //입사 구분 코드 명
+            obj.bplcCode          = dhxGridEmpPopup2.cells(rId, 55).getValue();   //사업장코드
+            obj.bplcCodeNm        = dhxGridEmpPopup2.cells(rId, 56).getValue();   //사업장코드 명
+            obj.salpeakAt         = dhxGridEmpPopup2.cells(rId, 57).getValue();   //임금피크제 여부
+            obj.flexbizAt         = dhxGridEmpPopup2.cells(rId, 58).getValue();   //유연근무제 여부
+            obj.ansalsysAt        = dhxGridEmpPopup2.cells(rId, 59).getValue();   //연봉제 여부
+            
+            obj.deptEngNm         = dhxGridEmpPopup2.cells(rId, 60).getValue();   //부서 영문 명
+            obj.deptAbrv          = dhxGridEmpPopup2.cells(rId, 61).getValue();   //부서 약어
+            obj.upperDeptCode     = dhxGridEmpPopup2.cells(rId, 62).getValue();   //상위 부서 코드
+            obj.upperDeptNm       = dhxGridEmpPopup2.cells(rId, 63).getValue();   //상위 부서 명
+            obj.deptLvl           = dhxGridEmpPopup2.cells(rId, 64).getValue();   //부서 레벨
+            obj.orgnztLvl         = dhxGridEmpPopup2.cells(rId, 65).getValue();   //조직 레벨
+            obj.deptTelno         = dhxGridEmpPopup2.cells(rId, 66).getValue();   //부서 전화번호
+            obj.deptFaxTelno      = dhxGridEmpPopup2.cells(rId, 67).getValue();   //부서 FAX 전화번호
+            obj.useBeginDe        = dhxGridEmpPopup2.cells(rId, 68).getValue();   //사용 시작 일자
+            obj.useAt             = dhxGridEmpPopup2.cells(rId, 69).getValue();   //사용 여부
+            obj.deptSe            = dhxGridEmpPopup2.cells(rId, 70).getValue();   //부서 구분
+            obj.sortOrdr          = dhxGridEmpPopup2.cells(rId, 71).getValue();   //출력 순서
+            obj.upperDeptAt       = dhxGridEmpPopup2.cells(rId, 72).getValue();   //상위부서 존재 여부
+
+            obj.jblnCode          = dhxGridEmpPopup2.cells(rId, 73).getValue();   // 직렬 코드
+            obj.jblnCodeNm        = dhxGridEmpPopup2.cells(rId, 74).getValue();   // 직렬 코드 명 
+            obj.dtyCode           = dhxGridEmpPopup2.cells(rId, 75).getValue();   // 직무 코드
+            obj.dtyCodeNm         = dhxGridEmpPopup2.cells(rId, 76).getValue();   // 직무 코드 명
+            obj.emgncTelno        = dhxGridEmpPopup2.cells(rId, 77).getValue();   // 비상전화번호
+            obj.indvdlEmail       = dhxGridEmpPopup2.cells(rId, 78).getValue();   // 개인 이메일
+            obj.hdadptDeptCodeNm  = dhxGridEmpPopup2.cells(rId, 79).getValue();   // 겸임 부서 명
+            obj.dispDeptCode      = dhxGridEmpPopup2.cells(rId, 80).getValue();   // 파견 부서 코드
+            obj.dispDeptCodeNm    = dhxGridEmpPopup2.cells(rId, 81).getValue();   // 파견 부서 명
+            obj.babyShrtenWorkAt  = dhxGridEmpPopup2.cells(rId, 82).getValue();   // 육아 단축 근무 여부
+            obj.salaryAprpCode    = dhxGridEmpPopup2.cells(rId, 83).getValue();   // 급여 책정 코드
+            obj.salaryAprpCodeNm  = dhxGridEmpPopup2.cells(rId, 84).getValue();   // 급여 책정 코드 명
+            obj.apntcSdt          = dhxGridEmpPopup2.cells(rId, 85).getValue();   // 수습 시작일자
+            obj.apntcEdt          = dhxGridEmpPopup2.cells(rId, 86).getValue();   // 수습 종료일자
+            obj.incmtaxrtCode     = dhxGridEmpPopup2.cells(rId, 87).getValue();   // 소득세율 코드
+            obj.incmtaxrtCodeNm   = dhxGridEmpPopup2.cells(rId, 88).getValue();   // 소득세율 코드 명
+        }
+    }
+    $('#empPopup2 .b-close').click();
+}
+
+</script>
+ 
+<style>
+.research_wrap{background:#fff;padding:10px;}
+.research_div{border:1px solid #d9e0ea;width:98%;margin:0 auto;}
+
+.research_listtopic{display:block;background:#f9faff;font-weight:bold;text-align:left;margin:7px 7px 10px 7px;padding:10px;border:1px solid #d9e0ea;font-size:13px;}
+
+.research_listtit{display:block;background:#f9faff;font-weight:bold;text-align:left;padding:10px;border-bottom:1px solid #d9e0ea;font-size:13px;}
+.research_list{}
+.research_list li{border-bottom:1px solid #d9e0ea;text-indent:10px;padding:5px 0;}
+
+.research_wrap .checkbox {
+  position: relative;
+  top:1px;
+  left:10px;
+}
+
+.research_wrap .checkbox label {
+  padding-left: 4px;
+  display: block;
+}
+
+.research_wrap .checkbox input {
+  top: 0;
+  left: 0;
+  z-index: 1;
+  cursor: pointer;
+  opacity: 0;
+  position: relative;
+  width: 13px;
+  height: 13px;
+}
+
+.research_wrap .checkbox .input-helper:before,
+.research_wrap .checkbox .input-helper:after {
+  position: absolute;
+  content: "";
+  transition: all 200ms;
+}
+
+.research_wrap .checkbox .input-helper:before {
+  left: 0;
+  border: 1px solid #ced4da;
+}
+
+.research_wrap .checkbox input:checked + .input-helper:before {
+  background-color: #1e5ca0;
+}
+
+.research_wrap .checkbox input:checked + .input-helper:after {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.research_wrap .checkbox .input-helper:before {
+  top: 0;
+  width: 13px;
+  height: 13px;
+  color: #fff;
+}
+
+.research_wrap .checkbox .input-helper:after {
+  content: '\2713';
+  font-size: 13px;
+  left: -8px;
+  color: #fff;
+  transform: scale(0);
+  opacity: 0;
+}
+
+
+.research_wrap .checkbox span{
+    position:relative;
+    top:-2px;
+    left:-11px;
+}
+
+</style>
+
+<!-- ★ -->
+
+<div class="pop-content">
+    
+    <div class="research_wrap">   
+         <span class="research_listtopic">설문은 교육 이수 직원 여러분의 만족도와 요구를 파악하여 향후 교육과정 개선과 보완의 자료로 활용하고자 실시하는 것이니 성의껏 작성을 부탁드립니다.</span>
+        <div class="research_div">
+            <span class="research_listtit pl10 al">1. 교육을 다녀오신 기관은 어디입니까?</span>
+            <ul class="research_list">
+                <li><input type="radio" name="open_close" value="open_some" id="open_some" checked> <label for="open_some"><span></span>부분 공개</label></li>
+                <li><input type="radio" name="open_close" value="close" id="close"/> <label for="close"><span></span>비공개</label></li>
+                <li>
+                    <div class="checkbox" checked>
+                        <label>
+                          <input type="checkbox" />
+                          <i class="input-helper"></i>
+                          <span>선택</span>
+                        </label>
+                     </div>
+                </li>
+                <li><select class="w90p">
+                        <option value="0" selected>선택</option>
+                        <option value="1">1년</option>
+                        <option value="2">2년</option>
+                        <option value="3">3년</option>
+                        <option value="4">4년</option>
+                        <option value="5">5년</option>
+                    </select>
+                </li>
+                <li><textarea rows="2" cols="10" class="w90p"></textarea></li>
+            </ul>
+        </div>
+    </div>
+
+
+         <div class="popup_footer_box">
+            <button type="button" id="btnEmpPupupOk2" name="btnEmpPupupOk2">
+                   <span class="glyphicon glyphicon-ok f15 mr5"></span>확인<!--닫기 --> 
+             </button>
+             <button type="button" id="btnEmpPupupClose" name="btnEmpPupupClose">
+                   <span class="glyphicon glyphicon-folder-close f15 mr5"></span>닫기</button>
+        </div>
+</div>
+
+</div></div></div><div class="dhxwin_fr_cover" style="left: 2px; top: 48px; width: 896px; height: 500px;"><iframe class="dhxwin_fr_cover_inner" frameborder="0" border="0"></iframe><div class="dhxwin_fr_cover_inner"></div></div></div><div class="b-modal __b-popup1__" style="background-color: rgb(0, 0, 0) !important; position: fixed; top: 0px; right: 0px; bottom: 0px; left: 0px; opacity: 0.5; z-index: 11;"></div><div id="empPopup2" formid="sampleForm" codeid="empCode2" codenmid="empCodeNm2" stmbizplccode="1000" empinfo="empInfo" searchflag="Y" style="left: 5px; position: absolute; z-index: 12; opacity: 1;"><div class="b-close" style="display:none"></div></div></body></html>
+

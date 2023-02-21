@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mhs.hrm.mhshrm003.service.mapper.Mhshrm003Mapper">
+
+    <!-- <select id="selectMhshrm003List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm003.service.mapper.Mhshrm003Mapper.selectMhshrm003List */
+        SELECT
+               ORGNZT_CODE,
+               DEPT_CODE,
+               UPPER_ORGNZT_CODE,
+               ORGNZT_NM,
+               ORGNZT_MNGR_EMPNO,
+               ORGNZT_SE_CODE,
+               ORGNZT_LVL,
+               FNC_DATESTR(USE_BEGIN_DE) AS USE_BEGIN_DE,
+               FNC_DATESTR(USE_END_DE) AS USE_END_DE,
+               USE_AT,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_ORGNZT A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="orgnztCode != null and orgnztCode != ''">
+                AND ORGNZT_CODE = #{orgnztCode}
+            </if>
+            <if test="sRegDt != null and sRegDt != ''">
+                <![CDATA[
+                AND REG_DT >= CONVERT(DATETIME, #{sRegDt} + ' 00:00:00') 
+                ]]>
+            </if>
+            <if test="eRegDt != null and eRegDt != ''">
+                <![CDATA[
+                AND REG_DT <= CONVERT(DATETIME, #{eRegDt} + ' 23:59:59')
+                ]]>
+             </if>
+        </trim>
+    </select>-->
+    
+    <select id="selectMhshrm003List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm003.service.mapper.Mhshrm003Mapper.selectMhshrm003List */
+        WITH  MENU_MGR AS  (
+        SELECT
+               UPPER_ORGNZT_CODE,
+               ORGNZT_CODE,
+               DEPT_CODE,
+               ORGNZT_NM,
+               ORGNZT_MNGR_EMPNO,
+               ORGNZT_SE_CODE,
+               ORGNZT_LVL,
+               USE_BEGIN_DE,
+               USE_END_DE,
+               USE_AT,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               1 LEVEL,
+               CONVERT(VARCHAR(255), REPLICATE('0',5-LEN(CONVERT(varchar(10), ORGNZT_LVL))) + CONVERT(varchar(10), ORGNZT_LVL)) AS MENU_LEVEL
+          FROM MHS_ORGNZT A
+          WHERE ORGNZT_CODE = '0000'
+          UNION ALL
+          SELECT
+               MM.UPPER_ORGNZT_CODE,
+               MM.ORGNZT_CODE,
+               MM.DEPT_CODE,
+               MM.ORGNZT_NM,
+               MM.ORGNZT_MNGR_EMPNO,
+               MM.ORGNZT_SE_CODE,
+               MM.ORGNZT_LVL,
+               MM.USE_BEGIN_DE,
+               MM.USE_END_DE,
+               MM.USE_AT,
+               MM.REG_DT,
+               MM.REG_ID,
+               MM.UPT_DT,
+               MM.UPT_ID,
+               (MMGR.LEVEL + 1) AS LEVEL,  
+               CONVERT(varchar(255), (CONVERT(varchar(255) ,MMGR.MENU_LEVEL) +convert(varchar(255), MMGR.LEVEL) + CONVERT(varchar(255), REPLICATE('0',5-LEN(CONVERT(varchar(10), MM.ORGNZT_LVL))) + CONVERT(varchar(10), MM.ORGNZT_LVL)) )) AS MENU_LEVEL
+          FROM MHS_ORGNZT MM
+          INNER JOIN MENU_MGR MMGR 
+          ON MM.UPPER_ORGNZT_CODE = MMGR.ORGNZT_CODE
+          WHERE MM.ORGNZT_CODE != '0000'
+          )
+         SELECT ISNULL(UPPER_ORGNZT_CODE,'ROOT') UPPER_ORGNZT_CODE,
+               ORGNZT_CODE,
+               DEPT_CODE,
+               ORGNZT_NM,
+               ORGNZT_MNGR_EMPNO,
+               (SELECT KOR_NM FROM MHS_EMP WHERE EMPNO = ORGNZT_MNGR_EMPNO) AS ORGNZT_MNGR_EMP_NM,
+               ORGNZT_SE_CODE,
+               ORGNZT_LVL,
+               DBO.FNC_DATESTR(USE_BEGIN_DE) AS USE_BEGIN_DE,
+               DBO.FNC_DATESTR(USE_END_DE) AS USE_END_DE,
+               USE_AT,
+               (CASE WHEN USE_AT='1' THEN '사용' WHEN USE_AT='0' THEN '미사용' ELSE '미사용' END) AS USE_AT_NM,
+               CONVERT(CHAR(10), REG_DT, 23) AS REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = MENU_MGR.REG_ID) REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = MENU_MGR.UPT_ID) UPT_NM
+         FROM MENU_MGR
+         WHERE ORGNZT_CODE != '0000'
+
+         <if test="deptCode != null and deptCode != ''">
+            AND DEPT_CODE = #{deptCode}
+        </if>
+        <if test="deptKorNm != null and deptKorNm != ''">
+            AND ORGNZT_NM LIKE '%' ||#{deptKorNm}|| '%'
+        </if>
+        <if test="orgnztNm != null and orgnztNm != ''">
+            <![CDATA[
+                AND ORGNZT_LVL <= (SELECT ORGNZT_LVL 
+                                   FROM ( SELECT ORGNZT_NM, DEPT_CODE, MAX(ORGNZT_LVL) AS ORGNZT_LVL  
+                                          FROM MHS_ORGNZT 
+                                          GROUP BY DEPT_CODE, ORGNZT_NM) 
+                                   WHERE DEPT_CODE = A.DEPT_CODE AND ORGNZT_NM LIKE '%'||#{orgnztNm}||'%' )
+            ]]>
+        </if>
+        <if test="useAt != null and useAt != ''">
+            <if test="useAt == 1 or useAt == '1'">
+                AND USE_AT = #{useAt} 
+            </if>
+            <if test="useAt == 0 or useAt == '0'">
+            <![CDATA[
+                AND ORGNZT_LVL <= (SELECT ORGNZT_LVL 
+                                   FROM ( SELECT USE_AT, DEPT_CODE, MAX(ORGNZT_LVL) AS ORGNZT_LVL  
+                                          FROM MHS_ORGNZT 
+                                          GROUP BY DEPT_CODE, USE_AT) 
+                                   WHERE DEPT_CODE = A.DEPT_CODE AND USE_AT =#{useAt} )
+            ]]>
+            </if>
+        </if>
+        <if test="sRegDt != null and sRegDt != ''">
+            <![CDATA[
+            AND REG_DT >= CONVERT(DATETIME, #{sRegDt} + ' 00:00:00') 
+            ]]>
+        </if>
+        <if test="eRegDt != null and eRegDt != ''">
+            <![CDATA[
+            AND REG_DT <= CONVERT(DATETIME, #{eRegDt} + ' 23:59:59')
+            ]]>
+         </if>
+        
+         ORDER BY MENU_LEVEL
+    
+    </select>
+
+    <select id="selectMhshrm003" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm003.service.mapper.Mhshrm003Mapper.selectMhshrm003 */
+        SELECT
+               ORGNZT_CODE,
+               DEPT_CODE,
+               UPPER_ORGNZT_CODE,
+               ORGNZT_NM,
+               ORGNZT_MNGR_EMPNO,
+               ORGNZT_SE_CODE,
+               ORGNZT_LVL,
+               USE_BEGIN_DE,
+               USE_END_DE,
+               USE_AT,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_ORGNZT A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="orgnztCode != null and orgnztCode != ''">
+                AND ORGNZT_CODE = #{orgnztCode}
+            </if>
+            <if test="upperOrgnztCode != null and upperOrgnztCode != ''">
+                OR UPPER_ORGNZT_CODE = #{upperOrgnztCode}
+            </if>
+        </trim>
+    </select>
+
+    <update id="saveMhshrm002" parameterType="kr.co.dbvision.api.mhs.hrm.mhshrm003.entity.Mhshrm003">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm003.service.mapper.Mhshrm003Mapper.saveMhshrm002 */
+        UPDATE MHS_DEPT
+        SET
+               DPRLR_EMPNO= #{orgnztMngrEmpno}
+        WHERE DEPT_CODE = #{deptCode} AND DEPT_CODE = #{orgnztCode}
+    </update>
+
+    <update id="saveMhshrm003" parameterType="kr.co.dbvision.api.mhs.hrm.mhshrm003.entity.Mhshrm003">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm003.service.mapper.Mhshrm003Mapper.saveMhshrm003 */
+        MERGE INTO MHS_ORGNZT A
+             USING (SELECT
+                    #{orgnztCode} ORGNZT_CODE
+                    FROM DUAL) B
+                ON (
+                    A.ORGNZT_CODE = B.ORGNZT_CODE
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               DEPT_CODE= #{deptCode},
+               UPPER_ORGNZT_CODE= #{upperOrgnztCode},
+               ORGNZT_NM= #{orgnztNm},
+               ORGNZT_MNGR_EMPNO= #{orgnztMngrEmpno},
+               ORGNZT_SE_CODE= #{orgnztSeCode},
+               ORGNZT_LVL= #{orgnztLvl},
+               USE_BEGIN_DE= REPLACE(#{useBeginDe},'-',''),
+               USE_END_DE= REPLACE(#{useEndDe},'-',''),
+               USE_AT= #{useAt},
+               UPT_DT = GETDATE(),
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               ORGNZT_CODE,
+               DEPT_CODE,
+               UPPER_ORGNZT_CODE,
+               ORGNZT_NM,
+               ORGNZT_MNGR_EMPNO,
+               ORGNZT_SE_CODE,
+               ORGNZT_LVL,
+               USE_BEGIN_DE,
+               USE_END_DE,
+               USE_AT,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{orgnztCode},
+               (SELECT DEPT_CODE FROM MHS_ORGNZT WHERE ORGNZT_CODE = #{upperOrgnztCode}),
+               #{upperOrgnztCode},
+               #{orgnztNm},
+               #{orgnztMngrEmpno},
+               #{orgnztSeCode},
+               #{orgnztLvl},
+               REPLACE(#{useBeginDe},'-',''),
+               REPLACE(#{useEndDe},'-',''),
+               #{useAt},
+               GETDATE(),
+               #{regId}
+
+        )
+    </update>
+    
+    <update id="updateMhshrm003UseAtOff" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm003.service.mapper.Mhshrm003Mapper.updateMhshrm003UseAtOff */
+         UPDATE MHS_ORGNZT SET
+                 USE_AT = '0', 
+                 USE_END_DE = REPLACE(#{useEndDe},'-',''),
+                UPT_DT = GETDATE(),
+                UPT_ID = #{uptId}
+            WHERE ORGNZT_CODE in (
+                select ORGNZT_CODE from MHS_ORGNZT where ORGNZT_CODE = #{orgnztCode}
+                union
+                select ORGNZT_CODE from MHS_ORGNZT where UPPER_ORGNZT_CODE = #{orgnztCode}
+                union
+                select ORGNZT_CODE from MHS_ORGNZT where UPPER_ORGNZT_CODE IN (select ORGNZT_CODE from MHS_ORGNZT where UPPER_ORGNZT_CODE = #{orgnztCode})
+                union
+                select ORGNZT_CODE from MHS_ORGNZT where UPPER_ORGNZT_CODE IN (select ORGNZT_CODE from MHS_ORGNZT where UPPER_ORGNZT_CODE IN (select ORGNZT_CODE from MHS_ORGNZT where UPPER_ORGNZT_CODE = #{orgnztCode}))
+                union
+                select ORGNZT_CODE from MHS_ORGNZT where UPPER_ORGNZT_CODE IN (select ORGNZT_CODE from MHS_ORGNZT where UPPER_ORGNZT_CODE IN (select ORGNZT_CODE from MHS_ORGNZT where UPPER_ORGNZT_CODE IN (select ORGNZT_CODE from MHS_ORGNZT where UPPER_ORGNZT_CODE = #{orgnztCode})))
+            )
+            AND USE_AT = '1'
+    </update>
+    
+
+    <update id="updateMhshrm003UseAtOn" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm003.service.mapper.Mhshrm003Mapper.updateMhshrm003UseAtOn */
+         UPDATE MHS_ORGNZT SET
+                 USE_AT = '1', 
+                UPT_DT = GETDATE(),
+                UPT_ID = #{uptId}
+            WHERE ORGNZT_CODE in (
+                select UPPER_ORGNZT_CODE from MHS_ORGNZT where ORGNZT_CODE = #{orgnztCode}
+                union
+                select UPPER_ORGNZT_CODE from MHS_ORGNZT where ORGNZT_CODE IN (select UPPER_ORGNZT_CODE from MHS_ORGNZT where ORGNZT_CODE = #{orgnztCode})
+                union
+                select UPPER_ORGNZT_CODE from MHS_ORGNZT where ORGNZT_CODE IN (select UPPER_ORGNZT_CODE from MHS_ORGNZT where ORGNZT_CODE IN (select UPPER_ORGNZT_CODE from MHS_ORGNZT where ORGNZT_CODE = #{orgnztCode}))
+                union
+                select UPPER_ORGNZT_CODE from MHS_ORGNZT where ORGNZT_CODE IN (select UPPER_ORGNZT_CODE from MHS_ORGNZT where ORGNZT_CODE IN (select UPPER_ORGNZT_CODE from MHS_ORGNZT where ORGNZT_CODE IN (select UPPER_ORGNZT_CODE from MHS_ORGNZT where ORGNZT_CODE = #{orgnztCode})))
+            )
+            AND USE_AT = '0'
+    </update>
+    
+    <update id="updateMhshrm002UseAtOn" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm003.service.mapper.Mhshrm003Mapper.updateMhshrm002UseAtOn */
+         UPDATE MHS_DEPT SET
+                 USE_AT = '1', 
+                UPT_DT = GETDATE(),
+                UPT_ID = #{uptId}
+            WHERE DEPT_CODE = (SELECT DEPT_CODE FROM MHS_ORGNZT WHERE ORGNZT_CODE = #{orgnztCode})
+    </update>
+    
+    <select id="checkDeleteMhshrm003" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm003.service.mapper.Mhshrm003Mapper.checkDeleteMhshrm003 */
+        SELECT
+               ORGNZT_CODE,
+               DEPT_CODE,
+               UPPER_ORGNZT_CODE,
+               ORGNZT_NM,
+               ORGNZT_MNGR_EMPNO,
+               ORGNZT_SE_CODE,
+               ORGNZT_LVL,
+               USE_BEGIN_DE,
+               USE_END_DE,
+               USE_AT,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_ORGNZT A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="upperOrgnztCode != null and upperOrgnztCode != ''">
+                AND UPPER_ORGNZT_CODE = #{upperOrgnztCode}
+            </if>
+        </trim>
+    </select>
+    
+    <select id="deleteCheckMhshrm003" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm003.service.mapper.Mhshrm003Mapper.deleteCheckMhshrm003 */
+         SELECT A.USE_CHECK
+        FROM (
+            SELECT DEPT_CODE AS USE_CHECK FROM MHS_ORGNZT WHERE UPPER_ORGNZT_CODE = #{orgnztCode}
+            UNION
+            SELECT EMPNO AS USE_CHECK FROM MHS_EMP WHERE ROWNUM = '1' AND DEPT_CODE = #{orgnztCode}
+            UNION
+            SELECT GNFD_CODE AS USE_CHECK FROM MHS_GNFD WHERE AFCHG_DEPT_CODE = #{orgnztCode} OR BFCHG_DEPT_CODE = #{orgnztCode}
+            ) A
+        WHERE ROWNUM = '1'
+    </select>
+
+    <delete id="deleteMhshrm003" parameterType="kr.co.dbvision.api.mhs.hrm.mhshrm003.entity.Mhshrm003">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm003.service.mapper.Mhshrm003Mapper.deleteMhshrm003 */
+        DELETE FROM MHS_ORGNZT
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND ORGNZT_CODE = #{orgnztCode}
+        </trim>
+    </delete>
+</mapper>

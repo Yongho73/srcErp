@@ -1,0 +1,508 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.pub.wks.pubwks016.service.mapper.Pubwks016Mapper">
+    <select id="userDataPubwks016" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.pub.wks.pubwks016.service.mapper.Pubwks016Mapper.userDataPubwks016 */
+        SELECT
+               EMPNO,
+               KOR_NM,
+               DEPT_CODE,
+               BPLC_CODE,
+               (SELECT C.DEPT_KOR_NM FROM MHS_DEPT C WHERE C.DEPT_CODE = A.DEPT_CODE) AS DEPT_NM
+              
+          FROM MHS_EMP A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="regId != null and regId != ''">
+                AND EMPNO = (SELECT B.EMPNO FROM STM_USERS B WHERE B.USER_ID = #{regId})
+            </if>
+        </trim>
+    </select>
+
+    <select id="selectPubwks016List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.pub.wks.pubwks016.service.mapper.Pubwks016Mapper.selectPubwks016List */
+        SELECT
+               A.BSRP_NO,
+               (SELECT COUNT(*)
+                FROM MHS_BSRP
+                WHERE
+                    BSRP_NO = A.BSRP_NO
+                    AND
+                    <![CDATA[
+                    ELCTSCT_SE_SN > A.ELCTSCT_SE_SN
+                    ]]>) AS COPY_FLAG,
+               A.ELCTSCT_SE_SN,
+               A.BPLC_CODE,
+               (SELECT BPLC_KOR_NM FROM STM_BIZPLC WHERE BPLC_CODE=A.BPLC_CODE) AS BPLC_CODE_NM,
+               FNC_DATESTR(A.REQST_DE) AS REQST_DE,
+               A.BSRP_NM,
+               A.BSRP_PURPS,
+               A.BSRP_SE_CODE,
+               FNC_COMCODENM ('C024',A.BSRP_SE_CODE) AS BSRP_SE_NM,
+               A.TRNSPORT_SE_CODE,
+               FNC_COMCODENM ('C059',A.TRNSPORT_SE_CODE) AS TRNSPORT_SE_CODE_NM,
+               A.REQST_EMPNO,
+               FNC_GETKORNM(A.REQST_EMPNO) AS REQST_EMP_NM,
+               FNC_DATESTR(A.BSRP_SDT) AS BSRP_SDT,
+               FNC_DATESTR(A.BSRP_EDT) AS BSRP_EDT,
+               A.STAYNG,
+               A.STAYNG || '박' || A.STAYNG_DAYCNT || '일' AS STAYNG_DAYCNT,
+               A.BUGT_CODE,
+               A.ELCTSCT_DOC_NO,
+               FNC_COMCODENM ('EA004',A.ELCTSCT_STTUS_CODE) AS ELCTSCT_STTUS_CODE_NM,
+               A.ELCTSCT_STTUS_CODE,
+               A.ELCTSCT_EMPNO,
+               A.REG_DT,
+               A.REG_ID,
+               A.UPT_DT,
+               A.UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM,
+               A.BSRP_CITY,
+               (SELECT COUNT(BSRP_EMPNO) FROM MHS_BSRP_DETAIL WHERE BSRP_NO = A.BSRP_NO AND ELCTSCT_SE_SN =  A.ELCTSCT_SE_SN) AS BSRP_EMP_CNT,
+               (SELECT FNC_GETKORNM(BSRP_EMPNO) FROM MHS_BSRP_DETAIL WHERE BSRP_NO = A.BSRP_NO AND ELCTSCT_SE_SN =  A.ELCTSCT_SE_SN AND  ROWNUM = '1') AS BSRP_EMPNM
+
+          FROM MHS_BSRP A 
+          WHERE 1=1
+                <choose>
+                    <when test="reqstEmpno != null and reqstEmpno != '' and deptCode != null and deptCode != ''">
+                        <![CDATA[
+                         AND A.BSRP_NO IN (SELECT A.BSRP_NO 
+                                      FROM MHS_BSRP_DETAIL A , MHS_EMP B 
+                                      WHERE 
+                                          A.BSRP_EMPNO = B.EMPNO(+)
+                                          AND
+                                          B.DEPT_CODE = #{deptCode}
+                                          AND
+                                          (A.BSRP_EMPNO = #{reqstEmpno} OR A.REG_ID = #{reqstEmpno}))
+                        ]]>
+                    </when>
+                    <when test="deptCode != null and deptCode != ''">
+                        <![CDATA[
+                         AND A.BSRP_NO IN (SELECT A.BSRP_NO 
+                                      FROM MHS_BSRP_DETAIL A 
+                                      WHERE 
+                                          (A.BSRP_EMPNO IN (SELECT EMPNO FROM MHS_EMP WHERE DEPT_CODE = #{deptCode}) 
+                                           OR 
+                                           A.REG_ID IN (SELECT EMPNO FROM MHS_EMP WHERE DEPT_CODE = #{deptCode})))
+                        ]]>                    
+                    </when>
+                    <when test="reqstEmpno != null and reqstEmpno != ''">
+                        <![CDATA[
+                         AND A.BSRP_NO IN (SELECT A.BSRP_NO 
+                                      FROM MHS_BSRP_DETAIL A , MHS_EMP B 
+                                      WHERE 
+                                          A.BSRP_EMPNO = B.EMPNO(+)
+                                          AND
+                                          (A.BSRP_EMPNO = #{reqstEmpno} OR A.REG_ID = #{reqstEmpno}))
+                        ]]>
+                    </when>
+                </choose>
+           <if test="elctsctSttusCode != null and elctsctSttusCode != ''">
+               AND A.ELCTSCT_STTUS_CODE = #{elctsctSttusCode}
+           </if>
+           <if test="sRegDt != null and sRegDt != ''">
+               <![CDATA[
+               AND A.BSRP_SDT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+               ]]>
+           </if>
+           <if test="eRegDt != null and eRegDt != ''">
+               <![CDATA[
+               AND A.BSRP_EDT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+               ]]>
+            </if>
+			<if test="reqstDe != null and reqstDe != ''">
+			   <![CDATA[
+			   AND A.REQST_DE = #{reqstDe}
+			   ]]>
+			</if>
+			<if test="bsrpNm != null and bsrpNm != ''">
+			   <![CDATA[
+			   AND A.BSRP_NM LIKE '%' || #{bsrpNm} || '%'
+			   ]]>
+			</if>        
+          ORDER BY A.BSRP_NO ASC , ELCTSCT_SE_SN ASC
+    </select>
+
+   <select id="findPubwks016DtlList" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.pub.wks.pubwks016.service.mapper.Pubwks016Mapper.findPubwks016DtlList */
+        SELECT
+               A.BSRP_NO,
+               A.BSRP_EMPNO,
+               A.ELCTSCT_SE_SN,
+               A.VISIT_OFFIC_NM,
+               A.VISIT_CN,
+               A.DAY_AMT,
+               A.CGFFD_AMT,
+               A.STAYNG_AMT,
+               A.TRNSPORT_AMT,
+			   A.LOCAL_TRNSPORT_AMT,
+			   A.DTY_VRSC_EMPNO,
+			   A.REG_DT,
+			   A.REG_ID,
+			   A.UPT_DT,
+			   A.UPT_ID,
+			   B.KOR_NM,
+			   B.CLSF_CODE,
+               FNC_GETDEPTNM(B.DEPT_CODE) AS DEPT_NM,
+               FNC_GETCLSFNM(B.CLSF_CODE) AS CLSF_CODE_NM
+          FROM MHS_BSRP_DETAIL A , MHS_EMP B 
+          WHERE
+               A.BSRP_EMPNO = B.EMPNO(+)
+               AND 
+               A.BSRP_NO = #{bsrpNo}
+               AND
+               A.ELCTSCT_SE_SN = #{elctsctSeSn}
+    </select>
+
+    <select id="selectPubwks016" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.pub.wks.pubwks016.service.mapper.Pubwks016Mapper.selectPubwks016 */
+        SELECT
+               BSRP_NO,
+               ELCTSCT_SE_SN,
+               BPLC_CODE,
+               FNC_DATESTR(A.REQST_DE) AS REQST_DE,
+               FNC_GETKORNM(A.REQST_EMPNO) AS REQST_EMP_NM,
+               BSRP_NM,
+               BSRP_PURPS,
+               BSRP_SE_CODE,
+               TRNSPORT_SE_CODE,
+               REQST_EMPNO,
+               FNC_DATESTR(A.BSRP_SDT) AS BSRP_SDT,
+               FNC_DATESTR(A.BSRP_EDT) AS BSRP_EDT,
+               SUBSTR(BSRP_SHR,1,2) || ':' || SUBSTR(BSRP_SHR,3,2) AS BSRP_SHR,
+               SUBSTR(BSRP_EHR,1,2) || ':' || SUBSTR(BSRP_EHR,3,2) AS BSRP_EHR,
+               STAYNG,
+               STAYNG_DAYCNT,
+               BUGT_CODE,
+               ELCTSCT_DOC_NO,
+               ELCTSCT_STTUS_CODE,
+               ELCTSCT_EMPNO,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM,
+               BSRP_CITY
+          FROM MHS_BSRP A 
+          WHERE
+               A.BSRP_NO = #{bsrpNo}
+               AND
+               A.ELCTSCT_SE_SN = #{elctsctSeSn}
+    </select>
+
+    <update id="savePubwks016" parameterType="kr.co.dbvision.api.pub.wks.pubwks016.entity.Pubwks016">
+        /* kr.co.dbvision.api.pub.wks.pubwks016.service.mapper.Pubwks016Mapper.savePubwks016 */
+        MERGE INTO MHS_BSRP A
+             USING (SELECT
+                    #{bsrpNo} BSRP_NO ,
+                    #{elctsctSeSn} ELCTSCT_SE_SN
+                    FROM DUAL) B
+                ON (
+                    A.BSRP_NO = B.BSRP_NO
+                    AND
+                    A.ELCTSCT_SE_SN = B.ELCTSCT_SE_SN
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               BPLC_CODE= #{bplcCode},
+               REQST_DE= REPLACE(#{reqstDe},'-',''),
+               BSRP_NM= #{bsrpNm},
+               BSRP_PURPS= #{bsrpPurps},
+               BSRP_SE_CODE= #{bsrpSeCode},
+               REQST_EMPNO= #{reqstEmpno},
+               BSRP_SDT= #{bsrpSdt},
+               BSRP_EDT= #{bsrpEdt},
+               BSRP_SHR= REPLACE(#{bsrpShr},':',''),
+               BSRP_EHR= REPLACE(#{bsrpEhr},':',''),
+               TRNSPORT_SE_CODE= #{trnsportSeCode},
+               STAYNG= #{stayng},
+               STAYNG_DAYCNT= #{stayngDaycnt},
+               BUGT_CODE= #{bugtCode},
+               ELCTSCT_DOC_NO= #{elctsctDocNo},
+               ELCTSCT_EMPNO= #{elctsctEmpno},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId},
+               BSRP_CITY = #{bsrpCity} 
+               
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               BSRP_NO,
+               ELCTSCT_SE_SN,
+               BPLC_CODE,
+               REQST_DE,
+               BSRP_NM,
+               BSRP_PURPS,
+               BSRP_SE_CODE,
+               REQST_EMPNO,
+               BSRP_SDT,
+               BSRP_EDT,
+               BSRP_SHR,
+               BSRP_EHR,
+               TRNSPORT_SE_CODE,
+               STAYNG,
+               STAYNG_DAYCNT,
+               BUGT_CODE,
+               ELCTSCT_DOC_NO,
+               ELCTSCT_STTUS_CODE,
+               ELCTSCT_EMPNO,
+               REG_DT,
+               REG_ID,
+               BSRP_CITY
+
+        ) VALUES (
+
+               #{bsrpNo},
+               (SELECT NVL(MAX(ELCTSCT_SE_SN) , 0) + 1
+                FROM MHS_BSRP
+                WHERE BSRP_NO = #{bsrpNo}),
+               #{bplcCode},
+               REPLACE(#{reqstDe},'-',''),
+               #{bsrpNm},
+               #{bsrpPurps},
+               #{bsrpSeCode},
+               #{reqstEmpno},
+               #{bsrpSdt},
+               #{bsrpEdt},
+               REPLACE(#{bsrpShr},':',''),
+               REPLACE(#{bsrpEhr},':',''),
+               #{trnsportSeCode},
+               #{stayng},
+               #{stayngDaycnt},
+               #{bugtCode},
+               #{elctsctDocNo},
+               #{elctsctSttusCode},
+               #{elctsctEmpno},
+               SYSDATE,
+               #{regId},
+               #{bsrpCity}
+
+        )
+    </update>
+    
+    <update id="saveDtlPubwks016" parameterType="kr.co.dbvision.api.pub.wks.pubwks016.entity.Pubwks016">
+	    /* kr.co.dbvision.api.pub.wks.pubwks016.service.mapper.Pubwks016Mapper.saveDtlPubwks016 */
+           MERGE INTO MHS_BSRP_DETAIL A
+        USING (SELECT
+               #{bsrpNo} BSRP_NO,
+               #{bsrpEmpno} BSRP_EMPNO,
+               #{elctsctSeSn} ELCTSCT_SE_SN,
+               ELCTSCT_STTUS_CODE
+               FROM MHS_BSRP
+               WHERE 
+                    BSRP_NO = #{bsrpNo}
+                    AND
+                    ELCTSCT_SE_SN = #{elctsctSeSn}) B
+           ON (
+               A.BSRP_NO = B.BSRP_NO
+               AND
+               A.BSRP_EMPNO = B.BSRP_EMPNO
+               AND
+               A.ELCTSCT_SE_SN = B.ELCTSCT_SE_SN
+               AND
+               (B.ELCTSCT_STTUS_CODE IS NULL OR B.ELCTSCT_STTUS_CODE = '40')
+              )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+            VISIT_OFFIC_NM = #{visitOfficNm},
+            VISIT_CN = #{visitCn},
+            DAY_AMT = #{dayAmt}, 
+            CGFFD_AMT = #{cgffdAmt},
+            STAYNG_AMT = #{stayngAmt},
+            TRNSPORT_AMT = #{trnsportAmt},
+            LOCAL_TRNSPORT_AMT = #{localTrnsportAmt},
+            DTY_VRSC_EMPNO = #{dtyVrscEmpno},
+            UPT_DT = SYSDATE,
+            UPT_ID = #{uptId}
+               
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+	        BSRP_NO,
+	        BSRP_EMPNO,
+	        ELCTSCT_SE_SN,
+	        VISIT_OFFIC_NM,
+	        VISIT_CN,
+	        DAY_AMT, 
+	        CGFFD_AMT,
+	        STAYNG_AMT,
+	        TRNSPORT_AMT,
+	        LOCAL_TRNSPORT_AMT,
+	        DTY_VRSC_EMPNO,
+	        REG_DT,
+	        REG_ID
+
+        ) VALUES (
+
+	         #{bsrpNo},
+	         #{bsrpEmpno},
+	         #{elctsctSeSn},
+	         #{visitOfficNm},
+	         #{visitCn},
+	         #{dayAmt},
+	         #{cgffdAmt},
+	         #{stayngAmt},
+	         #{trnsportAmt},
+	         #{localTrnsportAmt},
+	         #{dtyVrscEmpno},
+	         SYSDATE,
+	         #{regId}
+
+        )
+	 </update>
+    
+
+    <delete id="deletePubwks016" parameterType="kr.co.dbvision.api.pub.wks.pubwks016.entity.Pubwks016">
+        /* kr.co.dbvision.api.pub.wks.pubwks016.service.mapper.Pubwks016Mapper.deletePubwks016 */
+        DELETE FROM MHS_BSRP
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND BSRP_NO = #{bsrpNo}
+                AND ELCTSCT_SE_SN = #{elctsctSeSn}
+        </trim>
+    </delete>
+    
+    <delete id="deleteDtlPubwks016" parameterType="kr.co.dbvision.api.pub.wks.pubwks016.entity.Pubwks016">
+        /* kr.co.dbvision.api.pub.wks.pubwks016.service.mapper.Pubwks016Mapper.deleteDtlPubwks016 */
+        DELETE FROM MHS_BSRP_DETAIL
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND BSRP_NO = #{bsrpNo}
+                AND ELCTSCT_SE_SN = #{elctsctSeSn}
+        </trim>
+    </delete>
+    
+    <delete id="deleteDtlEmpPubwks016" parameterType="kr.co.dbvision.api.pub.wks.pubwks016.entity.Pubwks016">
+        /* kr.co.dbvision.api.pub.wks.pubwks016.service.mapper.Pubwks016Mapper.deleteDtlEmpPubwks016 */
+        DELETE FROM MHS_BSRP_DETAIL
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND BSRP_NO = #{bsrpNo}
+                AND BSRP_EMPNO = #{bsrpEmpno}
+                AND ELCTSCT_SE_SN = #{elctsctSeSn}
+        </trim>
+    </delete>
+    
+    <select id="selectElctsctSeSnCnt" parameterType="egovMapForNull" resultType="java.lang.Integer">
+        SELECT
+            COUNT(*)
+        FROM
+            MHS_BSRP
+        WHERE
+            BSRP_NO = #{bsrpNo}
+            AND
+            <![CDATA[
+            ELCTSCT_SE_SN > #{elctsctSeSn}
+            ]]>
+    </select>
+    
+    <insert id="saveBsrpCopyPubwks016" parameterType="egovMapForNull">
+        INSERT INTO
+            MHS_BSRP
+            (
+				BSRP_NO,
+				ELCTSCT_SE_SN,
+				BPLC_CODE,
+				REQST_DE,
+				BSRP_NM,
+				BSRP_PURPS,
+				BSRP_SE_CODE,
+				REQST_EMPNO,
+				BSRP_SDT,
+				BSRP_EDT,
+				BSRP_SHR,
+				BSRP_EHR,
+				STAYNG,
+				STAYNG_DAYCNT,
+				TRNSPORT_SE_CODE,
+				BUGT_CODE,
+				EXCCLC_SN,
+				ATCHMNFL_NO,
+				REG_DT,
+				REG_ID,
+				BSRP_CITY
+            )
+            SELECT
+                BSRP_NO,
+                (SELECT (MAX(ELCTSCT_SE_SN) + 1)
+                 FROM MHS_BSRP
+                 WHERE 
+                    BSRP_NO = #{bsrpNo}),
+                BPLC_CODE,
+                REQST_DE,
+                BSRP_NM,
+                BSRP_PURPS,
+                BSRP_SE_CODE,
+                REQST_EMPNO,
+                BSRP_SDT,
+                BSRP_EDT,
+                BSRP_SHR,
+                BSRP_EHR,
+                STAYNG,
+                STAYNG_DAYCNT,
+                TRNSPORT_SE_CODE,
+                BUGT_CODE,
+                EXCCLC_SN,
+                ATCHMNFL_NO,
+                SYSDATE,
+                #{regId},
+                BSRP_CITY
+            FROM
+                MHS_BSRP
+            WHERE
+                BSRP_NO = #{bsrpNo}
+                AND
+                ELCTSCT_SE_SN = #{elctsctSeSn}
+                AND
+                ELCTSCT_STTUS_CODE = '20'
+    </insert>
+
+    <insert id="saveBsrpDetailCopyPubwks016" parameterType="egovMapForNull">
+        INSERT INTO
+            MHS_BSRP_DETAIL
+            (
+				BSRP_NO,
+				ELCTSCT_SE_SN,
+				BSRP_EMPNO,
+				VISIT_OFFIC_NM,
+				VISIT_CN,
+				DAY_AMT,
+				CGFFD_AMT,
+				STAYNG_AMT,
+				TRNSPORT_AMT,
+				LOCAL_TRNSPORT_AMT,
+				DTY_VRSC_EMPNO,
+				REG_DT,
+				REG_ID
+            )
+            SELECT
+                BSRP_NO,
+                (SELECT (MAX(ELCTSCT_SE_SN)+ 1)
+                 FROM MHS_BSRP_DETAIL
+                 WHERE
+                    BSRP_NO = #{bsrpNo}),
+                BSRP_EMPNO,
+                VISIT_OFFIC_NM,
+                VISIT_CN,
+                DAY_AMT,
+                CGFFD_AMT,
+                STAYNG_AMT,
+                TRNSPORT_AMT,
+                LOCAL_TRNSPORT_AMT,
+                DTY_VRSC_EMPNO,
+                SYSDATE,
+                #{regId}
+            FROM
+                MHS_BSRP_DETAIL
+            WHERE
+                BSRP_NO = #{bsrpNo}
+                AND
+                ELCTSCT_SE_SN = #{elctsctSeSn}
+    </insert>
+</mapper>

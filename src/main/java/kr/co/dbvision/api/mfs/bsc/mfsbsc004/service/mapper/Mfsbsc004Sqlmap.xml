@@ -1,0 +1,369 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mfs.bsc.mfsbsc004.service.mapper.Mfsbsc004Mapper">
+
+    <sql id="searchCondition">
+    
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="cardNo != null and cardNo != ''">
+                AND CARD_NO LIKE '%'|| #{cardNo} || '%'
+            </if>
+            <if test="useAt != null and useAt != ''">
+                AND USE_AT = #{useAt}
+            </if>
+            <if test="ownEmpnm != null and ownEmpnm != ''">
+                AND OWN_EMPNO = #{ownEmpnm}
+            </if>
+            <if test="sRegDt != null and sRegDt != ''">
+                <![CDATA[
+                AND REG_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+                ]]>
+            </if>
+            <if test="eRegDt != null and eRegDt != ''">
+                <![CDATA[
+                AND REG_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+                ]]>
+             </if>
+        </trim>
+        <choose>
+        <when test="sortColumId != null and sortColumId != ''">
+            <if test="sortColumId == 'cardNo'">
+            ORDER BY CARD_NO <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+            <if test="sortColumId == 'bplcCode'">
+            ORDER BY BPLC_CODE <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+            <if test="sortColumId == 'cardNm'">
+            ORDER BY CARD_NM <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+            <if test="sortColumId == 'cardAbrv'">
+            ORDER BY CARD_ABRV <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+            <if test="sortColumId == 'cardIssuInstt'">
+            ORDER BY CARD_ISSU_INSTT <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+            <if test="sortColumId == 'cardSe'">
+            ORDER BY CARD_SE <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+            <if test="sortColumId == 'carddetailSe'">
+            ORDER BY CARDDETAIL_SE <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+            <if test="sortColumId == 'cardValidYm'">
+            ORDER BY CARD_VALID_YM <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+            <if test="sortColumId == 'deptCode'">
+            ORDER BY DEPT_CODE <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+            <if test="sortColumId == 'ownEmpno'">
+            ORDER BY OWN_EMPNO <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+            <if test="sortColumId == 'useEmpno'">
+            ORDER BY USE_EMPNO <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+            <if test="sortColumId == 'issuDe'">
+            ORDER BY ISSU_DE <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+            <if test="sortColumId == 'exprtnDe'">
+            ORDER BY EXPRTN_DE <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+            <if test="sortColumId == 'discardDe'">
+            ORDER BY DISCARD_DE <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+            <if test="sortColumId == 'setleDay'">
+            ORDER BY SETLE_DAY <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+            <if test="sortColumId == 'useAt'">
+            ORDER BY USE_AT <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+            <if test="sortColumId == 'bankCode'">
+            ORDER BY BANK_CODE <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+            <if test="sortColumId == 'defrayAcnutNo'">
+            ORDER BY DEFRAY_ACNUT_NO <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+            <if test="sortColumId == 'cvcNo'">
+            ORDER BY CVC_NO <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+            <if test="sortColumId == 'lmtAmt'">
+            ORDER BY LMT_AMT <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+            <if test="sortColumId == 'lmt2Amt'">
+            ORDER BY LMT_2_AMT <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+            <if test="sortColumId == 'rm'">
+            ORDER BY RM <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+            <if test="sortColumId == 'regDt'">
+            ORDER BY REG_DT <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+            <if test="sortColumId == 'regId'">
+            ORDER BY REG_ID <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+            <if test="sortColumId == 'uptDt'">
+            ORDER BY UPT_DT <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+            <if test="sortColumId == 'uptId'">
+            ORDER BY UPT_ID <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+        </when>
+        <otherwise>
+            ORDER BY REG_DT DESC
+        </otherwise>
+        </choose>
+    
+    </sql>
+
+    <select id="selectMfsbsc004TotalRecordCount" parameterType="egovMapForNull" resultType="java.lang.Integer">
+        /* kr.co.dbvision.api.mfs.bsc.mfsbsc004.service.mapper.Mfsbsc004Mapper.selectMfsbsc004TotalRecordCount */
+        SELECT COUNT(*) AS totalRecordCount
+          FROM MFS_CARD
+
+        <include refid="searchCondition" />
+
+    </select>
+
+    <select id="selectMfsbsc004ListAllInPage" parameterType="egovMapForNull" resultType="java.lang.Integer">
+        /* kr.co.dbvision.api.mfs.bsc.mfsbsc004.service.mapper.Mfsbsc004Mapper.selectMfsbsc004ListAllInPage */
+        SELECT CEIL(RNUM/#{pageingCnt}) PAGE FROM (SELECT ROWNUM AS RNUM, CARD_NO FROM (
+
+        SELECT CARD_NO
+          FROM MFS_CARD
+      ORDER BY CARD_NO
+
+        ) A ) B WHERE CARD_NO = #{cardNo}
+
+    </select>
+
+    <select id="selectMfsbsc004ListPaging" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mfs.bsc.mfsbsc004.service.mapper.Mfsbsc004Mapper.selectMfsbsc004ListPaging */
+        <![CDATA[
+        SELECT * FROM ( SELECT ROWNUM RNUM, A.* FROM (
+
+        SELECT
+               CARD_NO,
+               FNC_CARDNO_DASH(CARD_NO) AS DASH_CARD_NO,
+               BPLC_CODE,
+               CARD_NM,
+               CARD_ABRV,
+               CARD_ISSU_INSTT,
+               CARD_SE,
+               CARDDETAIL_SE,
+               CARD_VALID_YM,
+               DEPT_CODE,
+               FNC_GETDEPTNM(DEPT_CODE) AS  DEPT_NM,
+               OWN_EMPNO,
+               FNC_GETKORNM(OWN_EMPNO) AS OWN_EMPNM,
+               USE_EMPNO,
+               FNC_GETKORNM(USE_EMPNO) AS USE_EMPNM,
+               FNC_DATESTR(ISSU_DE) AS ISSU_DE,
+               FNC_DATESTR(EXPRTN_DE) AS EXPRTN_DE,
+               FNC_DATESTR(DISCARD_DE) AS DISCARD_DE,
+               SETLE_DAY,
+               USE_AT,
+               BANK_CODE,
+               DEFRAY_ACNUT_NO,
+               CVC_NO,
+               LMT_AMT,
+               LMT_2_AMT,
+               RM
+        FROM MFS_CARD A
+        ]]>
+
+        <include refid="searchCondition" />
+
+        <![CDATA[
+        ) A ) B WHERE RNUM > #{firstIndex} AND RNUM <= #{lastIndex}
+        ]]>
+    </select>
+
+    <select id="selectMfsbsc004List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mfs.bsc.mfsbsc004.service.mapper.Mfsbsc004Mapper.selectMfsbsc004List */
+        SELECT
+               CARD_NO,
+               FNC_CARDNO_DASH(CARD_NO) AS DASH_CARD_NO,
+               BPLC_CODE,
+               CARD_NM,
+               CARD_ABRV,
+               CARD_ISSU_INSTT,
+               CARD_SE,
+               CARDDETAIL_SE,
+               CARD_VALID_YM,
+               DEPT_CODE,
+               FNC_GETDEPTNM(DEPT_CODE) AS  DEPT_NM,
+               OWN_EMPNO,
+               FNC_GETKORNM(OWN_EMPNO) AS OWN_EMPNM,
+               USE_EMPNO,
+               FNC_GETKORNM(USE_EMPNO) AS USE_EMPNM,
+               FNC_DATESTR(ISSU_DE) AS ISSU_DE,
+               FNC_DATESTR(EXPRTN_DE) AS EXPRTN_DE,
+               FNC_DATESTR(DISCARD_DE) AS DISCARD_DE,
+               SETLE_DAY,
+               USE_AT,
+               BANK_CODE,
+               DEFRAY_ACNUT_NO,
+               CVC_NO,
+               LMT_AMT,
+               LMT_2_AMT,
+               RM,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MFS_CARD A
+
+        <include refid="searchCondition" />
+    </select>
+
+    <select id="selectMfsbsc004" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mfs.bsc.mfsbsc004.service.mapper.Mfsbsc004Mapper.selectMfsbsc004 */
+        SELECT
+               CARD_NO,
+               SUBSTR(CARD_NO,0,4) AS CARD_NO1,
+               SUBSTR(CARD_NO,5,4) AS CARD_NO2,
+               SUBSTR(CARD_NO,9,4) AS CARD_NO3,
+               SUBSTR(CARD_NO,13)  AS CARD_NO4,               
+               BPLC_CODE,
+               CARD_NM,
+               CARD_ABRV,
+               CARD_ISSU_INSTT,
+               CARD_SE,
+               CARDDETAIL_SE,
+               FNC_DATESTR(CARD_VALID_YM) as CARD_VALID_YM,
+               DEPT_CODE,
+               FNC_GETDEPTNM(DEPT_CODE) AS  DEPT_NM,
+               OWN_EMPNO,
+               FNC_GETKORNM(OWN_EMPNO) AS OWN_EMPNM,
+               USE_EMPNO,
+               FNC_GETKORNM(USE_EMPNO) AS USE_EMPNM,               
+               FNC_DATESTR(ISSU_DE) as ISSU_DE,
+               FNC_DATESTR(EXPRTN_DE) as EXPRTN_DE,
+               FNC_DATESTR(DISCARD_DE) as DISCARD_DE,
+               SETLE_DAY,
+               USE_AT,
+               BANK_CODE,
+               DEFRAY_ACNUT_NO,
+               CVC_NO,
+               LMT_AMT,
+               LMT_2_AMT,
+               RM,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID
+          FROM MFS_CARD A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="cardNo != null and cardNo != ''">
+                AND CARD_NO = #{cardNo}
+            </if>
+        </trim>
+    </select>
+
+    <update id="saveMfsbsc004" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mfs.bsc.mfsbsc004.service.mapper.Mfsbsc004Mapper.saveMfsbsc004 */
+        MERGE INTO MFS_CARD A
+             USING (SELECT
+                    #{cardNo} CARD_NO
+                    FROM DUAL) B
+                ON (
+                    A.CARD_NO = B.CARD_NO
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               BPLC_CODE= #{bplcCode},
+               CARD_NM= #{cardNm},
+               CARD_ABRV= #{cardAbrv},
+               CARD_ISSU_INSTT= #{cardIssuInstt},
+               CARD_SE= #{cardSe},
+               CARDDETAIL_SE= #{carddetailSe},
+               CARD_VALID_YM= #{cardValidYm},
+               DEPT_CODE= #{deptCode},
+               OWN_EMPNO= #{ownEmpno},
+               USE_EMPNO= #{useEmpno},
+               ISSU_DE= #{issuDe},
+               EXPRTN_DE= #{exprtnDe},
+               DISCARD_DE= #{discardDe},
+               SETLE_DAY= #{setleDay},
+               USE_AT= #{useAt},
+               BANK_CODE= #{bankCode},
+               DEFRAY_ACNUT_NO= #{defrayAcnutNo},
+               CVC_NO= #{cvcNo},
+               LMT_AMT= #{lmtAmt},
+               LMT_2_AMT= #{lmt2Amt},
+               RM= #{rm},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               CARD_NO,
+               BPLC_CODE,
+               CARD_NM,
+               CARD_ABRV,
+               CARD_ISSU_INSTT,
+               CARD_SE,
+               CARDDETAIL_SE,
+               CARD_VALID_YM,
+               DEPT_CODE,
+               OWN_EMPNO,
+               USE_EMPNO,
+               ISSU_DE,
+               EXPRTN_DE,
+               DISCARD_DE,
+               SETLE_DAY,
+               USE_AT,
+               BANK_CODE,
+               DEFRAY_ACNUT_NO,
+               CVC_NO,
+               LMT_AMT,
+               LMT_2_AMT,
+               RM,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{cardNo},
+               #{bplcCode},
+               #{cardNm},
+               #{cardAbrv},
+               #{cardIssuInstt},
+               #{cardSe},
+               #{carddetailSe},
+               #{cardValidYm},
+               #{deptCode},
+               #{ownEmpno},
+               #{useEmpno},
+               #{issuDe},
+               #{exprtnDe},
+               #{discardDe},
+               #{setleDay},
+               #{useAt},
+               #{bankCode},
+               #{defrayAcnutNo},
+               #{cvcNo},
+               #{lmtAmt},
+               #{lmt2Amt},
+               #{rm},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deleteMfsbsc004" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mfs.bsc.mfsbsc004.service.mapper.Mfsbsc004Mapper.deleteMfsbsc004 */
+        DELETE FROM MFS_CARD
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND CARD_NO = #{cardNo}
+        </trim>
+    </delete>
+</mapper>

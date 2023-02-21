@@ -1,0 +1,408 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mps.bsc.mpsbsc004.service.mapper.Mpsbsc004Mapper">
+
+	<select id="selectMpsbsc004MasterList" parameterType="egovMapForNull" resultType="egovMapForNull">
+	/* kr.co.dbvision.api.mps.bsc.mpsbsc004.service.mapper.Mpsbsc004Mapper.selectMpsbsc004MasterList */
+		SELECT 
+			A.APPLC_STDR_SN
+			, A.SALARYTY_CODE
+			, A.SALARYITEM_CODE
+			, A.EMPL_SE_CODE
+			, A.APPLC_SE
+			, A.CALC_ORDR
+			, A.DELETE_AT
+			, A.CALC_SE
+			, FNC_COMCODENM('C062',  A.SALARYTY_CODE)  AS SALARYTY_NM						
+			, FNC_COMCODENM ('C118', A.APPLC_SE) AS APPLC_STDR_SE_NM 
+			, FNC_COMCODENM ('C430', A.CALC_SE) AS CALC_SE_CODE_NM
+			,  B.SALARYITEM_NM AS SALARYITEM_NM
+			, FNC_DATESTR(B.USE_BEGIN_DE) AS USE_BEGIN_DE
+			, FNC_DATESTR(B.USE_END_DE) AS USE_END_DE
+		FROM MPS_APPLCS_STDR A, MPS_SALARYITEM B
+		WHERE  A.SALARYITEM_CODE = B.SALARYITEM_CODE
+		AND        A.DELETE_AT ='0'
+		<if test="salarytyCode != null and salarytyCode != ''">
+			AND A.SALARYTY_CODE = #{salarytyCode}
+		</if>
+		<if test="salaryitemNm != null and salaryitemNm != ''">
+			AND B.SALARYITEM_NM LIKE  #{salaryitemNm} || '%'
+		</if>
+		<if test="stdrDe != null and stdrDe != ''">
+			AND REPLACE(#{stdrDe}, '-', '') BETWEEN B.USE_BEGIN_DE AND B.USE_END_DE 
+		</if> 
+		ORDER BY  A.SALARYTY_CODE,  A.SALARYITEM_CODE
+	</select>
+    
+   
+
+    <select id="selectMpsbsc004List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.bsc.mpsbsc004.service.mapper.Mpsbsc004Mapper.selectMpsbsc004List */
+        SELECT
+		             SALARYTY_CODE
+					, SALARYITEM_CODE
+					, APPLC_STDR_SN
+					, CALC_STDR_SN
+					, APPLC_CODE
+					, CALC_SE
+					, CALC_NOMFRM_DTLS
+					, CALC_NOMFRM
+					, APPLC_SE          
+          FROM MPS_CALC_STDR 
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="applcStdrSn != null and applcStdrSn != ''">
+                AND APPLC_STDR_SN = #{applcStdrSn}
+            </if>
+            <if test="salarytyCode != null and salarytyCode != ''">
+                AND SALARYTY_CODE = #{salarytyCode}
+            </if>
+            <if test="salaryitemCode != null and salaryitemCode != ''">
+                AND SALARYITEM_CODE = #{salaryitemCode}
+            </if>
+             <if test="applcSe != null and applcSe != ''">
+                AND APPLC_SE = #{applcSe}
+            </if>
+             <if test="calcSe != null and calcSe != ''">
+                AND CALC_SE = #{calcSe}
+            </if>
+         
+        </trim>
+    </select>
+
+    <select id="selectMpsbsc004" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.bsc.mpsbsc004.service.mapper.Mpsbsc004Mapper.selectMpsbsc004 */
+        SELECT
+               APPLC_STDR_SN,
+               SALARYTY_CODE,
+               SALARYITEM_CODE,
+               EMPL_SE_CODE,
+               APPLC_STDR_SE,
+               CALC_ORDR,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MPS_APPLCS_STDR A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="applcStdrSn != null and applcStdrSn != ''">
+                AND APPLC_STDR_SN = #{applcStdrSn}
+            </if>
+            <if test="salarytyCode != null and salarytyCode != ''">
+                AND SALARYTY_CODE = #{salarytyCode}
+            </if>
+            <if test="salaryitemCode != null and salaryitemCode != ''">
+                AND SALARYITEM_CODE = #{salaryitemCode}
+            </if>
+        </trim>
+    </select>
+
+    <update id="saveMpsbsc004" parameterType="kr.co.dbvision.api.mps.bsc.mpsbsc004.entity.Mpsbsc004">
+        /* kr.co.dbvision.api.mps.bsc.mpsbsc004.service.mapper.Mpsbsc004Mapper.saveMpsbsc004 */
+      <selectKey resultType="String" keyProperty="applcStdrSn" order="BEFORE">
+            <if test="applcStdrSn != null and applcStdrSn != ''" >
+                SELECT #{applcStdrSn} AS applcStdrSn FROM DUAL
+            </if>
+            <if test="applcStdrSn == null or applcStdrSn == ''">
+                SELECT NVL(MAX(APPLC_STDR_SN),0)+1 AS applcStdrSn
+                  FROM MPS_APPLCS_STDR
+            </if>
+        </selectKey>
+        /* kr.co.dbvision.api.mps.bsc.mpsbsc004.service.mapper.Mpsbsc004Mapper.saveMpsbsc004 */
+        MERGE INTO MPS_APPLCS_STDR A
+             USING (SELECT
+                    #{salarytyCode} SALARYTY_CODE,
+                    #{salaryitemCode} SALARYITEM_CODE,
+                    #{applcStdrSn} APPLC_STDR_SN
+                    FROM DUAL) B
+                ON (
+                    A.SALARYTY_CODE = B.SALARYTY_CODE AND 
+                    A.SALARYITEM_CODE = B.SALARYITEM_CODE AND 
+                    A.APPLC_STDR_SN = B.APPLC_STDR_SN
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+               EMPL_SE_CODE  =#{emplSeCode},
+               APPLC_STDR_SE= #{applcStdrSe},
+               CALC_NOMFRM_DTLS= #{calcNomfrmDtls},
+               CALC_NOMFRM= #{calcNomfrm},
+               CALC_ORDR= #{calcOrdr},               
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+        WHEN NOT MATCHED THEN
+        INSERT (
+               SALARYTY_CODE,
+               SALARYITEM_CODE,
+               APPLC_STDR_SN,
+               APPLC_STDR_SE,
+               CALC_ORDR,
+               EMPL_SE_CODE,
+               CALC_NOMFRM_DTLS,               
+               CALC_NOMFRM,
+               REG_DT,
+               REG_ID
+        ) VALUES (
+				#{salarytyCode},
+				#{salaryitemCode},
+				#{applcStdrSn},
+				#{applcStdrSe},
+				#{calcOrdr},
+				#{emplSeCode},
+				#{calcNomfrmDtls},
+				#{calcNomfrm},
+				#{cnwkPdBeginYcnt},
+				#{cnwkPdBeginSeCode},
+				#{cnwkPdEndYcnt},
+				#{cnwkPdEndSeCode},
+               SYSDATE,
+               #{regId}
+        )
+    </update>
+    <update id="saveMpsbsc004calcStdr" parameterType="EgovMapForNull">
+      
+        /* kr.co.dbvision.api.mps.bsc.mpsbsc004.service.mapper.Mpsbsc004Mapper.saveMpsbsc004calcStdr */
+        MERGE INTO MPS_CALC_STDR A
+             USING (SELECT
+                    #{salarytyCode} SALARYTY_CODE,
+                    #{salaryitemCode} SALARYITEM_CODE,
+                    #{applcStdrSn} APPLC_STDR_SN,
+                    #{calcStdrSn} CALC_STDR_SN
+                    FROM DUAL) B
+                ON (
+                    A.SALARYTY_CODE = B.SALARYTY_CODE AND 
+                    A.SALARYITEM_CODE = B.SALARYITEM_CODE AND 
+                    A.APPLC_STDR_SN = B.APPLC_STDR_SN AND
+                    A.CALC_STDR_SN = B.CALC_STDR_SN
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+            CALC_NOMFRM_DTLS = #{calcNomfrmDtls},
+            CALC_NOMFRM = #{calcNomfrm},
+            CNWK_PD_BEGIN_YCNT = #{cnwkPdBeginYcnt},
+			CNWK_PD_BEGIN_SE_CODE = #{cnwkPdBeginSeCode},
+			CNWK_PD_END_YCNT = #{cnwkPdEndYcnt},
+			CNWK_PD_END_SE_CODE = #{cnwkPdEndSeCode},
+            UPT_DT = SYSDATE,
+            UPT_ID = #{uptId}         
+        WHEN NOT MATCHED THEN
+        INSERT (
+            SALARYTY_CODE ,  
+            SALARYITEM_CODE, 
+            APPLC_STDR_SN ,  
+            CALC_STDR_SN ,   
+            APPLC_CODE,      
+            APPLC_SE,        
+            CALC_SE,         
+            CALC_NOMFRM_DTLS,
+            CALC_NOMFRM,
+            CNWK_PD_BEGIN_YCNT,
+               CNWK_PD_BEGIN_SE_CODE,
+               CNWK_PD_END_YCNT,
+               CNWK_PD_END_SE_CODE,
+            REG_DT,          
+            REG_ID          
+        ) VALUES (
+            #{salarytyCode},   
+            #{salaryitemCode}, 
+            #{applcStdrSn},   
+            (SELECT NVL(MAX(CALC_STDR_SN),0)+1 
+                  FROM MPS_CALC_STDR
+                 WHERE SALARYTY_CODE =   #{salarytyCode}
+                   AND SALARYITEM_CODE = #{salaryitemCode} 
+                   AND APPLC_STDR_SN =   #{applcStdrSn}) , 
+            #{applcCode},      
+            #{applcSe},        
+            #{calcSe},         
+            #{calcNomfrmDtls},
+            #{calcNomfrm},
+            #{cnwkPdBeginYcnt},
+            #{cnwkPdBeginSeCode},
+            #{cnwkPdEndYcnt},
+            #{cnwkPdEndSeCode},
+            SYSDATE,
+            #{regId}     
+        )
+    </update>
+    
+
+    <delete id="deleteMpsbsc004" parameterType="kr.co.dbvision.api.mps.bsc.mpsbsc004.entity.Mpsbsc004">
+        /* kr.co.dbvision.api.mps.bsc.mpsbsc004.service.mapper.Mpsbsc004Mapper.deleteMpsbsc004 */
+        DELETE FROM MPS_APPLCS_STDR
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND APPLC_STDR_SN = #{applcStdrSn}
+                AND SALARYTY_CODE = #{salarytyCode}
+                AND SALARYITEM_CODE = #{salaryitemCode}
+        </trim>
+    </delete>
+    
+     <select id="selectGradeCalcMpsbsc004List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.bsc.mpsbsc004.service.mapper.Mpsbsc004Mapper.selectGradeCalcMpsbsc004List */
+        <choose>
+        <when test="applcSe == '002'">
+        /* 직급별 */                
+             SELECT                                       
+	                    #{salarytyCode}                              AS   SALARYTY_CODE,
+	                    #{salaryitemCode}                          AS   SALARYITEM_CODE,                
+	                    #{applcStdrSn}                               AS   APPLC_STDR_SN,
+	                    NVL(A.CALC_STDR_SN, '9999')    AS   CALC_STDR_SN,                                    
+	                    #{applcSe}                                     AS   APPLC_SE,
+	                    #{calcSe}                                       AS   CALC_SE,
+	                   A.CALC_NOMFRM_DTLS           AS   CALC_NOMFRM_DTLS,
+	                   A.CALC_NOMFRM                       AS   CALC_NOMFRM,           
+	                   B.CLSF_CODE                             AS    APPLC_CODE,
+	                   B.CLSF_NM                                   AS APPLC_CODE_NM
+	            FROM MPS_CALC_STDR  A
+	                      , MHS_CLSF_CODE B
+	            WHERE   1=1
+	            AND         A.SALARYTY_CODE(+) = #{salarytyCode}
+	            AND         A.SALARYITEM_CODE(+) =  #{salaryitemCode}
+	            AND         A.APPLC_SE(+)      =  #{applcSe}
+	            AND         A.CALC_SE(+)        =  #{calcSe}
+	            AND         A.APPLC_CODE(+)= B.CLSF_CODE
+	            AND         B.USE_AT = '1'             
+	            ORDER BY B.SORT_ORDR                     	                
+        </when>
+        <when test="applcSe == '003'">
+        /* 사원별 */                
+             SELECT                                       
+                        #{salarytyCode}                              AS   SALARYTY_CODE,
+                        #{salaryitemCode}                          AS   SALARYITEM_CODE,                
+                        #{applcStdrSn}                               AS   APPLC_STDR_SN,
+                        NVL(A.CALC_STDR_SN, '9999')    AS   CALC_STDR_SN,                                    
+                        #{applcSe}                                     AS   APPLC_SE,
+                        #{calcSe}                                       AS   CALC_SE,
+                       A.CALC_NOMFRM_DTLS           AS   CALC_NOMFRM_DTLS,                
+                       A.APPLC_CODE                             AS    APPLC_CODE,
+                       B.KOR_NM                                       AS APPLC_CODE_NM
+                FROM MPS_CALC_STDR  A
+                          , MHS_EMP B
+                WHERE   1=1
+                AND         A.SALARYTY_CODE = #{salarytyCode}
+                AND         A.SALARYITEM_CODE =  #{salaryitemCode}
+                AND         A.APPLC_SE      =  #{applcSe}
+                AND         A.CALC_SE        =  #{calcSe}
+                AND         A.APPLC_CODE = B.EMPNO                
+                ORDER BY B.EMPNO                                        
+        </when>
+        <when test="applcSe == '004'">
+        /* 부서별 */                
+             SELECT                                       
+                        #{salarytyCode}                              AS   SALARYTY_CODE,
+                        #{salaryitemCode}                          AS   SALARYITEM_CODE,                
+                        #{applcStdrSn}                               AS   APPLC_STDR_SN,
+                        NVL(A.CALC_STDR_SN, '9999')    AS   CALC_STDR_SN,                                    
+                        #{applcSe}                                     AS   APPLC_SE,
+                        #{calcSe}                                        AS   CALC_SE,
+                       A.CALC_NOMFRM_DTLS            AS   CALC_NOMFRM_DTLS,                
+                       B.DEPT_CODE                          AS    APPLC_CODE,
+                       B.DEPT_KOR_NM                     AS    APPLC_CODE_NM
+                FROM MPS_CALC_STDR  A
+                          , MHS_DEPT  B
+                WHERE   1=1
+                AND         A.SALARYTY_CODE(+)     = #{salarytyCode}
+                AND         A.SALARYITEM_CODE(+) =  #{salaryitemCode}
+                AND         A.APPLC_SE(+)                   =  #{applcSe}
+                AND         A.CALC_SE(+)                     =  #{calcSe}
+                AND         A.APPLC_CODE(+)            = B.DEPT_CODE
+                AND         B.USE_AT = '1'             
+                ORDER BY B.SORT_ORDR                      
+        </when>
+        <when test="applcSe == '006'">       
+           /* 직책별 */                
+             SELECT                                       
+                        #{salarytyCode}                              AS   SALARYTY_CODE,
+                        #{salaryitemCode}                          AS   SALARYITEM_CODE,                
+                        #{applcStdrSn}                               AS   APPLC_STDR_SN,
+                        NVL(A.CALC_STDR_SN, '9999')    AS   CALC_STDR_SN,                                    
+                        #{applcSe}                                     AS   APPLC_SE,
+                        #{calcSe}                                        AS   CALC_SE,
+                       A.CALC_NOMFRM_DTLS            AS   CALC_NOMFRM_DTLS,                
+                       B.RSPOFC_CODE                        AS    APPLC_CODE,
+                       B.RSPOFC_NM                              AS    APPLC_CODE_NM
+                FROM MPS_CALC_STDR  A
+                          , MHS_RSPOFC_CODE  B
+                WHERE   1=1
+                AND         A.SALARYTY_CODE(+) = #{salarytyCode}
+                AND         A.SALARYITEM_CODE(+) =  #{salaryitemCode}
+                AND         A.APPLC_SE(+)      =  #{applcSe}
+                AND         A.CALC_SE(+)        =  #{calcSe}
+                AND         A.APPLC_CODE(+)= B.RSPOFC_CODE
+                AND         B.USE_AT = '1'             
+                ORDER BY B.SORT_ORDR                                        
+        </when>
+        <when test="applcSe == '007'">             
+        /*직위별 */  
+             SELECT                                       
+                        #{salarytyCode}                              AS   SALARYTY_CODE,
+                        #{salaryitemCode}                          AS   SALARYITEM_CODE,                
+                        #{applcStdrSn}                               AS   APPLC_STDR_SN,
+                        NVL(A.CALC_STDR_SN, '9999')    AS   CALC_STDR_SN,                                    
+                        #{applcSe}                                     AS   APPLC_SE,
+                        #{calcSe}                                        AS   CALC_SE,
+                       A.CALC_NOMFRM_DTLS            AS   CALC_NOMFRM_DTLS,                
+                       B.OFCPS_CODE                          AS    APPLC_CODE,
+                       B.OFCPS_NM                                AS    APPLC_CODE_NM
+                FROM MPS_CALC_STDR  A
+                          , MHS_OFCPS_CODE   B
+                WHERE   1=1
+                AND         A.SALARYTY_CODE(+) = #{salarytyCode}
+                AND         A.SALARYITEM_CODE(+) =  #{salaryitemCode}
+                AND         A.APPLC_SE(+)      =  #{applcSe}
+                AND         A.CALC_SE(+)        =  #{calcSe}
+                AND         A.APPLC_CODE(+)= B.OFCPS_CODE
+                AND         B.USE_AT = '1'             
+                ORDER BY B.SORT_ORDR                                        
+        </when>
+        <when test="applcSe == '010'">             
+        /*근속기간 */  
+             SELECT                                       
+                        #{salarytyCode}                              AS   SALARYTY_CODE,
+                        #{salaryitemCode}                          AS   SALARYITEM_CODE,                
+                        #{applcStdrSn}                               AS   APPLC_STDR_SN,
+                        NVL(A.CALC_STDR_SN, '9999')    AS   CALC_STDR_SN,                                    
+                        #{applcSe}                                     AS   APPLC_SE,
+                        #{calcSe}                                        AS   CALC_SE,
+                        A.CALC_NOMFRM_DTLS            AS   CALC_NOMFRM_DTLS,
+						A.CNWK_PD_BEGIN_YCNT,
+						A.CNWK_PD_BEGIN_SE_CODE,
+						A.CNWK_PD_END_YCNT,
+						A.CNWK_PD_END_SE_CODE,
+						'년' AS DUMMY
+                FROM MPS_CALC_STDR  A
+                WHERE   1=1
+                AND         A.SALARYTY_CODE     = #{salarytyCode}
+                AND         A.SALARYITEM_CODE =  #{salaryitemCode}
+                AND         A.APPLC_SE     =  #{applcSe}
+                AND         A.CALC_SE        =  #{calcSe}                                                       
+        </when>
+        
+	        <otherwise>
+	        </otherwise>
+
+        </choose>
+        </select>
+
+    <select id="selectCalcMpsbsc004PopList" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.bsc.mpsbsc004.service.impl.Mpsbsc004Mapper.selectCalcMpsbsc004PopList */
+           SELECT
+                  A.SALARYTY_CODE        /*급여유형코드*/
+                 ,C.PYMNTDDC_SE
+                 ,FNC_COMCODENM('C062', A.SALARYTY_CODE) SALARYTY_CODE_NM        /*급여유형명*/
+                 ,FNC_COMCODENM('C064', C.PYMNTDDC_SE ) AS PYMNTDDC_SE_NM       /*지급공제구분*/
+                 ,A.SALARYITEM_CODE            /*급여항목코드*/
+                 ,C.SALARYITEM_NM            /*급여항목명*/
+             FROM MPS_ITEM_STDR A,MPS_SALARYITEM C
+            WHERE 1=1
+              AND A.SALARYITEM_CODE = C.SALARYITEM_CODE
+              AND C.CALC_APPLC_AT ='1' 
+    </select>
+    
+            
+</mapper>

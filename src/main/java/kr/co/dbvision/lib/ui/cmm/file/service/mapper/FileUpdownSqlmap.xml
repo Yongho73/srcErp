@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.lib.ui.cmm.file.service.mapper.FileUpdownMapper">
+	
+	<insert id="insertFileInfo" parameterType="egovMapForNull">
+	
+		INSERT INTO STM_ATCHMNFL
+		  (FILE_SN,
+		   FILE_EXTSN_NM,
+		   ORGINL_FILE_NM,
+		   STRE_FILE_NM,
+		   STRE_FLPTH,
+		   FILE_SIZE,
+		   REG_DT,
+		   REG_ID)
+		VALUES
+		  (#{atchFileId},		   
+		   #{fileExtsn},
+		   #{orignlFileNm},
+		   #{streFileNm},
+		   #{fileStreCours},
+		   #{fileMg},
+		   SYSDATE,
+		   #{regId})
+	
+	</insert>
+	
+	<select id="selectFileInfo" parameterType="egovMapForNull" resultType="egovMapForNull">
+	
+		SELECT FILE_SN ATCH_FILE_ID,			   
+			   STRE_FLPTH FILE_COURS,
+			   STRE_FILE_NM FIL_STORE_FILE_NM,
+			   ORGINL_FILE_NM FILE_ORG_FILE_NM,
+			   FILE_SIZE FILE_SIZE,
+			   FILE_EXTSN_NM FILE_EXT			   
+		  FROM STM_ATCHMNFL
+		 WHERE FILE_SN = 
+		 		
+		<if test="atchFileId != null and atchFileId != ''">
+		    #{atchFileId}
+		</if>					 
+				  		  
+	</select>	
+	
+	<select id="selectFileInfos" parameterType="egovMapForNull" resultType="egovMapForNull">
+	
+		SELECT FILE_SN ATCH_FILE_ID,			   
+			   STRE_FLPTH FILE_COURS,
+			   STRE_FILE_NM FIL_STORE_FILE_NM,
+			   ORGINL_FILE_NM FILE_ORG_FILE_NM,
+			   FILE_SIZE FILE_SIZE,
+			   FILE_EXTSN_NM FILE_EXT			   
+		  FROM STM_ATCHMNFL
+		 WHERE FILE_SN IN
+
+		<if test="atchFileIdArr.length != 0">		
+	       	<foreach collection="atchFileIdArr" item="item" index="index" open="(" separator="," close=")">
+	        #{item} 
+	        </foreach>
+		</if>			 
+				  		  	
+	</select>	
+
+</mapper>

@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mhs.flx.mhsflx002.service.mapper.Mhsflx002Mapper">
+    <select id="selectWorkDayValCheck" parameterType="egovMapForNull" resultType="java.lang.Integer">
+        SELECT
+            COUNT(*)
+        FROM 
+            MHS_INDVDLWORKTYSEL
+        WHERE
+            EMPNO = #{empno}
+            AND 
+            (CONFM_STTUS_CODE != '003' OR CONFM_STTUS_CODE IS NULL)
+            <if test="useBeginDe != null and useBeginDe != ''">
+               <![CDATA[
+                AND USE_END_DE >= TO_DATE(#{useBeginDe})
+                ]]>
+            </if>
+            <if test="sn != null and sn != ''">
+                AND SN != #{sn}
+            </if>
+    </select>
+    <select id="selectWorkTyCode" parameterType="egovMapForNull" resultType="egovMapForNull">
+        SELECT
+            WORK_TY_CODE AS CODE,
+            WORK_TY_CODE_NM AS CODE_NM,
+            USE_AT,
+            BASS_TY_AT,
+            CALC_PD,
+            CORE_TIME_APPLC_AT,
+            ATTEND_CONFIRM_AT,
+            DAY_RECOG_WORKTIME
+        FROM
+            MHS_WORKTY
+    </select>
+    <select id="selectMhsflx002List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.flx.mhsflx002.service.mapper.Mhsflx002Mapper.selectMhsflx002List */
+        SELECT
+               A.EMPNO,
+               B.KOR_NM,
+               A.SN,
+               A.WORK_TY_CODE,
+               (SELECT WORK_TY_CODE_NM FROM MHS_WORKTY WHERE A.WORK_TY_CODE = WORK_TY_CODE) AS WORK_TY_CODE_NM,
+               FNC_DATESTR(A.USE_BEGIN_DE) AS USE_BEGIN_DE,
+               FNC_DATESTR(A.USE_END_DE) AS USE_END_DE,
+               SUBSTR(A.WORK_BEGIN_TIME , '0' , '2') || ':' || SUBSTR(A.WORK_BEGIN_TIME , '3' , '2') AS WORK_BEGIN_TIME,
+               SUBSTR(A.WORK_BEGIN_TIME , '0' , '2') AS WORK_BEGIN_TIME_HR,
+               SUBSTR(A.WORK_BEGIN_TIME , '3' , '2') AS WORK_BEGIN_TIME_MIN,
+               SUBSTR(A.WORK_END_TIME , '0' , '2') || ':' || SUBSTR(A.WORK_END_TIME , '3' , '2') AS WORK_END_TIME,
+               SUBSTR(A.WORK_END_TIME , '0' , '2') AS WORK_END_TIME_HR,
+               SUBSTR(A.WORK_END_TIME , '3' , '2') AS WORK_END_TIME_MIN,
+               A.RM,
+               A.CONFM_STTUS_CODE,
+               FNC_COMCODENM('C197' , A.CONFM_STTUS_CODE) AS CONFM_STTUS_CODE_NM,
+               FNC_DATESTR(A.CONFM_DE) AS CONFM_DE,
+               A.CONFMER_EMPNO,
+               FNC_GETKORNM(A.CONFMER_EMPNO) AS CONFMER_EMPNM,
+               A.REG_DT,
+               A.REG_ID,
+               A.UPT_DT,
+               A.UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM,
+               A.RETURN_RESN
+          FROM MHS_INDVDLWORKTYSEL A , MHS_EMP B
+          WHERE A.EMPNO = B.EMPNO
+            <if test="empno != null and empno != ''">
+                AND B.EMPNO = #{empno}
+            </if>
+            <if test="deptCode != null and deptCode != ''">
+                AND B.DEPT_CODE = #{deptCode}
+            </if>
+            <if test="workTyCode != null and workTyCode != ''">
+                AND A.WORK_TY_CODE = #{workTyCode}
+            </if>
+            <if test="useBeginDe != null and useBeginDe != ''">
+                <![CDATA[
+                AND A.USE_BEGIN_DE >= TO_DATE(#{useBeginDe})
+                ]]>
+            </if>
+            <if test="useEndDe != null and useEndDe != ''">
+                <![CDATA[
+                AND A.USE_END_DE <= TO_DATE(#{useEndDe})
+                ]]>
+            </if>
+            <choose>
+                <when test="confmSttusCode != null and confmSttusCode != ''">
+                    AND A.CONFM_STTUS_CODE = #{confmSttusCode}
+                </when>
+                <otherwise>
+                    AND A.CONFM_STTUS_CODE IS NOT NULL
+                </otherwise>
+            </choose>
+    </select>
+
+    <select id="selectMhsflx002" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.flx.mhsflx002.service.mapper.Mhsflx002Mapper.selectMhsflx002 */
+        SELECT
+               EMPNO,
+               SN,
+               WORK_TY_CODE,
+               (SELECT WORK_TY_CODE_NM FROM MHS_WORKTY WHERE A.WORK_TY_CODE = WORK_TY_CODE) AS WORK_TY_CODE_NM,
+               USE_BEGIN_DE,
+               USE_END_DE,
+               WORK_BEGIN_TIME,
+               SUBSTR(WORK_BEGIN_TIME , '0' , '2') AS WORK_BEGIN_TIME_HR,
+               SUBSTR(WORK_BEGIN_TIME , '3' , '2') AS WORK_BEGIN_TIME_MIN,
+               WORK_END_TIME,
+               SUBSTR(WORK_END_TIME , '0' , '2') AS WORK_END_TIME_HR,
+               SUBSTR(WORK_END_TIME , '3' , '2') AS WORK_END_TIME_MIN,
+               RM,
+               CONFM_STTUS_CODE,
+               CONFM_DE,
+               CONFMER_EMPNO,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_INDVDLWORKTYSEL A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="empno != null and empno != ''">
+                AND EMPNO = #{empno}
+            </if>
+            <if test="sn != null and sn != ''">
+                AND SN = #{sn}
+            </if>
+        </trim>
+    </select>
+
+    <update id="saveMhsflx002" parameterType="kr.co.dbvision.api.mhs.flx.mhsflx002.entity.Mhsflx002">
+        /* kr.co.dbvision.api.mhs.flx.mhsflx002.service.mapper.Mhsflx002Mapper.saveMhsflx002 */
+        MERGE INTO MHS_INDVDLWORKTYSEL A
+             USING (SELECT
+                    #{empno} EMPNO,
+                    #{sn} SN
+                    FROM DUAL) B
+                ON (
+                    A.EMPNO = B.EMPNO AND 
+                    A.SN = B.SN
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               WORK_TY_CODE= #{workTyCode},
+               USE_BEGIN_DE= REPLACE(#{useBeginDe},'-',''),
+               USE_END_DE= REPLACE(#{useEndDe},'-',''),
+               WORK_BEGIN_TIME= REPLACE(#{workBeginTime},':',''),
+               WORK_END_TIME= REPLACE(#{workEndTime},':',''),
+               RM= #{rm},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId},
+               RETURN_RESN = #{returnResn}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               EMPNO,
+               SN,
+               WORK_TY_CODE,
+               USE_BEGIN_DE,
+               USE_END_DE,
+               WORK_BEGIN_TIME,
+               WORK_END_TIME,
+               CONFM_STTUS_CODE,
+               RM,
+               REG_DT,
+               REG_ID,
+               RETURN_RESN
+
+        ) VALUES (
+
+               #{empno},
+               (SELECT NVL(MAX(SN),'0') + 1
+                FROM MHS_INDVDLWORKTYSEL
+                WHERE EMPNO = #{empno}),
+               #{workTyCode},
+               REPLACE(#{useBeginDe},'-',''),
+               REPLACE(#{useEndDe},'-',''),
+               REPLACE(#{workBeginTime},':',''),
+               REPLACE(#{workEndTime},':',''),
+               #{confmSttusCode},
+               #{rm},
+               SYSDATE,
+               #{regId},
+               #{returnResn}
+        )
+    </update>
+    
+    <update id="updateSttusMhsflx002" parameterType="kr.co.dbvision.api.mhs.flx.mhsflx002.entity.Mhsflx002">
+        UPDATE
+            MHS_INDVDLWORKTYSEL
+        SET
+            CONFM_STTUS_CODE = #{confmSttusCode},
+            CONFM_DE = #{confmDe},
+            CONFMER_EMPNO = #{confmerEmpno},
+            RETURN_RESN = #{returnResn}
+        WHERE
+            EMPNO = #{empno}
+            AND
+            SN = #{sn}
+    </update>
+
+    <delete id="deleteMhsflx002" parameterType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.flx.mhsflx002.service.mapper.Mhsflx002Mapper.deleteMhsflx002 */
+        DELETE FROM MHS_INDVDLWORKTYSEL
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND EMPNO = #{empno}
+                AND SN = #{sn}
+        </trim>
+    </delete>
+</mapper>

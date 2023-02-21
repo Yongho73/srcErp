@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html class="no-js" lang="ko">
+<HEAD>
+<meta charset="utf-8">
+<LINK href="../img/icon/dbv.ico" rel="shortcut icon" type="image/x-icon">
+
+<TITLE>XERP</TITLE>
+
+<LINK href="../css/dhtmlx/skin/dhtmlx.css" rel="stylesheet" type="text/css">
+<LINK href="../glyphicons/css/bootstrap-glyphicons.css" rel="stylesheet" type="text/css">
+
+<!-- jquery -->
+<SCRIPT src="../js/jquery-1.11.1.min.js"></SCRIPT>
+<SCRIPT src="../js/jquery-ui-custom.min.js"></SCRIPT>
+ 
+<!-- css -->
+<LINK href="../css/default.css" rel="stylesheet" type="text/css">
+<LINK href="../css/contents.css" rel="stylesheet" type="text/css">
+<LINK href="../css/table.css" rel="stylesheet" type="text/css">
+
+</HEAD>
+
+
+<body>
+	<!--컨텐츠-->
+		<div class="path_info" style="">
+            <ul id="menu_path" style=""><li><a class="home" href="#n"></a></li><li><a href="#"> 프로젝트관리 </a></li><li><a href="#"> 프로젝트관리</a></li></ul>
+        </div>
+        
+        <DIV class="btn" style="float:right;text-align:right; vertical-align:middle;" title="저장">
+				<BUTTON class="btn_common02_new" id="btnDelete" type="button">
+					<SPAN class="glyphicon glyphicon-ok"></SPAN> 저장
+				</BUTTON>
+				<BUTTON class="btn_common02_new" id="btn_help" type="button" title="도움말">
+					<SPAN class="glyphicon glyphicon-question-sign"></SPAN>
+				</BUTTON>
+				<BUTTON class="btn_common02_new" id="btnRemove" type="button" title="닫기">
+					<SPAN class="glyphicon glyphicon-remove"></SPAN>
+				</BUTTON>
+			</DIV>
+      
+       
+    <div class="project_tit_div">
+    	<ul class="project_tit_ul">
+    		<li class="project_tit_li">2020년 서울시 급여관리시스템 통합 재개발</li>
+    		<li>홍길동<span class="ml5">대리</span><span class="ml5">02-1234-5678</span></li>
+    	</ul>    
+    </div>
+    
+    <div class="project_tab2_div mt10">
+		<ul class="project_tab2">
+			<a href=""><li class="">기본사항</li></a>
+			<a href=""><li class="active">인력</li></a>
+			<a href=""><li class="">예산</li></a>
+			<a href=""><li class="">협력계약</li></a>
+			<a href=""><li class="">이슈위험</li></a>
+			<a href=""><li class="">산출물</li></a>
+		</ul>
+	</div>
+	
+	<div class="project_tab_div">		 
+		<ul class="project_tab">
+				<a href=""><li class="active">· 인력계획</li></a>
+				<a href=""><li class="">· 인력실적(월별)</li></a>
+				<a href=""><li class="">· 인력계획 대비 실적</li></a>
+			</ul>
+				
+		<div style="float: right;line-height:30px;">
+			<button class="btn_common01_new" type="button">인력계획 추가</button>
+		</div>
+		
+	</div>
+	
+	<DIV class="tabl_box" style="margin-top:0;">
+		
+		<div class="detail_type022">
+			<table>
+				<caption>프로젝트 기본사항</caption>
+				
+				<colgroup>
+					<col style="width:40px;min-width:40px;" />
+					<col style="width:10%" />
+					<col style="width:10%" />
+					<col style="width:10%" />
+					<col style="width:10%" />
+					<col style="width:15%" />
+					<col style="width:15%" />
+					<col style="width:10%" />
+					<col style="width:auto" />
+				</colgroup>
+				<thead>
+					<tr>
+						<th class="ac brddd">No</th>
+						<th class="ac brddd"><label for="nm">성명</label></th>
+						<th class="ac brddd"><label for="grade">기술등급</label></th>
+						<th class="ac brddd"><label for="type">역할</label></th>
+						<th class="ac brddd"><label for="mm">M/M</label></th>
+						<th class="ac brddd"><label for="start">시작일자</label></th>
+						<th class="ac brddd"><label for="end">종료일자</label></th>
+						<th class="ac brddd"><label for="outside">외부인력</label></th>
+						<th class="ac brddd">처리</th>
+					</tr>
+				</thead>
+				
+				<tbody>
+					<tr>
+						<td class="ac">01</td>
+						<td class="ac"><input type="text" id="writer" title="등록자" style="width:80px" value="홍길동"></td>
+						<td class="ac">
+							<select id="" title="기술등급" style="min-width:70px">
+								<option value="">특급</option>
+								<option value=""></option>
+								<option value=""></option>
+							</select></td>
+						<td class="ac"><select id="" title="역할" style="min-width:70px">
+								<option value="">PM</option>
+								<option value=""></option>
+								<option value=""></option>
+							</select></td>
+						<td class="ac"><input type="text" id="" title="M/M" style="width:50px" value="10"></td>
+						<td class="ac"><input type="text" id="" title="시작일자" style="width:80px" value="2020.01.01"></td>
+						<td class="ac"><input type="text" id="" title="종료일자" style="width:80px" value="2020.11.01"></td>
+						<td class="ac">
+							<div class="checks etrans">
+							  <input type="checkbox" id="ex_chk3"> 
+							  <label for="ex_chk3"></label> 
+							</div>
+						</td>
+						<td class="ac"><button type="submit" class="btn_common02_new">변경</button>&nbsp;<button type="submit" class="btn_common02_new">삭제</button></td>
+					</tr>
+
+				</tbody>
+			</table>
+		</div><!--//baseForm-->
+	</div>
+	
+	
+	
+	
+</BODY>
+</HTML>

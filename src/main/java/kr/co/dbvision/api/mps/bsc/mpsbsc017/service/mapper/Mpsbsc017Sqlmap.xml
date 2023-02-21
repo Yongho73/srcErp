@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mps.bsc.mpsbsc017.service.mapper.Mpsbsc017Mapper"> 
+
+    <select id="selectMpsbsc017List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.bsc.mpsbsc017.service.mapper.Mpsbsc017Mapper.selectMpsbsc017List */
+        SELECT
+               EMPNO,
+               FNC_GETKORNM(EMPNO) AS EMP_NM,
+               ACNUT_SN,
+               ACNUT_SE_CODE,
+               BANK_CODE,
+               ACNUTNO,
+               DPSTR_NM,
+               FNC_DATESTR(BEGIN_DE) AS BEGIN_DE,
+               FNC_DATESTR(END_DE) AS END_DE,
+               BNKB_ATCHMNFLNO,
+               RM,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_ACNUT A
+          <if test="empNm != null and empNm != ''"> 
+               ,(SELECT EMPNO as N_EMPNO FROM MHS_EMP B WHERE B.KOR_NM = #{empNm})
+            </if>
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="empno != null and empno != ''">
+                AND EMPNO = #{empno}
+            </if>
+            <if test="empNm != null and empNm != ''">
+                AND N_EMPNO = A.EMPNO
+            </if>
+            <if test="sRegDt != null and sRegDt != ''">
+                <![CDATA[
+                AND REG_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+                ]]>
+            </if>
+            <if test="eRegDt != null and eRegDt != ''">
+                <![CDATA[
+                AND REG_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+                ]]>
+             </if>
+        </trim>
+        ORDER BY BEGIN_DE ASC, EMPNO
+        
+    </select>
+
+    <select id="selectMpsbsc017" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.bsc.mpsbsc017.service.mapper.Mpsbsc017Mapper.selectMpsbsc017 */
+        SELECT
+               EMPNO,
+               ACNUT_SN,
+               ACNUT_SE_CODE,
+               BANK_CODE,
+               ACNUTNO,
+               DPSTR_NM,
+               BEGIN_DE,
+               END_DE,
+               BNKB_ATCHMNFLNO,
+               RM,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_ACNUT A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="empno != null and empno != ''">
+                AND EMPNO = #{empno}
+            </if>
+            <if test="acnutSeCode != null and acnutSeCode != ''">
+                AND ACNUT_SE_CODE = #{acnutSeCode}
+            </if>
+        </trim>
+        ORDER BY BEGIN_DE ASC, EMPNO
+    </select>
+
+    <update id="saveMpsbsc017" parameterType="kr.co.dbvision.api.mps.bsc.mpsbsc017.entity.Mpsbsc017">
+        /* kr.co.dbvision.api.mps.bsc.mpsbsc017.service.mapper.Mpsbsc017Mapper.saveMpsbsc017 */
+        MERGE INTO MHS_ACNUT A
+             USING (SELECT
+                    #{empno} EMPNO,
+                    #{acnutSn} ACNUT_SN
+                    FROM DUAL) B
+                ON (
+                    A.EMPNO = B.EMPNO AND 
+                    A.ACNUT_SN = B.ACNUT_SN
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               ACNUT_SE_CODE= #{acnutSeCode},
+               BANK_CODE= #{bankCode},
+               ACNUTNO= #{acnutno},
+               DPSTR_NM= #{dpstrNm},
+               BEGIN_DE= REPLACE(#{beginDe},'-',''),
+               END_DE= REPLACE(#{endDe},'-',''),
+               BNKB_ATCHMNFLNO= #{bnkbAtchmnflno},
+               RM= #{rm},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               EMPNO,
+               ACNUT_SN,
+               ACNUT_SE_CODE,
+               BANK_CODE,
+               ACNUTNO,
+               DPSTR_NM,
+               BEGIN_DE,
+               END_DE,
+               BNKB_ATCHMNFLNO,
+               RM,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{empno},
+               (select MAX(ACNUT_SN)+1 from MHS_ACNUT),
+               #{acnutSeCode},
+               #{bankCode},
+               #{acnutno},
+               #{dpstrNm},
+               REPLACE(#{beginDe},'-',''),
+               REPLACE(#{endDe},'-',''),
+               #{bnkbAtchmnflno},
+               #{rm},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deleteMpsbsc017" parameterType="kr.co.dbvision.api.mps.bsc.mpsbsc017.entity.Mpsbsc017">
+        /* kr.co.dbvision.api.mps.bsc.mpsbsc017.service.mapper.Mpsbsc017Mapper.deleteMpsbsc017 */
+        DELETE FROM MHS_ACNUT
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND EMPNO = #{empno}
+                AND ACNUT_SE_CODE = #{acnutSeCode}
+        </trim>
+    </delete>
+</mapper>

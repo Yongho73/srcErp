@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mhs.edu.mhsedu004.service.mapper.Mhsedu004Mapper">
+
+    <select id="selectMhsedu004List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.edu.mhsedu004.service.mapper.Mhsedu004Mapper.selectMhsedu004List */
+        SELECT     X.EMPNO,
+                   KOR_NM,
+                   EDUCOURSE_CODE,
+                   ELCTSCT_SE_SN,
+                   ELCTSCT_STTUS_CODE,
+                   COCHRGEDOCUMENT_ISU_AT,
+                   RETURN_RESN,
+                   EDUCOURSE_NM, 
+                   CONFM_STTUS_CODE,
+                   EDU_SDT,
+                   EDU_SHR,
+                   EDU_EDT,
+                   EDU_EHR,
+                   EDU_CLS,              
+                   EDU_KIND,
+                   EDU_AMT_BURDEN_SE,
+                   INNER_EXTRL_EDU_SE,
+                   EDU_DAYCNT,
+                   EDU_INSTT,
+                   EDU_INSTT_ADRES,
+                   INDVDL_EDUCOST,
+                   EPIS_RETUNAMT,
+                   ATCHMNFL_NO,
+                   QESTNAR_CODE,
+                   EDU_CN,
+                   JOB_APPLC_PLAN,
+                   STSFDG_CODE,
+                   REQUST_DESC,
+                   RESULT_ELCTSCT_SE_SN,
+                   QESTNAR_RESULT_SN,
+                   REQUST_DESC_OK,
+                   QESTNAR_NM,
+                   TOT_FINISH_TIME,
+                   CLOS_AT,
+                   TOT_FINISH_PNT
+
+            FROM 
+            (
+            SELECT A.EMPNO,
+                   (SELECT KOR_NM FROM MHS_EMP WHERE A.EMPNO = EMPNO ) AS KOR_NM,
+                   A.EDUCOURSE_CODE,
+                   A.ELCTSCT_SE_SN,
+                   A.ELCTSCT_STTUS_CODE,
+                   B.COCHRGEDOCUMENT_ISU_AT,
+                   A.RETURN_RESN,
+                   B.EDUCOURSE_NM, 
+                   (SELECT CONFM_STTUS_CODE FROM MHS_EDUREQST WHERE A.EMPNO = EMPNO AND A.EDUCOURSE_CODE = EDUCOURSE_CODE) AS CONFM_STTUS_CODE,
+                   CASE WHEN ISNULL(A.EDU_SDT,'') = '' THEN DBO.FNC_DATESTR(B.EDU_SDT) WHEN A.EDU_SDT != '' THEN DBO.FNC_DATESTR(A.EDU_SDT) END AS EDU_SDT,
+                   CASE WHEN ISNULL(A.EDU_SHR,'') = '' THEN '00:00' WHEN A.EDU_SHR != '' THEN SUBSTRING(A.EDU_SHR,1,2)+':'+SUBSTRING(A.EDU_SHR,3,4) END AS EDU_SHR,
+                   CASE WHEN ISNULL(A.EDU_EDT,'') = '' THEN DBO.FNC_DATESTR(B.EDU_EDT) WHEN A.EDU_EDT != '' THEN DBO.FNC_DATESTR(B.EDU_SDT) END AS EDU_EDT,
+                   CASE WHEN ISNULL(A.EDU_EHR, '') = '' THEN '00:00' WHEN A.EDU_EHR != '' THEN SUBSTRING(A.EDU_EHR,1,2)+':'+SUBSTRING(A.EDU_EHR,3,4) END AS EDU_EHR,
+                   B.EDU_CLS,              
+                   B.EDU_KIND,
+                   B.EDU_AMT_BURDEN_SE,
+                   B.INNER_EXTRL_EDU_SE,
+                   B.EDU_DAYCNT,
+                   A.EDU_INSTT,
+                   A.EDU_INSTT_ADRES,
+                   A.INDVDL_EDUCOST,
+                   A.EPIS_RETUNAMT,
+                   A.ATCHMNFL_NO,
+                   A.QESTNAR_CODE,
+                   A.EDU_CN,
+                   A.JOB_APPLC_PLAN,
+                   A.STSFDG_CODE,
+                   A.REQUST_DESC,
+                   A.RESULT_ELCTSCT_SE_SN,
+                   A.QESTNAR_RESULT_SN,
+                   (CASE WHEN ISNULL(A.QESTNAR_RESULT_SN,0) = 0 THEN '0' ELSE '1' END )AS REQUST_DESC_OK,
+                   (SELECT QESTNAR_NM FROM STM_QESTNAR WHERE A.QESTNAR_CODE = QESTNAR_CODE ) AS QESTNAR_NM,
+                   (CASE WHEN A.TOT_FINISH_TIME = '' THEN '00:00' ELSE SUBSTRING(A.TOT_FINISH_TIME,1,2)+':'+SUBSTRING(A.TOT_FINISH_TIME,3,4) END) AS TOT_FINISH_TIME,
+                   (CASE WHEN (SELECT CLOS_AT  FROM MHS_EDU_TRGTER C WHERE A.EDUCOURSE_CODE = EDUCOURSE_CODE AND A.EMPNO = EMPNO AND A.ELCTSCT_SE_SN = ELCTSCT_SE_SN) = '1' THEN '마감' ELSE NULL END ) AS CLOS_AT,
+                   B.TOT_FINISH_PNT
+             from MHS_EDU_RESULT_REPORT A , MHS_EDUCRSE B
+            WHERE A.EDUCOURSE_CODE = B.EDUCOURSE_CODE
+              AND ( A.ELCTSCT_STTUS_CODE = '99' OR A.ELCTSCT_STTUS_CODE = '10' OR A.ELCTSCT_STTUS_CODE = '20' OR A.ELCTSCT_STTUS_CODE = '30' OR A.ELCTSCT_STTUS_CODE = '40')
+            )X INNER JOIN DBO.FNC_GET_DEPTAUTH_EMP_LIST(#{deptAuth}, #{exempno}) C
+          ON X.EMPNO = C.EMPNO
+            
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+<!--                     REQUST_DESC_OK = '1' -->
+            <if test="educourseNm != null and educourseNm != ''">
+                AND X.EDUCOURSE_NM LIKE '%' + #{educourseNm} + '%'
+            </if>
+            <if test="empno != null and empno != ''">
+                AND X.EMPNO = #{empno}
+            </if>
+            <if test="empNm != null and empNm != ''">
+                AND C.EMP_NM LIKE '%' + #{empNm} + '%'
+            </if>
+            <if test="deptCode != null and deptCode != ''">
+                AND C.DEPT_CODE LIKE '%' + #{deptCode} + '%'
+            </if> 
+            <if test="deptCodeNm != null and deptCodeNm != ''">
+                AND DBO.FNC_GETDEPTNM(C.DEPT_CODE) = #{deptCodeNm}
+            </if>  
+            <if test="educourseNm != null and educourseNm != ''">
+                AND X.EDUCOURSE_NM = #{educourseNm}
+            </if> 
+            <if test="searchelctsctSttusCode != null and searchelctsctSttusCode != ''">
+                AND X.ELCTSCT_STTUS_CODE = #{searchelctsctSttusCode}
+            </if>
+            <if test="searcheduCls != null and searcheduCls != ''">
+                AND X.EDU_CLS = #{searcheduCls}
+            </if>
+            <if test="stDate != null and stDate != ''">
+                <![CDATA[
+                AND X.EDU_EDT >= #{stDate}
+                ]]>
+            </if>
+            <if test="edDate != null and edDate != ''">
+                <![CDATA[
+                AND X.EDU_EDT <= #{edDate}
+                ]]>
+            </if>
+        </trim>
+    </select>
+    
+    <select id="selectMhseduTime" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.edu.mhsedu004.service.mapper.Mhsedu004Mapper.selectMhseduTime */
+        SELECT  #{educourseCode} AS EDUCOURSE_CODE,
+                 #{elctsctSeSn} AS ELCTSCT_SE_SN,
+                 Y.MUST_FINISH_EDU_SE,
+                 Y.CODE_KOR_NM,
+                 CASE WHEN ISNULL(X.FINISH_TIME,'') = '' THEN '00:00' WHEN X.FINISH_TIME != '' THEN SUBSTRING(X.FINISH_TIME,1,2)+':'+SUBSTRING(X.FINISH_TIME,3,4) END AS FINISH_TIME,
+                 EMPNO
+           FROM (
+                 SELECT A.CODE AS MUST_FINISH_EDU_SE,
+                 A.CODE_KOR_NM,
+                 A.ORDR
+           FROM STM_CODE A
+          WHERE CODEKIND_CODE = 'C209'
+            AND CODE IN (
+         SELECT A.MUST_FINISH_EDU_SE
+           FROM MHS_EDU_FINISH_TIME A RIGHT OUTER JOIN MHS_EDU_FINISH_TIME B
+           ON A.EDUCOURSE_CODE = B.EDUCOURSE_CODE 
+           AND B.EDUCOURSE_CODE = #{educourseCode} 
+           AND A.ELCTSCT_SE_SN = B.ELCTSCT_SE_SN 
+           AND B.ELCTSCT_SE_SN = CONVERT(INT,#{elctsctSeSn})
+          UNION
+         SELECT CODE AS MUST_FINISH_EDU_SE
+          FROM STM_CODE
+          WHERE CODEKIND_CODE = 'C209'
+            AND USE_AT = CONVERT(INT,'1')
+                )
+            ) Y LEFT OUTER JOIN  (
+                                SELECT A.EDUCOURSE_CODE,
+                                       A.ELCTSCT_SE_SN,
+                                       A.FINISH_TIME,
+                                       A.MUST_FINISH_EDU_SE,
+                                       #{empno} AS EMPNO
+                                FROM MHS_EDU_FINISH_TIME A
+                               WHERE A.EDUCOURSE_CODE = #{educourseCode}
+                                 AND A.ELCTSCT_SE_SN = #{elctsctSeSn}
+                                 
+                                ) X 
+                    ON Y.MUST_FINISH_EDU_SE = X.MUST_FINISH_EDU_SE
+                    <!-- WHERE EMPNO = #{empno} -->
+                    ORDER BY Y.ORDR
+      </select>
+    
+    <select id="selectMhseduTime2" parameterType="egovMapForNull" resultType="egovMapForNull">
+    /* kr.co.dbvision.api.mhs.edu.mhsedu004.service.mapper.Mhsedu004Mapper.selectMhseduTime2 */
+    SELECT 
+		EDUCOURSE_CODE
+		,ELCTSCT_SE_SN
+		,EMPNO
+		,MUST_FINISH_EDU_SE
+		,SUBSTRING(FINISH_TIME,1,2)+':'+SUBSTRING(FINISH_TIME,3,4) AS FINISH_TIME
+		,REG_DT
+		,REG_ID
+		,UPT_DT
+		,UPT_ID
+        
+    FROM MHS_EDU_FINISH_RECOG_TIME A
+    WHERE A.EDUCOURSE_CODE = #{educourseCode}
+      AND A.ELCTSCT_SE_SN = #{elctsctSeSn}
+      AND A.EMPNO = #{empno}
+    </select>
+      
+
+    <select id="selectMhsedu004" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.edu.mhsedu004.service.mapper.Mhsedu004Mapper.selectMhsedu004 */
+        SELECT
+               EDUCOURSE_CODE,
+               ELCTSCT_SE_SN,
+               EMPNO,
+               RESULT_ELCTSCT_SE_SN,
+               EDU_SDT,
+               EDU_SHR,
+               EDU_EDT,
+               EDU_EHR,
+               TOT_FINISH_TIME,
+               TOT_EDUCOST,
+               EPIS_RETUNAMT,
+               INDVDL_EDUCOST,
+               COCHRGE_AT,
+               STSFDG_CODE,
+               EDU_INSTT,
+               EDU_INSTT_ADRES,
+               EDU_CN,
+               JOB_APPLC_PLAN,
+               REQUST_DESC,
+               QESTNAR_CODE,
+               QESTNAR_RESULT_SN,
+               TRNSPORTCT,
+               DAYCT,
+               CGFFD_AMT,
+               STAYNGCT,
+               RM,
+               ATCHMNFL_NO,
+               ELCTSCT_DOC_NO,
+               ELCTSCT_STTUS_CODE,
+               ELCTSCT_EMPNO,
+               RETURN_RESN,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_EDU_RESULT_REPORT A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="educourseCode != null and educourseCode != ''">
+                AND EDUCOURSE_CODE = #{educourseCode}
+            </if>
+            <if test="elctsctSeSn != null and elctsctSeSn != ''">
+                AND ELCTSCT_SE_SN = #{elctsctSeSn}
+            </if>
+            <if test="empno != null and empno != ''">
+                AND EMPNO = #{empno}
+            </if>
+            <if test="resultElctsctSeSn != null and resultElctsctSeSn != ''">
+                AND RESULT_ELCTSCT_SE_SN = #{resultElctsctSeSn}
+            </if>
+        </trim>
+    </select>
+
+    <update id="saveMhsedu004" parameterType="kr.co.dbvision.api.mhs.edu.mhsedu004.entity.Mhsedu004">
+        /* kr.co.dbvision.api.mhs.edu.mhsedu004.service.mapper.Mhsedu004Mapper.saveMhsedu004 */
+        UPDATE MHS_EDU_RESULT_REPORT
+           SET TOT_FINISH_TIME = REPLACE(#{totFinishTime},':',''),
+               ELCTSCT_STTUS_CODE = REPLACE(#{elctsctSttusCode},':',''),
+               RETURN_RESN = #{returnResn}
+            
+         WHERE EDUCOURSE_CODE = #{educourseCode}
+           AND ELCTSCT_SE_SN = #{elctsctSeSn}
+           AND EMPNO = #{empno}
+           AND RESULT_ELCTSCT_SE_SN = #{resultElctsctSeSn}
+    </update>
+    
+    <update id="updateClosAt" parameterType="kr.co.dbvision.api.mhs.edu.mhsedu004.entity.Mhsedu004">
+        /* kr.co.dbvision.api.mhs.edu.mhsedu004.service.mapper.Mhsedu004Mapper.updateClosAt */
+        UPDATE MHS_EDU_TRGTER
+        SET CLOS_AT = '1',
+            RESULT_REPORT_SN = #{resultElctsctSeSn},
+            TOT_FINISH_TIME =  REPLACE(#{totFinishTime},':',''),
+            TOT_EDUCOST = CONVERT(INT,#{totEducost}),
+            EPIS_RETUNAMT = CONVERT(INT,#{episRetunamt})
+        
+        WHERE EDUCOURSE_CODE = #{educourseCode}
+          AND ELCTSCT_SE_SN = #{elctsctSeSn}
+          AND EMPNO = #{empno}
+    </update>
+    
+    <update id="updateClos" parameterType="kr.co.dbvision.api.mhs.edu.mhsedu004.entity.Mhsedu004">
+        /* kr.co.dbvision.api.mhs.edu.mhsedu004.service.mapper.Mhsedu004Mapper.updateClos */
+        UPDATE MHS_EDU_TRGTER
+        SET CLOS_AT = '0',
+            RESULT_REPORT_SN = '0'
+        WHERE EDUCOURSE_CODE = #{educourseCode}
+          AND ELCTSCT_SE_SN = #{elctsctSeSn}
+          AND EMPNO = #{empno}
+    </update>
+    
+    <update id="saveMhseduTime" parameterType="kr.co.dbvision.api.mhs.edu.mhsedu004.entity.Mhsedu004">
+        /* kr.co.dbvision.api.mhs.edu.mhsedu004.service.mapper.Mhsedu004Mapper.saveMhseduTime */
+        MERGE INTO MHS_EDU_FINISH_RECOG_TIME A
+             USING (SELECT
+                    #{educourseCode} EDUCOURSE_CODE,
+                    #{elctsctSeSn} ELCTSCT_SE_SN,
+                    #{mustFinishEduSe} MUST_FINISH_EDU_SE,
+                    #{empno} EMPNO
+                    ) B
+                ON (
+                    A.EDUCOURSE_CODE = B.EDUCOURSE_CODE AND 
+                    A.ELCTSCT_SE_SN = B.ELCTSCT_SE_SN AND 
+                    A.MUST_FINISH_EDU_SE = B.MUST_FINISH_EDU_SE AND
+                    A.EMPNO = B.EMPNO
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               FINISH_TIME= REPLACE(#{finishTime},':',''),
+               UPT_DT = GETDATE(),
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               EDUCOURSE_CODE,
+               ELCTSCT_SE_SN,
+               MUST_FINISH_EDU_SE,
+               EMPNO,
+               FINISH_TIME,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{educourseCode},
+               #{elctsctSeSn},
+               #{mustFinishEduSe},
+               #{empno},
+               REPLACE(#{finishTime},':',''),
+               GETDATE(),
+               #{regId}
+        );
+        
+    </update>
+    
+    <update id="updateSttusMhsedu004" parameterType="egovMapForNull">
+    /* kr.co.dbvision.api.mhs.edu.mhsedu004.service.mapper.Mhsedu004Mapper.updateSttusMhsedu004 */
+        UPDATE 
+            MHS_EDU_RESULT_REPORT
+        SET 
+            ELCTSCT_STTUS_CODE = #{elctsctSttusCode},
+            ELCTSCT_EMPNO = #{elctsctEmpno},
+            ELCTSCT_DOC_NO = #{elctsctDocNo}
+            
+        WHERE EDUCOURSE_CODE = #{educourseCode}
+           AND ELCTSCT_SE_SN = #{elctsctSeSn}
+           AND EMPNO = #{empno}
+           AND RESULT_ELCTSCT_SE_SN = #{resultElctsctSeSn}
+    </update>
+    
+    <update id="updateSttusReturn" parameterType="egovMapForNull">
+    /* kr.co.dbvision.api.mhs.edu.mhsedu004.service.mapper.Mhsedu004Mapper.updateSttusReturn */
+        UPDATE 
+            MHS_EDU_RESULT_REPORT
+        SET 
+            ELCTSCT_STTUS_CODE = #{elctsctSttusCode},
+            RETURN_RESN = #{returnResn}
+            
+        WHERE EDUCOURSE_CODE = #{educourseCode}
+           AND ELCTSCT_SE_SN = #{elctsctSeSn}
+           AND EMPNO = #{empno}
+           AND RESULT_ELCTSCT_SE_SN = #{resultElctsctSeSn}
+    </update>
+    
+</mapper>

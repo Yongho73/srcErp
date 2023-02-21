@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.lib.ui.cmm.emp.service.mapper.EmpMapper">
+
+    <select id="selectMhsEmpList" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.lib.ui.cmm.emp.service.impl.EmpMapper.selectMhsEmpList */
+        SELECT
+               A.EMPNO,
+               A.KOR_NM,
+               A.ENG_NM,
+               A.DEPT_CODE,
+               (SELECT DEPT_KOR_NM FROM MHS_DEPT B WHERE A.DEPT_CODE = B.DEPT_CODE) AS DEPT_CODE_NM,
+               --UNISTR(A.CHCRT_NM) AS CHCRT_NM,
+               A.CHCRT_NM AS CHCRT_NM,
+               DBO.FNC_DATESTR(A.ECNY_DE) AS ECNY_DE,
+               DBO.FNC_DATESTR(A.RETIRE_DE) AS RETIRE_DE,
+               (CASE WHEN A.IHIDNUM = NULL THEN '' ELSE LEFT(A.IHIDNUM,6)+'-*******' END) AS IHIDNUM,
+               A.NLTY_CODE,
+               DBO.FNC_COMCODENM('C122',A.NLTY_CODE) AS NLTY_CODE_NM,
+               A.JSSFC_CODE,
+               DBO.FNC_GETJSSFCNM(A.JSSFC_CODE) AS JSSFC_CODE_NM,
+               A.SRCLS_CODE,
+               A.CLSF_CODE,
+               DBO.FNC_GETCLSFNM(A.CLSF_CODE) AS CLSF_CODE_NM,
+               A.OFCPS_CODE,
+               DBO.FNC_COMCODENM('C252',A.OFCPS_CODE) AS OFCPS_CODE_NM,
+               A.RSPOFC_CODE,
+               DBO.FNC_GETRSPOFCNM(A.RSPOFC_CODE) AS RSPOFC_CODE_NM,
+               A.ZIP,
+               A.OWNHOM_ADRES,
+               A.OWNHOM_DETAIL_ADRES,
+               A.OWNHOM_ENG_ADRES,
+               A.OWNHOM_TELNO,
+               A.LXTN_TELNO,
+               A.MBTLNUM,
+               A.EMAIL,
+               DBO.FNC_DATESTR(A.BRTHDY) AS BRTHDY,
+               A.SLRCLD_AT,
+               A.MRRG_AT,
+               DBO.FNC_COMCODENM('C288',A.MRRG_AT) AS MRRG_AT_NM,
+               A.HDADPT_DEPT_CODE,
+               A.EMPL_SE,
+               DBO.FNC_COMCODENM('C068', A.EMPL_SE) AS EMPL_SE_NM,
+               A.HFFS_SE,
+               DBO.FNC_COMCODENM('C278',A.HFFS_SE) AS HFFS_SE_NM,
+               A.RETIRE_SE,
+               DBO.FNC_COMCODENM('C154',A.RETIRE_SE) AS RETIRE_SE,
+               A.SEXDSTN_SE,
+               DBO.FNC_COMCODENM('C286',A.SEXDSTN_SE) AS SEXDSTN_SE,
+               A.EMPL_SE EMPNM_SE,
+               DBO.FNC_COMCODENM('C014',A.EMPL_SE) AS EMPNM_SE_NM,
+               CONVERT(CHAR(19), A.REG_DT, 20) AS REG_DT,
+               A.REG_ID,
+               CONVERT(CHAR(19), A.UPT_DT, 20) AS UPT_DT,
+               A.UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM,
+               A.PHOTO_ATCHMNFL_NO,
+               A.SIGN_ATCHMNFL_NO,
+               A.CASHIER_AT,
+               A.HDADPT_AT,
+               A.DPRLR_AT,
+               A.LBUN_SBSCRB_AT,
+               DBO.FNC_COMCODENM('C641',A.LBUN_SBSCRB_AT) AS LBUN_SBSCRB_AT_NM,
+               A.MUTAID_SBSCRB_AT,
+               A.DISP_WORK_AT,
+               A.NATVFRGN_SE_CODE,
+               DBO.FNC_COMCODENM('C011',A.NATVFRGN_SE_CODE) AS NATVFRGN_SE_CODE_NM,
+               A.ECNY_SE_CODE,
+               DBO.FNC_COMCODENM('C014',A.ECNY_SE_CODE) AS ECNY_SE_CODE_NM,
+               A.BPLC_CODE,
+               (SELECT BPLC_KOR_NM FROM STM_BIZPLC WHERE BPLC_CODE=A.BPLC_CODE) AS BPLC_CODE_NM,
+               A.SALPEAK_AT,
+               A.FLEXBIZ_AT,
+               A.ANSALSYS_AT,
+               (SELECT DEPT_ENG_NM FROM MHS_DEPT B WHERE A.DEPT_CODE = B.DEPT_CODE) AS DEPT_ENG_NM,
+               (SELECT DEPT_ABRV FROM MHS_DEPT B WHERE A.DEPT_CODE = B.DEPT_CODE) AS DEPT_ABRV,
+               (SELECT DEPT_TELNO FROM MHS_DEPT B WHERE A.DEPT_CODE = B.DEPT_CODE) AS DEPT_TELNO,
+               (SELECT DEPT_FAX_TELNO FROM MHS_DEPT B WHERE A.DEPT_CODE = B.DEPT_CODE) AS DEPT_FAX_TELNO,
+               DBO.FNC_DATESTR((SELECT USE_BEGIN_DE FROM MHS_DEPT B WHERE A.DEPT_CODE = B.DEPT_CODE)) AS USE_BEGIN_DE,
+               (SELECT USE_AT FROM MHS_DEPT B WHERE A.DEPT_CODE = B.DEPT_CODE) AS USE_AT,
+               (SELECT SORT_ORDR FROM MHS_DEPT B WHERE A.DEPT_CODE = B.DEPT_CODE) AS SORT_ORDR,
+               B.USER_ID
+          FROM MHS_EMP A , STM_USERS B
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                    A.EMPNO = B.EMPNO
+	       <if test="empno != null and empno  != ''">
+	         AND   A.EMPNO  LIKE '%' || #{empno} || '%'
+	       </if>
+	       
+	       <if test="korNm != null and korNm  != ''">
+	         AND   A.KOR_NM  LIKE '%' || #{korNm} || '%'
+	       </if>
+	       
+	       <if test="hffsSe != null and hffsSe  != ''">
+	         AND   A.HFFS_SE = #{hffsSe}
+	       </if>
+	       <if test="deptCode != null and deptCode  != ''">
+	         AND  A.DEPT_CODE = #{deptCode}
+	       </if>
+	       <if test="deptNm != null and deptNm  != ''">
+	         AND   DBO.FNC_GETDEPTNM(A.DEPT_CODE)  LIKE  '%' ||  #{deptNm} || '%'
+	       </if>
+	       <if test="bplcCode != null and bplcCode != ''">
+	            AND A.BPLC_CODE = #{bplcCode}
+	       </if>
+	   </trim>
+       
+        ORDER BY EMPNO
+    </select>
+    
+
+
+	<select id="selectMhsEmpList_20200427" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.lib.ui.cmm.emp.service.impl.EmpMapper.selectMhsEmpList_20200427 */
+        SELECT
+        	   ROWNUM AS NUM,
+               A.EMPNO,
+               A.KOR_NM,
+               A.ENG_NM,
+               A.DEPT_CODE,
+			   B.DEPT_KOR_NM AS DEPT_CODE_NM,
+               --UNISTR(A.CHCRT_NM) AS CHCRT_NM,
+               A.CHCRT_NM AS CHCRT_NM,
+               DBO.FNC_DATESTR(A.ECNY_DE) AS ECNY_DE,
+               DBO.FNC_DATESTR(A.RETIRE_DE) AS RETIRE_DE,
+               A.IHIDNUM,
+               A.NLTY_CODE,
+               DBO.FNC_COMCODENM('C122',A.NLTY_CODE) AS NLTY_CODE_NM,
+               A.JSSFC_CODE,
+               DBO.FNC_GETJSSFCNM(A.JSSFC_CODE) AS JSSFC_CODE_NM,
+               A.SRCLS_CODE,
+               A.CLSF_CODE,
+			   DBO.FNC_GETCLSFNM(A.CLSF_CODE) AS CLSF_CODE_NM,
+			   A.OFCPS_CODE,
+               DBO.FNC_COMCODENM('C252',A.OFCPS_CODE) AS OFCPS_CODE_NM,
+               A.RSPOFC_CODE,
+               DBO.FNC_GETRSPOFCNM(A.RSPOFC_CODE) AS RSPOFC_CODE_NM,
+               A.ZIP,
+               A.OWNHOM_ADRES,
+               A.OWNHOM_DETAIL_ADRES,
+               A.OWNHOM_ENG_ADRES,
+               A.OWNHOM_TELNO,
+               A.LXTN_TELNO,
+               A.MBTLNUM,
+               A.EMAIL,
+               DBO.FNC_DATESTR(A.BRTHDY) AS BRTHDY,
+               A.SLRCLD_AT,
+               A.MRRG_AT,
+               DBO.FNC_COMCODENM('C288',A.MRRG_AT) AS MRRG_AT_NM,
+               A.HDADPT_DEPT_CODE,
+               A.EMPL_SE,
+               DBO.FNC_COMCODENM('C068', A.EMPL_SE) AS EMPL_SE_NM,
+               A.HFFS_SE,
+               DBO.FNC_COMCODENM('C278',A.HFFS_SE) AS HFFS_SE_NM,
+               A.RETIRE_SE,
+               DBO.FNC_COMCODENM('C154',A.RETIRE_SE) AS RETIRE_SE,
+               A.SEXDSTN_SE,
+               DBO.FNC_COMCODENM('C286',A.SEXDSTN_SE) AS SEXDSTN_SE,
+               A.EMPL_SE EMPNM_SE,
+               DBO.FNC_COMCODENM('C014',A.EMPL_SE) AS EMPNM_SE_NM,
+               CONVERT(CHAR(19), A.REG_DT, 20) AS REG_DT,
+               A.REG_ID,
+               CONVERT(CHAR(19), A.UPT_DT, 20) AS UPT_DT,
+               A.UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM,
+               A.PHOTO_ATCHMNFL_NO,
+               A.SIGN_ATCHMNFL_NO,
+               A.CASHIER_AT,
+               A.HDADPT_AT,
+               A.DPRLR_AT,
+               A.LBUN_SBSCRB_AT,
+               DBO.FNC_COMCODENM('C641',A.LBUN_SBSCRB_AT) AS LBUN_SBSCRB_AT_NM,
+               A.MUTAID_SBSCRB_AT,
+               A.DISP_WORK_AT,
+               A.NATVFRGN_SE_CODE,
+               DBO.FNC_COMCODENM('C011',A.NATVFRGN_SE_CODE) AS NATVFRGN_SE_CODE_NM,
+               A.ECNY_SE_CODE,
+               DBO.FNC_COMCODENM('C014',A.ECNY_SE_CODE) AS ECNY_SE_CODE_NM,
+               A.BPLC_CODE,
+               (SELECT BPLC_KOR_NM FROM STM_BIZPLC WHERE BPLC_CODE=A.BPLC_CODE) AS BPLC_CODE_NM,
+               A.SALPEAK_AT,
+               A.FLEXBIZ_AT,
+               A.ANSALSYS_AT,
+               B.DEPT_ENG_NM,
+               B.DEPT_ABRV,
+               B.DEPT_TELNO,
+               B.DEPT_FAX_TELNO,
+               DBO.FNC_DATESTR(B.USE_BEGIN_DE) AS USE_BEGIN_DE,
+               B.USE_AT,
+               B.SORT_ORDR
+          FROM MHS_EMP A, MHS_DEPT B
+       WHERE   A.DEPT_CODE = B.DEPT_CODE
+        
+       <if test="empno != null and empno  != ''">
+         AND   A.EMPNO  LIKE '%' || #{empno} || '%'
+       </if>
+       
+       <if test="korNm != null and korNm  != ''">
+         AND   A.KOR_NM  LIKE '%' || #{korNm} || '%'
+       </if>
+       
+       <if test="hffsSe != null and hffsSe  != ''">
+         AND   A.HFFS_SE = #{hffsSe}
+       </if>
+       <if test="deptCode != null and deptCode  != ''">
+         AND  A.DEPT_CODE = #{deptCode}
+       </if>
+       <if test="deptNm != null and deptNm  != ''">
+         AND   (DBO.FNC_GETDEPTNM(A.DEPT_CODE)  LIKE  '%' ||  #{deptNm} || '%'
+               OR DBO.FNC_GETDEPTNM(B.DEPT_CODE)  LIKE  '%' ||  #{deptNm} || '%' )
+       </if>
+  	   <if test="bplcCode != null and bplcCode != ''">
+      		AND A.BPLC_CODE = #{bplcCode}
+  	   </if>
+       
+        ORDER BY EMPNO
+    </select>
+
+	<select id="selectMhsEmpListDept" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.lib.ui.cmm.emp.service.impl.EmpMapper.selectMhsEmpListDept */
+        SELECT
+        	   ROWNUM AS NUM,
+               A.EMPNO,
+               A.KOR_NM,
+               A.ENG_NM,
+               A.DEPT_CODE,
+			   B.DEPT_KOR_NM AS DEPT_CODE_NM,
+               UNISTR(A.CHCRT_NM) AS CHCRT_NM,
+               FNC_DATESTR(A.ECNY_DE) AS ECNY_DE,
+               FNC_DATESTR(A.RETIRE_DE) AS RETIRE_DE,
+               A.IHIDNUM,
+               A.NLTY_CODE,
+               FNC_COMCODENM('C122',A.NLTY_CODE) AS NLTY_CODE_NM,
+               A.JSSFC_CODE,
+               FNC_GETJSSFCNM(A.JSSFC_CODE) AS JSSFC_CODE_NM,
+               A.SRCLS_CODE,
+               A.CLSF_CODE,
+			   FNC_GETCLSFNM(A.CLSF_CODE) AS CLSF_CODE_NM,
+			   A.OFCPS_CODE,
+               FNC_COMCODENM('C252',A.OFCPS_CODE) AS OFCPS_CODE_NM,
+               A.RSPOFC_CODE,
+               FNC_GETRSPOFCNM(A.RSPOFC_CODE) AS RSPOFC_CODE_NM,
+               A.ZIP,
+               A.OWNHOM_ADRES,
+               A.OWNHOM_DETAIL_ADRES,
+               A.OWNHOM_ENG_ADRES,
+               A.OWNHOM_TELNO,
+               A.LXTN_TELNO,
+               A.MBTLNUM,
+               A.EMAIL,
+               FNC_DATESTR(A.BRTHDY) AS BRTHDY,
+               A.SLRCLD_AT,
+               A.MRRG_AT,
+               FNC_COMCODENM('C288',A.MRRG_AT) AS MRRG_AT_NM,
+               A.HDADPT_DEPT_CODE,
+               A.EMPL_SE,
+               FNC_COMCODENM('C068', A.EMPL_SE) AS EMPL_SE_NM,
+               A.HFFS_SE,
+               FNC_COMCODENM('C278',A.HFFS_SE) AS HFFS_SE_NM,
+               A.RETIRE_SE,
+               FNC_COMCODENM('C154',A.RETIRE_SE) AS RETIRE_SE,
+               A.SEXDSTN_SE,
+               FNC_COMCODENM('C286',A.SEXDSTN_SE) AS SEXDSTN_SE,
+               /*A.EMPNM_SE,
+               FNC_COMCODENM('C014',A.EMPNM_SE) AS EMPNM_SE_NM,*/
+               TO_CHAR(A.REG_DT,'YYYY-MM-DD HH24:MI:SS') AS REG_DT,
+               A.REG_ID,
+               TO_CHAR(A.UPT_DT,'YYYY-MM-DD HH24:MI:SS') AS UPT_DT,
+               A.UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM,
+               A.PHOTO_ATCHMNFL_NO,
+               A.SIGN_ATCHMNFL_NO,
+               A.CASHIER_AT,
+               A.HDADPT_AT,
+               A.DPRLR_AT,
+               A.LBUN_SBSCRB_AT,
+               FNC_COMCODENM('C641',A.LBUN_SBSCRB_AT) AS LBUN_SBSCRB_AT_NM,
+               A.MUTAID_SBSCRB_AT,
+               A.DISP_WORK_AT,
+               A.NATVFRGN_SE_CODE,
+               FNC_COMCODENM('C011',A.NATVFRGN_SE_CODE) AS NATVFRGN_SE_CODE_NM,
+               A.ECNY_SE_CODE,
+               FNC_COMCODENM('C014',A.ECNY_SE_CODE) AS ECNY_SE_CODE_NM,
+               A.BPLC_CODE,
+               (SELECT BPLC_KOR_NM FROM STM_BIZPLC WHERE BPLC_CODE=A.BPLC_CODE) AS BPLC_CODE_NM,
+               A.SALPEAK_AT,
+               A.FLEXBIZ_AT,
+               A.ANSALSYS_AT,
+               B.DEPT_ENG_NM,
+               B.DEPT_ABRV,
+               B.DEPT_TELNO,
+               B.DEPT_FAX_TELNO,
+               FNC_DATESTR(B.USE_BEGIN_DE) AS USE_BEGIN_DE,
+               B.USE_AT,
+               B.SORT_ORDR
+          FROM MHS_EMP A, (
+                    SELECT DISTINCT X.DEPT_CODE,X.DEPT_KOR_NM,X.DEPT_ENG_NM,X.BPLC_CODE,X.USE_AT,X.DEPT_ABRV,X.DEPT_TELNO,X.DEPT_FAX_TELNO,X.USE_BEGIN_DE,X.SORT_ORDR
+                    FROM MHS_DEPT X
+                    WHERE 1=1
+		  	   <if test="bplcCode != null and bplcCode != ''">
+		      		AND x.BPLC_CODE = #{bplcCode}
+		  	   </if>
+		  	   <if test="useAt != null and useAt != ''">
+		      		AND x.USE_AT = #{useAt}
+		  	   </if>
+                ) B
+       WHERE   A.DEPT_CODE = B.DEPT_CODE
+        
+       <if test="empno != null and empno  != ''">
+         AND   A.EMPNO  LIKE '%' || #{empno} || '%'
+       </if>
+       <if test="deptCode != null and deptCode  != ''">
+         AND   A.DEPT_CODE = #{deptCode}
+       </if>
+       
+       <if test="korNm != null and korNm  != ''">
+         AND   A.KOR_NM  LIKE '%' || #{korNm} || '%'
+       </if>
+       
+       <if test="hffsSe != null and hffsSe  != ''">
+         AND   A.HFFS_SE = #{hffsSe}
+       </if>
+       
+  	   <if test="bplcCode != null and bplcCode != ''">
+      		AND A.BPLC_CODE = #{bplcCode}
+  	   </if>
+       
+        ORDER BY A.DEPT_CODE, A.EMPNO
+    </select>
+</mapper>

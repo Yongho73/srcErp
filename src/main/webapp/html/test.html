@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html class="no-js" lang="ko">
+<HEAD>
+<META content="IE=11.0000" http-equiv="X-UA-Compatible">
+<META charset="UTF-8">
+<META http-equiv="Content-Script-Type" content="text/javascript; charet=utf-8">
+<META http-equiv="Content-Style-Type" content="text/css; charet=utf-8">
+<META name="HandheldFriendly" content="True">
+<META http-equiv="cleartype" content="on">
+<META http-equiv="X-UA-Compatible" content="IE=edge">
+<META http-equiv="Expires" content="-1">
+<META http-equiv="Pragma" content="no-cache">
+<META http-equiv="Cache-Control" content="no-cache">
+<META content="DBVision-XERP" property="og:title">
+<META name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, minimum-scale=1.0, user-scalable=yes">
+<META name="keywords" content="DBVision-XERP">
+<META name="description" content="DBVision-XERP">
+<LINK href="http://localhost:8180/xerp/img/icon/dbv.ico" rel="shortcut icon" type="image/x-icon">
+
+<TITLE>XERP</TITLE>
+
+<LINK href="http://localhost:8180/xerp/css/dhtmlx/skin/dhtmlx.css" rel="stylesheet" type="text/css">
+<LINK href="http://localhost:8180/xerp/glyphicons/css/bootstrap-glyphicons.css" rel="stylesheet" type="text/css">
+
+<!-- jquery -->
+<SCRIPT src="http://localhost:8180/xerp/js/jquery-1.11.1.min.js"></SCRIPT>
+<SCRIPT src="http://localhost:8180/xerp/js/jquery-ui-custom.min.js"></SCRIPT>
+ 
+<!-- css -->
+<LINK href="http://localhost:8180/xerp/css/sub.css" rel="stylesheet" type="text/css">
+
+</HEAD>
+<BODY>
+
+
+	 
+	<div class="path_info" style="">
+            <ul id="menu_path" style=""><li><a class="home" href="#n"></a></li><li><a href="#"> 인사관리 </a></li><li><a href="#"> 조직관리 </a></li><li><a href="#"> 직급코드관리</a></li></ul>
+        </div>
+        
+        <DIV class="btn" style="float:right;text-align:right;">
+				<BUTTON class="btn_common02" id="btnExcel" type="button">
+					<SPAN class="glyphicon glyphicon-download-alt"></SPAN> 엑셀다운로드
+				</BUTTON>
+				<BUTTON class="btn_common02_new" id="btn_help" type="button" title="도움말">
+                      <SPAN class="glyphicon glyphicon-question-sign"></SPAN>
+                </BUTTON>
+                <BUTTON class="btn_common02_new" id="btnClose" type="button" title="닫기">
+                       <SPAN class="glyphicon glyphicon-remove"></SPAN>
+                </BUTTON>
+			</DIV>
+        
+	<!-- title_box -->
+	<DIV class="title_box" style="clear:none;">
+		<DIV class="path_info">
+			<UL id="menu_path"></UL>
+			<A class="btn_help" href="http://localhost:8180/xerp/stmmng008/searchStmBtn/view#n"><SPAN class="blind">도움말</SPAN>
+			</A>
+		</DIV>
+		<!--//path_info-->
+	</DIV>
+	<!--//title_box-->
+	<!-- search_box -->
+	<DIV class="search_box" id="searchFormStmBtn" style="width:100%;">
+		<TABLE>
+			<TBODY>
+				<TR>
+					<TH><LABEL for="docmT">버튼 ID</LABEL></TH>
+					<TD><INPUT name="btnId" id="btnId" type="text"></TD>
+					<TH><LABEL for="writer">버튼 명</LABEL></TH>
+					<TD><INPUT name="btnNm" id="btnNm" type="text"></TD>
+					<TH><LABEL for="writer">기안일자</LABEL></TH>
+					<td><input name="searchSregDt" class="input_calen" id="searchSregDt" onkeyup="gf_AutoDate(event, this)" onkeypress="gf_AutoDate(event, this)" type="text" maxlength="8"> ~ <input name="searchEregDt" class="input_calen" id="searchEregDt" onkeyup="gf_AutoDate(event, this)" onkeypress="gf_AutoDate(event, this)" type="text" maxlength="8"></td>
+					<TD>
+						<DIV class="btn2" style="position:relative;display:inline-block;float:right;">
+							<BUTTON id="btnSearch" type="button">
+								<SPAN class="glyphicon glyphicon-search f15"></SPAN>
+							</BUTTON>
+							<BUTTON id="btnClear" type="button">
+								<SPAN class="glyphicon glyphicon-refresh f15 mr5" style="color:#fff;margin-left:4px;"></SPAN>
+							</BUTTON>
+						</DIV>
+					</TD>
+				</TR>
+			</TBODY>
+		</TABLE>
+	</DIV>
+	<!--//search_box-->
+	<!--//tabl_box-->
+	<DIV class="tabl_box">
+		<!-- //tabl-1 -->
+		<!-- <DIV class="tdl-1"> -->
+			<DIV class="list_type01">
+				<DIV class="list_top">
+					<H4 class="title03 fl">버튼&nbsp;목록</H4>
+						<div style="float:left;text-align:left;">
+							<SPAN class="view" style="font-weight:bold;">최근 기안한 양식</span>&nbsp;<SPAN class="view"> 총 &nbsp; <SPAN id="spanCnt">3</SPAN>건</SPAN>
+						</div>
+						<div style="float:right;text-align:right;">
+							<BUTTON class="btn_common01_new" id="" type="button">결재</BUTTON>
+							<BUTTON class="btn_common01_new" id="" type="button">일괄결재</BUTTON>
+						</div>
+					</SPAN>					
+				</DIV>
+				<!--//list_top-->
+
+				<DIV>
+					<DIV id="dataList" style="width: 100%; height: 600px; background:skyblue;background:url('../img/sub/dhtml_example.jpg')no-repeat;background-size:cover;"><span style="color:#fff;background:rgba(0,0,0,0.5);">html grid area</span></DIV>
+				</DIV>
+				<div>페이징 영역</div>
+			</DIV>
+			<!--//list_type01-->
+		<!-- </DIV> -->
+		<!-- //tabl-1 -->
+		<!-- //tdl-2 --
+		<DIV class="tdl-2" id="saveForm">
+			<DIV class="list_top02">
+				<H4 class="title03" id="h4_pr_title">버튼&nbsp;등록</H4>
+			</DIV>
+			<!-- <DIV class="detail_type01">
+				<FORM id="saveFormStmBtn">
+					<TABLE>
+						<CAPTION>버튼</CAPTION>
+						<COLGROUP>
+							<COL width="150">
+							<COL width="">
+						</COLGROUP>
+						<TBODY>
+							<TR>
+								<TH>버튼 ID</TH>
+								<TD><INPUT name="btnId" id="btnId" style="width: 50%;"
+									required="" type="text" maxlength="20">
+
+									<DIV class="btn_common04 w70 checkDupBtn">
+										<SPAN class="glyphicon glyphicon-duplicate"></SPAN> <INPUT
+											class="btn_input w60" id="btnCheckDup" type="button"
+											value="중복확인">
+									</DIV></TD>
+							</TR>
+							<TR>
+								<TH>버튼 명</TH>
+								<TD><INPUT name="btnNm" id="btnNm" style="width: 50%;"
+									required="" type="text" maxlength="20"></TD>
+							</TR>
+							<TR>
+								<TH>버튼 설명</TH>
+								<TD><INPUT name="btnDc" id="btnDc" style="width: 50%;"
+									required="" type="text" maxlength="50"></TD>
+							</TR>
+						</TBODY>
+					</TABLE>
+				</FORM>
+			</DIV>
+			<!--//detail_type01--
+
+			<DIV class="ac mt10">
+				<BUTTON class="btn_common01" id="btnFormSave" type="button">
+					<SPAN class="glyphicon glyphicon-save mr5"></SPAN> 저장
+				</BUTTON>
+				<SPAN id="spanReset"><BUTTON class="btn_common01"
+						id="btnFormReset" type="button">
+						<SPAN class="glyphicon glyphicon-refresh mr5"></SPAN> Reset
+					</BUTTON> </SPAN> <SPAN id="spanDel" style="display: none;"><BUTTON
+						class="btn_common01" id="btnFormRemove" type="button">
+						<SPAN class="glyphicon glyphicon-trash mr5"></SPAN> 삭제
+					</BUTTON> </SPAN>
+			</DIV>
+			<!-- //ac --
+		</DIV>
+		<!-- //tabl-2 --
+	</DIV>
+	<!--//tabl_box-->
+</BODY>
+</HTML>

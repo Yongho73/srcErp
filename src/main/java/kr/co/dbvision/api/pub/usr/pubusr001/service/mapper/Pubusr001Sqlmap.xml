@@ -1,0 +1,590 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.pub.usr.pubusr001.service.mapper.Pubusr001Mapper">
+
+    <select id="selectPubusr001List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.pub.usr.pubusr001.service.mapper.Pubusr001Mapper.selectPubusr001List */
+        SELECT
+               EMPNO, 
+               BPLC_CODE,
+               KOR_NM,
+               ENG_NM, 
+               UNISTR(CHCRT_NM) AS CHCRT_NM, 
+               TO_CHAR(TO_DATE(FNC_DATESTR(ECNY_DE),'YYYY-MM-DD'),'YYYY-MM-DD') AS ECNY_DE, 
+               FNC_DATESTR(RETIRE_DE) AS RETIRE_DE,
+               CASE WHEN RETIRE_SE = 'T01' THEN '의원면직'
+                    WHEN RETIRE_SE = 'T02' THEN '권고사직'
+                    WHEN RETIRE_SE = 'T03' THEN '계약종료'
+                    WHEN RETIRE_SE = 'T04' THEN '징계해고'
+                    WHEN RETIRE_SE = 'T05' THEN '정년퇴직'
+                    WHEN RETIRE_SE = 'T06' THEN '명예퇴직'
+                    WHEN RETIRE_SE = 'T07' THEN '조기퇴직'
+                    WHEN RETIRE_SE = 'T08' THEN '기타'
+                    WHEN RETIRE_SE = 'T09' THEN '임용포기'
+                    WHEN RETIRE_SE = 'T10' THEN '당연퇴직'
+                    WHEN RETIRE_SE = 'T11' THEN '권고사직'
+               END AS RETIRE_SE,
+               CASE WHEN EMPL_SE = '001' THEN '정규직' WHEN EMPL_SE = '002' THEN '무기계약직' WHEN EMPL_SE = '004' THEN '계약직'WHEN EMPL_SE = '005' THEN '임시직' END AS EMPL_SE,
+               ECNY_SE_CODE,
+               FNC_GETDEPTNM(DEPT_CODE) AS DEPT_CODE,
+               CASE WHEN HFFS_SE = 'J01' THEN '재직' WHEN HFFS_SE = 'J05' THEN '퇴직' WHEN HFFS_SE ='J03' THEN '휴직' END AS HFFS_SE,
+               TO_CHAR(TO_DATE(BRTHDY,'YYYY-MM-DD'),'YYYY-MM-DD') AS BRTHDY, 
+               TO_CHAR(TO_DATE(CUR_CLSF_EMPLMNDAY,'YYYY-MM-DD'),'YYYY-MM-DD') AS CUR_CLSF_EMPLMNDAY, 
+               CASE WHEN SLRCLD_AT = 'S' THEN '양력' WHEN SLRCLD_AT = 'R' THEN '음력' END AS SLRCLD_AT, 
+               DECODE(A.IHIDNUM,NULL,'',SUBSTR(A.IHIDNUM,1,6)||'-*******') AS IHIDNUM, 
+               CASE WHEN SEXDSTN_SE = 'M' THEN '남자' WHEN SEXDSTN_SE = 'F' THEN '여자' END AS SEXDSTN_SE, 
+               --CASE WHEN NATVFRGN_SE_CODE = '1' THEN '내국인' WHEN NATVFRGN_SE_CODE = '9' THEN '외국인' END AS 
+               NATVFRGN_SE_CODE,
+               NLTY_CODE,
+               CASE WHEN SRCLS_CODE = '00' THEN '호봉-미적용'
+                    ELSE '해당없음' END AS SRCLS_CODE,
+               CASE WHEN CLSF_CODE='001' THEN '대표이사'
+                    WHEN CLSF_CODE='002' THEN '이사'
+                    WHEN CLSF_CODE='003' THEN '부장'
+                    WHEN CLSF_CODE='004' THEN '차장'
+                    WHEN CLSF_CODE='005' THEN '과장'
+                    WHEN CLSF_CODE='006' THEN '대리'
+                    WHEN CLSF_CODE='007' THEN '사원'
+                    WHEN CLSF_CODE='008' THEN '인턴'
+                    WHEN CLSF_CODE='009' THEN '고문'
+               END AS CLSF_CODE,
+               CASE WHEN OFCPS_CODE='100' THEN '대표이사'
+                    WHEN OFCPS_CODE='200' THEN '이사'
+                    WHEN OFCPS_CODE='300' THEN '부장'
+                    WHEN OFCPS_CODE='400' THEN '차장'
+                    WHEN OFCPS_CODE='500' THEN '과장'
+                    WHEN OFCPS_CODE='600' THEN '대리'
+                    WHEN OFCPS_CODE='700' THEN '사원'
+                    WHEN OFCPS_CODE='800' THEN '인턴'
+               END AS OFCPS_CODE,
+               CASE WHEN JSSFC_CODE ='001' THEN '관리직'
+                    WHEN JSSFC_CODE ='002' THEN '개발직'
+                    WHEN JSSFC_CODE ='003' THEN '영업직'
+                    WHEN JSSFC_CODE ='004' THEN '연구직'
+                    WHEN JSSFC_CODE ='005' THEN '웹디자인'
+                    WHEN JSSFC_CODE ='009' THEN '임시직'
+               END AS JSSFC_CODE,
+               CASE WHEN DTY_CODE='001' THEN '일반'
+                     WHEN DTY_CODE='002' THEN '인사'
+                     WHEN DTY_CODE='003' THEN '급여'
+                     WHEN DTY_CODE='004' THEN '복리후생'
+                     WHEN DTY_CODE='005' THEN '총무'
+                     WHEN DTY_CODE='006' THEN '기술(건축)'
+                     WHEN DTY_CODE='007' THEN '기술(소방)'
+                     WHEN DTY_CODE='008' THEN '수영강사'
+                     WHEN DTY_CODE='009' THEN '헬스강사'
+                     WHEN DTY_CODE='010' THEN '테니스강사'
+                     WHEN DTY_CODE='011' THEN '주차관리'
+                     WHEN DTY_CODE='012' THEN '환경관리'
+                     WHEN DTY_CODE='013' THEN '시설안내'
+                     WHEN DTY_CODE='014' THEN '사무보조'
+                     WHEN DTY_CODE='015' THEN '생활체육'
+                     ELSE '해당없음'
+               END AS DTY_CODE,
+               CASE WHEN RSPOFC_CODE='100' THEN '대표이사'
+                    WHEN RSPOFC_CODE='200' THEN '임원'
+                    WHEN RSPOFC_CODE='300' THEN '팀장'
+                    WHEN RSPOFC_CODE='400' THEN '팀원'
+                    WHEN RSPOFC_CODE='500' THEN '부서장'
+               END AS RSPOFC_CODE,
+               JBLN_CODE,
+               ZIP,
+               OWNHOM_ADRES,
+               OWNHOM_DETAIL_ADRES,
+               OWNHOM_ENG_ADRES,
+               OWNHOM_TELNO,
+               LXTN_TELNO,
+               MBTLNUM,
+               EMGNC_TELNO,
+               EMAIL,
+               INDVDL_EMAIL,
+               CASE WHEN MRRG_AT = '1' THEN '기혼'
+                    WHEN MRRG_AT = '0' THEN '미혼'
+                    ELSE '해당없음'
+               END AS MRRG_AT,
+               CASE WHEN MRRG_AT = '1' THEN (SELECT TO_CHAR(TO_DATE(MRRG_DE,'YYYY-MM-DD'),'YYYY-MM-DD') FROM MHS_INDVDLINFO A WHERE A.EMPNO = '202101')
+                    ELSE ''
+               END AS MRRG_DE,
+               LAYOFF_SE_CODE,
+               PHOTO_ATCHMNFL_NO,
+               SIGN_ATCHMNFL_NO,
+               CASHIER_AT,
+               HDADPT_AT,
+               FNC_GETDEPTNM(HDADPT_DEPT_CODE) AS HDADPT_DEPT_CODE,
+               FNC_GETDEPTNM(DISP_DEPT_CODE) AS DISP_DEPT_CODE,
+               DPRLR_AT,
+               LBUN_SBSCRB_AT,
+               MUTAID_SBSCRB_AT,
+               DISP_WORK_AT,
+               FLEXBIZ_AT,
+               BABY_SHRTEN_WORK_AT,
+               SALPEAK_AT,
+               CASE WHEN SALARY_APRP_CODE = '100' THEN '책정임금'
+                    WHEN SALARY_APRP_CODE = '100' THEN '호봉'
+                    WHEN SALARY_APRP_CODE = '100' THEN '연봉'
+                    ELSE '해당없음'
+               END AS SALARY_APRP_CODE,
+               ANSALSYS_AT,
+               APNTC_SDT,
+               APNTC_EDT,
+               CASE WHEN INCMTAXRT_CODE = '01' THEN '80%'
+                    WHEN INCMTAXRT_CODE = '02' THEN '100%'
+                    WHEN INCMTAXRT_CODE = '03' THEN '120%'
+                    ELSE '해당없음'
+               END AS INCMTAXRT_CODE,
+               CASE WHEN SALARY_PYMNT_AT = '1' THEN '지급'
+                    WHEN SALARY_PYMNT_AT = '1' THEN '미지급'
+                    ELSE '해당없음'
+               END AS SALARY_PYMNT_AT,
+                CASE WHEN RETIRE_ANNTY_KIND_CODE = '1' THEN '이연계좌'
+                    WHEN RETIRE_ANNTY_KIND_CODE = '2' THEN 'IRP'
+                    ELSE '해당없음'
+               END AS RETIRE_ANNTY_KIND_CODE,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               FNC_DATESTR(NXTTRM_PROMT_DE) AS NXTTRM_PROMT_DE,
+               FNC_DATESTR(RETIRE_ANNTY_SBSCRB_DE) AS RETIRE_ANNTY_SBSCRB_DE,
+               RETIRE_ANNTY_DPSTNM,
+               RETIRE_ANNTY_BANK_CODE,
+               RETIRE_ANNTY_ACNUTNO,
+               LAYOFF_ALT_HNF_AT,
+               FNC_DATESTR(NON_TMLMT_CNTRCT_CHANGE_DE) AS NON_TMLMT_CNTRCT_CHANGE_DE,
+               SENIOR_SE,
+               FNC_DATESTR(RETIRE_ANNTY_DC_SBSCRB_DE) AS RETIRE_ANNTY_DC_SBSCRB_DE,
+               FNC_DATESTR(LAST_PROMT_DE) AS LAST_PROMT_DE,
+               FNC_DATESTR(NON_TMLMT_CNTTK_CHANGE_DE) AS NON_TMLMT_CNTTK_CHANGE_DE,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_EMP A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="empno != null and empno != ''">
+                AND EMPNO = #{empno}
+            </if>
+            <if test="sRegDt != null and sRegDt != ''">
+                <![CDATA[
+                AND REG_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+                ]]>
+            </if>
+            <if test="eRegDt != null and eRegDt != ''">
+                <![CDATA[
+                AND REG_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+                ]]>
+             </if>
+        </trim>
+    </select>
+
+    <select id="selectPubusr001" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.pub.usr.pubusr001.service.mapper.Pubusr001Mapper.selectPubusr001 */
+        SELECT
+               EMPNO, 
+               BPLC_CODE,
+               KOR_NM,
+               ENG_NM, 
+               UNISTR(CHCRT_NM) AS CHCRT_NM, 
+               TO_CHAR(TO_DATE(FNC_DATESTR(ECNY_DE),'YYYY-MM-DD'),'YYYY-MM-DD') AS ECNY_DE, 
+               FNC_DATESTR(RETIRE_DE) AS RETIRE_DE,
+               CASE WHEN RETIRE_SE = 'T01' THEN '의원면직'
+                    WHEN RETIRE_SE = 'T02' THEN '권고사직'
+                    WHEN RETIRE_SE = 'T03' THEN '계약종료'
+                    WHEN RETIRE_SE = 'T04' THEN '징계해고'
+                    WHEN RETIRE_SE = 'T05' THEN '정년퇴직'
+                    WHEN RETIRE_SE = 'T06' THEN '명예퇴직'
+                    WHEN RETIRE_SE = 'T07' THEN '조기퇴직'
+                    WHEN RETIRE_SE = 'T08' THEN '기타'
+                    WHEN RETIRE_SE = 'T09' THEN '임용포기'
+                    WHEN RETIRE_SE = 'T10' THEN '당연퇴직'
+                    WHEN RETIRE_SE = 'T11' THEN '권고사직'
+               END AS RETIRE_SE,
+               CASE WHEN EMPL_SE = '001' THEN '정규직' WHEN EMPL_SE = '002' THEN '무기계약직' WHEN EMPL_SE = '004' THEN '계약직'WHEN EMPL_SE = '005' THEN '임시직' END AS EMPL_SE,
+               ECNY_SE_CODE,
+               FNC_GETDEPTNM(DEPT_CODE) AS DEPT_CODE,
+               CASE WHEN HFFS_SE = 'J01' THEN '재직' WHEN HFFS_SE = 'J05' THEN '퇴직' WHEN HFFS_SE ='J03' THEN '휴직' END AS HFFS_SE,
+               TO_CHAR(TO_DATE(BRTHDY,'YYYY-MM-DD'),'YYYY-MM-DD') AS BRTHDY, 
+               TO_CHAR(TO_DATE(CUR_CLSF_EMPLMNDAY,'YYYY-MM-DD'),'YYYY-MM-DD') AS CUR_CLSF_EMPLMNDAY, 
+               CASE WHEN SLRCLD_AT = 'S' THEN '양력' WHEN SLRCLD_AT = 'R' THEN '음력' END AS SLRCLD_AT, 
+               DECODE(A.IHIDNUM,NULL,'',SUBSTR(A.IHIDNUM,1,6)||'-*******') AS IHIDNUM, 
+               CASE WHEN SEXDSTN_SE = 'M' THEN '남자' WHEN SEXDSTN_SE = 'F' THEN '여자' END AS SEXDSTN_SE, 
+               --CASE WHEN NATVFRGN_SE_CODE = '1' THEN '내국인' WHEN NATVFRGN_SE_CODE = '9' THEN '외국인' END AS 
+               NATVFRGN_SE_CODE,
+               NLTY_CODE,
+               CASE WHEN SRCLS_CODE = '00' THEN '호봉-미적용'
+                    ELSE '해당없음' END AS SRCLS_CODE,
+               CASE WHEN CLSF_CODE='001' THEN '대표이사'
+                    WHEN CLSF_CODE='002' THEN '이사'
+                    WHEN CLSF_CODE='003' THEN '부장'
+                    WHEN CLSF_CODE='004' THEN '차장'
+                    WHEN CLSF_CODE='005' THEN '과장'
+                    WHEN CLSF_CODE='006' THEN '대리'
+                    WHEN CLSF_CODE='007' THEN '사원'
+                    WHEN CLSF_CODE='008' THEN '인턴'
+                    WHEN CLSF_CODE='009' THEN '고문'
+               END AS CLSF_CODE,
+               CASE WHEN OFCPS_CODE='100' THEN '대표이사'
+                    WHEN OFCPS_CODE='200' THEN '이사'
+                    WHEN OFCPS_CODE='300' THEN '부장'
+                    WHEN OFCPS_CODE='400' THEN '차장'
+                    WHEN OFCPS_CODE='500' THEN '과장'
+                    WHEN OFCPS_CODE='600' THEN '대리'
+                    WHEN OFCPS_CODE='700' THEN '사원'
+                    WHEN OFCPS_CODE='800' THEN '인턴'
+               END AS OFCPS_CODE,
+               CASE WHEN JSSFC_CODE ='001' THEN '관리직'
+                    WHEN JSSFC_CODE ='002' THEN '개발직'
+                    WHEN JSSFC_CODE ='003' THEN '영업직'
+                    WHEN JSSFC_CODE ='004' THEN '연구직'
+                    WHEN JSSFC_CODE ='005' THEN '웹디자인'
+                    WHEN JSSFC_CODE ='009' THEN '임시직'
+               END AS JSSFC_CODE,
+               CASE WHEN DTY_CODE='001' THEN '일반'
+                     WHEN DTY_CODE='002' THEN '인사'
+                     WHEN DTY_CODE='003' THEN '급여'
+                     WHEN DTY_CODE='004' THEN '복리후생'
+                     WHEN DTY_CODE='005' THEN '총무'
+                     WHEN DTY_CODE='006' THEN '기술(건축)'
+                     WHEN DTY_CODE='007' THEN '기술(소방)'
+                     WHEN DTY_CODE='008' THEN '수영강사'
+                     WHEN DTY_CODE='009' THEN '헬스강사'
+                     WHEN DTY_CODE='010' THEN '테니스강사'
+                     WHEN DTY_CODE='011' THEN '주차관리'
+                     WHEN DTY_CODE='012' THEN '환경관리'
+                     WHEN DTY_CODE='013' THEN '시설안내'
+                     WHEN DTY_CODE='014' THEN '사무보조'
+                     WHEN DTY_CODE='015' THEN '생활체육'
+                     ELSE '해당없음'
+               END AS DTY_CODE,
+               CASE WHEN RSPOFC_CODE='100' THEN '대표이사'
+                    WHEN RSPOFC_CODE='200' THEN '임원'
+                    WHEN RSPOFC_CODE='300' THEN '팀장'
+                    WHEN RSPOFC_CODE='400' THEN '팀원'
+                    WHEN RSPOFC_CODE='500' THEN '부서장'
+               END AS RSPOFC_CODE,
+               JBLN_CODE,
+               ZIP,
+               OWNHOM_ADRES,
+               OWNHOM_DETAIL_ADRES,
+               OWNHOM_ENG_ADRES,
+               OWNHOM_TELNO,
+               LXTN_TELNO,
+               MBTLNUM,
+               EMGNC_TELNO,
+               EMAIL,
+               INDVDL_EMAIL,
+               CASE WHEN MRRG_AT = '1' THEN '기혼'
+                    WHEN MRRG_AT = '0' THEN '미혼'
+                    ELSE '해당없음'
+               END AS MRRG_AT,
+               CASE WHEN MRRG_AT = '1' THEN (SELECT TO_CHAR(TO_DATE(MRRG_DE,'YYYY-MM-DD'),'YYYY-MM-DD') FROM MHS_INDVDLINFO A WHERE A.EMPNO = '202101')
+                    ELSE ''
+               END AS MRRG_DE,
+               LAYOFF_SE_CODE,
+               PHOTO_ATCHMNFL_NO,
+               SIGN_ATCHMNFL_NO,
+               CASHIER_AT,
+               HDADPT_AT,
+               FNC_GETDEPTNM(HDADPT_DEPT_CODE) AS HDADPT_DEPT_CODE,
+               FNC_GETDEPTNM(DISP_DEPT_CODE) AS DISP_DEPT_CODE,
+               DPRLR_AT,
+               LBUN_SBSCRB_AT,
+               MUTAID_SBSCRB_AT,
+               DISP_WORK_AT,
+               FLEXBIZ_AT,
+               BABY_SHRTEN_WORK_AT,
+               SALPEAK_AT,
+               CASE WHEN SALARY_APRP_CODE = '100' THEN '책정임금'
+                    WHEN SALARY_APRP_CODE = '100' THEN '호봉'
+                    WHEN SALARY_APRP_CODE = '100' THEN '연봉'
+                    ELSE '해당없음'
+               END AS SALARY_APRP_CODE,
+               ANSALSYS_AT,
+               APNTC_SDT,
+               APNTC_EDT,
+               CASE WHEN INCMTAXRT_CODE = '01' THEN '80%'
+                    WHEN INCMTAXRT_CODE = '02' THEN '100%'
+                    WHEN INCMTAXRT_CODE = '03' THEN '120%'
+                    ELSE '해당없음'
+               END AS INCMTAXRT_CODE,
+               CASE WHEN SALARY_PYMNT_AT = '1' THEN '지급'
+                    WHEN SALARY_PYMNT_AT = '1' THEN '미지급'
+                    ELSE '해당없음'
+               END AS SALARY_PYMNT_AT,
+                CASE WHEN RETIRE_ANNTY_KIND_CODE = '1' THEN '이연계좌'
+                    WHEN RETIRE_ANNTY_KIND_CODE = '2' THEN 'IRP'
+                    ELSE '해당없음'
+               END AS RETIRE_ANNTY_KIND_CODE,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               FNC_DATESTR(NXTTRM_PROMT_DE) AS NXTTRM_PROMT_DE,
+               FNC_DATESTR(RETIRE_ANNTY_SBSCRB_DE) AS RETIRE_ANNTY_SBSCRB_DE,
+               RETIRE_ANNTY_DPSTNM,
+               RETIRE_ANNTY_BANK_CODE,
+               RETIRE_ANNTY_ACNUTNO,
+               LAYOFF_ALT_HNF_AT,
+               FNC_DATESTR(NON_TMLMT_CNTRCT_CHANGE_DE) AS NON_TMLMT_CNTRCT_CHANGE_DE,
+               SENIOR_SE,
+               FNC_DATESTR(RETIRE_ANNTY_DC_SBSCRB_DE) AS RETIRE_ANNTY_DC_SBSCRB_DE,
+               FNC_DATESTR(LAST_PROMT_DE) AS LAST_PROMT_DE,
+               FNC_DATESTR(NON_TMLMT_CNTTK_CHANGE_DE) AS NON_TMLMT_CNTTK_CHANGE_DE,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_EMP A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="empno != null and empno != ''">
+                AND EMPNO = #{empno}
+            </if>
+        </trim>
+    </select>
+
+    <update id="savePubusr001" parameterType="kr.co.dbvision.api.pub.usr.pubusr001.entity.Pubusr001">
+        /* kr.co.dbvision.api.pub.usr.pubusr001.service.mapper.Pubusr001Mapper.savePubusr001 */
+        MERGE INTO MHS_EMP A
+             USING (SELECT
+                    #{empno} EMPNO
+                    FROM DUAL) B
+                ON (
+                    A.EMPNO = B.EMPNO
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               BPLC_CODE= #{bplcCode},
+               KOR_NM= #{korNm},
+               ENG_NM= #{engNm},
+               CHCRT_NM= #{chcrtNm},
+               EMPL_SE= #{emplSe},
+               ECNY_SE_CODE= #{ecnySeCode},
+               DEPT_CODE= #{deptCode},
+               HFFS_SE= #{hffsSe},
+               ECNY_DE= REPLACE(#{ecnyDe},'-',''),
+               IHIDNUM= #{ihidnum},
+               SEXDSTN_SE= #{sexdstnSe},
+               NATVFRGN_SE_CODE= #{natvfrgnSeCode},
+               NLTY_CODE= #{nltyCode},
+               SRCLS_CODE= #{srclsCode},
+               CLSF_CODE= #{clsfCode},
+               OFCPS_CODE= #{ofcpsCode},
+               JSSFC_CODE= #{jssfcCode},
+               DTY_CODE= #{dtyCode},
+               RSPOFC_CODE= #{rspofcCode},
+               JBLN_CODE= #{jblnCode},
+               ZIP= #{zip},
+               OWNHOM_ADRES= #{ownhomAdres},
+               OWNHOM_DETAIL_ADRES= REPLACE(#{ownhomDetailAdres},'-',''),
+               OWNHOM_ENG_ADRES= #{ownhomEngAdres},
+               OWNHOM_TELNO= #{ownhomTelno},
+               LXTN_TELNO= #{lxtnTelno},
+               MBTLNUM= #{mbtlnum},
+               EMGNC_TELNO= #{emgncTelno},
+               EMAIL= #{email},
+               INDVDL_EMAIL= #{indvdlEmail},
+               BRTHDY= #{brthdy},
+               SLRCLD_AT= #{slrcldAt},
+               MRRG_AT= #{mrrgAt},
+               RETIRE_DE= REPLACE(#{retireDe},'-',''),
+               RETIRE_SE= #{retireSe},
+               LAYOFF_SE_CODE= #{layoffSeCode},
+               PHOTO_ATCHMNFL_NO= #{photoAtchmnflNo},
+               SIGN_ATCHMNFL_NO= #{signAtchmnflNo},
+               CASHIER_AT= #{cashierAt},
+               HDADPT_AT= #{hdadptAt},
+               HDADPT_DEPT_CODE= REPLACE(#{hdadptDeptCode},'-',''),
+               DISP_DEPT_CODE= REPLACE(#{dispDeptCode},'-',''),
+               DPRLR_AT= #{dprlrAt},
+               LBUN_SBSCRB_AT= #{lbunSbscrbAt},
+               MUTAID_SBSCRB_AT= #{mutaidSbscrbAt},
+               DISP_WORK_AT= #{dispWorkAt},
+               FLEXBIZ_AT= #{flexbizAt},
+               BABY_SHRTEN_WORK_AT= #{babyShrtenWorkAt},
+               SALPEAK_AT= #{salpeakAt},
+               SALARY_APRP_CODE= #{salaryAprpCode},
+               ANSALSYS_AT= #{ansalsysAt},
+               APNTC_SDT= #{apntcSdt},
+               APNTC_EDT= #{apntcEdt},
+               INCMTAXRT_CODE= #{incmtaxrtCode},
+               SALARY_PYMNT_AT= #{salaryPymntAt},
+               RETIRE_ANNTY_KIND_CODE= #{retireAnntyKindCode},
+               NXTTRM_PROMT_DE= REPLACE(#{nxttrmPromtDe},'-',''),
+               RETIRE_ANNTY_SBSCRB_DE= REPLACE(#{retireAnntySbscrbDe},'-',''),
+               RETIRE_ANNTY_DPSTNM= #{retireAnntyDpstnm},
+               RETIRE_ANNTY_BANK_CODE= #{retireAnntyBankCode},
+               RETIRE_ANNTY_ACNUTNO= #{retireAnntyAcnutno},
+               LAYOFF_ALT_HNF_AT= #{layoffAltHnfAt},
+               NON_TMLMT_CNTRCT_CHANGE_DE= REPLACE(#{nonTmlmtCntrctChangeDe},'-',''),
+               CUR_CLSF_EMPLMNDAY= #{curClsfEmplmnday},
+               SENIOR_SE= #{seniorSe},
+               RETIRE_ANNTY_DC_SBSCRB_DE= REPLACE(#{retireAnntyDcSbscrbDe},'-',''),
+               LAST_PROMT_DE= REPLACE(#{lastPromtDe},'-',''),
+               NON_TMLMT_CNTTK_CHANGE_DE= REPLACE(#{nonTmlmtCnttkChangeDe},'-',''),
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               EMPNO,
+               BPLC_CODE,
+               KOR_NM,
+               ENG_NM,
+               CHCRT_NM,
+               EMPL_SE,
+               ECNY_SE_CODE,
+               DEPT_CODE,
+               HFFS_SE,
+               ECNY_DE,
+               IHIDNUM,
+               SEXDSTN_SE,
+               NATVFRGN_SE_CODE,
+               NLTY_CODE,
+               SRCLS_CODE,
+               CLSF_CODE,
+               OFCPS_CODE,
+               JSSFC_CODE,
+               DTY_CODE,
+               RSPOFC_CODE,
+               JBLN_CODE,
+               ZIP,
+               OWNHOM_ADRES,
+               OWNHOM_DETAIL_ADRES,
+               OWNHOM_ENG_ADRES,
+               OWNHOM_TELNO,
+               LXTN_TELNO,
+               MBTLNUM,
+               EMGNC_TELNO,
+               EMAIL,
+               INDVDL_EMAIL,
+               BRTHDY,
+               SLRCLD_AT,
+               MRRG_AT,
+               RETIRE_DE,
+               RETIRE_SE,
+               LAYOFF_SE_CODE,
+               PHOTO_ATCHMNFL_NO,
+               SIGN_ATCHMNFL_NO,
+               CASHIER_AT,
+               HDADPT_AT,
+               HDADPT_DEPT_CODE,
+               DISP_DEPT_CODE,
+               DPRLR_AT,
+               LBUN_SBSCRB_AT,
+               MUTAID_SBSCRB_AT,
+               DISP_WORK_AT,
+               FLEXBIZ_AT,
+               BABY_SHRTEN_WORK_AT,
+               SALPEAK_AT,
+               SALARY_APRP_CODE,
+               ANSALSYS_AT,
+               APNTC_SDT,
+               APNTC_EDT,
+               INCMTAXRT_CODE,
+               SALARY_PYMNT_AT,
+               RETIRE_ANNTY_KIND_CODE,
+               NXTTRM_PROMT_DE,
+               RETIRE_ANNTY_SBSCRB_DE,
+               RETIRE_ANNTY_DPSTNM,
+               RETIRE_ANNTY_BANK_CODE,
+               RETIRE_ANNTY_ACNUTNO,
+               LAYOFF_ALT_HNF_AT,
+               NON_TMLMT_CNTRCT_CHANGE_DE,
+               CUR_CLSF_EMPLMNDAY,
+               SENIOR_SE,
+               RETIRE_ANNTY_DC_SBSCRB_DE,
+               LAST_PROMT_DE,
+               NON_TMLMT_CNTTK_CHANGE_DE,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{empno},
+               #{bplcCode},
+               #{korNm},
+               #{engNm},
+               #{chcrtNm},
+               #{emplSe},
+               #{ecnySeCode},
+               #{deptCode},
+               #{hffsSe},
+               REPLACE(#{ecnyDe},'-',''),
+               #{ihidnum},
+               #{sexdstnSe},
+               #{natvfrgnSeCode},
+               #{nltyCode},
+               #{srclsCode},
+               #{clsfCode},
+               #{ofcpsCode},
+               #{jssfcCode},
+               #{dtyCode},
+               #{rspofcCode},
+               #{jblnCode},
+               #{zip},
+               #{ownhomAdres},
+               REPLACE(#{ownhomDetailAdres},'-',''),
+               #{ownhomEngAdres},
+               #{ownhomTelno},
+               #{lxtnTelno},
+               #{mbtlnum},
+               #{emgncTelno},
+               #{email},
+               #{indvdlEmail},
+               #{brthdy},
+               #{slrcldAt},
+               #{mrrgAt},
+               REPLACE(#{retireDe},'-',''),
+               #{retireSe},
+               #{layoffSeCode},
+               #{photoAtchmnflNo},
+               #{signAtchmnflNo},
+               #{cashierAt},
+               #{hdadptAt},
+               REPLACE(#{hdadptDeptCode},'-',''),
+               REPLACE(#{dispDeptCode},'-',''),
+               #{dprlrAt},
+               #{lbunSbscrbAt},
+               #{mutaidSbscrbAt},
+               #{dispWorkAt},
+               #{flexbizAt},
+               #{babyShrtenWorkAt},
+               #{salpeakAt},
+               #{salaryAprpCode},
+               #{ansalsysAt},
+               #{apntcSdt},
+               #{apntcEdt},
+               #{incmtaxrtCode},
+               #{salaryPymntAt},
+               #{retireAnntyKindCode},
+               REPLACE(#{nxttrmPromtDe},'-',''),
+               REPLACE(#{retireAnntySbscrbDe},'-',''),
+               #{retireAnntyDpstnm},
+               #{retireAnntyBankCode},
+               #{retireAnntyAcnutno},
+               #{layoffAltHnfAt},
+               REPLACE(#{nonTmlmtCntrctChangeDe},'-',''),
+               #{curClsfEmplmnday},
+               #{seniorSe},
+               REPLACE(#{retireAnntyDcSbscrbDe},'-',''),
+               REPLACE(#{lastPromtDe},'-',''),
+               REPLACE(#{nonTmlmtCnttkChangeDe},'-',''),
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deletePubusr001" parameterType="kr.co.dbvision.api.pub.usr.pubusr001.entity.Pubusr001">
+        /* kr.co.dbvision.api.pub.usr.pubusr001.service.mapper.Pubusr001Mapper.deletePubusr001 */
+        DELETE FROM MHS_EMP
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND EMPNO = #{empno}
+        </trim>
+    </delete>
+</mapper>

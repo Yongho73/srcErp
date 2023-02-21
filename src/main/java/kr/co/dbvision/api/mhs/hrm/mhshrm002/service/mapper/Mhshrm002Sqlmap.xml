@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mhs.hrm.mhshrm002.service.mapper.Mhshrm002Mapper">
+
+    <select id="selectMhshrm002List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm002.service.mapper.Mhshrm002Mapper.selectMhshrm002List */
+        SELECT
+               DEPT_CODE,
+               BPLC_CODE,
+               DEPT_KIND_CODE,
+               DEPT_KOR_NM,
+               DEPT_ENG_NM,
+               DEPT_ABRV,
+               SORT_ORDR,
+               DEPT_TELNO,
+               DEPT_FAX_TELNO,
+               DEPT_EMAIL,
+               DPRLR_EMPNO,
+               (SELECT KOR_NM FROM MHS_EMP WHERE EMPNO = DPRLR_EMPNO) AS DPRLR_EMP_NM,
+               BUGT_USE_DEPT,
+               (SELECT DEPT_KOR_NM FROM MHS_DEPT WHERE DEPT_CODE = A.BUGT_USE_DEPT) AS BUGT_USE_DEPT_NM,
+               FNC_DATESTR(USE_BEGIN_DE) AS USE_BEGIN_DE,
+               FNC_DATESTR(USE_END_DE) AS USE_END_DE,
+               USE_AT,
+               DECODE(USE_AT, '1', '사용', '0', '미사용', '미사용') AS USE_AT_NM,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_DEPT A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="deptCode != null and deptCode != ''">
+                AND DEPT_CODE = #{deptCode}
+            </if>
+            <if test="deptKorNm != null and deptKorNm != ''">
+                AND DEPT_KOR_NM LIKE '%'|| #{deptKorNm} ||'%'
+            </if>
+            <if test="useAt != null and useAt != ''">
+                AND USE_AT = #{useAt}
+            </if>
+            <if test="sRegDt != null and sRegDt != ''">
+                <![CDATA[
+                AND REG_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+                ]]>
+            </if>
+            <if test="eRegDt != null and eRegDt != ''">
+                <![CDATA[
+                AND REG_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+                ]]>
+             </if>
+        </trim>
+        ORDER BY SORT_ORDR, DEPT_CODE
+    </select>
+
+    <select id="selectMhshrm002" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm002.service.mapper.Mhshrm002Mapper.selectMhshrm002 */
+        SELECT
+               DEPT_CODE,
+               BPLC_CODE,
+               DEPT_KIND_CODE,
+               DEPT_KOR_NM,
+               DEPT_ENG_NM,
+               DEPT_ABRV,
+               SORT_ORDR,
+               DEPT_TELNO,
+               DEPT_FAX_TELNO,
+               DEPT_EMAIL,
+               DPRLR_EMPNO,
+               BUGT_USE_DEPT,
+               USE_BEGIN_DE,
+               USE_END_DE,
+               USE_AT,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_DEPT A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="deptCode != null and deptCode != ''">
+                AND DEPT_CODE = #{deptCode}
+            </if>
+        </trim>
+    </select>
+    
+    <select id="findMhshrm003" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm002.service.mapper.Mhshrm002Mapper.findMhshrm003 */
+        <if test="deptCode != null and deptCode != ''">
+        SELECT *
+        FROM (
+            SELECT DEPT_CODE AS USE_CHECK FROM MHS_ORGNZT WHERE UPPER_ORGNZT_CODE = #{deptCode}
+            UNION
+            SELECT DEPT_CODE AS USE_CHECK FROM MHS_EMP WHERE DEPT_CODE = #{deptCode}
+            UNION
+            SELECT GNFD_CODE AS USE_CHECK FROM MHS_GNFD WHERE AFCHG_DEPT_CODE = #{deptCode} OR BFCHG_DEPT_CODE = #{deptCode}
+            )
+        WHERE ROWNUM = '1'
+        </if>
+    </select>
+
+    <update id="saveMhshrm002" parameterType="kr.co.dbvision.api.mhs.hrm.mhshrm002.entity.Mhshrm002">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm002.service.mapper.Mhshrm002Mapper.saveMhshrm002 */
+        MERGE INTO MHS_DEPT A
+             USING (SELECT
+                    #{deptCode} DEPT_CODE
+                    FROM DUAL) B
+                ON (
+                    A.DEPT_CODE = B.DEPT_CODE
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               DEPT_KIND_CODE= #{deptKindCode},
+               DEPT_KOR_NM= #{deptKorNm},
+               DEPT_ENG_NM= #{deptEngNm},
+               DEPT_ABRV= #{deptAbrv},
+               SORT_ORDR= #{sortOrdr},
+               DEPT_TELNO= #{deptTelno},
+               DEPT_FAX_TELNO= #{deptFaxTelno},
+               DEPT_EMAIL= #{deptEmail},
+               DPRLR_EMPNO= #{dprlrEmpno},
+               BUGT_USE_DEPT= REPLACE(#{bugtUseDept},'-',''),
+               USE_BEGIN_DE= REPLACE(#{useBeginDe},'-',''),
+               USE_END_DE= REPLACE(#{useEndDe},'-',''),
+               USE_AT= #{useAt},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               DEPT_CODE,
+               BPLC_CODE,
+               DEPT_KIND_CODE,
+               DEPT_KOR_NM,
+               DEPT_ENG_NM,
+               DEPT_ABRV,
+               SORT_ORDR,
+               DEPT_TELNO,
+               DEPT_FAX_TELNO,
+               DEPT_EMAIL,
+               DPRLR_EMPNO,
+               BUGT_USE_DEPT,
+               USE_BEGIN_DE,
+               USE_END_DE,
+               USE_AT,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{deptCode},
+               '1000',
+               #{deptKindCode},
+               #{deptKorNm},
+               #{deptEngNm},
+               #{deptAbrv},
+               #{sortOrdr},
+               #{deptTelno},
+               #{deptFaxTelno},
+               #{deptEmail},
+               #{dprlrEmpno},
+               REPLACE(#{bugtUseDept},'-',''),
+               REPLACE(#{useBeginDe},'-',''),
+               REPLACE(#{useEndDe},'-',''),
+               #{useAt},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+    
+    <update id="saveMhshrm003" parameterType="kr.co.dbvision.api.mhs.hrm.mhshrm002.entity.Mhshrm002">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm002.service.mapper.Mhshrm002Mapper.saveMhshrm003 */
+        MERGE INTO MHS_ORGNZT A
+             USING (SELECT
+                    #{deptCode} ORGNZT_CODE
+                    FROM DUAL) B
+                ON (
+                    A.ORGNZT_CODE = B.ORGNZT_CODE
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+               DEPT_CODE = #{deptCode},
+               ORGNZT_NM = #{deptKorNm},
+               ORGNZT_MNGR_EMPNO = #{dprlrEmpno},
+               USE_BEGIN_DE = REPLACE(#{useBeginDe},'-',''),
+               USE_END_DE = REPLACE(#{useEndDe},'-',''),
+               USE_AT = #{useAt},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+               
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               ORGNZT_CODE,
+               ORGNZT_NM,
+               DEPT_CODE,
+               UPPER_ORGNZT_CODE,
+               ORGNZT_SE_CODE,
+               ORGNZT_LVL,
+               ORGNZT_MNGR_EMPNO,
+               USE_BEGIN_DE,
+               USE_END_DE,
+               USE_AT,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{deptCode},
+               #{deptKorNm},
+               #{deptCode},
+               '0000',
+               '10',
+               '1',
+               #{dprlrEmpno},
+               REPLACE(#{useBeginDe},'-',''),
+               REPLACE(#{useEndDe},'-',''),
+               #{useAt},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+    
+    <update id="updateMhshrm002UseAtOff" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm002.service.mapper.Mhshrm002Mapper.updateMhshrm002UseAtOff */
+         UPDATE MHS_ORGNZT SET
+                 USE_AT = '0',
+                USE_END_DE = REPLACE(NVL(USE_END_DE, #{useEndDe}),'-',''),
+                UPT_DT = SYSDATE,
+                UPT_ID = #{uptId}
+            WHERE DEPT_CODE = #{deptCode}
+    </update>
+
+    <delete id="deleteMhshrm002" parameterType="kr.co.dbvision.api.mhs.hrm.mhshrm002.entity.Mhshrm002">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm002.service.mapper.Mhshrm002Mapper.deleteMhshrm002 */
+        DELETE FROM MHS_DEPT
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND DEPT_CODE = #{deptCode}
+        </trim>
+    </delete>
+    
+    <delete id="deleteMhshrm003" parameterType="kr.co.dbvision.api.mhs.hrm.mhshrm002.entity.Mhshrm002">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm002.service.mapper.Mhshrm002Mapper.deleteMhshrm003 */
+        DELETE FROM MHS_ORGNZT
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND ORGNZT_CODE = #{deptCode}
+        </trim>
+    </delete>
+    
+    <select id="selectMhshrm002DeptCodeCombo" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm002.service.mapper.Mhshrm002Mapper.selectMhshrm002DeptCodeCombo */
+        SELECT
+               DEPT_CODE,
+               BPLC_CODE,
+               (SELECT BPLC_KOR_NM FROM STM_BIZPLC WHERE A.BPLC_CODE = BPLC_CODE) AS BPLC_KOR_NM,
+               DEPT_KIND_CODE,
+               DEPT_KOR_NM,
+               DEPT_ENG_NM,
+               DEPT_ABRV,
+               DEPT_TELNO,
+               DEPT_FAX_TELNO,
+               DEPT_EMAIL,
+               USE_AT,
+               FNC_DATESTR(USE_BEGIN_DE) AS USE_BEGIN_DE,
+               FNC_DATESTR(USE_END_DE) AS USE_END_DE,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_DEPT A
+          WHERE USE_AT = '1'
+          ORDER BY SORT_ORDR, DEPT_CODE
+    </select>
+</mapper>

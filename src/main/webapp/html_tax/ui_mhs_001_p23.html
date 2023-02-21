@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html class="no-js" lang="ko">
+<HEAD>
+<meta charset="utf-8">
+<LINK href="../img/icon/dbv.ico" rel="shortcut icon" type="image/x-icon">
+
+<TITLE>XERP</TITLE>
+
+<LINK href="../css/dhtmlx/skin/dhtmlx.css" rel="stylesheet" type="text/css">
+<LINK href="../glyphicons/css/bootstrap-glyphicons.css" rel="stylesheet" type="text/css">
+
+<!-- jquery -->
+<SCRIPT src="../js/jquery-1.11.1.min.js"></SCRIPT>
+<SCRIPT src="../js/jquery-ui-custom.min.js"></SCRIPT>
+ 
+<!-- css -->
+<LINK href="../css/default.css" rel="stylesheet" type="text/css">
+<LINK href="../css/contents.css" rel="stylesheet" type="text/css">
+
+</HEAD>
+
+<body>
+	<div style="height:24px;overflow:hidden;white-space:nowrap;width:100%;">
+	<!--컨텐츠-->
+		<div class="path_info" style="">
+            <ul id="menu_path" style=""><li><a class="home" href="#n"></a></li><li><a href="#"> 연말정산 </a></li><li><a href="#"> 직원별정산내역등록</a></li></ul>
+        </div>
+        
+		<DIV class="btn" style="float:right;text-align:right; vertical-align:middle;min-width:1065px;overflow:hidden;white-space:nowrap;">
+			<BUTTON class="btn_common02_new" type="button" title="연말정산초기화">
+				<SPAN class="glyphicon glyphicon-refresh mr5"></SPAN>연말정산초기화
+			</BUTTON>			
+			<BUTTON class="btn_common02_new" type="button" title="연말정산 간소화 PDF 업로드">
+				<SPAN class="glyphicon glyphicon-arrow-up mr5"></SPAN>연말정산 간소화 PDF 업로드
+			</BUTTON>			
+			<BUTTON class="btn_common02_new" type="button" title="조회">
+				<SPAN class="glyphicon glyphicon-search mr5"></SPAN>조회
+			</BUTTON>
+			<BUTTON class="btn_common02_new" type="button" title="저장">
+				<SPAN class="glyphicon glyphicon-ok mr5"></SPAN>저장
+			</BUTTON>
+			<BUTTON class="btn_common02_new" type="button" title="제출">
+				<SPAN class=" glyphicon glyphicon-share-alt mr5"></SPAN>제출
+			</BUTTON>
+			<BUTTON class="btn_common02_new" type="button" title="제출취소">
+				<SPAN class="glyphicon glyphicon-ban-circle mr5"></SPAN>제출취소
+			</BUTTON>
+			<BUTTON class="btn_common02_new" type="button" title="소득세액공제신고">
+				<!-- <SPAN class="glyphicon glyphicon-tag mr5"></SPAN>-->소득세액공제신고
+			</BUTTON>
+			<BUTTON class="btn_common02_new" type="button" title="소득세액공제신고(일괄)">
+				<!-- <SPAN class="glyphicon glyphicon-tags mr5"></SPAN> -->소득세액공제신고(일괄)
+			</BUTTON>
+			<BUTTON class="btn_common02_new" type="button" title="원천징수영수증">
+				<!-- <SPAN class="glyphicon glyphicon-file mr5"></SPAN> -->원천징수영수증
+			</BUTTON>
+			<BUTTON class="btn_common02_new" type="button" title="의료비명세">
+				<!-- <SPAN class="glyphicon glyphicon-tint mr5"></SPAN> -->의료비명세
+			</BUTTON>
+			<BUTTON class="btn_common02_new" type="button" title="기부금명세">
+				<!-- <SPAN class="glyphicon glyphicon-gift mr5"></SPAN> -->기부금명세
+			</BUTTON>
+			<BUTTON class="btn_common02_new" type="button" title="닫기">
+				<SPAN class="glyphicon glyphicon-remove"></SPAN>
+			</BUTTON>
+		</DIV>
+	</div>
+	
+    <DIV class="search_box mt15" style="width:100%; overflow:hidden; height:36px; white-space:nowrap;">
+		<TABLE style="width:100%;">
+			<TBODY>
+				<TR>
+					<td style="position:relative; vertical-align:middle;">					    
+						<div style="position:relative;display:inline-block;float:left;">
+							<label>정산년월</LABEL>
+							<input type="text" class="al w100 readonly" value="2017-01" readonly disabled="disabled" maxlength="7">
+						</div>
+						<div style="position:relative;display:inline-block;padding-left:50px;">
+							<label>부서</LABEL>
+							<input type="text" class="al w100 readonly" readonly disabled="disabled">&nbsp;<input type="text" class="al w100 readonly" readonly disabled="disabled">
+							<button class="btn_common03" type="button">
+                    			<span class="glyphicon  glyphicon glyphicon-search"> </span>
+                			</button>
+						</div>
+						<div style="position:relative;display:inline-block;padding-left:50px;">
+							<label>개인번호</LABEL>
+							<input type="text" class="al w100 readonly" readonly disabled="disabled">&nbsp;<input type="text" class="al w100 readonly" readonly disabled="disabled">
+							<button class="btn_common03" type="button">
+                    			<span class="glyphicon  glyphicon glyphicon-search"> </span>
+                			</button>
+						</div>						
+					</td>
+				</TR>
+			</TBODY>
+		</TABLE>
+	</DIV>
+	<!--//search_box-->
+	
+	<div class="mt10" style="width:100%; overflow:hidden; white-space:nowrap; height:500px;">
+		<div class="type_bd" style="width:290px; height:500px; float:left; overflow: scroll; overflow-x:hidden; margin-right:10px;">
+			<div class="detail_type024 type_bd">
+			<table>
+				<caption>개인번호 성명 직급</caption>
+				
+				<colgroup>
+					<col style="width: 33%; min-width: 80px;">
+					<col style="width: 33%;">
+					<col style="width: 34%;">
+				</colgroup>
+				<thead>
+					<tr>
+						<th class="ac brnavy">개인번호</th>
+						<th class="ac brnavy">성명</th>
+						<th class="ac brnavy">직급</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+					</tr>					
+				</tbody>
+				
+				</table>
+			</div>
+		</div>
+		<div style="width:78%; height:500px; overflow:hidden; float:left; clear:right;">
+			
+			<DIV class="search_box" style="width:100%; overflow:hidden; border:none; border-top:2px solid #4aa5eb;border-radius:0;white-space:nowrap;">
+				<TABLE style="width:100%;border:none;">
+					<TBODY>
+						
+						<TR>
+							<th style="position:relative; vertical-align:middle; border:none;padding-left:10px;">
+							    <div style="position:relative;display:inline-block;float:left;">
+									<label>귀속년</LABEL>
+									 <input name="searchEregDt" class="input_calen" onkeyup="gf_AutoDate(event, this)" onkeypress="gf_AutoDate(event, this)" type="text" style="width: 90px;" maxlength="10" value="2019-01-01">
+								</div>
+								 <div style="position:relative;display:inline-block;float:left;padding-left:10px;">
+									<label>귀속일시작</LABEL>
+									 <input type="text" style="width: 70px;" maxlength="10">&nbsp;<input type="text" style="width: 70px;" maxlength="10">
+								</div>
+								 <div style="position:relative;display:inline-block;float:left;padding-left:10px;">
+									<label>귀속일종료</LABEL>
+									 <input name="searchEregDt" class="input_calen" onkeyup="gf_AutoDate(event, this)" onkeypress="gf_AutoDate(event, this)" type="text" style="width: 90px;" maxlength="10" value="2019-01-01">
+								</div>
+								 <div style="position:relative;display:inline-block;float:left;padding-left:10px;">
+									<label>급여</LABEL>
+									 <input type="text" style="width: 90px;">
+								</div>
+								 <div style="position:relative;display:inline-block;float:left;padding-left:10px;">
+									<label>상여</LABEL>
+									 <input type="text" style="width: 90px;">
+								</div>
+								 <div style="position:relative;display:inline-block;float:left;padding-left:10px;">
+									<label>비과세</LABEL>
+									 <input type="text" style="width: 90px;">
+								</div>
+								 <div style="position:relative;display:inline-block;float:left;padding-left:10px;">
+									<label>총급여</LABEL>
+									 <input type="text" style="width: 90px;">
+								</div>
+								
+								<div>
+									<button class="btn_common01_new_red" type="button">연말정산자료반영</button>
+								</div>
+								
+							</th>
+						</TR>
+						<TR>
+							<th style="position:relative; vertical-align:middle; border:none;padding-left:10px;white-space:nowrap;">
+								 <div style="position:relative;display:inline-block;float:left;">
+									<label>결정세액(소득+지방+농특)</LABEL>
+									 <input type="text" style="width: 90px;">
+								</div>
+								 <div style="position:relative;display:inline-block;float:left;padding-left:10px;">
+									<label>기납부세액(소득세)</LABEL>
+									 <input type="text" style="width: 90px;">
+								</div>
+								 <div style="position:relative;display:inline-block;float:left;padding-left:10px;">
+									<label>기납부세액(지방세)</label>
+									 <input type="text" style="width: 90px;">
+								</div>
+								 <div style="position:relative;display:inline-block;float:left;padding-left:10px;">
+									<label>국민연금</LABEL>
+									 <input type="text" style="width: 90px;">
+								</div>
+								 <div style="position:relative;display:inline-block;float:left;padding-left:10px;">
+									<label>건강보험</LABEL>
+									 <input type="text" style="width: 90px;">
+								</div>
+								 <div style="position:relative;display:inline-block;float:left;padding-left:10px;">
+									<label>고용보험</LABEL>
+									 <input type="text" style="width: 90px;">
+								</div>
+							</th>
+						</TR>		
+						
+					</TBODY>
+				</TABLE>
+				
+				<div class="detail_type024 type_bd">
+								<table>
+									<caption>개인번호 성명 직급</caption>
+									
+									<thead>
+										<tr>
+											<th class="ac brnavy">전근무지공제(상세)</th>
+											<th class="ac brnavy">인적공제</th>
+											<th class="ac brnavy">기부금등록</th>
+											<th class="ac brnavy">의료비명세서</th>
+											<th class="ac brnavy">연금·저축</th>
+											<th class="ac brnavy">월세액</th>
+											<th class="ac brnavy">연금보험료공제</th>
+											<th class="ac brnavy">특별소득공제</th>
+											<th class="ac brnavy">그밖의소득공제</th>
+											<th class="ac brnavy">세액감면 및 공제</th>
+											<th class="ac brnavy">추가제출서류</th>
+											<th class="ac brnavy">인적공제(상세)</th>
+											<th class="ac brnavy">모의계산</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td class="ac">0</td>
+											<td class="ac">0</td>
+											<td class="ac">0</td>
+											<td class="ac">0</td>
+											<td class="ac">0</td>
+											<td class="ac">0</td>
+											<td class="ac">0</td>
+											<td class="ac">0</td>
+											<td class="ac">0</td>
+											<td class="ac">0</td>
+											<td class="ac">0</td>
+											<td class="ac">0</td>
+											<td class="ac">0</td>
+										</tr>					
+									</tbody>
+									
+									</table>
+							</div>
+							
+						<div style="clear:both;"></div>
+			
+			
+			<div style="line-height:30px;font-size:12px;">
+    			<div style="text-align:left;float:left;width:50%;">
+    				<span>본인 세대주 여부 <img onclick="new eXcell_ch(this.parentNode).changeState(true); (arguments[0]||event).cancelBubble=true; " src="/xerp/css/dhtmlx/skin/imgs/dhxgrid_material/item_chk0.gif" alt="체크박스" style="margin-top:-3px;"><span class="red" style="color:#ed1c46"> (가족사항 수정 시 저장버튼을 필히 눌러 주세요.)</span></span>
+    			</div>
+    			<div style="text-align:right;float:right;width:50%;">
+					<button class="btn_common01_new" type="button">추가</button>
+					<button class="btn_common01_new" type="button">삭제</button>
+				</div>
+    		</div>
+			
+					<div style="clear:both;"></div>
+		</div>
+	</div>
+</div>
+		<div style="clear:both;"></div>
+
+
+	
+	
+	
+</BODY>
+</HTML>

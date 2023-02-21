@@ -1,0 +1,1300 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mhs.hrb.mhshrb001.service.mapper.Mhshrb001Mapper">
+
+    <select id="selectMhsEmpListAllCnt" parameterType="egovMapForNull" resultType="java.lang.Integer">
+        /* kr.co.dbvision.api.stm.mng.stmmng003.service.impl.Stmmng003Mapper.selectStmCodeKindListAllCnt */
+        SELECT COUNT(*) AS totalRecordCount
+          FROM MHS_EMP
+		
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+        	<if test="deptCode != null and deptCode != ''">
+              		   AND DEPT_CODE = #{deptCode}
+            </if>
+            <if test="empno != null and empno != ''">
+              		   AND EMPNO = #{empno}
+            </if>
+            <if test="korNm != null and korNm != ''">
+                       AND KOR_NM  LIKE '%' || #{korNm} || '%' 
+            </if>
+            
+            <if test="sRegDt != null and sRegDt != ''">
+            	<if test="eRegDt != null and eRegDt != ''">
+                <![CDATA[
+                AND (ECNY_DE between #{sRegDt} and #{eRegDt})
+                ]]>
+                </if>
+            </if>
+            <if test="sRetireDt != null and sRetireDt != ''">
+            	<if test="eRetireDt != null and eRetireDt != ''">
+                <![CDATA[
+                AND (RETIRE_DE between #{sRetireDt} and #{eRetireDt})
+                ]]>
+                </if>
+            </if>
+            <if test="sBirthDt != null and sBirthDt != ''">
+            	<if test="eBirthDt != null and eBirthDt != ''">
+                <![CDATA[
+                AND (BRTHDY between #{sBirthDt} and #{eBirthDt})
+                ]]>
+                </if>
+            </if>
+ 
+            <if test="bplcCode != null and bplcCode != ''">  <!-- AND DEPT_CODE IN (SELECT DEPT_CODE FROM MHS_DEPT WHERE BPLC_CODE = #{bplcCode} ) -->
+                AND BPLC_CODE = #{bplcCode}
+            </if>
+            <if test="ofcpsNm != null and ofcpsNm != ''">
+                AND OFCPS_CODE = #{ofcpsNm} 
+            </if>
+ 			<if test="clsfCode != null and clsfCode != ''">
+              	AND CLSF_CODE = #{clsfCode}
+            </if>
+ 			<if test="rspofcCode != null and rspofcCode != ''">
+              	AND RSPOFC_CODE = #{rspofcCode}
+            </if>
+            <if test="emplSe != null and emplSe != ''">
+                AND EMPL_SE = #{emplSe} 
+            </if>
+            <if test="hffsSe != null and hffsSe != ''">
+                AND HFFS_SE = #{hffsSe} 
+            </if>
+            <if test="sexdstnSe != null and sexdstnSe != ''">
+                AND SEXDSTN_SE = #{sexdstnSe} 
+            </if>
+            <if test="lbunSbscrb != null and lbunSbscrb != ''">
+                AND LBUN_SBSCRB_AT = #{lbunSbscrb} 
+            </if>
+            <if test="mrrgAt != null and mrrgAt != ''">
+                AND MRRG_AT = #{mrrgAt} 
+            </if>
+        </trim>
+
+    </select>
+    
+    <select id="selectMhsEmpList" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrb.mhshrb001.service.impl.Mhshrb001Mapper.selectMhsEmpList */
+		SELECT ROWNUM + #{firstIndex} AS NUM, Z.*
+		FROM (
+		    SELECT *
+		    FROM (
+		        SELECT *
+		        FROM (
+			        SELECT ROWNUM AS NUMS, X.*
+			        FROM (
+				        SELECT
+				               EMPNO,
+				               EMPNO AS OL_EMPNO,
+				               KOR_NM,
+				               ENG_NM,
+				               DEPT_CODE,
+							   FNC_GETDEPTNM(DEPT_CODE) AS DEPT_CODE_NM,
+							   FNC_GETCLSFNM(CLSF_CODE) AS CLSF_CODE_NM
+				<if test="gridSearchAt == null or gridSearchAt == ''">
+				               ,UNISTR(CHCRT_NM) AS CHCRT_NM,
+				               FNC_DATESTR(ECNY_DE) AS ECNY_DE,
+				               FNC_DATESTR(RETIRE_DE) AS RETIRE_DE,
+				               IHIDNUM,
+				               NLTY_CODE,
+				               FNC_COMCODENM('C122',NLTY_CODE) AS NLTY_CODE_NM,
+				               JBLN_CODE,
+				               FNC_COMCODENM('C090',JBLN_CODE) AS JBLN_CODE_NM,
+				               JSSFC_CODE,
+				               FNC_GETJSSFCNM(JSSFC_CODE) AS JSSFC_CODE_NM,
+				               DTY_CODE,
+				               FNC_COMCODENM('C103',JBLN_CODE) AS DTY_CODE_NM,
+				               SRCLS_CODE,
+				               CLSF_CODE,
+							   OFCPS_CODE,
+				               FNC_COMCODENM('C252',OFCPS_CODE) AS OFCPS_CODE_NM,
+				               RSPOFC_CODE,
+				               FNC_GETRSPOFCNM(RSPOFC_CODE) AS RSPOFC_CODE_NM,
+				               ZIP,
+				               OWNHOM_ADRES,
+				               OWNHOM_DETAIL_ADRES,
+				               OWNHOM_ENG_ADRES,
+				               OWNHOM_TELNO,
+				               LXTN_TELNO,
+				               MBTLNUM,
+				               EMGNC_TELNO,
+				               EMAIL,
+				               INDVDL_EMAIL,
+				               FNC_DATESTR(BRTHDY) AS BRTHDY,
+				               SLRCLD_AT,
+				               MRRG_AT,
+				               FNC_COMCODENM('C288',MRRG_AT) AS MRRG_AT_NM,
+				               --FNC_DATESTR(MRRG_DE) AS MRRG_DE,
+				               EMPL_SE,
+				               FNC_COMCODENM('C068',EMPL_SE) AS EMPL_SE_NM,
+				               HFFS_SE,
+				               FNC_COMCODENM('C278',HFFS_SE) AS HFFS_SE_NM,
+				               RETIRE_SE,
+				               FNC_COMCODENM('C154',RETIRE_SE) AS RETIRE_SE_NM,
+				               SEXDSTN_SE,
+				               FNC_COMCODENM('C286',SEXDSTN_SE) AS SEXDSTN_SE_NM,
+				               /*EMPNM_SE,
+				               FNC_COMCODENM('C014',EMPNM_SE) AS EMPNM_SE_NM,*/
+				               TO_CHAR(REG_DT,'YYYY-MM-DD HH24:MI:SS') AS REG_DT,
+				               REG_ID,
+				               TO_CHAR(UPT_DT,'YYYY-MM-DD HH24:MI:SS') AS UPT_DT,
+				               UPT_ID,
+				               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+				               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM,
+				               PHOTO_ATCHMNFL_NO,
+				               SIGN_ATCHMNFL_NO,
+				               CASHIER_AT,
+				               HDADPT_AT,
+				               HDADPT_DEPT_CODE,
+				               FNC_GETDEPTNM(HDADPT_DEPT_CODE) AS HDADPT_DEPT_CODE_NM,
+				               DISP_DEPT_CODE,
+				               FNC_GETDEPTNM(DISP_DEPT_CODE) AS DISP_DEPT_CODE_NM,
+				               '' AS UPPER_DEPT_CODE,
+               				   '' AS UPPER_DEPT_CODE_NM,
+				               
+				               DPRLR_AT,
+				               LBUN_SBSCRB_AT,
+				               FNC_COMCODENM('C641',LBUN_SBSCRB_AT) AS LBUN_SBSCRB_AT_NM,
+				               MUTAID_SBSCRB_AT,
+				               DISP_WORK_AT,
+				               BABY_SHRTEN_WORK_AT,
+				               NATVFRGN_SE_CODE,
+				               FNC_COMCODENM('C011',NATVFRGN_SE_CODE) AS NATVFRGN_SE_CODE_NM,
+				               ECNY_SE_CODE,
+				               FNC_COMCODENM('C014',ECNY_SE_CODE) AS ECNY_SE_CODE_NM,
+				               BPLC_CODE,
+				               (SELECT BPLC_KOR_NM FROM STM_BIZPLC WHERE BPLC_CODE=A.BPLC_CODE) AS BPLC_CODE_NM,
+				               SALPEAK_AT,
+				               FLEXBIZ_AT,
+				               ANSALSYS_AT,
+				               SALARY_APRP_CODE,
+				               FNC_COMCODENM('C067',SALARY_APRP_CODE) AS SALARY_APRP_CODE_NM,
+				               FNC_DATESTR(APNTC_SDT) AS APNTC_SDT,
+				               FNC_DATESTR(APNTC_EDT) AS APNTC_EDT,
+				               INCMTAXRT_CODE,
+				               INCMTAXRT_CODE AS INCMTAXRT_CODE_NM
+				</if>          
+				          FROM MHS_EMP A
+				
+				        <trim prefix="WHERE" prefixOverrides="AND|OR">
+				        	<if test="deptCode != null and deptCode != ''">
+				              		   AND DEPT_CODE = #{deptCode}
+				            </if>
+				            <if test="empno != null and empno != ''">
+				              		   AND EMPNO = #{empno}
+				            </if>
+				            <if test="korNm != null and korNm != ''">
+				                       AND KOR_NM  LIKE '%' || #{korNm} || '%' 
+				            </if>
+				            
+				            <if test="sRegDt != null and sRegDt != ''">
+				            	<if test="eRegDt != null and eRegDt != ''">
+				                <![CDATA[
+				                AND (ECNY_DE between #{sRegDt} and #{eRegDt})
+				                ]]>
+				                </if>
+				            </if>
+				            <if test="sRetireDt != null and sRetireDt != ''">
+				            	<if test="eRetireDt != null and eRetireDt != ''">
+				                <![CDATA[
+				                AND (RETIRE_DE between #{sRetireDt} and #{eRetireDt})
+				                ]]>
+				                </if>
+				            </if>
+				            <if test="sBirthDt != null and sBirthDt != ''">
+				            	<if test="eBirthDt != null and eBirthDt != ''">
+				                <![CDATA[
+				                AND (BRTHDY between #{sBirthDt} and #{eBirthDt})
+				                ]]>
+				                </if>
+				            </if>
+				 
+				            <if test="bplcCode != null and bplcCode != ''">  <!-- AND DEPT_CODE IN (SELECT DEPT_CODE FROM MHS_DEPT WHERE BPLC_CODE = #{bplcCode} ) -->
+				                AND BPLC_CODE = #{bplcCode}
+				            </if>
+				            <if test="ofcpsNm != null and ofcpsNm != ''">
+				                AND OFCPS_CODE = #{ofcpsNm} 
+				            </if>
+				 			<if test="clsfCode != null and clsfCode != ''">
+				              	AND CLSF_CODE = #{clsfCode}
+				            </if>
+				 			<if test="rspofcCode != null and rspofcCode != ''">
+				              	AND RSPOFC_CODE = #{rspofcCode}
+				            </if>
+				            <if test="emplSe != null and emplSe != ''">
+				                AND EMPL_SE = #{emplSe} 
+				            </if>
+				            <if test="hffsSe != null and hffsSe != ''">
+				                AND HFFS_SE = #{hffsSe} 
+				            </if>
+				            <if test="sexdstnSe != null and sexdstnSe != ''">
+				                AND SEXDSTN_SE = #{sexdstnSe} 
+				            </if>
+				            <if test="lbunSbscrb != null and lbunSbscrb != ''">
+				                AND LBUN_SBSCRB_AT = #{lbunSbscrb} 
+				            </if>
+				            <if test="mrrgAt != null and mrrgAt != ''">
+				                AND MRRG_AT = #{mrrgAt} 
+				            </if>
+				        </trim>
+			
+						ORDER BY EMPNO
+		            ) X
+		        ) B
+		        WHERE NUMS &gt; #{firstIndex}
+		          AND NUMS &lt;= #{lastIndex}
+		    ) Y
+            <choose>
+            <when test="sortColumId != null and sortColumId != ''">
+                <if test="sortColumId == 'empno'">
+                ORDER BY EMPNO <choose><when test="sortDirection == 'desc'">DESC</when><otherwise>ASC</otherwise></choose>
+                </if>
+                <if test="sortColumId == 'korNm'">
+                ORDER BY KOR_NM   <choose><when test="sortDirection == 'desc'">DESC</when><otherwise>ASC</otherwise></choose>
+                </if>
+                <if test="sortColumId == 'deptCodeNm'">
+                ORDER BY DEPT_CODE_NM <choose><when test="sortDirection == 'desc'">DESC</when><otherwise>ASC</otherwise></choose>, EMPNO <choose><when test="sortDirection == 'desc'">DESC</when><otherwise>ASC</otherwise></choose>
+                </if>
+            </when>
+            <otherwise>
+                ORDER BY EMPNO
+            </otherwise>
+            </choose>
+		) Z
+    </select>
+    
+    <select id="selectMhsEmpList_OL전체_정렬_후_카운팅" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrb.mhshrb001.service.impl.Mhshrb001Mapper.selectMhsEmpList */
+        SELECT *
+        FROM (
+	        SELECT ROWNUM AS NUM, X.*
+	        FROM (
+		        SELECT
+	               EMPNO,
+	               EMPNO AS OL_EMPNO,
+	               KOR_NM,
+	               ENG_NM,
+	               DEPT_CODE,
+				   FNC_GETDEPTNM(DEPT_CODE) AS DEPT_CODE_NM
+	<if test="gridSearchAt == null or gridSearchAt == ''">
+	               ,UNISTR(CHCRT_NM) AS CHCRT_NM,
+	               FNC_DATESTR(ECNY_DE) AS ECNY_DE,
+	               FNC_DATESTR(RETIRE_DE) AS RETIRE_DE,
+	               IHIDNUM,
+	               NLTY_CODE,
+	               FNC_COMCODENM('C122',NLTY_CODE) AS NLTY_CODE_NM,
+	               JBLN_CODE,
+	               FNC_COMCODENM('C090',JBLN_CODE) AS JBLN_CODE_NM,
+	               JSSFC_CODE,
+	               FNC_GETJSSFCNM(JSSFC_CODE) AS JSSFC_CODE_NM,
+	               DTY_CODE,
+				   FNC_COMCODENM('C103',JBLN_CODE) AS DTY_CODE_NM,
+	               SRCLS_CODE,
+	               CLSF_CODE,
+				   FNC_GETCLSFNM(CLSF_CODE) AS CLSF_CODE_NM,
+				   OFCPS_CODE,
+	               FNC_COMCODENM('C252',OFCPS_CODE) AS OFCPS_CODE_NM,
+	               RSPOFC_CODE,
+	               FNC_GETRSPOFCNM(RSPOFC_CODE) AS RSPOFC_CODE_NM,
+	               ZIP,
+	               OWNHOM_ADRES,
+	               OWNHOM_DETAIL_ADRES,
+	               OWNHOM_ENG_ADRES,
+	               OWNHOM_TELNO,
+	               LXTN_TELNO,
+	               MBTLNUM,
+	               EMGNC_TELNO,
+	               EMAIL,
+	               INDVDL_EMAIL,
+	               FNC_DATESTR(BRTHDY) AS BRTHDY,
+	               SLRCLD_AT,
+	               MRRG_AT,
+	               FNC_COMCODENM('C288',MRRG_AT) AS MRRG_AT_NM,
+	               --FNC_DATESTR(MRRG_DE) AS MRRG_DE,
+	               EMPL_SE,
+	               FNC_COMCODENM('C068',EMPL_SE) AS EMPL_SE_NM,
+	               HFFS_SE,
+	               FNC_COMCODENM('C278',HFFS_SE) AS HFFS_SE_NM,
+	               RETIRE_SE,
+	               FNC_COMCODENM('C154',RETIRE_SE) AS RETIRE_SE_NM,
+	               SEXDSTN_SE,
+	               FNC_COMCODENM('C286',SEXDSTN_SE) AS SEXDSTN_SE_NM,
+	               /*EMPNM_SE,
+	               FNC_COMCODENM('C014',EMPNM_SE) AS EMPNM_SE_NM,*/
+	               TO_CHAR(REG_DT,'YYYY-MM-DD HH24:MI:SS') AS REG_DT,
+	               REG_ID,
+	               TO_CHAR(UPT_DT,'YYYY-MM-DD HH24:MI:SS') AS UPT_DT,
+	               UPT_ID,
+	               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+	               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM,
+	               PHOTO_ATCHMNFL_NO,
+	               SIGN_ATCHMNFL_NO,
+	               CASHIER_AT,
+	               HDADPT_AT,
+	               HDADPT_DEPT_CODE,
+	               FNC_GETDEPTNM(HDADPT_DEPT_CODE) AS HDADPT_DEPT_CODE_NM,
+	               DISP_DEPT_CODE,
+	               FNC_GETDEPTNM(DISP_DEPT_CODE) AS DISP_DEPT_CODE_NM,
+	               '' AS UPPER_DEPT_CODE,
+            	   '' AS UPPER_DEPT_CODE_NM,
+	               
+	               
+	               DPRLR_AT,
+	               LBUN_SBSCRB_AT,
+	               FNC_COMCODENM('C641',LBUN_SBSCRB_AT) AS LBUN_SBSCRB_AT_NM,
+	               MUTAID_SBSCRB_AT,
+	               DISP_WORK_AT,
+	               BABY_SHRTEN_WORK_AT,
+	               NATVFRGN_SE_CODE,
+	               FNC_COMCODENM('C011',NATVFRGN_SE_CODE) AS NATVFRGN_SE_CODE_NM,
+	               ECNY_SE_CODE,
+	               FNC_COMCODENM('C014',ECNY_SE_CODE) AS ECNY_SE_CODE_NM,
+	               BPLC_CODE,
+	               (SELECT BPLC_KOR_NM FROM STM_BIZPLC WHERE BPLC_CODE=A.BPLC_CODE) AS BPLC_CODE_NM,
+	               SALPEAK_AT,
+	               FLEXBIZ_AT,
+	               ANSALSYS_AT,
+	               SALARY_APRP_CODE,
+	               FNC_COMCODENM('C067',SALARY_APRP_CODE) AS SALARY_APRP_CODE_NM,
+	               FNC_DATESTR(APNTC_SDT) AS APNTC_SDT,
+	               FNC_DATESTR(APNTC_EDT) AS APNTC_EDT,
+	               INCMTAXRT_CODE,
+	               INCMTAXRT_CODE AS INCMTAXRT_CODE_NM
+		</if>          
+		          FROM MHS_EMP A
+		
+		        <trim prefix="WHERE" prefixOverrides="AND|OR">
+		        	<if test="deptCode != null and deptCode != ''">
+		              		   AND DEPT_CODE = #{deptCode}
+		            </if>
+		            <if test="empno != null and empno != ''">
+		              		   AND EMPNO = #{empno}
+		            </if>
+		            <if test="korNm != null and korNm != ''">
+		                       AND KOR_NM  LIKE '%' || #{korNm} || '%' 
+		            </if>
+		            
+		            <if test="sRegDt != null and sRegDt != ''">
+		            	<if test="eRegDt != null and eRegDt != ''">
+		                <![CDATA[
+		                AND (ECNY_DE between #{sRegDt} and #{eRegDt})
+		                ]]>
+		                </if>
+		            </if>
+		            <if test="sRetireDt != null and sRetireDt != ''">
+		            	<if test="eRetireDt != null and eRetireDt != ''">
+		                <![CDATA[
+		                AND (RETIRE_DE between #{sRetireDt} and #{eRetireDt})
+		                ]]>
+		                </if>
+		            </if>
+		            <if test="sBirthDt != null and sBirthDt != ''">
+		            	<if test="eBirthDt != null and eBirthDt != ''">
+		                <![CDATA[
+		                AND (BRTHDY between #{sBirthDt} and #{eBirthDt})
+		                ]]>
+		                </if>
+		            </if>
+		 
+		            <if test="bplcCode != null and bplcCode != ''">  <!-- AND DEPT_CODE IN (SELECT DEPT_CODE FROM MHS_DEPT WHERE BPLC_CODE = #{bplcCode} ) -->
+		                AND BPLC_CODE = #{bplcCode}
+		            </if>
+		            <if test="ofcpsNm != null and ofcpsNm != ''">
+		                AND OFCPS_CODE = #{ofcpsNm} 
+		            </if>
+		 			<if test="clsfCode != null and clsfCode != ''">
+		              	AND CLSF_CODE = #{clsfCode}
+		            </if>
+		 			<if test="rspofcCode != null and rspofcCode != ''">
+		              	AND RSPOFC_CODE = #{rspofcCode}
+		            </if>
+		            <if test="emplSe != null and emplSe != ''">
+		                AND EMPL_SE = #{emplSe} 
+		            </if>
+		            <if test="hffsSe != null and hffsSe != ''">
+		                AND HFFS_SE = #{hffsSe} 
+		            </if>
+		            <if test="sexdstnSe != null and sexdstnSe != ''">
+		                AND SEXDSTN_SE = #{sexdstnSe} 
+		            </if>
+		            <if test="lbunSbscrb != null and lbunSbscrb != ''">
+		                AND LBUN_SBSCRB_AT = #{lbunSbscrb} 
+		            </if>
+		            <if test="mrrgAt != null and mrrgAt != ''">
+		                AND MRRG_AT = #{mrrgAt} 
+		            </if>
+		        </trim>
+	
+	            <choose>
+	            <when test="sortColumId != null and sortColumId != ''">
+	                <if test="sortColumId == 'empno'">
+	                ORDER BY EMPNO <choose><when test="sortDirection == 'desc'">DESC</when><otherwise>ASC</otherwise></choose>
+	                </if>
+	                <if test="sortColumId == 'korNm'">
+	                ORDER BY KOR_NM   <choose><when test="sortDirection == 'desc'">DESC</when><otherwise>ASC</otherwise></choose>
+	                </if>
+	                <if test="sortColumId == 'deptCodeNm'">
+	                ORDER BY DEPT_CODE_NM   <choose><when test="sortDirection == 'desc'">DESC</when><otherwise>ASC</otherwise></choose>
+	                </if>
+	            </when>
+	            <otherwise>
+	                ORDER BY EMPNO
+	            </otherwise>
+	            </choose>
+            ) X
+        ) B
+        WHERE NUM &gt; #{firstIndex}
+          AND NUM &lt;= #{lastIndex}
+    </select>
+
+    <select id="selectMhsEmp" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrb.mhshrb001.service.impl.Mhshrb001Mapper.selectMhsEmp */
+        SELECT
+               A.EMPNO ,
+               A.KOR_NM,
+               A.ENG_NM,
+               UNISTR(A.CHCRT_NM) AS  CHCRT_NM,
+               FNC_DATESTR(A.ECNY_DE) AS ECNY_DE,
+               FNC_DATESTR(A.RETIRE_DE) AS RETIRE_DE,
+               DECODE(A.IHIDNUM,NULL,'',SUBSTR(A.IHIDNUM,1,6)||'-*******') AS IHIDNUM,
+               A.NLTY_CODE,
+               A.DTY_CODE,
+               A.JSSFC_CODE,
+               A.SRCLS_CODE,
+			   A.CLSF_CODE,
+               A.OFCPS_CODE,
+			   A.DEPT_CODE,
+			   FNC_GETDEPTNM(A.DEPT_CODE) AS DEPT_CODE_NM,
+               A.ZIP,
+               A.OWNHOM_ADRES,
+               A.OWNHOM_DETAIL_ADRES,
+               A.OWNHOM_ENG_ADRES,
+               DECODE(A.OWNHOM_TELNO,NULL,'', REGEXP_REPLACE(A.OWNHOM_TELNO,'([[:digit:]]{3})([[:digit:]]{3,4})([[:digit:]]{4})','\1-\2-\3')) AS OWNHOM_TELNO,
+               A.LXTN_TELNO,
+               DECODE(A.MBTLNUM,NULL,'', REGEXP_REPLACE(A.MBTLNUM,'([[:digit:]]{3})([[:digit:]]{3,4})([[:digit:]]{4})','\1-\2-\3')) AS MBTLNUM,
+               A.EMAIL,
+               FNC_DATESTR(A.BRTHDY) AS BRTHDY,
+               A.SLRCLD_AT,
+               A.MRRG_AT,
+               FNC_DATESTR(B.MRRG_DE) AS MRRG_DE,
+               A.HDADPT_DEPT_CODE,
+               A.EMPL_SE,
+               A.HFFS_SE,
+               A.RETIRE_SE,
+               A.SEXDSTN_SE,
+               A.REG_DT,
+               A.REG_ID,
+               A.UPT_DT,
+               A.UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM,
+			   '' AS UPPER_DEPT_CODE,
+               '' AS UPPER_DEPT_CODE_NM,
+               A.RSPOFC_CODE,
+               DECODE(A.PHOTO_ATCHMNFL_NO,'0','',NULL,'',A.PHOTO_ATCHMNFL_NO) AS PHOTO_ATCHMNFL_NO,
+               A.BPLC_CODE,
+               FNC_GETDEPTNM(A.HDADPT_DEPT_CODE) AS HDADPT_DEPT_CODE_NM,
+               A.DISP_DEPT_CODE,
+               FNC_GETDEPTNM(A.DISP_DEPT_CODE) AS DISP_DEPT_CODE_NM,
+               A.INDVDL_EMAIL,
+               A.EMGNC_TELNO,
+               A.LAYOFF_SE_CODE,
+               NVL(A.SALARY_PYMNT_AT,'0') AS SALARY_PYMNT_AT,
+               A.RETIRE_ANNTY_KIND_CODE,
+               NVL(A.CASHIER_AT,'0') AS CASHIER_AT,
+               A.INCMTAXRT_CODE,
+               A.SALARY_APRP_CODE,
+               NVL(A.BABY_SHRTEN_WORK_AT,'0') AS BABY_SHRTEN_WORK_AT,
+               NVL(A.LBUN_SBSCRB_AT,'0') AS LBUN_SBSCRB_AT,
+               NVL(A.MUTAID_SBSCRB_AT,'0') AS MUTAID_SBSCRB_AT,
+               FNC_DATESTR(B.LAST_PROMT_DE) AS LAST_PROMT_DE,
+               FNC_DATESTR(B.LAST_SALCLSUP_DE) AS LAST_SALCLSUP_DE,
+               B.BORN_ZIP,
+               B.BORN_ADRES,
+               B.BORN_DETAILADRES,
+               B.RETIRE_EXCCLC_DE,
+               (SELECT ACDMCR_SE_CODE FROM MHS_ACDMCR WHERE EMPNO = A.EMPNO AND LAST_ACDMCR_AT = 'Y') AS LAST_ACDMCR_CODE,
+               (SELECT SCHUL_NM FROM MHS_ACDMCR WHERE EMPNO = A.EMPNO AND LAST_ACDMCR_AT = 'Y') AS LAST_SCHUL_NM,
+               A.RETIRE_SE,
+               FNC_DATESTR(A.CUR_CLSF_EMPLMNDAY) CUR_CLSF_EMPLMNDAY
+          FROM MHS_EMP A, MHS_INDVDLINFO B
+          WHERE A.EMPNO = B.EMPNO(+)
+
+          <if test="empno != null and empno != ''">
+              AND A.EMPNO = #{empno}
+          </if>
+        ORDER BY EMPNO
+    </select>
+
+    <insert id="insertMhsEmp" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrb.mhshrb001.service.impl.Mhshrb001Mapper.insertMhsEmp */
+		INSERT INTO mhs_emp (
+		    empno,
+		    bplc_code,
+		    kor_nm,
+		    eng_nm,
+		    chcrt_nm,
+		    empl_se,
+		    ecny_se_code,
+		    hffs_se,
+		    ecny_de,
+		    dept_code,
+		    ihidnum,
+		    sexdstn_se,
+		    natvfrgn_se_code,
+		    nlty_code,
+		    srcls_code,
+		    clsf_code,
+		    ofcps_code,
+		    jssfc_code,
+		    dty_code,
+		    rspofc_code,
+		    jbln_code,
+		    zip,
+		    ownhom_adres,
+		    ownhom_detail_adres,
+		    ownhom_eng_adres,
+		    ownhom_telno,
+		    lxtn_telno,
+		    mbtlnum,
+		    emgnc_telno,
+		    email,
+		    indvdl_email,
+		    brthdy,
+		    slrcld_at,
+		    mrrg_at,
+		    retire_de,
+		    retire_se,
+		    photo_atchmnfl_no,
+		    sign_atchmnfl_no,
+		    cashier_at,
+		    hdadpt_at,
+		    hdadpt_dept_code,
+		    disp_dept_code,
+		    dprlr_at,
+		    lbun_sbscrb_at,
+		    mutaid_sbscrb_at,
+		    disp_work_at,
+		    flexbiz_at,
+		    baby_shrten_work_at,
+		    salpeak_at,
+		    salary_aprp_code,
+		    ansalsys_at,
+		    apntc_sdt,
+		    apntc_edt,
+		    incmtaxrt_code,
+		    RETIRE_SE,
+            CUR_CLSF_EMPLMNDAY,
+		    reg_dt,
+		    reg_id,
+		    upt_dt,
+		    upt_id
+		) VALUES (
+            NVL((SELECT SUBSTR(#{ecnyDe},1,6) || LPAD(NVL(TO_CHAR(TO_NUMBER(SUBSTR(MAX(EMPNO),7,4))+1),'1'),4,'0') AS BB FROM MHS_EMP WHERE EMPNO LIKE SUBSTR(#{ecnyDe},1,6) || '%'), SUBSTR(#{ecnyDe},1,6) || '0001'),
+            #{bplcCode},
+            #{korNm},
+            #{engNm},
+            #{chcrtNm},
+            #{emplSe},
+            #{ecnySeCode},
+            #{hffsSe},
+            #{ecnyDe},
+            #{deptCode},
+            #{ihidnum},
+            #{sexdstnSe},
+            #{natvfrgnSeCode},
+            #{nltyCode},
+            #{srclsCode},
+            #{clsfCode},
+            #{ofcpsCode},
+            #{jssfcCode},
+            #{dtyCode},
+            #{rspofcCode},
+            #{jblnCode},
+            #{zip},
+            #{ownhomAdres},
+            #{ownhomDetailAdres},
+            #{ownhomEngAdres},
+            #{ownhomTelno},
+            #{lxtnTelno},
+            #{mbtlnum},
+            #{emgncTelno},
+            #{email},
+            #{indvdlEmail},
+            #{brthdy},
+            #{slrcldAt},
+            #{mrrgAt},
+            #{retireDe},
+            #{retireSe},
+            #{photoAtchmnflNo},
+            #{signAtchmnflNo},
+            #{cashierAt},
+            #{hdadptAt},
+            #{hdadptDeptCode},
+            #{dispDeptCode},
+            #{dprlrAt},
+            #{lbunSbscrbAt},
+            #{mutaidSbscrbAt},
+            #{dispWorkbAt},
+            #{flexbizAt},
+            #{babyShrtenWorkAt},
+            #{salpeakAt},
+            #{salaryAprpCode},
+            #{ansalsysAt},
+            #{apntcSdt},
+            #{apntcEdt},
+            #{incmtaxrtCode},
+            #{curClsfEmplmnday},
+            #{retireSe},
+            SYSDATE,
+            #{regId},
+            SYSDATE,
+            #{regId}
+        )
+    </insert>
+    
+    <insert id="insertMhsEmpMain" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrb.mhshrb001.service.impl.Mhshrb001Mapper.insertMhsEmpMain */
+        <selectKey resultType="string" keyProperty="empno" order="BEFORE">
+<!--         SELECT NVL((SELECT SUBSTR(#{ecnyDe},1,4) || LPAD(NVL(TO_CHAR(TO_NUMBER(SUBSTR(EMPNO,5,2))+1),'1'),2,0) AS BB  -->
+<!-- 	        FROM MHS_EMP  -->
+<!-- 	        WHERE EMPNO LIKE SUBSTR(#{ecnyDe},1,4) || '%'), SUBSTR(#{ecnyDe},1,4) || '01') FROM DUAL      -->
+	        
+	    SELECT NVL((SELECT SUBSTR(#{ecnyDe},1,4) || LPAD(NVL(TO_CHAR(TO_NUMBER(SUBSTR(max(EMPNO),5,2))+1),'1'),2,0) AS BB 
+	        FROM MHS_EMP 
+	        WHERE EMPNO LIKE SUBSTR(#{ecnyDe},1,4) || '%'), SUBSTR(#{ecnyDe},1,4) || '01') as BB FROM DUAL
+    	</selectKey>    
+		INSERT INTO mhs_emp (
+		    empno,
+		    bplc_code,
+		    kor_nm,
+		    eng_nm,
+		    chcrt_nm,
+		    empl_se,
+		    hffs_se,
+		    ecny_de,
+		    dept_code,
+		    ihidnum,
+		    sexdstn_se,
+		    srcls_code,
+		    clsf_code,
+		    ofcps_code,
+		    jssfc_code,
+		    dty_code,
+		    rspofc_code,
+		    brthdy,
+		    slrcld_at,
+		    retire_de,
+		    photo_atchmnfl_no,
+		    hdadpt_dept_code,
+		    disp_dept_code,
+		    RETIRE_SE,
+            CUR_CLSF_EMPLMNDAY,
+		    reg_dt,
+		    reg_id,
+		    upt_dt,
+		    upt_id
+		) VALUES (
+            #{empno},
+            #{bplcCode},
+            #{korNm},
+            #{engNm},
+            #{chcrtNm},
+            #{emplSe},
+            #{hffsSe},
+            #{ecnyDe},
+            #{deptCode},
+            #{ihidnum},
+            #{sexdstnSe},
+            #{srclsCode},
+            #{clsfCode},
+            #{ofcpsCode},
+            #{jssfcCode},
+            #{dtyCode},
+            #{rspofcCode},
+            #{brthdy},
+            #{slrcldAt},
+            #{retireDe},
+            #{photoAtchmnflNo},
+            #{hdadptDeptCode},
+            #{dispDeptCode},
+            #{curClsfEmplmnday},
+            #{retireSe},
+            SYSDATE,
+            #{regId},
+            SYSDATE,
+            #{regId}
+        )
+    </insert>
+
+    <update id="updateMhsEmp" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrb.mhshrb001.service.impl.Mhshrb001Mapper.updateMhsEmp */
+        UPDATE MHS_EMP SET
+        	   BPLC_CODE = #{bplcCode},
+               KOR_NM= #{korNm},
+               ENG_NM= #{engNm},
+               CHCRT_NM= #{chcrtNm},
+               EMPL_SE = #{emplSe},
+               ECNY_SE_CODE = #{ecnySeCode},
+               HFFS_SE = #{hffsSe},
+               ECNY_DE= #{ecnyDe},
+               DEPT_CODE= #{deptCode},
+               IHIDNUM= decode(instr(#{ihidnum},'*',1,1),0,replace(#{ihidnum},'-',''),IHIDNUM),
+               SEXDSTN_SE= #{sexdstnSe},
+               NATVFRGN_SE_CODE = #{natvfrgnSeCode},
+               NLTY_CODE = #{nltyCode},
+               SRCLS_CODE = #{srclsCode},
+               CLSF_CODE= #{clsfCode},
+               OFCPS_CODE= #{ofcpsCode},
+               JSSFC_CODE = #{jssfcCode},
+               DTY_CODE = #{dtyCode},
+               RSPOFC_CODE = #{rspofcCode},
+               JBLN_CODE = #{jblnCode},
+               ZIP= #{zip},
+               OWNHOM_ADRES= #{ownhomAdres},
+               OWNHOM_DETAIL_ADRES= #{ownhomDetailAdres},
+               OWNHOM_ENG_ADRES = #{ownhomEngAdres},
+               OWNHOM_TELNO= #{ownhomTelno},
+               LXTN_TELNO= #{lxtnTelno},
+               MBTLNUM= #{mbtlnum},
+               EMGNC_TELNO = #{emgncTelno},
+               EMAIL= #{email},
+               INDVDL_EMAIL = #{indvdlEmail},
+               BRTHDY= #{brthdy},
+               SLRCLD_AT= #{slrcldAt},
+               MRRG_AT= #{mrrgAt},
+               RETIRE_DE= #{retireDe},
+               RETIRE_SE= #{retireSe},
+               PHOTO_ATCHMNFL_NO = #{photoAtchmnflNo},
+               SIGN_ATCHMNFL_NO = #{signAtchmnflNo},
+               CASHIER_AT = #{cashierAt},
+               HDADPT_AT = #{hdadptAt},
+               HDADPT_DEPT_CODE= #{hdadptDeptCode},
+               DISP_DEPT_CODE = #{dispDeptCode},
+               DPRLR_AT = #{dprlrAt},
+               LBUN_SBSCRB_AT = #{lbunSbscrbAt},
+               MUTAID_SBSCRB_AT = #{mutaidSbscrbAt},
+               DISP_WORK_AT = #{dispWorkbAt},
+               FLEXBIZ_AT = #{flexbizAt},
+               BABY_SHRTEN_WORK_AT = #{babyShrtenWorkAt},
+               SALPEAK_AT = #{salpeakAt},
+               SALARY_APRP_CODE = #{salaryAprpCode},
+               ANSALSYS_AT = #{ansalsysAt},
+               APNTC_SDT = #{apntcSdt},
+               APNTC_EDT = #{apntcEdt},
+               INCMTAXRT_CODE = #{incmtaxrtCode},
+               RETIRE_SE = #{retireSe},
+               CUR_CLSF_EMPLMNDAY = #{curClsfEmplmnday},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+         WHERE EMPNO = #{empno}
+    </update>
+    
+    <update id="updateMhsEmpMain" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrb.mhshrb001.service.impl.Mhshrb001Mapper.updateMhsEmpMain */
+        UPDATE MHS_EMP SET
+        	   BPLC_CODE = #{bplcCode},
+               KOR_NM= #{korNm},
+               ENG_NM= #{engNm},
+               CHCRT_NM= #{chcrtNm},
+               EMPL_SE = #{emplSe},
+               HFFS_SE = #{hffsSe},
+               ECNY_DE= #{ecnyDe},
+               DEPT_CODE= #{deptCode},
+               <if test="ihidnum != null and ihidnum != ''">
+               IHIDNUM = #{ihidnum},
+               </if>
+               SEXDSTN_SE= #{sexdstnSe},
+               SRCLS_CODE = #{srclsCode},
+               CLSF_CODE= #{clsfCode},
+               OFCPS_CODE= #{ofcpsCode},
+               JSSFC_CODE = #{jssfcCode},
+               DTY_CODE = #{dtyCode},
+               RSPOFC_CODE = #{rspofcCode},
+               BRTHDY= #{brthdy},
+               SLRCLD_AT= #{slrcldAt},
+               RETIRE_DE= #{retireDe},
+               PHOTO_ATCHMNFL_NO = #{photoAtchmnflNo},
+               HDADPT_DEPT_CODE= #{hdadptDeptCode},
+               DISP_DEPT_CODE = #{dispDeptCode},
+               RETIRE_SE = #{retireSe},
+               CUR_CLSF_EMPLMNDAY = #{curClsfEmplmnday},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+         WHERE EMPNO = #{empno}
+    </update>
+    
+    <update id="updateMhsEmpBase" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrb.mhshrb001.service.impl.Mhshrb001Mapper.updateMhsEmpBase */
+        UPDATE MHS_EMP SET
+        	   LXTN_TELNO = #{lxtnTelno},
+        	   MBTLNUM= #{mbtlnum},
+               OWNHOM_TELNO= #{ownhomTelno},
+               EMAIL= #{email},
+               INDVDL_EMAIL= #{indvdlEmail},
+               MRRG_AT = #{mrrgAt},
+               EMGNC_TELNO = #{emgncTelno},
+               ZIP= #{zip},
+               OWNHOM_ADRES= #{ownhomAdres},
+               OWNHOM_DETAIL_ADRES= #{ownhomDetailAdres},
+               SALARY_PYMNT_AT= #{salaryPymntAt},
+               CASHIER_AT= #{cashierAt},
+               RETIRE_ANNTY_KIND_CODE= #{retireAnntyKindCode},
+               INCMTAXRT_CODE= #{incmtaxrtCode},
+               SALARY_APRP_CODE= #{salaryAprpCode},
+               BABY_SHRTEN_WORK_AT= #{babyShrtenWorkAt},
+               LBUN_SBSCRB_AT= #{lbunSbscrbAt},
+               MUTAID_SBSCRB_AT= #{mutaidSbscrbAt},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+         WHERE EMPNO = #{empno}
+    </update>
+
+    <delete id="deleteMhsEmp" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrb.mhshrb001.service.impl.Mhshrb001Mapper.deleteMhsEmp */
+        DELETE FROM MHS_EMP
+		WHERE EMPNO = #{empno}
+    </delete>
+    
+    <select id="selectMhsEmpUseChk" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.stm.mng.stmmng003.service.impl.Stmmng003Mapper.selectMhsEmpUseChk */
+		SELECT NVL(SUM(X.CNT),0) AS CNT, MAX(X.TBL) AS TBL
+		FROM (
+	        SELECT COUNT(*) AS CNT , '예산편성' AS TBL
+	          FROM MBS_BUGTMAKEUP
+	         WHERE  CONFM_EMPNO = #{empno}
+			UNION ALL
+	        SELECT COUNT(*) AS CNT , '회계전표' AS TBL
+	          FROM MFS_SLIP_COMM
+	         WHERE (WRITE_EMPNO = #{empno} OR ELCTSCT_EMPNO = #{empno})
+			UNION ALL
+	        SELECT COUNT(*) AS CNT , '근태' AS TBL
+	          FROM MHS_DCLZ
+	         WHERE EMPNO = #{empno}
+			UNION ALL
+	        SELECT COUNT(*) AS CNT , '발령' AS TBL
+	          FROM MHS_GNFD
+	         WHERE EMPNO = #{empno}
+			UNION ALL
+	        SELECT COUNT(*) AS CNT , '변경신청' AS TBL
+	          FROM MHS_EMP_CHANGE
+	         WHERE CHANGE_REQST_SN = #{empno}
+			UNION ALL
+	        SELECT COUNT(*) AS CNT , '연봉' AS TBL
+	          FROM MPS_ANSLRY
+	         WHERE EMPNO = #{empno}
+			UNION ALL
+	        SELECT COUNT(*) AS CNT , '연차' AS TBL
+	          FROM MHS_WRYC
+	         WHERE EMPNO = #{empno}
+			UNION ALL
+	        SELECT COUNT(*) AS CNT , '연차 일수' AS TBL
+	          FROM MHS_WRYC_DAYCNT
+	         WHERE EMPNO = #{empno}
+			UNION ALL
+	        SELECT COUNT(*) AS CNT , '징계' AS TBL
+	          FROM MHS_DSCPL
+	         WHERE EMPNO = #{empno}
+			UNION ALL
+	        SELECT COUNT(*) AS CNT , '출장' AS TBL
+	          FROM MHS_BSRP
+	         WHERE REQST_EMPNO = #{empno}
+			UNION ALL
+	        SELECT COUNT(*) AS CNT , '포상' AS TBL
+	          FROM MHS_RWARD
+	         WHERE EMPNO = #{empno}
+			UNION ALL
+	        SELECT COUNT(*) AS CNT , '학자금신청' AS TBL
+	          FROM MHS_SCHXPN_REQST
+	         WHERE EMPNO = #{empno}
+			UNION ALL
+	        SELECT COUNT(*) AS CNT , '휴직' AS TBL
+	          FROM MHS_LAYOFF
+	         WHERE EMPNO = #{empno}
+			UNION ALL
+	        SELECT COUNT(*) AS CNT , '급여 대상자' AS TBL
+	          FROM MPS_SALARY_TRGTER
+	         WHERE EMPNO = #{empno}
+			UNION ALL
+	        SELECT COUNT(*) AS CNT , '급여 대장' AS TBL
+	          FROM MPS_SALARY_REGSTR
+	         WHERE EMPNO = #{empno}
+			UNION ALL
+	        SELECT COUNT(*) AS CNT , '급여 지급' AS TBL
+	          FROM MPS_SALARY_PYMNT
+	         WHERE EMPNO = #{empno}
+			UNION ALL
+	        SELECT COUNT(*) AS CNT , '소급' AS TBL
+	          FROM MPS_RTROACT
+	         WHERE EMPNO = #{empno}
+			UNION ALL
+	        SELECT COUNT(*) AS CNT , '시간외 수당' AS TBL
+	          FROM MPS_OVTIME_ALLWNC
+	         WHERE EMPNO = #{empno}
+			UNION ALL
+	        SELECT COUNT(*) AS CNT , '월 사회보험료' AS TBL
+	          FROM MPS_MT_SNLRCCHRGE
+	         WHERE EMPNO = #{empno}
+        ) X
+        WHERE X.CNT > 0
+     </select>
+     <!-- 
+자산이동  MAS_ASSETS_MOVE   MOVE_EMPNO
+MBS_예산 요구  MBS_BUGT_REQUST   REQST_EMPNO
+MBS_예산 요구 이력   MBS_BUGT_REQUST_HIST   REQST_EMPNO
+MBS_예산배정신청  MBS_BUGT_ASSIGN_REQ    REQST_EMPNO
+MBS_예산변경신청  MBS_AMEND_REQST   REQST_EMPNO   CONFM_EMPNO
+MBS_예산편성   MBS_BUGTMAKEUP   CONFM_EMPNO
+MFS_개인 증빙   MFS_INDVDL_EVID   EMPNO
+MFS_구매증빙    MFS_PURCHS_EVID   PURCHS_EMPNO
+MFS_급여증빙    MFS_SALARYEVID   EMPNO
+MFS_기타소득자관리    MFS_EMPLOYEE_GITA    EMPL_NO
+MFS_법인카드    MFS_CARD    OWN_EMPNO   USE_EMPNO
+MFS_법인카드 승인 내역    MFS_CMPCARD_CONFM_DTLS    EMPNO
+MFS_세금계산서    MFS_TAX_COMM    WRITE_EMPNO
+MFS_카드증빙   MFS_CARDEVID   USE_EMPNO
+MFS_품의    MFS_CNSUL   CNSUL_EMPL_NO
+MFS_회계전표   MFS_SLIP_COMM   SLIP_EMPNO
+MHS_근태   MHS_DCLZ   EMPNO
+MHS_발령   MHS_GNFD   EMPNO
+MHS_변경신청   MHS_EMP_CHANGE   CHANGE_REQST_SN
+MHS_연봉   MPS_ANSLRY   EMPNO
+MHS_연차    MHS_WRYC   EMPNO
+MHS_연차 일수   MHS_WRYC_DAYCNT   EMPNO
+MHS_임금피크제   MHS_SALPEAK   EMPNO
+MHS_징계  MHS_DSCPL    EMPNO
+MHS_출장   MHS_BSRP   REQST_EMPNO
+MHS_포상   MHS_RWARD   EMPNO
+MHS_학자금신청   MHS_SCHXPN_REQST   EMPNO
+MHS_휴직   MHS_LAYOFF   EMPNO
+MPS_급여 대상자   MPS_SALARY_TRGTER   EMPNO
+MPS_급여 대장   MPS_SALARY_REGSTR   EMPNO
+MPS_급여 지급    MPS_SALARY_PYMNT   EMPNO
+MPS_소급   MPS_RTROACT   EMPNO
+MPS_시간외 수당   MPS_OVTIME_ALLWNC   EMPNO
+MPS_월 사회보험료   MPS_MT_SNLRCCHRGE   EMPNO
+MPS_일괄등록   MPS_BNDEREGIST   EMPNO
+MPU_구매 요청   MPU_PURCHS_REQ   REQST_EMPNO
+YND_교육비  YND_EDUCOST   EMPNO
+YND_그밖의소득공제    YND_ETC_INDCT   EMPNO
+YND_급여기초   YND_PAY_BASIC   EMPNO
+YND_기부금    YND_CONTRI     EMPNO
+YND_분할납부   YND_PART_PAYMENT    EMPNO
+YND_세액 감면    YND_REDUCT    EMPNO
+YND_세액공제   YND_TAX_DDC   EMPNO
+YND_연금저축  YND_SAVING    EMPNO
+YND_외국납부세액     YND_FRNTNPAYTAX   EMPNO
+YND_월세   YND_MTHT   EMPNO
+YND_의료비    YND_MEDEXP   EMPNO
+YND_인적 공제    YND_HUMAN_DDC    EMPNO
+YND_전근무지   YND_BF_WRKPLC   EMPNO
+YND_주택임차    YND_HOUSE_LOAN    EMPNO
+YND_최종결과   YND_END  EMPNO
+YND_추가제출자료    YND_ADD_DOC   EMPNO
+YND_특별소득공제    YND_SP_INDCT   EMPNO
+사회보험신고    MPS_SOCIALINSURANCE   EMPL_NO
+접대비_신용카드   D_CRTCD_LIST   EMPLOYEE_NO
+      -->
+      
+    <delete id="deleteMhsEmp_Family" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrb.mhshrb001.service.impl.Mhshrb001Mapper.deleteMhsEmpFamily */
+        DELETE FROM MHS_FAMILY
+        WHERE EMPNO = #{empno}
+    </delete>
+    <delete id="deleteMhsEmp_Indvdlinfo" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrb.mhshrb001.service.impl.Mhshrb001Mapper.deleteMhsEmpIndvdlinfo */
+        DELETE FROM MHS_INDVDLINFO
+        WHERE EMPNO = #{empno}
+    </delete>
+    <delete id="deleteMhsEmp_Career" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrb.mhshrb001.service.impl.Mhshrb001Mapper.deleteMhsEmpCareer */
+        DELETE FROM MHS_CAREER
+        WHERE EMPNO = #{empno}
+    </delete>
+    <delete id="deleteMhsEmp_Eud" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrb.mhshrb001.service.impl.Mhshrb001Mapper.deleteMhsEud */
+        DELETE FROM MHS_EDU
+        WHERE EMPNO = #{empno}
+    </delete>
+    <delete id="deleteMhsEmp_Mltpwr" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrb.mhshrb001.service.impl.Mhshrb001Mapper.deleteMhsMltpwr */
+        DELETE FROM MHS_MLTPWR
+        WHERE EMPNO = #{empno}
+    </delete>
+    <delete id="deleteMhsEmp_Anslry" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrb.mhshrb001.service.impl.Mhshrb001Mapper.deleteMhsAnslry */
+        DELETE FROM MPS_ANSLRY
+        WHERE EMPNO = #{empno}
+    </delete>
+    <delete id="deleteMhsEmp_Crqfs" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrb.mhshrb001.service.impl.Mhshrb001Mapper.deleteMhsCrqfs */
+        DELETE FROM MHS_CRQFS
+        WHERE EMPNO = #{empno}
+    </delete>
+    <delete id="deleteMhsEmp_Acdmcr" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrb.mhshrb001.service.impl.Mhshrb001Mapper.deleteMhsEmpAcdmcr */
+        DELETE FROM MHS_ACDMCR
+        WHERE EMPNO = #{empno}
+    </delete>
+    
+    <update id="saveMhsIndvdlInfo" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrb.mhshrb001.service.impl.Mhshrb001Mapper.saveMhsIndvdlInfo */
+        MERGE INTO MHS_INDVDLINFO
+        USING DUAL ON (  
+                  EMPNO= #{empno}
+        ) 
+		WHEN MATCHED THEN 
+	        UPDATE 
+	        SET
+	               MRRG_DE= #{mrrgDe},
+	               BORN_ZIP= #{bornZip},
+	               BORN_ADRES= #{bornAdres},
+	               BORN_DETAILADRES= #{bornDetailAdres},
+	               UPT_DT = SYSDATE,
+	               UPT_ID = #{uptId}
+        WHEN NOT MATCHED THEN 
+	         INSERT
+	        (
+	            EMPNO,
+				MRRG_DE,
+				BORN_ZIP,
+				BORN_ADRES,
+				BORN_DETAILADRES,
+				
+				REG_DT,
+				REG_ID,
+				UPT_DT,
+				UPT_ID
+	        )
+	        VALUES
+	        (
+	            #{empno},
+	            #{mrrgDe},
+	            #{bornZip},
+	            #{bornAdres},
+	            #{bornDetailAdres},
+	            
+	            SYSDATE,
+	            #{regId},
+	            SYSDATE,
+	            #{uptId}
+	        )
+    </update>
+    
+    
+    <!-- 학력  -->
+    <select id="selectMhsAcdmcrList" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrb.mhshrb001.service.impl.Mhshrb001Mapper.selectMhsAcdmcrList */
+        SELECT
+               ACDMCR_SN,
+               EMPNO,
+               FNC_DATESTR(ENTSCH_DE) AS ENTSCH_DE,
+               FNC_DATESTR(GRDTN_DE) AS GRDTN_DE,
+               SCHUL_NM,
+               MAJOR_NM,
+               MINOR_NM,
+               DGRI_CODE,
+               DECODE(LAST_ACDMCR_AT,'Y','true','false') AS LAST_ACDMCR_AT,
+               AREA_CODE,
+               RM,
+               GRDTN_SE_CODE,
+               TO_CHAR(REG_DT,'YYYY-MM-DD HH24:MI:SS') AS REG_DT,
+               ACDMCR_SE_CODE,
+               LAST_ACDMCR_AT,
+               REG_ID,
+               TO_CHAR(UPT_DT,'YYYY-MM-DD HH24:MI:SS') AS UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_ACDMCR A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="acdmcrSn != null and acdmcrSn != ''">
+                AND ACDMCR_SN = #{acdmcrSn}
+            </if>
+            <if test="empno != null and empno != ''">
+                AND EMPNO = #{empno}
+            </if>
+ 
+        </trim>
+ 		ORDER BY ACDMCR_SN
+    </select>
+
+    <select id="selectMhsAcdmcr" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrb.mhshrb001.service.impl.Mhshrb001Mapper.selectMhsAcdmcr */
+        SELECT
+               ACDMCR_SN,
+               EMPNO,
+               FNC_DATESTR(ENTSCH_DE) AS ENTSCH_DE,
+               FNC_DATESTR(GRDTN_DE) AS GRDTN_DE,
+               SCHUL_CODE,
+               SCHUL_NM,
+               MAJOR_NM,
+               DGRI_NM,
+               LAST_ACDMCR_AT,
+               AREA_CODE,
+               RM,
+               GRDTN_SE,
+               REG_DT,
+               ACDMCR_SE,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_ACDMCR A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="acdmcrSn != null and acdmcrSn != ''">
+                AND ACDMCR_SN = #{acdmcrSn}
+            </if>
+            <if test="empno != null and empno != ''">
+                AND EMPNO = #{empno}
+            </if>
+        </trim>
+    </select>
+
+    <insert id="insertMhsAcdmcr" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrb.mhshrb001.service.impl.Mhshrb001Mapper.insertMhsAcdmcr */
+        INSERT INTO MHS_ACDMCR
+        (
+            ACDMCR_SN,
+            EMPNO,
+            ENTSCH_DE,
+            GRDTN_DE,
+            SCHUL_CODE,
+            SCHUL_NM,
+            MAJOR_NM,
+            DGRI_NM,
+            LAST_ACDMCR_AT,
+            AREA_CODE,
+            RM,
+            GRDTN_SE,
+            ACDMCR_SE,
+            REG_DT,
+            REG_ID
+        )
+        VALUES
+        (
+            #{acdmcrSn},
+            #{empno},
+            #{entschDe},
+            #{grdtnDe},
+            #{schulCode},
+            #{schulNm},
+            #{majorNm},
+            #{dgriNm},
+            #{lastAcdmcrAt},
+            #{areaCode},
+            #{rm},
+            #{grdtnSe},
+            #{acdmcrSe},
+            SYSDATE,
+            #{regId}
+        )
+    </insert>
+
+    <update id="updateMhsAcdmcr" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrb.mhshrb001.service.impl.Mhshrb001Mapper.updateMhsAcdmcr */
+        UPDATE MHS_ACDMCR SET
+
+               ENTSCH_DE= #{entschDe},
+               GRDTN_DE= #{grdtnDe},
+               SCHUL_CODE= #{schulCode},
+               SCHUL_NM= #{schulNm},
+               MAJOR_NM= #{majorNm},
+               DGRI_NM= #{dgriNm},
+               LAST_ACDMCR_AT= #{lastAcdmcrAt},
+               AREA_CODE= #{areaCode},
+               RM= #{rm},
+               GRDTN_SE= #{grdtnSe},
+               ACDMCR_SE= #{acdmcrSe},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+               AND ACDMCR_SN = #{acdmcrSn}
+               AND EMPNO = #{empno}
+        </trim>
+    </update>
+
+    <delete id="deleteMhsAcdmcr" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrb.mhshrb001.service.impl.Mhshrb001Mapper.deleteMhsAcdmcr */
+        DELETE FROM MHS_ACDMCR
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND ACDMCR_SN = #{acdmcrSn}
+                AND EMPNO = #{empno}
+        </trim>
+    </delete>
+    
+    <!-- 부속 정보 삭제 -->
+    <delete id="deleteMhsEmpAcdmcr" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrb.mhshrb001.service.impl.Mhshrb001Mapper.deleteMhsAcdmcr */
+        DELETE FROM MHS_ACDMCR
+                AND EMPNO = #{empno}
+    </delete>
+    
+     <!-- 직위콤보용  -->
+     <select id="selectMhshrb001OfcpsCode" parameterType="egovMapForNull" resultType="egovMapForNull">
+     /* kr.co.dbvision.api.mhs.hrb.mhshrb001.service.mapper.Mhshrm015Mapper.selectMhshrm015 */
+     SELECT
+            OFCPS_CODE,
+            OFCPS_NM,
+            USE_BEGIN_DE,
+            USE_END_DE,
+            USE_AT,
+            SORT_ORDR,
+            REG_DT,
+            REG_ID,
+            UPT_DT,
+            UPT_ID,
+            (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+            (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+       FROM MHS_OFCPS_CODE A
+   	  WHERE USE_AT = '1'
+   ORDER BY SORT_ORDR, OFCPS_CODE
+ 	</select>
+ 	
+ 	<!-- 직책 -->
+ 	<select id="selectMhshrb001RspofcCode" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrb.mhshrb001.service.mapper.Mhshrm015Mapper.selectMhshrb001RspofcCode */
+        SELECT
+               RSPOFC_CODE,
+               RSPOFC_NM,
+               FNC_DATESTR(USE_BEGIN_DE) AS USE_BEGIN_DE,
+               FNC_DATESTR(USE_END_DE) AS USE_END_DE,
+               USE_AT,
+               SORT_ORDR,
+               RSPOFC_ALLWNC_AMT,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+          FROM MHS_RSPOFC_CODE A
+   	     WHERE USE_AT = '1'
+        ORDER BY SORT_ORDR, RSPOFC_CODE
+    </select>
+    
+    <!-- 직급 -->
+    <select id="selectMhshrb001ClsfCode" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrb.mhshrb001.service.mapper.Mhshrm001Mapper.selectMhshrb001ClsfCode */
+        SELECT
+               CLSF_CODE,
+               CLSF_NM,
+               USE_AT,
+               SORT_ORDR,
+               REG_ID,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_CLSF_CODE A
+   	     WHERE USE_AT = '1'
+        ORDER BY SORT_ORDR, CLSF_CODE
+    </select>
+</mapper>

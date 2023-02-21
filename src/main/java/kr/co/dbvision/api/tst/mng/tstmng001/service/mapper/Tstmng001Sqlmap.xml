@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.tst.mng.tstmng001.service.mapper.Tstmng001Mapper">
+
+    <select id="selectTstmng001List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.tst.mng.tstmng001.service.mapper.Tstmng001Mapper.selectTstmng001List */
+        SELECT
+               KOR_ABRV_NM,
+               ENG_ABRV_NM,
+               DOMN_AT,
+               ENG_DC,
+               KOR_DC,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM STM_WRD A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="korAbrvNm != null and korAbrvNm != ''">
+                AND KOR_ABRV_NM = #{korAbrvNm}
+            </if>
+            <if test="sRegDt != null and sRegDt != ''">
+                <![CDATA[
+                AND REG_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+                ]]>
+            </if>
+            <if test="eRegDt != null and eRegDt != ''">
+                <![CDATA[
+                AND REG_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+                ]]>
+             </if>
+        </trim>
+    </select>
+
+    <select id="selectTstmng001" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.tst.mng.tstmng001.service.mapper.Tstmng001Mapper.selectTstmng001 */
+        SELECT
+               KOR_ABRV_NM,
+               ENG_ABRV_NM,
+               DOMN_AT,
+               ENG_DC,
+               KOR_DC,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM STM_WRD A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="korAbrvNm != null and korAbrvNm != ''">
+                AND KOR_ABRV_NM = #{korAbrvNm}
+            </if>
+        </trim>
+    </select>
+
+    <update id="saveTstmng001" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.tst.mng.tstmng001.service.mapper.Tstmng001Mapper.saveTstmng001 */
+        MERGE INTO STM_WRD A
+             USING (SELECT
+                    #{korAbrvNm} KOR_ABRV_NM
+                    FROM DUAL) B
+                ON (
+                    A.KOR_ABRV_NM = B.KOR_ABRV_NM
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               ENG_ABRV_NM= #{engAbrvNm},
+               DOMN_AT= #{domnAt},
+               ENG_DC= #{engDc},
+               KOR_DC= #{korDc},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               KOR_ABRV_NM,
+               ENG_ABRV_NM,
+               DOMN_AT,
+               ENG_DC,
+               KOR_DC,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{korAbrvNm},
+               #{engAbrvNm},
+               #{domnAt},
+               #{engDc},
+               #{korDc},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deleteTstmng001" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.tst.mng.tstmng001.service.mapper.Tstmng001Mapper.deleteTstmng001 */
+        DELETE FROM STM_WRD
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND KOR_ABRV_NM = #{korAbrvNm}
+        </trim>
+    </delete>
+</mapper>

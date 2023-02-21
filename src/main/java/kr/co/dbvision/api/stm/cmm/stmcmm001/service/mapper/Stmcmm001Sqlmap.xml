@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.stm.cmm.stmcmm001.service.mapper.Stmcmm001Mapper">
+
+	<select id="selectUser" parameterType="String" resultType="egovMapForNull">
+		/* kr.co.dbvision.api.stm.cmm.stmcmm001.service.impl.Stmcmm001Mapper.selectUser */
+		SELECT USER_ID,
+		       USER_NM,
+		       USER_IP,
+		       EMPNO,
+		       AUTHOR_SETTING,
+		       TO_CHAR(PASSWORD_UPDT,'YYYYMMDD') PASSWORD_UPDT
+		  FROM STM_USERS
+		 WHERE USE_AT = '1'
+		   AND USER_ID = #{userId}
+	</select>
+ 
+	<select id="selectUserDetail" parameterType="String" resultType="egovMapForNull">
+		/* kr.co.dbvision.api.stm.cmm.stmcmm001.service.impl.Stmcmm001Mapper.selectUserDetail */
+		SELECT A.USER_ID,
+			   A.USER_PASSWORD,
+		       A.USER_NM,
+		       A.USER_IP,
+		       A.EMPNO,
+		       B.DEPT_CODE,
+		       FNC_GETCLSFNM(B.CLSF_CODE) AS CLSF_CODE,
+		       C.DEPT_KOR_NM AS DEPT_NM,		       
+               AUTHOR_SETTING,
+               B.BPLC_CODE,
+               D.CLSF_CODE,
+               D.CLSF_NM,
+               TO_CHAR(A.PASSWORD_UPDT,'YYYYMMDD') PASSWORD_UPDT
+		  FROM STM_USERS A, MHS_EMP B ,MHS_DEPT C , MHS_CLSF_CODE D
+		 WHERE A.USE_AT = '1'
+		   AND A.EMPNO = B.EMPNO
+           AND B.DEPT_CODE = C.DEPT_CODE
+           AND B.BPLC_CODE = C.BPLC_CODE
+           AND B.CLSF_CODE = D.CLSF_CODE
+		   AND USER_ID = #{userId}
+	</select>
+
+	<select id="selectMenuList" parameterType="egovMapForNull" resultType="egovMapForNull">	
+	    /* kr.co.dbvision.api.stm.cmm.stmcmm001.service.impl.Stmcmm001Mapper.selectMenuList */
+	    SELECT LEVEL, B.*
+          FROM (SELECT A.MENU_ID AS ID,
+                       A.UPPER_MENU_ID AS PARENT_ID,
+                       A.MENU_NM AS TEXT,
+                       A.MENU_SE AS MENU_SE,
+                       A.ORDR AS ORDR,
+                       A.ENM AS TEXT_ENG,
+                       A.THIRD AS TEXT_THIRD,
+                       A.PROGRM_ID,
+                       NVL((SELECT INQIRE_AUTHOR_AT FROM STM_USERMENU WHERE MENU_ID = A.MENU_ID AND USER_ID = #{userId}),'0') AS INQIRE_AUTHOR_AT,
+                       NVL((SELECT REGIST_AUTHOR_AT FROM STM_USERMENU WHERE MENU_ID = A.MENU_ID AND USER_ID = #{userId}),'0') AS REGIST_AUTHOR_AT,
+                       NVL((SELECT UPDT_AUTHOR_AT   FROM STM_USERMENU WHERE MENU_ID = A.MENU_ID AND USER_ID = #{userId}),'0') AS UPDT_AUTHOR_AT,
+                       NVL((SELECT DELETE_AUTHOR_AT FROM STM_USERMENU WHERE MENU_ID = A.MENU_ID AND USER_ID = #{userId}),'0') AS DELETE_AUTHOR_AT,
+                       NVL((SELECT PRNTNG_AUTHOR_AT FROM STM_USERMENU WHERE MENU_ID = A.MENU_ID AND USER_ID = #{userId}),'0') AS PRNTNG_AUTHOR_AT,
+                       NVL((SELECT EXCEL_AUTHOR_AT  FROM STM_USERMENU WHERE MENU_ID = A.MENU_ID AND USER_ID = #{userId}),'0') AS EXCEL_AUTHOR_AT,
+                       NVL((SELECT DATA_AUTHOR_SE   FROM STM_USERMENU WHERE MENU_ID = A.MENU_ID AND USER_ID = #{userId}),'0') AS DATA_AUTHOR_SE,                   
+                       NVL((SELECT DELETE_AT        FROM STM_USERMENU WHERE MENU_ID = A.MENU_ID AND USER_ID = #{userId}),'1') AS DELETE_AT                   
+                  FROM STM_MENU A
+                 WHERE MENU_ID != 'CHF000000'
+                   AND MENU_USE_AT = '1') B
+            START WITH B.PARENT_ID = 'CHF000000'
+            CONNECT BY PRIOR B.ID = B.PARENT_ID
+            ORDER SIBLINGS BY B.ORDR
+	</select>
+	
+	<select id="selectRoleMenuList" parameterType="egovMapForNull" resultType="egovMapForNull">	
+	    /* kr.co.dbvision.api.stm.cmm.stmcmm001.service.impl.Stmcmm001Mapper.selectRoleMenuList */ 
+		SELECT LEVEL, B.*
+		  FROM (SELECT A.MENU_ID       AS ID,
+		               A.UPPER_MENU_ID AS PARENT_ID,
+		               A.MENU_NM       AS TEXT,
+		               A.MENU_SE       AS MENU_SE,
+		               A.ORDR          AS ORDR,
+		               A.ENM           AS TEXT_ENG,
+		               A.THIRD         AS TEXT_THIRD,
+		               A.PROGRM_ID,		               
+		               NVL((SELECT MAX(INQIRE_AUTHOR_AT)
+		                     FROM STM_ROLEMENU
+		                    WHERE MENU_ID = A.MENU_ID
+		                      AND ROLE_CODE IN (SELECT ROLE_CODE
+					                              FROM STM_ROLEUSER
+					                             WHERE USER_ID = #{userId})), '0') AS INQIRE_AUTHOR_AT,
+		               NVL((SELECT MAX(REGIST_AUTHOR_AT)
+		                     FROM STM_ROLEMENU
+		                    WHERE MENU_ID = A.MENU_ID
+		                      AND ROLE_CODE IN (SELECT ROLE_CODE
+		                                          FROM STM_ROLEUSER
+		                                         WHERE USER_ID = #{userId})), '0') AS REGIST_AUTHOR_AT,
+		               NVL((SELECT MAX(UPDT_AUTHOR_AT)
+		                     FROM STM_ROLEMENU
+		                    WHERE MENU_ID = A.MENU_ID
+		                      AND ROLE_CODE IN (SELECT ROLE_CODE
+		                                          FROM STM_ROLEUSER
+		                                          WHERE USER_ID = #{userId})), '0') AS UPDT_AUTHOR_AT,
+		               NVL((SELECT MAX(DELETE_AUTHOR_AT)
+		                     FROM STM_ROLEMENU
+		                    WHERE MENU_ID = A.MENU_ID
+		                      AND ROLE_CODE IN (SELECT ROLE_CODE
+		                                          FROM STM_ROLEUSER
+		                                         WHERE USER_ID = #{userId})), '0') AS DELETE_AUTHOR_AT,
+		               NVL((SELECT MAX(PRNTNG_AUTHOR_AT)
+		                     FROM STM_ROLEMENU
+		                    WHERE MENU_ID = A.MENU_ID
+		                      AND ROLE_CODE IN (SELECT ROLE_CODE
+		                                          FROM STM_ROLEUSER
+		                                         WHERE USER_ID = #{userId})), '0') AS PRNTNG_AUTHOR_AT,
+		               NVL((SELECT MAX(EXCEL_AUTHOR_AT)
+		                     FROM STM_ROLEMENU
+		                    WHERE MENU_ID = A.MENU_ID
+		                      AND ROLE_CODE IN (SELECT ROLE_CODE
+		                                          FROM STM_ROLEUSER
+		                                         WHERE USER_ID = #{userId})), '0') AS EXCEL_AUTHOR_AT,
+		              NVL((SELECT MIN(DATA_AUTHOR_SE)
+                             FROM STM_ROLEMENU
+                            WHERE MENU_ID = A.MENU_ID
+                              AND ROLE_CODE IN (SELECT ROLE_CODE
+                                                  FROM STM_ROLEUSER
+                                                 WHERE USER_ID = #{userId})), '0') AS DATA_AUTHOR_SE,                          
+		              NVL((SELECT MIN(DELETE_AT)
+		                     FROM STM_ROLEMENU
+		                    WHERE MENU_ID = A.MENU_ID
+		                      AND ROLE_CODE IN (SELECT ROLE_CODE
+		                                          FROM STM_ROLEUSER
+		                                          WHERE USER_ID = #{userId})), '1') AS DELETE_AT,
+		              NVL((SELECT DECODE(NVL(X.PM_CONFIRM,'0'),'0',NVL(X.PROGRS_STTUS,'0'),'2') AS AA FROM STM_DEV_STAT X, STM_MENU Y WHERE X.MENU_ID(+) = Y.MENU_ID AND Y.MENU_SE ='P' AND Y.MENU_USE_AT ='1' AND Y.MENU_ID = A.MENU_ID),'0') AS FINISH_CHK    
+		          FROM STM_MENU A
+		         WHERE MENU_ID != 'CHF000000'
+		           AND MENU_USE_AT = '1') B
+		 START WITH B.PARENT_ID = 'CHF000000'
+		CONNECT BY PRIOR B.ID = B.PARENT_ID
+		 ORDER SIBLINGS BY B.ORDR
+	</select>		
+	
+	<select id="selectMenuPath" parameterType="String" resultType="egovMapForNull">	
+		/* kr.co.dbvision.api.stm.cmm.stmcmm001.service.impl.Stmcmm001Mapper.selectMenuPath */ 
+		SELECT *
+		  FROM (SELECT A.MENU_ID,
+		               SUBSTR(SYS_CONNECT_BY_PATH(A.MENU_NM, '|#|'), 4) PATH_NM
+		          FROM STM_MENU A
+		         START WITH A.UPPER_MENU_ID = 'CHF000000'
+		        CONNECT BY PRIOR A.MENU_ID = A.UPPER_MENU_ID
+		         ORDER SIBLINGS BY A.ORDR) A
+		 WHERE MENU_ID = #{menuId}
+	</select>
+
+    <insert id="insertStmUseHis" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.stm.cmm.stmcmm001.service.impl.Stmcmm001Mapper.insertStmUseHis */ 
+        INSERT INTO STM_USE_HIS (
+            USEHIST_SN
+           ,CONECT_IP
+           ,MENU_ID
+           ,HIST_SE
+           ,HIST_DC
+           ,REG_DT
+           ,REG_ID
+        ) VALUES (
+            STM_USE_HIS_SEQUENCE.NEXTVAL
+           ,#{conectIp}
+           ,#{menuId}
+           ,#{histSe}
+           ,#{histDc}
+           ,SYSDATE
+           ,#{regId}
+        )
+    </insert>
+
+</mapper>

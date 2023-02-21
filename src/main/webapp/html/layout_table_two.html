@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+    <title>X-ERP</title>
+    <meta name="keywords" content="디비비전">
+    <meta name="description" content="디비비전">
+    <meta name="keywords" content="디비비전">
+    <meta name="generator" content="Notepad++">
+    
+<link href="../glyphicons/css/bootstrap-glyphicons.css" rel="stylesheet" type="text/css">
+<link href="../axicon/axicon.min.css" rel="stylesheet" type="text/css">
+<link href="../css/table.css" rel="stylesheet" type="text/css">   
+<LINK href="css/default.css" rel="stylesheet" type="text/css">
+<LINK href="css/iframe.css" rel="stylesheet" type="text/css">
+
+<!-- jquery -->
+<script src="/xerp/js/jquery-1.11.1.min.js"></script>
+<script src="/xerp/js/jquery-ui-custom.min.js"></script>
+<!-- bpopup -->
+<script src="/xerp/js/jquery.bpopup.js"></script>
+<script src="/xerp/js/jquery.blockUI.js"></script>
+<!-- multi file upload -->
+<script src="/xerp/js/jquery.fileupload.js"></script>
+<!-- websocket -->
+<script src="/xerp/js/sockjs-0.3.4.js"></script>
+<!-- validation -->
+<script src="/xerp/js/validation/jquery.validate.js"></script>
+<script src="/xerp/js/validation/localization/messages_ko.js"></script>
+<!-- number -->
+<script src="/xerp/js/jquery.number.js"></script>
+<!-- jquery.form.js -->
+<script src="/xerp/js/jquery.form.js"></script>
+
+<!-- CryptoJS v3.1.2 -->
+<script src="/xerp/js/CryptoJSv3.1.2/rollups/aes.js"></script>
+<script src="/xerp/js/CryptoJSv3.1.2/rollups/sha256.js"></script>
+
+<!-- dhtmlxtree -->
+<link rel="stylesheet" type="text/css" href="/xerp/css/dhtmlx/codebase/dhtmlxtree.css"/>
+<script src="/xerp/js/dhtmlx/codebase/dhtmlxtree.js"></script>
+<!-- dhtmlxtreeview -->
+<link rel="stylesheet" type="text/css" href="/xerp/css/dhtmlx/codebase/dhtmlxtreeview.css"/>
+<script src="/xerp/js/dhtmlx/codebase/dhtmlxtreeview.js"></script>
+<!-- dhtmlx grid -->
+<link rel="stylesheet" type="text/css" href="/xerp/css/dhtmlx/codebase/dhtmlxgrid.css"/>
+<script src="/xerp/js/dhtmlx/codebase/dhtmlxgrid.js"></script>
+<!-- dhtmlxwindows -->
+<link rel="stylesheet" type="text/css" href="/xerp/css/dhtmlx/codebase/dhtmlxwindows.css"/>
+<script src="/xerp/js/dhtmlx/codebase/dhtmlxwindows.js"></script>
+<!-- dhtmlxcombo -->
+<link rel="stylesheet" type="text/css" href="/xerp/css/dhtmlx/codebase/dhtmlxcombo.css"/>
+<script src="/xerp/js/dhtmlx/codebase/dhtmlxcombo.js"></script>
+<!-- dhtmlxtreegrid -->
+<script src="/xerp/js/dhtmlx/codebase/dhtmlxtreegrid.js"></script>
+<!-- dhtmlxcalender -->
+<link rel="stylesheet" type="text/css" href="/xerp/css/dhtmlx/codebase/dhtmlxcalendar.css"/>
+<script src="/xerp/js/dhtmlx/codebase/dhtmlxcalendar.js"></script>
+<!-- dhtmlxchart -->
+<link rel="stylesheet" type="text/css" href="/xerp/css/dhtmlx/codebase/dhtmlxchart.css"/>
+<script src="/xerp/js/dhtmlx/codebase/dhtmlxchart.js"></script>
+<!-- dhtmlxchart -->
+<link rel="stylesheet" type="text/css" href="/xerp/css/dhtmlx/codebase/dhtmlxtabbar.css"/>
+<script src="/xerp/js/dhtmlx/codebase/dhtmlxtabbar.js"></script>
+
+<!-- core js -->
+<script src="/xerp/js/core/comCore.js"></script>
+<script src="/xerp/js/core/comConvention.js"></script>
+<script src="/xerp/js/core/comTransaction.js"></script>
+<script src="/xerp/js/core/comEnv.js"></script>
+<script src="/xerp/js/core/comPopup.js"></script>
+<script src="/xerp/js/core/comDhtmlx.js"></script>
+<script src="/xerp/js/core/comEnvSetting.js"></script>
+
+
+
+</head>
+
+<body>
+
+<div class="wrapper_con">
+    <div class="path_div">
+        <div class="path">
+            <span class="path_star" style="display:inline-block;"></span>
+            <ul class="path_list" style="display:inline-block;">
+                <li><span>시스템관리</span></li>
+                <li><span>사용자관리</span></li>
+                <li><a href="#"><span>사용자등록</span></a></li>
+            </ul>
+            <ul class="btn_type1">
+                <li title="도움말"><i class="axi axi-live-help"></i></li>
+                <li title="프로그램개선요청"><i class="axi axi-happytalk-counselor"></i></li>
+            </ul>
+        </div>
+        <div class="pathbt_div">
+            <ul class="pathbt_list">
+                <li><a href="#"><i class="axi axi-note-add mr5"></i><span>신규</span></a></li>
+                <li><a href="#"><i class="axi axi-save mr5"></i><span>저장</span></a></li>
+                <li><a href="#"><i class="axi axi-ion-android-trash mr5"></i><span>삭제</span></a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="consearch_div">
+        <div class="consearch_input">
+            <ul class="consearchinput_list">
+                <li><span>부서</span><select name="deptNmSearchFormStmUsers" class="deptNmSearchFormStmUsers" id="deptNmSearchFormStmUsers" style="width: 140px;"><option value="">전체</option><option value="0030">감사실</option><option value="8400">경영지원팀</option><option value="8200">고객관리팀</option><option value="1700">공공서비스정책관</option><option value="1710">공공서비스혁신과</option><option value="2130">교부세과</option><option value="1720">국민참여혁신과</option><option value="1300">국제행정협력관</option><option value="1302">국제협력담당관</option><option value="8300">기술혁신팀</option><option value="1210">기획재정담당관</option><option value="1601">기획재정담당관</option><option value="1100">기획조정실</option><option value="1000">디비비전</option><option value="8000">디비비전(주)</option><option value="1903">민간협력과</option><option value="1730">민원제도혁신과</option><option value="1240">법무담당관</option><option value="1400">비상안전기획관</option><option value="1840">스마트서비스과</option><option value="8500">임원</option><option value="0020">임원실</option><option value="1901">자치행정과</option><option value="2110">재정정책과</option><option value="2120">재정협력과</option><option value="1810">전자정부국</option><option value="1820">전자정부정책과</option><option value="1611">정보공개정책과</option><option value="1401">정보사업팀</option><option value="1830">정보화사업성과관리과</option><option value="1610">정부혁신기획관</option><option value="1200">정책기획관</option><option value="1220">정책평가담당관</option><option value="1630">조직기획과</option><option value="1620">조직정책관</option><option value="1640">조직진단과</option><option value="1902">주민과</option><option value="2200">지방세정책관</option><option value="2000">지방재정경제실</option><option value="2100">지방재정정책관</option><option value="1900">지방차지분권실</option><option value="1850">지역정보지원과</option><option value="8100">컨설팅팀</option><option value="1250">테스트</option><option value="0040">품질본부</option><option value="1740">행정정보공유과</option><option value="1301">행정한류담당관</option><option value="1500">혁신조직실</option><option value="1230">혁신행정담당관</option><option value="0010">홍보담당관</option></select>
+                </li>
+                <li><span>사용자ID</span><input name="search" type="text"></li>
+                <li><span>사용자명</span><input name="search" type="text"></li>
+                
+                <li><span>사원여부</span><select name="empAt" id="empAtSearchFormStmUsers">
+                                        <option value="">전체</option>
+                                        <option value="1">사원</option>
+                                        <option value="0">비사원</option>
+                                    </select>
+                </li>
+                <li><span>사용여부</span><select name="useAt" id="useAtSearchFormStmUsers">
+                                        <option value="">전체</option>
+                                        <option value="1">사용</option>
+                                        <option value="0">미사용</option>
+                                    </select></li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="consearch_div">
+        <div class="consearch_input">
+            <ul class="consearchinput_list">
+                <li><span>부서</span><select name="deptNmSearchFormStmUsers" class="deptNmSearchFormStmUsers" id="deptNmSearchFormStmUsers" style="width: 140px;"><option value="">전체</option><option value="0030">감사실</option><option value="8400">경영지원팀</option><option value="8200">고객관리팀</option><option value="1700">공공서비스정책관</option><option value="1710">공공서비스혁신과</option><option value="2130">교부세과</option><option value="1720">국민참여혁신과</option><option value="1300">국제행정협력관</option><option value="1302">국제협력담당관</option><option value="8300">기술혁신팀</option><option value="1210">기획재정담당관</option><option value="1601">기획재정담당관</option><option value="1100">기획조정실</option><option value="1000">디비비전</option><option value="8000">디비비전(주)</option><option value="1903">민간협력과</option><option value="1730">민원제도혁신과</option><option value="1240">법무담당관</option><option value="1400">비상안전기획관</option><option value="1840">스마트서비스과</option><option value="8500">임원</option><option value="0020">임원실</option><option value="1901">자치행정과</option><option value="2110">재정정책과</option><option value="2120">재정협력과</option><option value="1810">전자정부국</option><option value="1820">전자정부정책과</option><option value="1611">정보공개정책과</option><option value="1401">정보사업팀</option><option value="1830">정보화사업성과관리과</option><option value="1610">정부혁신기획관</option><option value="1200">정책기획관</option><option value="1220">정책평가담당관</option><option value="1630">조직기획과</option><option value="1620">조직정책관</option><option value="1640">조직진단과</option><option value="1902">주민과</option><option value="2200">지방세정책관</option><option value="2000">지방재정경제실</option><option value="2100">지방재정정책관</option><option value="1900">지방차지분권실</option><option value="1850">지역정보지원과</option><option value="8100">컨설팅팀</option><option value="1250">테스트</option><option value="0040">품질본부</option><option value="1740">행정정보공유과</option><option value="1301">행정한류담당관</option><option value="1500">혁신조직실</option><option value="1230">혁신행정담당관</option><option value="0010">홍보담당관</option></select>
+                </li>
+                <li><span>사용자ID</span><input name="search" type="text"></li>
+                <li><span>사용자명</span><input name="search" type="text"></li>
+                
+                <li><span>사원여부</span><select name="empAt" id="empAtSearchFormStmUsers">
+                                        <option value="">전체</option>
+                                        <option value="1">사원</option>
+                                        <option value="0">비사원</option>
+                                    </select>
+                </li>
+                <li><span>사용여부</span><select name="useAt" id="useAtSearchFormStmUsers">
+                                        <option value="">전체</option>
+                                        <option value="1">사용</option>
+                                        <option value="0">미사용</option>
+                                    </select></li>
+            </ul>
+        </div>
+        <div class="consearchbt_div">
+            <ul class="consearchbt_list">
+                <li><a href="#"><span class="glyphicon glyphicon-search mr5"></span><span>조회</span></a></li>
+                <li><a href="#"><span class="glyphicon glyphicon-refresh mr5"></span><span>초기화</span></a></li>
+            </ul>
+        </div>  
+    </div>
+    
+
+    <div class="wrapper">
+    
+        
+        
+        <div class="div" style="width:calc(60% - 5px);">
+            <div class="div_title">
+            <span class="table_sumnum">10</span>
+            </div>
+            <div class="div_line" id="gridA" style="height:80vh; width:100%; position:relative;"> 
+            </div>
+        </div>
+        
+        <div class="div_divine"></div>
+        
+        <div class="div" style="width:calc(40% - 5px)">
+            <div class="div_line" style="min-height:80vh; margin-top:23px;">
+                
+                <div class="detail_type01">
+                       
+                             <table>
+                            <caption>
+                                사용자<!-- 사용자등록 -->
+                            </caption>
+                            <colgroup>
+                                <col width="100">
+                                <col width="">
+                            </colgroup>
+                            <tbody><tr>
+                                <th class="essential_icon">
+                                    사원번호<!-- 사원번호 -->
+                                </th>
+                                <td>
+                                    <input name="empno" disabled="disabled" id="empnoSaveFormStmUsers" style="width: 50%;" required="true" type="text" maxlength="15" readonly="">
+                                    <button class="btn_common01" id="btnPopEmpSearchStmUsers" style="display: none;" type="button">
+                                        <span class="glyphicon glyphicon glyphicon-search"></span>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th class="essential_icon">
+                                    사용자 명<!-- 사용자명 -->
+                                </th>
+                                <td>
+                                    <input name="userNm" id="userNmSaveFormStmUsers" style="width: 50%;" required="true" type="text" maxlength="20">
+                                </td>
+                            </tr>
+                            <tr>
+                                <th class="essential_icon">
+                                    사용자 ID<!-- 사용자ID -->
+                                </th>
+                                <td>
+                                    <input name="userId" disabled="disabled" id="userIdSaveFormStmUsers" style="width: 50%;" required="true" type="text" maxlength="30">                            
+                                </td>
+                            </tr>
+                            <tr>
+                                <th class="essential_icon">
+                                    패스워드<!-- 패스워드 -->
+                                </th>
+                                <td>
+                                    <input name="userPassword" id="userPasswordSaveFormStmUsers" style="width: 50%;" required="true" type="password" maxlength="30">                            
+                                </td>
+                            </tr>
+                            <tr>
+                                <th class="essential_icon">
+                                    사용자IP<!-- 사용자IP -->
+                                </th>
+                                <td>
+                                    <input name="userIp" id="userIpSaveFormStmUsers" style="width: 50%;" required="true" type="text" maxlength="100">
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    사원 여부<!-- 사원여부 -->
+                                </th>
+                                <td>
+                                    <div class="checkbox">
+                                        <label> 
+                                            <input name="emplAt" id="emplAtSaveFormStmUsers" type="checkbox">
+                                            <i class="input-helper"></i>
+                                        </label>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    사용 여부<!-- 사용여부 -->
+                                </th>
+                                <td>
+                                    <div class="checkbox">
+                                        <label> 
+                                            <input name="useAt" id="useAtSaveFormStmUsers" type="checkbox">
+                                            <i class="input-helper"></i>
+                                        </label>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th class="essential_icon">권한부여방식</th>
+                                <td>
+                                    <select name="roleOption" id="roleOptionSaveFormStmUsers">
+                                        <option value="UG">사용자권한+그룹권한</option>
+                                        <option value="U">사용자권한</option>
+                                        <option value="G">그룹권한</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>사용자그룹권한</th>
+                                <td>
+                                    <input name="roleCode" id="roleCodeSaveFormStmUsers" type="hidden">
+                                    <div id="userRoleCodeSaveFormStmUsersCombo"><div class="checkbox"><label><input name="userRoleCodeSaveFormStmUsers" class="userRoleCodeSaveFormStmUsers" id="checkbox_userRoleCodeSaveFormStmUsers감사담당자" type="checkbox" value="ROLE_AUT"><i class="input-helper"></i><span> 감사담당자</span></label></div><div class="checkbox"><label><input name="userRoleCodeSaveFormStmUsers" class="userRoleCodeSaveFormStmUsers" id="checkbox_userRoleCodeSaveFormStmUsers구매담당자" type="checkbox" value="ROLE_MPU"><i class="input-helper"></i><span> 구매담당자</span></label></div><div class="checkbox"><label><input name="userRoleCodeSaveFormStmUsers" class="userRoleCodeSaveFormStmUsers" id="checkbox_userRoleCodeSaveFormStmUsers급여담당자" type="checkbox" value="ROLE_MPS"><i class="input-helper"></i><span> 급여담당자</span></label></div><div class="checkbox"><label><input name="userRoleCodeSaveFormStmUsers" class="userRoleCodeSaveFormStmUsers" id="checkbox_userRoleCodeSaveFormStmUsers시스템관리자" type="checkbox" value="ROLE_ADM"><i class="input-helper"></i><span> 시스템관리자</span></label></div><div class="checkbox"><label><input name="userRoleCodeSaveFormStmUsers" class="userRoleCodeSaveFormStmUsers" id="checkbox_userRoleCodeSaveFormStmUsers예산담당자" type="checkbox" value="ROLE_MBS"><i class="input-helper"></i><span> 예산담당자</span></label></div><div class="checkbox"><label><input name="userRoleCodeSaveFormStmUsers" class="userRoleCodeSaveFormStmUsers" id="checkbox_userRoleCodeSaveFormStmUsers인사담당자" type="checkbox" value="ROLE_MHS"><i class="input-helper"></i><span> 인사담당자</span></label></div><div class="checkbox"><label><input name="userRoleCodeSaveFormStmUsers" class="userRoleCodeSaveFormStmUsers" id="checkbox_userRoleCodeSaveFormStmUsers일반사용자" type="checkbox" value="ROLE_GNR"><i class="input-helper"></i><span> 일반사용자</span></label></div><div class="checkbox"><label><input name="userRoleCodeSaveFormStmUsers" class="userRoleCodeSaveFormStmUsers" id="checkbox_userRoleCodeSaveFormStmUsers자산담당자" type="checkbox" value="ROLE_MAS"><i class="input-helper"></i><span> 자산담당자</span></label></div><div class="checkbox"><label><input name="userRoleCodeSaveFormStmUsers" class="userRoleCodeSaveFormStmUsers" id="checkbox_userRoleCodeSaveFormStmUsers회계담당자" type="checkbox" value="ROLE_MFS"><i class="input-helper"></i><span> 회계담당자</span></label></div></div>
+                                </td>
+                            </tr>
+                        </tbody></table>
+                            
+                   </div>
+                </div>
+        </div>
+        <div class="div_divine"></div>
+       
+         
+         
+     
+    </div>
+</div>
+
+
+<script>
+var gv_ContextPath = "/xerp";
+var dhxGridHeaderInfo = [];
+dhxGridHeaderInfo.push(gf_MakeDhxGridHeader('No', '40', 'center', 'str', 'cntr', false, 'num', '', ''));  
+dhxGridHeaderInfo.push(gf_MakeDhxGridHeader('<input type="checkbox" id="checkAllEtsfmg000" />', '40', 'center', 'na', 'ch', false, 'selYn', '', ''));  
+dhxGridHeaderInfo.push(gf_MakeDhxGridHeader('문서분류', '100', 'center', 'str', 'ro', false, 'docClsCode', '', ''));   
+dhxGridHeaderInfo.push(gf_MakeDhxGridHeader('양식명', '*', 'left', 'str', 'ro', false, 'raisnm', '', '')); /* gf_LocaleTrans('default', 'titRaisnm') */    
+
+var dhxGrid = gf_MakeDhxGrid('gridA', dhxGridHeaderInfo, true, false, false);
+dhxGrid.enableAutoWidth(true);
+
+var data = [
+	
+	{selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+	{selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+	{selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+	{selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+	{selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+	{selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+	{selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+	{selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+	{selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+	{selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+	{selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+	{selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+	{selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+	{selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+	{selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+	{selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+	{selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+	{selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'},
+    {selYn:'1', docClsCode:'공통', raisnm:'문서들.....'}
+		
+];
+
+dhxGrid.parse(data, 'js');
+ 
+</script>
+
+
+
+</body>
+</html>

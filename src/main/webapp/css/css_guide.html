@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html class="no-js" lang="ko">
+
+<head>
+    <meta charset="utf-8">
+    <link href="../img/icon/dbv.ico" rel="shortcut icon" type="image/x-icon">
+
+    <link href="../css/dhtmlx/skin/dhtmlx.css" rel="stylesheet" type="text/css">
+    <link href="../glyphicons/css/bootstrap-glyphicons.css" rel="stylesheet" type="text/css">
+
+    <!-- jquery -->
+    <script src="../js/jquery-1.11.1.min.js"></script>
+    <script src="../js/jquery-ui-custom.min.js"></script>
+
+    <!-- css -->
+
+    <link href="../css/default.css" rel="stylesheet" type="text/css">
+    <link href="../css/base.css" rel="stylesheet" type="text/css">
+    <link href="../css/baseSub.css" rel="stylesheet" type="text/css">
+    <link href="../css/contents.css" rel="stylesheet" type="text/css">
+    <link href="../css/table.css" rel="stylesheet" type="text/css">
+    <link href="../css/iframe.css" rel="stylesheet" type="text/css">
+
+    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js?skin=desert"></script>
+
+
+    <title>XERP</title>
+    <style>
+        body {
+            padding: 20px;
+        }
+
+        code {
+            font-family: monospace;
+        }
+
+
+        /* 공통 체크박스 */
+        .box {
+            position: absolute;
+        }
+
+        .checkbox {
+            position: relative;
+            top: 3px;
+        }
+
+        .checkbox label {
+            padding-left: 4px;
+            display: block;
+        }
+
+        .checkbox input {
+            top: 0;
+            left: 0;
+            z-index: 1;
+            cursor: pointer;
+            opacity: 0;
+            position: relative;
+            width: 12px;
+            height: 12px;
+        }
+
+        .checkbox input:checked+.input-helper:before {
+            border-color: #ced4da;
+        }
+
+        .checkbox .input-helper:before,
+        .checkbox .input-helper:after {
+            position: absolute;
+            content: "";
+            transition: all 200ms;
+        }
+
+        .checkbox .input-helper:before {
+            left: 0;
+            border: 1px solid #ced4da;
+        }
+
+        .checkbox input:checked+.input-helper:before {
+            background-color: #ced4da;
+        }
+
+        .checkbox input:checked+.input-helper:after {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        .checkbox .input-helper:before {
+            top: 0;
+            width: 12px;
+            height: 12px;
+            border-radius: 1px;
+            color: #fff;
+        }
+
+        .checkbox .input-helper:after {
+            content: '\2713';
+            font-size: 12px;
+            left: 1px;
+            top: -3px;
+            color: #fff;
+            transform: scale(0);
+            opacity: 0;
+        }
+
+
+        .checkbox span {
+            position: relative;
+            top: -3px;
+        }
+
+        .detail_type024 {
+            position: relative;
+            clear: both;
+            border-top: none;
+            border-bottom: none;
+        }
+
+        .detail_type024 table {
+            position: relative;
+            clear: both;
+            width: 100%;
+            border-bottom: none;
+            border-collapse: separate;
+            background: #fff;
+            text-align: center !important;
+            white-space: nowrap;
+        }
+
+        .detail_type024 table th {
+            position: relative;
+            padding: 3px 12px;
+            border-bottom: solid 1px #307ab2;
+            background: #649fe2;
+            font-size: 0.75rem;
+            font-weight: bold;
+            color: #fff;
+            text-align: right;
+            letter-spacing: -.5px;
+        }
+
+        .detail_type024 table td {
+            position: relative;
+            border-bottom: solid 1px #ddd;
+            border-right: solid 1px #d8d8d8;
+            text-align: left;
+            line-height: 20px;
+            letter-spacing: -.3px;
+            font-size: 0.75rem;
+            color: #212529;
+            empty-cells: show;
+        }
+
+        .detail_type024 table td a {
+            color: #333;
+        }
+
+        .detail_type024 td input[type="text"] {
+            text-align: center
+        }
+
+        .detail_type024 td select {
+            text-align: center
+        }
+
+        .detail_type024 .al input[type="text"] {
+            text-align: left
+        }
+
+        .detail_type024 .al select {
+            text-align: left
+        }
+
+        .detail_type024 .al button {
+            text-align: left
+        }
+
+        .detail_type024 .cellred {
+            background: #f9c1c1;
+            border-bottom: solid 1px #ddd;
+        }
+
+        .detail_type024 .cellgray {
+            background: #f2f2f2;
+        }
+
+        .detail_type024 .brnavy {
+            border-right: 1px solid #307ab2;
+        }
+
+        .detail_type024 .bbnone {
+            border-bottom: none;
+        }
+
+        .detail_type024 .surtax {
+            font-size: 10px;
+            opacity: 0.8;
+        }
+
+        .detail_type024 thead {
+            table-layout: fixed;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Update</h2>
+
+    <div class="detail_type024 mt5">
+        <table>
+            <caption>레이아웃 테이블</caption>
+            <tr>
+                <th class="ac brnavy" style="min-width:100px">날짜</th>
+                <th class="ac brnavy" style="min-width:100px">업데이트 유형</th>
+                <th class="ac brnavy" style="min-width:100px">업데이트 내역</th>
+                <th class="ac brnavy" style="min-width:100px">사용방법</th>
+            </tr>
+            <tr>
+                <td class="ac cellgray"><b>2022-05-04 17:15</b></td>
+                <td class="ac">폼 내 테이블 클래스 추가</td>
+                <td class="al pl10">form영역 안에 폼 들어갈시 두줄 겹칠 경우 쓰는 클래스 추가<br>.form_tabtype01(윗줄에 선 포인트 색상 있음) / .form_tabtype02(포인트 색상 없음-중간사용) </td>
+                <td class="al pl10" rowspan="2">
+                    <div class="colorscripter-code" style="color:#010101;font-family:Consolas, 'Liberation Mono', Menlo, Courier, monospace !important; position:relative !important;overflow:auto"><table class="colorscripter-code-table" style="margin:0;padding:0;border:none;background-color:#fafafa;border-radius:4px;" cellspacing="0" cellpadding="0"><tr><td style="padding:6px;border-right:2px solid #e5e5e5"><div style="margin:0;padding:0;word-break:normal;text-align:right;color:#666;font-family:Consolas, 'Liberation Mono', Menlo, Courier, monospace !important;line-height:130%"><div style="line-height:130%">1</div><div style="line-height:130%">2</div><div style="line-height:130%">3</div><div style="line-height:130%">4</div><div style="line-height:130%">5</div><div style="line-height:130%">6</div><div style="line-height:130%">7</div><div style="line-height:130%">8</div><div style="line-height:130%">9</div><div style="line-height:130%">10</div><div style="line-height:130%">11</div><div style="line-height:130%">12</div><div style="line-height:130%">13</div><div style="line-height:130%">14</div><div style="line-height:130%">15</div><div style="line-height:130%">16</div><div style="line-height:130%">17</div><div style="line-height:130%">18</div><div style="line-height:130%">19</div><div style="line-height:130%">20</div><div style="line-height:130%">21</div><div style="line-height:130%">22</div><div style="line-height:130%">23</div><div style="line-height:130%">24</div><div style="line-height:130%">25</div><div style="line-height:130%">26</div></div></td><td style="padding:6px 0;text-align:left"><div style="margin:0;padding:0;color:#010101;font-family:Consolas, 'Liberation Mono', Menlo, Courier, monospace !important;line-height:130%"><div style="padding:0 6px; white-space:pre; line-height:130%"><span style="color:#010101">&lt;</span><span style="color:#066de2">div</span>&nbsp;<span style="color:#0a9989">class</span>=<span style="color:#df5000">"mt5&nbsp;outer_line_form&nbsp;searchx2h"</span><span style="color:#0a9989"></span>&nbsp;<span style="color:#0a9989">style</span>=<span style="color:#df5000">"min-height:&nbsp;calc(100vh&nbsp;-&nbsp;120px);"</span><span style="color:#0a9989"></span><span style="color:#010101">&gt;</span></div><div style="padding:0 6px; white-space:pre; line-height:130%">&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#010101">&lt;</span><span style="color:#066de2">div</span>&nbsp;<span style="color:#0a9989">class</span>=<span style="color:#df5000">"form_tabtype01"</span><span style="color:#0a9989"></span><span style="color:#010101">&gt;</span></div><div style="padding:0 6px; white-space:pre; line-height:130%">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#010101">&lt;</span><span style="color:#066de2">table</span><span style="color:#010101">&gt;</span></div><div style="padding:0 6px; white-space:pre; line-height:130%">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#010101">&lt;</span><span style="color:#010101">/</span><span style="color:#066de2">table</span><span style="color:#010101">&gt;</span></div><div style="padding:0 6px; white-space:pre; line-height:130%">&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#010101">&lt;</span><span style="color:#010101">/</span><span style="color:#066de2">div</span><span style="color:#010101">&gt;</span></div><div style="padding:0 6px; white-space:pre; line-height:130%">&nbsp;</div><div style="padding:0 6px; white-space:pre; line-height:130%">&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#010101">&lt;</span><span style="color:#066de2">div</span>&nbsp;<span style="color:#0a9989">class</span>=<span style="color:#df5000">"form_tabtype02"</span><span style="color:#0a9989"></span><span style="color:#010101">&gt;</span></div><div style="padding:0 6px; white-space:pre; line-height:130%">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#010101">&lt;</span><span style="color:#066de2">div</span>&nbsp;<span style="color:#0a9989">class</span>=<span style="color:#df5000">"outer_tab"</span><span style="color:#0a9989"></span>&nbsp;<span style="color:#0a9989">id</span>=<span style="color:#df5000">"tabbarObj"</span><span style="color:#0a9989"></span>&nbsp;<span style="color:#0a9989">style</span>=<span style="color:#df5000">"height:calc(100vh&nbsp;-&nbsp;558px);"</span><span style="color:#0a9989"></span><span style="color:#010101">&gt;</span></div><div style="padding:0 6px; white-space:pre; line-height:130%">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#010101">&lt;</span><span style="color:#066de2">div</span>&nbsp;<span style="color:#0a9989">id</span>=<span style="color:#df5000">"tab1"</span><span style="color:#0a9989"></span>&nbsp;<span style="color:#0a9989">class</span>=<span style="color:#df5000">"inner_tab"</span><span style="color:#0a9989"></span><span style="color:#010101">&gt;</span></div><div style="padding:0 6px; white-space:pre; line-height:130%">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#010101">&lt;</span><span style="color:#066de2">div</span>&nbsp;<span style="color:#0a9989">class</span>=<span style="color:#df5000">"outer_line_grid"</span><span style="color:#0a9989"></span>&nbsp;<span style="color:#0a9989">style</span>=<span style="color:#df5000">"height:calc(100vh&nbsp;-&nbsp;558px&nbsp;-&nbsp;69px);"</span><span style="color:#0a9989"></span><span style="color:#010101">&gt;</span></div><div style="padding:0 6px; white-space:pre; line-height:130%">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;실제&nbsp;높이와&nbsp;좌우&nbsp;라인그려줌</div><div style="padding:0 6px; white-space:pre; line-height:130%">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#010101">&lt;</span><span style="color:#066de2">div</span>&nbsp;<span style="color:#0a9989">class</span>=<span style="color:#df5000">"dhtml_line"</span><span style="color:#0a9989"></span><span style="color:#010101">&gt;</span></div><div style="padding:0 6px; white-space:pre; line-height:130%">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;아래선과&nbsp;높이&nbsp;상속(높이는&nbsp;부모높이가&nbsp;상속됨)</div><div style="padding:0 6px; white-space:pre; line-height:130%">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#010101">&lt;</span><span style="color:#066de2">div</span>&nbsp;<span style="color:#0a9989">class</span>=<span style="color:#df5000">"dhtml_grid"</span><span style="color:#0a9989"></span>&nbsp;<span style="color:#0a9989">id</span>=<span style="color:#df5000">"gridid"</span><span style="color:#0a9989"></span><span style="color:#010101">&gt;</span>실제그리드<span style="color:#010101">&lt;</span><span style="color:#010101">/</span><span style="color:#066de2">div</span><span style="color:#010101">&gt;</span></div><div style="padding:0 6px; white-space:pre; line-height:130%">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#010101">&lt;</span><span style="color:#010101">/</span><span style="color:#066de2">div</span><span style="color:#010101">&gt;</span></div><div style="padding:0 6px; white-space:pre; line-height:130%">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#010101">&lt;</span><span style="color:#010101">/</span><span style="color:#066de2">div</span><span style="color:#010101">&gt;</span></div><div style="padding:0 6px; white-space:pre; line-height:130%">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#010101">&lt;</span><span style="color:#010101">/</span><span style="color:#066de2">div</span><span style="color:#010101">&gt;</span></div><div style="padding:0 6px; white-space:pre; line-height:130%">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#010101">&lt;</span><span style="color:#066de2">div</span>&nbsp;<span style="color:#0a9989">id</span>=<span style="color:#df5000">"tab2"</span><span style="color:#0a9989"></span>&nbsp;<span style="color:#0a9989">class</span>=<span style="color:#df5000">"inner_tab"</span><span style="color:#0a9989"></span><span style="color:#010101">&gt;</span></div><div style="padding:0 6px; white-space:pre; line-height:130%">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#010101">&lt;</span><span style="color:#010101">/</span><span style="color:#066de2">div</span><span style="color:#010101">&gt;</span></div><div style="padding:0 6px; white-space:pre; line-height:130%">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#010101">&lt;</span><span style="color:#066de2">div</span>&nbsp;<span style="color:#0a9989">id</span>=<span style="color:#df5000">"tab3"</span><span style="color:#0a9989"></span>&nbsp;<span style="color:#0a9989">class</span>=<span style="color:#df5000">"inner_tab"</span><span style="color:#0a9989"></span><span style="color:#010101">&gt;</span></div><div style="padding:0 6px; white-space:pre; line-height:130%">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#010101">&lt;</span><span style="color:#010101">/</span><span style="color:#066de2">div</span><span style="color:#010101">&gt;</span></div><div style="padding:0 6px; white-space:pre; line-height:130%">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#010101">&lt;</span><span style="color:#010101">/</span><span style="color:#066de2">div</span><span style="color:#010101">&gt;</span></div><div style="padding:0 6px; white-space:pre; line-height:130%">&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#010101">&lt;</span><span style="color:#010101">/</span><span style="color:#066de2">div</span><span style="color:#010101">&gt;</span></div><div style="padding:0 6px; white-space:pre; line-height:130%"><span style="color:#010101">&lt;</span><span style="color:#010101">/</span><span style="color:#066de2">div</span><span style="color:#010101">&gt;</span></div><div style="padding:0 6px; white-space:pre; line-height:130%">&nbsp;</div><div style="padding:0 6px; white-space:pre; line-height:130%">&nbsp;</div></div><div style="text-align:right;margin-top:-13px;margin-right:5px;font-size:9px;font-style:italic"></div></td>
+					</tr></table></div>
+                </td>
+            </tr>
+            <tr>
+                <td class="ac cellgray"><b>2022-05-04 17:15</b></td>
+                <td class="ac">dhtmlx탭 클래스 추가</td>
+                <td class="al pl10">전체 탭을 둘러싸는 클래스(height는 적어줘야함) .outer_tab<br>
+        탭안쪽 여백 둘러싸는 클래스 .inner_tab <br>
+           ex) 아웃소싱 인력조회 페이지 참고</td>
+            </tr>
+            <tr>
+                <td class="ac cellgray"><b>2021-07-15 10:05</b></td>
+                <td class="ac">탭용 클래스 tab_dhtml_line 추가</td>
+                <td class="al pl10"><b>기존 dhtml_line에서 height안맞춰지는 부분 tab_dhtml_line클래스 사용하시면 됩니다.</b></td>
+                <td class="al pl10">
+                </td>
+             </tr>
+               <tr>
+                <td class="ac cellgray"><b>2021-06-16 10:00</b></td>
+                <td class="ac">레이아웃 유형 flex2,flex3,flex0 추가</td>
+                <td class="al pl10"><b>검색영역 2줄일 경우 flex2, 3줄일 경우 flex3, 검색영역 없는 경우 flex0을 사용하십시오. 1줄일경우 기존 flex</b></td>
+                <td class="al pl10">
+                	기본 레이아웃의 경우 style에서 직접 min-height를 입력했으나<br>height관련 style 삭제 후 class 순서에 맞게 제대로 넣어주시면 height가 맞습니다.<br>
+                	이외에 복잡하거나 기존에 없었던 레이아웃의 경우<br><b>반드시 요청하여 사용</b>하여 주십시오! important 자주 쓰면 퍼포먼스에 안좋다고 하네요.
+                </td>
+             </tr>
+               <tr>
+                <td class="ac cellgray"><b>2021-05-14 10:00</b></td>
+                <td class="ac">레이아웃 유형 TYPE3-2 추가</td>
+                <td class="al pl10"><b>좌측 그리드 + 우측 상단 폼,우측하단 그리드</b></td>
+                <td class="al pl10">
+		<a href="http://localhost:8080/xerp/html/layout_type3_2.html" target="_blank">layout_type3_2.html</a>
+                     예시페이지) KPI 지표등록 페이지 참고
+                </td>
+             </tr>
+            <tr>
+                <td class="ac cellgray"><b>2021-04-07 17:19</b></td>
+                <td class="ac">레이아웃 클래스 추가</td>
+                <td class="al pl10"><b>검색영역 2줄이고 아래 1단일때</b> height사이즈 조절할수 있는 <b>.searchx2h 클래스 추가</b>되었습니다</td>
+                <td class="al pl10">
+                    <div class="colorscripter-code" style="color:#010101;font-family:Consolas, 'Liberation Mono', Menlo, Courier, monospace !important; position:relative !important;overflow:auto">
+                        <table class="colorscripter-code-table" style="margin:0;padding:0;border:none;background-color:#fafafa;border-radius:4px;" cellspacing="0" cellpadding="0">
+                            <tr>
+                                <td style="padding:6px;border-right:2px solid #e5e5e5">
+                                    <div style="margin:0;padding:0;word-break:normal;text-align:right;color:#666;font-family:Consolas, 'Liberation Mono', Menlo, Courier, monospace !important;line-height:130%">
+                                        <div style="line-height:130%">1</div>
+                                        <div style="line-height:130%">2</div>
+                                        <div style="line-height:130%">3</div>
+                                        <div style="line-height:130%">4</div>
+                                        <div style="line-height:130%">5</div>
+                                        <div style="line-height:130%">6</div>
+                                        <div style="line-height:130%">7</div>
+                                        <div style="line-height:130%">8</div>
+                                        <div style="line-height:130%">9</div>
+                                    </div>
+                                </td>
+                                <td style="padding:6px 0;text-align:left">
+                                    <div style="margin:0;padding:0;color:#010101;font-family:Consolas, 'Liberation Mono', Menlo, Courier, monospace !important;line-height:130%">
+                                        <div style="padding:0 6px; white-space:pre; line-height:130%">1dep인&nbsp;outer_line_grid,&nbsp;form&nbsp;클래스에&nbsp;style로&nbsp;height넣었던&nbsp;영역을&nbsp;지운후</div>
+                                        <div style="padding:0 6px; white-space:pre; line-height:130%">&nbsp;</div>
+                                        <div style="padding:0 6px; white-space:pre; line-height:130%">searchx2&nbsp;class&nbsp;가장&nbsp;마지막&nbsp;클래스로&nbsp;입력</div>
+                                        <div style="padding:0 6px; white-space:pre; line-height:130%">&nbsp;</div>
+                                        <div style="padding:0 6px; white-space:pre; line-height:130%">변경&nbsp;전)</div>
+                                        <div style="padding:0 6px; white-space:pre; line-height:130%"><span style="color:#010101">&lt;</span><span style="color:#066de2">div</span>&nbsp;<span style="color:#0a9989">class</span>=<span style="color:#df5000">"outer_line_grid"</span><span style="color:#0a9989"></span>&nbsp;<span style="color:#0a9989">style</span>=<span style="color:#df5000">"height:calc(100vh&nbsp;-&nbsp;160px);"</span><span style="color:#0a9989"></span><span style="color:#010101">&gt;</span><span style="color:#010101">&lt;</span><span style="color:#010101">/</span><span style="color:#066de2">div</span><span style="color:#010101">&gt;</span></div>
+                                        <div style="padding:0 6px; white-space:pre; line-height:130%">&nbsp;</div>
+                                        <div style="padding:0 6px; white-space:pre; line-height:130%">변경&nbsp;후)</div>
+                                        <div style="padding:0 6px; white-space:pre; line-height:130%"><span style="color:#010101">&lt;</span><span style="color:#066de2">div</span>&nbsp;<span style="color:#0a9989">class</span>=<span style="color:#df5000">"outer_line_grid&nbsp;searchx2h"</span><span style="color:#0a9989"></span><span style="color:#010101">&gt;</span><span style="color:#010101">&lt;</span><span style="color:#010101">/</span><span style="color:#066de2">div</span><span style="color:#010101">&gt;</span></div>
+                                    </div>
+                                </td>
+                                <td style="vertical-align:bottom;padding:0 2px 4px 0"></td>
+                            </tr>
+                        </table>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="ac cellgray"><b>2021-04-09 17:09</b></td>
+                <td class="ac">레이아웃 클래스 추가</td>
+                <td class="pt10"><img src="../html/ex/row_col_div.jpg" alt="클래스 설명"></td>
+                <td>
+                    <div class="colorscripter-code" style="color:#010101;font-family:Consolas, 'Liberation Mono', Menlo, Courier, monospace !important; position:relative !important;overflow:auto">
+                        <table class="colorscripter-code-table" style="margin:0;padding:0;border:none;background-color:#fafafa;border-radius:4px;" cellspacing="0" cellpadding="0">
+                            <tr>
+                                <td style="padding:6px;border-right:2px solid #e5e5e5">
+                                    <div style="margin:0;padding:0;word-break:normal;text-align:right;color:#666;font-family:Consolas, 'Liberation Mono', Menlo, Courier, monospace !important;line-height:130%">
+                                        <div style="line-height:130%">1</div>
+                                        <div style="line-height:130%">2</div>
+                                        <div style="line-height:130%">3</div>
+                                        <div style="line-height:130%">4</div>
+                                        <div style="line-height:130%">5</div>
+                                        <div style="line-height:130%">6</div>
+                                        <div style="line-height:130%">7</div>
+                                        <div style="line-height:130%">8</div>
+                                        <div style="line-height:130%">9</div>
+                                        <div style="line-height:130%">10</div>
+                                        <div style="line-height:130%">11</div>
+                                        <div style="line-height:130%">12</div>
+                                        <div style="line-height:130%">13</div>
+                                        <div style="line-height:130%">14</div>
+                                        <div style="line-height:130%">15</div>
+                                        <div style="line-height:130%">16</div>
+                                        <div style="line-height:130%">17</div>
+                                        <div style="line-height:130%">18</div>
+                                        <div style="line-height:130%">19</div>
+                                        <div style="line-height:130%">20</div>
+                                        <div style="line-height:130%">21</div>
+                                        <div style="line-height:130%">22</div>
+                                        <div style="line-height:130%">23</div>
+                                        <div style="line-height:130%">24</div>
+                                        <div style="line-height:130%">25</div>
+                                        <div style="line-height:130%">26</div>
+                                    </div>
+                                </td>
+                                <td style="padding:6px 0;text-align:left">
+                                    <div style="margin:0;padding:0;color:#010101;font-family:Consolas, 'Liberation Mono', Menlo, Courier, monospace !important;line-height:130%">
+                                        <div style="padding:0 6px; white-space:pre; line-height:130%"><span style="color:#010101">&lt;</span><span style="color:#066de2">div</span>&nbsp;<span style="color:#0a9989">class</span>=<span style="color:#df5000">"row-12"</span><span style="color:#0a9989"></span><span style="color:#010101">&gt;</span></div>
+                                        <div style="padding:0 6px; white-space:pre; line-height:130%">&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#010101">&lt;</span><span style="color:#066de2">div</span>&nbsp;<span style="color:#0a9989">class</span>=<span style="color:#df5000">"col-4&nbsp;col-pdt"</span><span style="color:#0a9989"></span><span style="color:#010101">&gt;</span>.col-4<span style="color:#010101">&lt;</span><span style="color:#010101">/</span><span style="color:#066de2">div</span><span style="color:#010101">&gt;</span></div>
+                                        <div style="padding:0 6px; white-space:pre; line-height:130%">&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#010101">&lt;</span><span style="color:#066de2">div</span>&nbsp;<span style="color:#0a9989">class</span>=<span style="color:#df5000">"col-4&nbsp;col-pdt"</span><span style="color:#0a9989"></span><span style="color:#010101">&gt;</span>.col-4<span style="color:#010101">&lt;</span><span style="color:#010101">/</span><span style="color:#066de2">div</span><span style="color:#010101">&gt;</span></div>
+                                        <div style="padding:0 6px; white-space:pre; line-height:130%">&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#010101">&lt;</span><span style="color:#066de2">div</span>&nbsp;<span style="color:#0a9989">class</span>=<span style="color:#df5000">"col-4&nbsp;col-pdt"</span><span style="color:#0a9989"></span><span style="color:#010101">&gt;</span>.col-4<span style="color:#010101">&lt;</span><span style="color:#010101">/</span><span style="color:#066de2">div</span><span style="color:#010101">&gt;</span></div>
+                                        <div style="padding:0 6px; white-space:pre; line-height:130%"><span style="color:#010101">&lt;</span><span style="color:#010101">/</span><span style="color:#066de2">div</span><span style="color:#010101">&gt;</span></div>
+                                        <div style="padding:0 6px; white-space:pre; line-height:130%"><span style="color:#010101">&lt;</span><span style="color:#066de2">div</span>&nbsp;<span style="color:#0a9989">class</span>=<span style="color:#df5000">"row-12"</span><span style="color:#0a9989"></span><span style="color:#010101">&gt;</span></div>
+                                        <div style="padding:0 6px; white-space:pre; line-height:130%">&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#010101">&lt;</span><span style="color:#066de2">div</span>&nbsp;<span style="color:#0a9989">class</span>=<span style="color:#df5000">"col-6&nbsp;col-pdt"</span><span style="color:#0a9989"></span><span style="color:#010101">&gt;</span>.col-6<span style="color:#010101">&lt;</span><span style="color:#010101">/</span><span style="color:#066de2">div</span><span style="color:#010101">&gt;</span></div>
+                                        <div style="padding:0 6px; white-space:pre; line-height:130%">&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#010101">&lt;</span><span style="color:#066de2">div</span>&nbsp;<span style="color:#0a9989">class</span>=<span style="color:#df5000">"col-6&nbsp;col-pdt"</span><span style="color:#0a9989"></span><span style="color:#010101">&gt;</span>.col-6<span style="color:#010101">&lt;</span><span style="color:#010101">/</span><span style="color:#066de2">div</span><span style="color:#010101">&gt;</span></div>
+                                        <div style="padding:0 6px; white-space:pre; line-height:130%"><span style="color:#010101">&lt;</span><span style="color:#010101">/</span><span style="color:#066de2">div</span><span style="color:#010101">&gt;</span></div>
+                                        <div style="padding:0 6px; white-space:pre; line-height:130%"><span style="color:#010101">&lt;</span><span style="color:#066de2">div</span>&nbsp;<span style="color:#0a9989">class</span>=<span style="color:#df5000">"row-12"</span><span style="color:#0a9989"></span><span style="color:#010101">&gt;</span></div>
+                                        <div style="padding:0 6px; white-space:pre; line-height:130%">&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#010101">&lt;</span><span style="color:#066de2">div</span>&nbsp;<span style="color:#0a9989">class</span>=<span style="color:#df5000">"col-12&nbsp;col-pdt"</span><span style="color:#0a9989"></span><span style="color:#010101">&gt;</span>.col-12<span style="color:#010101">&lt;</span><span style="color:#010101">/</span><span style="color:#066de2">div</span><span style="color:#010101">&gt;</span></div>
+                                        <div style="padding:0 6px; white-space:pre; line-height:130%"><span style="color:#010101">&lt;</span><span style="color:#010101">/</span><span style="color:#066de2">div</span><span style="color:#010101">&gt;</span></div>
+                                        <div style="padding:0 6px; white-space:pre; line-height:130%"><span style="color:#010101">&lt;</span><span style="color:#066de2">div</span>&nbsp;<span style="color:#0a9989">class</span>=<span style="color:#df5000">"row-12&nbsp;row-pdt"</span><span style="color:#0a9989"></span><span style="color:#010101">&gt;</span></div>
+                                        <div style="padding:0 6px; white-space:pre; line-height:130%">&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#010101">&lt;</span><span style="color:#066de2">div</span>&nbsp;<span style="color:#0a9989">class</span>=<span style="color:#df5000">"col-1"</span><span style="color:#0a9989"></span><span style="color:#010101">&gt;</span>.col-1<span style="color:#010101">&lt;</span><span style="color:#010101">/</span><span style="color:#066de2">div</span><span style="color:#010101">&gt;</span></div>
+                                        <div style="padding:0 6px; white-space:pre; line-height:130%">&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#010101">&lt;</span><span style="color:#066de2">div</span>&nbsp;<span style="color:#0a9989">class</span>=<span style="color:#df5000">"col-1"</span><span style="color:#0a9989"></span><span style="color:#010101">&gt;</span>.col-1<span style="color:#010101">&lt;</span><span style="color:#010101">/</span><span style="color:#066de2">div</span><span style="color:#010101">&gt;</span></div>
+                                        <div style="padding:0 6px; white-space:pre; line-height:130%">&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#010101">&lt;</span><span style="color:#066de2">div</span>&nbsp;<span style="color:#0a9989">class</span>=<span style="color:#df5000">"col-1"</span><span style="color:#0a9989"></span><span style="color:#010101">&gt;</span>.col-1<span style="color:#010101">&lt;</span><span style="color:#010101">/</span><span style="color:#066de2">div</span><span style="color:#010101">&gt;</span></div>
+                                        <div style="padding:0 6px; white-space:pre; line-height:130%">&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#010101">&lt;</span><span style="color:#066de2">div</span>&nbsp;<span style="color:#0a9989">class</span>=<span style="color:#df5000">"col-1"</span><span style="color:#0a9989"></span><span style="color:#010101">&gt;</span>.col-1<span style="color:#010101">&lt;</span><span style="color:#010101">/</span><span style="color:#066de2">div</span><span style="color:#010101">&gt;</span></div>
+                                        <div style="padding:0 6px; white-space:pre; line-height:130%">&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#010101">&lt;</span><span style="color:#066de2">div</span>&nbsp;<span style="color:#0a9989">class</span>=<span style="color:#df5000">"col-1"</span><span style="color:#0a9989"></span><span style="color:#010101">&gt;</span>.col-1<span style="color:#010101">&lt;</span><span style="color:#010101">/</span><span style="color:#066de2">div</span><span style="color:#010101">&gt;</span></div>
+                                        <div style="padding:0 6px; white-space:pre; line-height:130%">&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#010101">&lt;</span><span style="color:#066de2">div</span>&nbsp;<span style="color:#0a9989">class</span>=<span style="color:#df5000">"col-1"</span><span style="color:#0a9989"></span><span style="color:#010101">&gt;</span>.col-1<span style="color:#010101">&lt;</span><span style="color:#010101">/</span><span style="color:#066de2">div</span><span style="color:#010101">&gt;</span></div>
+                                        <div style="padding:0 6px; white-space:pre; line-height:130%">&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#010101">&lt;</span><span style="color:#066de2">div</span>&nbsp;<span style="color:#0a9989">class</span>=<span style="color:#df5000">"col-1"</span><span style="color:#0a9989"></span><span style="color:#010101">&gt;</span>.col-1<span style="color:#010101">&lt;</span><span style="color:#010101">/</span><span style="color:#066de2">div</span><span style="color:#010101">&gt;</span></div>
+                                        <div style="padding:0 6px; white-space:pre; line-height:130%">&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#010101">&lt;</span><span style="color:#066de2">div</span>&nbsp;<span style="color:#0a9989">class</span>=<span style="color:#df5000">"col-1"</span><span style="color:#0a9989"></span><span style="color:#010101">&gt;</span>.col-1<span style="color:#010101">&lt;</span><span style="color:#010101">/</span><span style="color:#066de2">div</span><span style="color:#010101">&gt;</span></div>
+                                        <div style="padding:0 6px; white-space:pre; line-height:130%">&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#010101">&lt;</span><span style="color:#066de2">div</span>&nbsp;<span style="color:#0a9989">class</span>=<span style="color:#df5000">"col-1"</span><span style="color:#0a9989"></span><span style="color:#010101">&gt;</span>.col-1<span style="color:#010101">&lt;</span><span style="color:#010101">/</span><span style="color:#066de2">div</span><span style="color:#010101">&gt;</span></div>
+                                        <div style="padding:0 6px; white-space:pre; line-height:130%">&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#010101">&lt;</span><span style="color:#066de2">div</span>&nbsp;<span style="color:#0a9989">class</span>=<span style="color:#df5000">"col-1"</span><span style="color:#0a9989"></span><span style="color:#010101">&gt;</span>.col-1<span style="color:#010101">&lt;</span><span style="color:#010101">/</span><span style="color:#066de2">div</span><span style="color:#010101">&gt;</span></div>
+                                        <div style="padding:0 6px; white-space:pre; line-height:130%">&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#010101">&lt;</span><span style="color:#066de2">div</span>&nbsp;<span style="color:#0a9989">class</span>=<span style="color:#df5000">"col-1"</span><span style="color:#0a9989"></span><span style="color:#010101">&gt;</span>.col-1<span style="color:#010101">&lt;</span><span style="color:#010101">/</span><span style="color:#066de2">div</span><span style="color:#010101">&gt;</span></div>
+                                        <div style="padding:0 6px; white-space:pre; line-height:130%">&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#010101">&lt;</span><span style="color:#066de2">div</span>&nbsp;<span style="color:#0a9989">class</span>=<span style="color:#df5000">"col-1"</span><span style="color:#0a9989"></span><span style="color:#010101">&gt;</span>.col-1<span style="color:#010101">&lt;</span><span style="color:#010101">/</span><span style="color:#066de2">div</span><span style="color:#010101">&gt;</span></div>
+                                        <div style="padding:0 6px; white-space:pre; line-height:130%"><span style="color:#010101">&lt;</span><span style="color:#010101">/</span><span style="color:#066de2">div</span><span style="color:#010101">&gt;</span></div>
+                                    </div>
+                                    <div style="text-align:right;margin-top:-13px;margin-right:5px;font-size:9px;font-style:italic"></div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </td>
+            </tr>
+        </table>
+        <br>
+
+        <div class="detail_type024 mt5">
+            <table>
+                <caption>레이아웃 클래스 설명</caption>
+                <colgroup>
+                    <col style="width:352px;" />
+                    <col style="width:20%" />
+                    <col style="" />
+                </colgroup>
+                <tr>
+                    <th class="ac brnavy">레이아웃 참고이미지</th>
+                    <th class="ac brnavy">위치(역할)</th>
+                    <th class="ac brnavy">사용 필수 클래스</th>
+                    <th class="ac brnavy">추가 클래스(한칸띄우고 사용) 클래스 위치는 가장 뒤쪽에 사용</th>
+                </tr>
+                <tr>
+                    <td rowspan="4"><img src="../html/ex/layout.jpg" alt="레이아웃설명"></td>
+                    <td class="al pl10">flex 레이아웃 클래스 설명</td>
+                    <td colspan="2" class="al pl10">flex(전체컨테이너) > item(100%) ~ item7(70%) 기본세로 2단 / item333클래스(세로3단)<br><span style="color:red">[item숫자는 왼쪽기준 동일한 클래스 사용]</span><br>예) 30%, 70% 화면 => flex > item3 / item7 (x)<br>flex > item3 / item3 (o)</td>
+                </tr>
+                <tr>
+                    <td class="al" style="min-width:100px;background:#4caf50; font-weight:bold;padding-left:10px;color:#fff;">1dep(전체 선/height값 필수!)<br>※ 가이드에 없는 height경우 직접 입력!(예)style="height:calc(100vh - 10px))"</td>
+                    <td class="pl10">outer_line_grid / outer_line_form / outer_line / outer_line_2dangrid(2단-위아래)</td>
+                    <td colspan="2" class="al pl10">searchx2 (검색영역이 2단인 경우 클래스뒤에 한칸띄우고 searchx2h ★함께 넣어준다)</td>
+                </tr>
+                <tr>
+                    <td class="al" style="min-width:300px;background:#00bcd4; font-weight:bold;padding-left:10px;color:#fff;">1dep > 2dep(그리드 내부 선)</td>
+                    <td class="pl10">> dhtml_line / dhtml_line_paging(페이징있는경우) / dhtml_line_2danpaging2(2단페이징)</td>
+                    <td colspan="2"></td>
+                </tr>
+                <tr>
+                    <td class="al" style="min-width:300px;background:yellow; font-weight:bold;padding-left:10px;color:#000;">1dep > 2dep > 3dep(실제 grid 영역:id필수!)</td>
+                    <td class="pl10">>> dhtml_grid(상단 크기 상속)</td>
+                    <td colspan="2" class="al pl10">div_line_bottom [상하2단 사용시 grid 아래 라인그리기]</td>
+                </tr>
+            </table>
+        </div>
+        <br>
+        <h2>레이아웃</h2>
+
+        <div class="detail_type024 type_bd mt5">
+            <table>
+                <caption>레이아웃 테이블</caption>
+                <tr>
+                    <th class="ac brnavy" style="min-width:100px">레이아웃유형</th>
+                    <th class="ac brnavy" style="min-width:300px">미리보기</th>
+                    <th class="ac brnavy">HTML 링크</th>
+                    <th class="ac brnavy" style="min-width:100px">레이아웃유형</th>
+                    <th class="ac brnavy" style="min-width:300px">미리보기</th>
+                    <th class="ac brnavy">HTML 링크</th>
+                </tr>
+
+                <tr>
+                    <td class="ac cellgray"><b>유형 2-1.<br>Search + List + Detail</b></td>
+                    <td class="ac">
+                        <img src="../html/ex/grid_21.gif" alt="그리드">
+                    </td>
+                    <td class="ac"><a href="../html/layout_type2_1.html" target="_blank" style="border:1px solid #ddd;padding:0 4px;border-radius:2px;">HTML 새창으로 보기</a></td>
+                    <td class="ac cellgray"><b>유형 3-1.<br>Search + List(2) + Detail</b></td>
+                    <td class="ac">
+                        <img src="../html/ex/grid_31.gif" alt="그리드">
+                    </td>
+                    <td class="ac"><a href="../html/layout_type3_1.html" target="_blank" style="border:1px solid #ddd;padding:0 4px;border-radius:2px;">HTML 새창으로 보기</a></td>
+
+                </tr>
+
+                <tr>
+                    <td class="ac cellgray"><b>유형 2-2.<br>Search + List + Detail(2)</b></td>
+                    <td class="ac">
+                        <img src="../html/ex/grid_22.gif" alt="그리드">
+                    </td>
+                    <td class="ac"><a href="../html/layout_type2_2.html" target="_blank" style="border:1px solid #ddd;padding:0 4px;border-radius:2px;">HTML 새창으로 보기</a></td>
+                    <td class="ac cellgray"><b>유형 3-2.<br>Search + List(2) + Detail</b></td>
+                    <td class="ac">
+                        <img src="../html/ex/grid_32.gif" alt="그리드">
+                    </td>
+                    <td class="ac"><a href="../html/layout_type3_2.html" target="_blank" style="border:1px solid #ddd;padding:0 4px;border-radius:2px;">HTML 새창으로 보기</a></td>
+
+                </tr>
+
+                <tr>
+                    <td class="ac cellgray"><b>유형 2-3.<br>Search + Detail</b></td>
+                    <td class="ac">
+                        <img src="../html/ex/grid_23.gif" alt="그리드">
+                    </td>
+                    <td class="ac"><a href="../html/layout_type2_3.html" target="_blank" style="border:1px solid #ddd;padding:0 4px;border-radius:2px;">HTML 새창으로 보기</a></td>
+                    <td class="ac cellgray"><b>유형 3-3.<br>Search(2) + List(2) + Detail</b></td>
+                    <td class="ac">
+                        <img src="../html/ex/grid_33.gif" alt="그리드">
+                    </td>
+                    <td class="ac"><a href="../html/layout_type3_3.html" target="_blank" style="border:1px solid #ddd;padding:0 4px;border-radius:2px;">HTML 새창으로 보기</a></td>
+
+                </tr>
+
+
+                <tr>
+                    <td class="ac cellgray"><b>유형 4-1.<br>List Shuttle</b></td>
+                    <td class="ac">
+                        <img src="../html/ex/grid_41.gif" alt="그리드">
+                    </td>
+                    <td class="ac"><a href="../html/layout_type4_1.html" target="_blank" style="border:1px solid #ddd;padding:0 4px;border-radius:2px;">HTML 새창으로 보기</a></td>
+                    <td class="ac cellgray"><b>유형 4-2.<br>Search + List(3) + Detail(4)</b></td>
+                    <td class="ac">
+                        <img src="../html/ex/grid_42.gif" alt="그리드">
+                    </td>
+                    <td class="ac"><a href="../html/layout_type4_2.html" target="_blank" style="border:1px solid #ddd;padding:0 4px;border-radius:2px;">HTML 새창으로 보기</a></td>
+
+                </tr>
+
+
+            </table>
+        </div>
+
+        <h2 class="mt10">컴포넌트</h2> <a href="https://docs.dhtmlx.com/grid__htmlform_integration.html" style="border:1px solid #307ab2;padding:2px 5px;margin-top:10px;font-weight:bold;color:#307ab2;" target="_blank">HTMLX 5.X 가이드보기</a>
+
+
+
+        <div class="detail_type024 type_bd mt5">
+            <table>
+                <caption>컴포넌트 테이블</caption>
+                <colgroup>
+                    <col style="width:5%" />
+                    <col style="width:50%" />
+                    <col style="width:10%" />
+                    <col style="width:15%" />
+                    <col style="width:20%" />
+                </colgroup>
+                <tr>
+                    <th class="ac brnavy">component</th>
+                    <th class="ac brnavy">적용화면</th>
+                    <th class="ac brnavy">적용소스</th>
+                    <th class="ac brnavy">사용클래스 & 적용시 유의할점</th>
+                    <th class="ac brnavy">웹접근성</th>
+                </tr>
+
+                <tr>
+                    <td class="ac"><b>1. 라디오</b></td>
+                    <td style="padding:5px"><input type="radio" name="open_close" value="open_some" id="open_some" / checked> <label for="open_some"><span></span>부분 공개</label>
+                        <input type="radio" name="open_close" value="close" id="close" /> <label for="close"><span></span>비공개</label>
+                    </td>
+                    <td style="padding:5px"><textarea rows="5" cols="90" style="vertical-align:top; width:99%;">
+<input type="radio" name="open_close" value="open_some" id="open_some" checked> <label for="open_some"><span></span>부분 공개</label>
+<input type="radio" name="open_close" value="close" id="close"/> <label for="close"><span></span>비공개</label></textarea>
+                    </td>
+                    <td style="padding:5px;padding-left:15px;">input의 id와 label의 for을 같은 값으로 맞춰야 텍스트 클릭시 라디오 버튼 체크된다.<br>id는
+                        전체 문서에 겹치지 않도록 확인후 사용.</td>
+                    <td rowspan="7" style="vertical-align:top;padding-top:10px;">
+
+
+                        <p><span style="font-family: Arial; font-size: 10pt;"><b><span style="font-size: 12pt;">1. 크롬브라우저에서 아래 링크로 들어가서 확장프로그램 설치</span></b></span></p>
+                        <p><span style="font-family: Arial; font-size: 10pt;"><b><a class="in-cell-link" href="https://chrome.google.com/webstore/detail/openwax/bfahpbmaknaeohgdklfbobogpdngngoe?hl=ko" target="_blank">https://chrome.google.com/webstore/detail/openwax/bfahpbmaknaeohgdklfbobogpdngngoe?hl=ko</a>
+                                    <br>
+                                    <!-- <a href="https://dl.google.com/chrome/install/standalonesetup.exe" target="_blank">오프라인 32bit 환경 설치 파일 다운로드</a><br>
+					<a href="https://dl.google.com/chrome/install/standalonesetup64.exe" target="_blank">오프라인 64bit 환경 설치 파일 다운로드</a>
+ 					-->
+
+                                    <p><span style="font-family: Arial; font-size: 10pt;"><b><br></b></span></p>
+                                    <p><span style="font-family: Arial; font-size: 10pt;"><b><span style="font-size: 12pt;">2. 페이지를 오픈 후 실행 (페이지별로 동일한 방법으로 실행하면 재검사됨)</span></b></span></p>
+                                    <p><span style="font-family: Arial; font-size: 10pt;"><b><br></b></span></p>
+                                    <p><span style="font-family: Arial; font-size: 10pt;"><b><span style="font-size: 12pt;">3.</span><span style="color: rgb(255, 0, 0); font-size: 12pt;"> 빨간색 항목</span><span style="font-size: 12pt;">에 대한 것들을 수정해 주시면 됩니다.</span></b></span></p>
+                                    <p><span style="font-family: Arial; font-size: 10pt;"><b><br></b></span></p>
+
+                                    <br><br><br>
+                                    <p><span style="font-family: Arial; font-size: 10pt;"> <b style="font-size: 14.6667px;">&lt;a&gt;태그의 경우 href 속성 반드시 입력!!</b><br>
+                                            <div><b style="font-size: 14.6667px;"></b></div>
+                                            <p>&nbsp;</p>
+                                            <p>예) &lt;a&nbsp;<span style="color: rgb(255, 0, 0);">href="a.html"</span>&gt;</p>
+                                            <p>&nbsp; &nbsp; <span style="color: rgb(0, 158, 37);"><u>※ 링크이동이 없거나, 현재창에서 띄우는 경우</u></span></p>
+                                            <p><span style="color: rgb(0, 117, 200);"><b><span style="color: rgb(0, 0, 0);">&nbsp; &nbsp; 위의 이미지 예제와 같이 a태그를 <span style="color: rgb(0, 117, 200);">button태그로 변경하고 onclick에 return false를 추가</span>하여 사용합니다.</span></b></span></p>
+                                            <p><span style="color: rgb(0, 117, 200);"><b><span style="color: rgb(0, 0, 0);">&nbsp; &nbsp;- onfocus="this.blur()" 사용하면 키보드 접근불가 이므로 접근성 부적합</span></b></span></p>
+                                            <p><span style="color: rgb(0, 117, 200);"><b><span style="color: rgb(0, 0, 0);">&nbsp; &nbsp;- window.open()을 통해 새창 띄울시, title,alt 속성에 <span style="color: rgb(255, 0, 0);">새창</span>이라고 명시해줘야하하며<br>파라메터가 _blank, _self, _parent, _top중 하나를 포함하고 있으면 적합</span></b></span></p>
+                                            <p><span style="color: rgb(0, 117, 200);"><b><span style="color: rgb(0, 0, 0);">&nbsp; &nbsp;</span></b></span></p>
+                                            <p>&nbsp;</p>
+                                            <div><br></div>
+                                            <div><b style="font-size: 14.6667px;">&lt;iframe&gt;태그의 경우 title 속성 반드시 입력!!</b><br></div>
+                                            <div><b style="font-size: 14.6667px;"></b></div>
+                                            <p>&nbsp;</p>
+                                            <p>예) &lt;iframe&nbsp;<span style="color: rgb(255, 0, 0);">title="레이아웃 프레임"</span>&gt;</p>
+                                            <p>&nbsp;</p>
+                                            <div><br></div>
+                                            <div></div>
+                                            <p>&nbsp;</p>
+                                            <p><b style="font-size: 14.6667px;">&lt;input&gt;태그의 경우 label 태그와 for속성 반드시 포함!! (type=text,radio,checkbox,file,submit 동일)</b>&nbsp;</p>
+                                            <p>예) 이름 : &lt;input id="name" type="text"&gt; (X)&nbsp;</p>
+                                            <p><span style="color: rgb(255, 0, 0);">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&lt;label for="</span><span style="color: rgb(255, 0, 0);">name</span><span style="color: rgb(255, 0, 0);">"&gt;이름 :&lt;/label&gt;</span>&lt;input type="text"<span style="color: rgb(255, 0, 0);"> id="</span><span style="color: rgb(255, 0, 0);">name</span>"&gt; (O) -&nbsp; (label의 for속성과 id를 같게 해주어 연결)</p>
+                                            <p>&nbsp;</p>
+                                            <p>&nbsp; &nbsp;&nbsp;<u><span style="color: rgb(0, 158, 37);"><u>※ label이 없는 input의 경우</u></span></u></p>
+                                            <p>&nbsp; &nbsp; &nbsp; &lt;input id="zipcode2" type="text"&nbsp;<span style="color: rgb(255, 0, 0);">title="우편번호 뒤 세자리"</span>&gt;</p>
+                                            <p>&nbsp;</p>
+                                            <p><b style="font-size: 14.6667px;">&lt;select&gt;태그의 경우 title속성과 label 태그 + for속성 반드시 포함!!</b></p>
+                                            <p>예) 직업:&lt;select id="job"&gt;</p>
+                                            <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&lt;option value="student"&gt;학생&lt;/option&gt; (X)</p>
+                                            <p>&nbsp;</p>
+                                            <p>&nbsp; &nbsp;<span style="color: rgb(255, 0, 0);">&lt;label for="job"&gt;직업:&lt;/label&gt;</span>&lt;select <span style="color: rgb(255, 0, 0);">id="job"</span>&gt;&nbsp;-&nbsp; (label의 for속성과 id를 같게 해주어 연결)</p>
+                                            <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&lt;option value="student"&gt;학생&lt;/option&gt;(O)</p>
+                                            <p>&nbsp;</p>
+                                            <p>&nbsp; &nbsp; <u><span style="color: rgb(0, 158, 37);"><u>※ label이 없는 select 디자인의 경우 title로 대체</u></span></u></p>
+                                            <p>&nbsp; &nbsp; &nbsp; &lt;select id="job"&nbsp;<span style="color: rgb(255, 0, 0);">title="직업 선택"</span>&gt;&nbsp;</p>
+                                            <p>&nbsp;</p>
+                                            <p>&nbsp;</p>
+                                            <p>&nbsp;</p>
+                                            <div><b style="font-size: 14.6667px;">&lt;textarea&gt;태그의 경우 title 속성과 label 태그 반드시 포함!!</b></div>
+                                            <div>
+                                                <div><b style="font-size: 14.6667px;"></b></div>
+                                                <p>&nbsp;</p>
+                                                <p>예) 내용: &lt;textarea <span style="color: rgb(255, 0, 0);">title="내용을 입력합니다."</span>&gt;</p>
+                                                <p><b style="font-size: 14.6667px;"><span id="husky_bookmark_start_1617176140560"></span><span id="husky_bookmark_end_1617176140560"></span></b></p>
+                                                <p><b style="font-size: 14.6667px;"><span id="husky_bookmark_start_1617177249833"></span><span id="husky_bookmark_end_1617177249833"></span></b></p>
+                                                <p><b style="font-size: 14.6667px;"><br></b></p>
+                                                <p><b style="font-size: 14.6667px;">&lt;html&gt;태그의 경우 lang 속성(기본 언어 설정) &amp; title 태그 반드시 포함!!</b>&nbsp;</p>
+                                                <p>예) &lt;html&nbsp;<span style="color: rgb(255, 0, 0);">lang="ko"</span>&gt;&nbsp;</p>
+                                                <p><span style="color: rgb(255, 0, 0);">&nbsp; &nbsp; &nbsp; &nbsp; &lt;title&gt;X-ERP&lt;/title&gt;</span></p>
+                                                <p>&nbsp;</p>
+                                                <p>&nbsp;</p>
+                                                <div><b style="font-size: 14.6667px;">&lt;img&gt;태그의 경우 alt 속성 반드시 입력!!</b><br></div>
+                                                <div><b style="font-size: 14.6667px;"></b></div>
+                                                <p>&nbsp;</p>
+                                                <p>예) &lt;img src="logo.png"&nbsp;<span style="color: rgb(255, 0, 0);">alt="로고이미지"</span>&gt;</p>
+                                            </div>
+                                        </span></p>
+                                </b></span></p>
+
+
+                    </td>
+                </tr>
+
+                <tr>
+                    <td rowspan="2" class="ac"><b>2. 체크박스</b></td>
+                    <td style="padding:5px">DHTML내 이미지 표현<br>
+                        <img src="../css/dhtmlx/skin/imgs/dhxgrid_material/item_chk1.gif" alt="체크박스">
+                        <img src="../css/dhtmlx/skin/imgs/dhxgrid_material/item_chk1_dis.gif" alt="체크박스">
+                        <img src="../css/dhtmlx/skin/imgs/dhxgrid_material/item_chk0.gif" alt="체크박스">
+                        <img src="../css/dhtmlx/skin/imgs/dhxgrid_material/item_chk0_dis.gif" alt="체크박스">
+
+                    </td>
+                    <td style="padding:5px"><textarea rows="5" cols="90" style="vertical-align:top; width:99%;"><img src="../css/dhtmlx/skin/imgs/dhxgrid_material/item_chk1.gif" alt="체크박스">
+<img src="../css/dhtmlx/skin/imgs/dhxgrid_material/item_chk1_dis.gif" alt="체크박스">
+<img src="../css/dhtmlx/skin/imgs/dhxgrid_material/item_chk0.gif" alt="체크박스">
+<img src="../css/dhtmlx/skin/imgs/dhxgrid_material/item_chk0_dis.gif" alt="체크박스"></textarea></td>
+                    <td style="padding-left:15px"></td>
+                </tr>
+                <tr>
+                    <td style="padding:5px">그 외 표현<br>
+
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" checked>
+                                <i class="input-helper"></i>
+                                <span>선택</span>
+                            </label>
+                        </div>
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" />
+                                <i class="input-helper"></i>
+                                <span>선택</span>
+                            </label>
+                        </div>
+                    </td>
+                    <td style="padding:5px"><textarea rows="5" cols="90" style="vertical-align:top; width:99%;"><div class="checkbox" checked>
+    <label>
+      <input type="checkbox" />
+      <i class="input-helper"></i>
+      <span>선택</span>
+    </label>
+  </div></textarea></td>
+                    <td style="padding-left:15px"></td>
+                </tr>
+
+                <tr>
+                    <td class="ac"><b>3. 인풋text</b></td>
+                    <td><input type="text" class="w80"><br><input type="text" class="w90p al"><br>
+                        <br>캘린더input<br><input type="text" class="w85 input_calen al" value="2020-01-01" maxlength="10">
+                    </td>
+                    <td style="padding:5px"><textarea rows="10" cols="90" style="vertical-align:top; width:99%;"><input type="text" class="w80">
+<input type="text" class="w90p al">
+
+<input type="text" class="w90 input_calen al" value="2020-01-01" maxlength="10"></textarea></td>
+                    <td style="padding:5px;padding-left:15px;">
+                        <pre>w = width / 그냥숫자 = px / 숫자+p = % <br>(예- w80 = width 80px / w90p = width 90%)<br><b>/* px형 가로값 클래스 */</b>
+.w10 {width:10px} ~ .w40 {width:40px} (10씩▲)
+.w45 {width:45px} ~ .w95 {width:95px} (5씩▲) 
+.w100 {width:100px} ~ .w280 {width:200px} (10씩▲)
+.w300 {width:300px}, .w400 {width:400px} (100씩▲)
+<b>/* 퍼센트 가로값 클래스 */</b>
+.w100p {width:100%}~.w91p {width:91%} (1씩▲)
+.w90p {width:90%} ~.w85p {width:85%} ~ .w50p {width:50%} (5씩▲)
+.w40p {width:40%} ~ .w10p {width:10%} (10씩▲)
+이 외 필요한 width 값은 따로 요청하시면 만들어드림
+<b>/* 텍스트 정렬 */</b>
+기본정렬 ac 가운데정렬 / al = left 좌측정렬 / ar = right 우측정렬
+/* 인풋 캘린더 설명 */
+.input_calen 클래스 추가 / value는 기본값 / maxlength는 고정자리수 설정
+</pre>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="ac"><b>4. 셀렉트</b></td>
+                    <td><select>
+                            <option value="0" selected>선택</option>
+                            <option value="1">1년</option>
+                            <option value="2">2년</option>
+                            <option value="3">3년</option>
+                            <option value="4">4년</option>
+                            <option value="5">5년</option>
+                        </select><br>
+                        <select>
+                            <option value="0" selected>선택</option>
+                            <option value="1">1년ffffffffffffffff</option>
+                            <option value="2">2년</option>
+                            <option value="3">3년</option>
+                            <option value="4">4년</option>
+                            <option value="5">5년</option>
+                        </select><br>
+                        <select class="w50p">
+                            <option value="0" selected>선택</option>
+                            <option value="1">1년</option>
+                            <option value="2">2년</option>
+                            <option value="3">3년</option>
+                            <option value="4">4년</option>
+                            <option value="5">5년</option>
+                        </select>
+                    </td>
+                    <td style="padding:5px"><textarea rows="10" cols="90" style="vertical-align:top; width:99%;"><select>
+    <option value="0" selected>선택</option>
+    <option value="1">1년</option>
+    <option value="2">2년</option>
+    <option value="3">3년</option>
+    <option value="4">4년</option>
+    <option value="5">5년</option>
+</select>
+    
+<select>
+    <option value="0" selected>선택</option>
+    <option value="1">1년ffffffffffffffff</option>
+    <option value="2">2년</option>
+    <option value="3">3년</option>
+    <option value="4">4년</option>
+    <option value="5">5년</option>
+</select>   
+    
+<select class="w50p">
+    <option value="0" selected>선택</option>
+    <option value="1">1년</option>
+    <option value="2">2년</option>
+    <option value="3">3년</option>
+    <option value="4">4년</option>
+    <option value="5">5년</option>
+</select></textarea></td>
+                    <td style="padding-left:15px">옵션값에 의해서 가로값이 늘어남.<br>
+                        따로 조절 원할시 상단 width클래스를 select 태그에 클래스 적용<br>
+                        <font color="red">〈select class="w50p"〉</font>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="ac"><b>5. 텍스트AREA</b></td>
+                    <td class="vt"><textarea rows="3" cols="10" class="w99p"></textarea></td>
+                    <td style="padding:5px"><textarea rows="5" cols="90" style="vertical-align:top; width:99%;"><textarea rows="2" cols="5" class="w99p"> </textarea> </textarea>
+                    </td>
+                    <td style="padding-left:15px">
+                        <b>rows 는 줄수 / cols 는 가로너비</b><br>
+                        세로정렬시 textarea 바로 상단 태그에 아래 클래스로 정렬한다.<br>
+                        .vt {vertical-align:top} 세로 상단맞춤<br>
+                        .vb {vertical-align:bottom} 세로 중간맞춤<br>
+                        .vm {vertical-align:middle} 세로 하단맞춤
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="ac"><b>7. 경로위치 버튼 아이콘</b></td>
+                    <td class="vt">
+                        <div class="consearch_div" style="min-width:auto;">
+                            <div class="consearch_input">
+                                <form id="searchFormStmUsers">
+                                    <ul class="consearchinput_list">
+                                        <li><span class="span">사용자ID</span><input name="userId" id="userIdSearchFormStmUsers"></li>
+                                        <li><span class="span">사원여부</span>
+                                            <select id="empAtSearchFormStmUsers" name="empAt">
+                                                <option value="">전체</option>
+                                                <option value="1">사원</option>
+                                                <option value="0">비사원</option>
+                                            </select>
+                                        </li>
+                                    </ul>
+                                </form>
+                            </div>
+                            <div class="consearchbt_div">
+                                <ul class="consearchbt_list">
+                                    <li><a href="#none" id="btnSearchStmUsers"><span class="glyphicon glyphicon-search mr5"></span><span>조회</span></a></li>
+                                    <li><a href="#none" id="btnResetStmUsers"><span class="glyphicon glyphicon-refresh mr5"></span><span>초기화</span></a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </td>
+                    <td style="padding:5px">
+                        <textarea rows="15" cols="90" style="vertical-align:top; width:99%;">
+        <div class="consearch_div">            
+            <div class="consearch_input">
+                <form id="searchFormStmUsers">
+                    <ul class="consearchinput_list">
+                        <li><span class="span">사용자ID</span><input name="userId" id="userIdSearchFormStmUsers"></li>                   
+                        <li><span class="span">사원여부</span>
+                            <select id="empAtSearchFormStmUsers" name="empAt">
+                                <option value="">전체</option>
+                                <option value="1">사원</option>
+                                <option value="0">비사원</option>
+                            </select>
+                        </li>
+                    </ul>
+                </form>  
+            </div>
+            <div class="consearchbt_div">
+                <ul class="consearchbt_list">
+                    <li><a href="#none" id="btnSearchStmUsers"><span class="glyphicon glyphicon-search mr5"></span><span>조회</span></a></li>
+                    <li><a href="#none" id="btnResetStmUsers"><span class="glyphicon glyphicon-refresh mr5"></span><span>초기화</span></a></li>
+                </ul>
+            </div>            
+        </div>
+</textarea>
+                    </td>
+                    <td style="padding-left:15px">
+                    </td>
+                </tr>
+
+            </table>
+        </div>
+    </div>
+
+</body>
+
+</html>

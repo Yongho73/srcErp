@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mhs.hrd.mhshrd002.service.mapper.Mhshrd002Mapper">
+
+    <select id="WrycTime" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hra.mhshrd002.service.mapper.Mhshrd002Mapper.WrycTime */
+        SELECT 
+            CODE, 
+            REFER1_DC 
+        FROM STM_CODE 
+        WHERE CODEKIND_CODE = 'C081'
+    </select>
+
+     <select id="searchWrycDaycntMhshrd002" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.pub.wks.mhshrd002.service.mapper.Mhshrd002Mapper.searchWrycDaycntMhshrd002 */
+        <trim>
+        <![CDATA[
+        SELECT
+             DISTINCT
+
+          		A.EMPNO   AS EMPNO,
+          		(SELECT SNM FROM dbvision_intra.GW_STAFF WHERE EMP_NO = A.EMPNO AND SNM IS NOT NULL)   AS EMPNM,
+          		CASE WHEN SUBSTR(FNC_DATESTR(B.ECNY_DE),1,4) = SUBSTR(WRYC_BEGIN_TIME,1,4)
+          			 THEN FNC_DATESTR(B.ECNY_DE)
+          		ELSE SUBSTR(WRYC_BEGIN_TIME,1,4) ||'-'|| '01' ||'-'|| '01' 
+          		END  AS APPLC_BEGIN_DE,
+          		SUBSTR(WRYC_END_TIME,1,4) ||'-'|| '12' ||'-'|| '31'   AS APPLC_END_DE,
+          		CASE WHEN SUBSTR(ECNY_DE,1,4) = TO_CHAR(SYSDATE,'YYYY') THEN TO_CHAR(SYSDATE,'MM') - SUBSTR(ECNY_DE,6,1) 
+                     WHEN SUBSTR(WRYC_BEGIN_TIME,1,4) = SUBSTR(ECNY_DE,1,4) THEN TO_NUMBER('12') - SUBSTR(ECNY_DE,6,1) 
+                     WHEN SUBSTR(ECNY_DE,1,4) + 1 = TO_CHAR(SYSDATE,'YYYY') AND TO_CHAR(SYSDATE,'YYYY') = SUBSTR(WRYC_BEGIN_TIME,1,4) THEN TO_NUMBER('15')
+                     WHEN TO_CHAR(SYSDATE,'YYYY') > SUBSTR(ECNY_DE,1,4) + 1  THEN TO_NUMBER('15') + TRUNC((SUBSTR(WRYC_BEGIN_TIME,1,4) - SUBSTR(ECNY_DE,1,4)-1)/2) 
+                END AS WRYC_DAYCNT, --연차일수
+
+          		(SELECT SUM(WRYC_REQST_DAYCNT) FROM  MHS_WRYC WHERE EMPNO = A.EMPNO AND SUBSTR(WRYC_BEGIN_TIME,1,4) = TO_CHAR(SYSDATE,'YYYY') AND WRYC_SE_CODE IN ('01','02')) 
+                - (select COUNT(c.job_de) from MHS_WRYC, STM_JOB_DAY c 
+				  where C.hvof_at = '1'  AND  EMPNO = A.EMPNO AND C.JOB_DE BETWEEN WRYC_BEGIN_TIME AND WRYC_END_TIME
+			      AND SUBSTR(C.JOB_DE,1,4) = TO_CHAR(SYSDATE,'YYYY') AND WRYC_SE_CODE IN ('01','02')
+ 				) AS USING_DAYCNT, --소요일
+
+          		CASE WHEN (CASE WHEN SUBSTR(ECNY_DE,1,4) = TO_CHAR(SYSDATE,'YYYY') THEN TO_CHAR(SYSDATE,'MM') - SUBSTR(ECNY_DE,6,1) 
+                     WHEN SUBSTR(WRYC_BEGIN_TIME,1,4) = SUBSTR(ECNY_DE,1,4) THEN TO_NUMBER('12') - SUBSTR(ECNY_DE,6,1) 
+                     WHEN SUBSTR(ECNY_DE,1,4) + 1 = TO_CHAR(SYSDATE,'YYYY') AND TO_CHAR(SYSDATE,'YYYY') = SUBSTR(WRYC_BEGIN_TIME,1,4) THEN TO_NUMBER('15')
+                     WHEN TO_CHAR(SYSDATE,'YYYY') > SUBSTR(ECNY_DE,1,4) + 1  THEN TO_NUMBER('15') + TRUNC((SUBSTR(WRYC_BEGIN_TIME,1,4) - SUBSTR(ECNY_DE,1,4)-1)/2) 
+                END) <= ((SELECT SUM(WRYC_REQST_DAYCNT) FROM  MHS_WRYC WHERE EMPNO = A.EMPNO AND SUBSTR(WRYC_BEGIN_TIME,1,4) = TO_CHAR(SYSDATE,'YYYY') AND WRYC_SE_CODE IN ('01','02')) 
+                - (select COUNT(c.job_de) from MHS_WRYC, STM_JOB_DAY c 
+				  where C.hvof_at = '1'  AND  EMPNO = A.EMPNO AND C.JOB_DE BETWEEN WRYC_BEGIN_TIME AND WRYC_END_TIME
+			      AND SUBSTR(C.JOB_DE,1,4) = TO_CHAR(SYSDATE,'YYYY') AND WRYC_SE_CODE IN ('01','02')
+ 				)) THEN 0 ELSE 
+
+          		(CASE WHEN SUBSTR(ECNY_DE,1,4) = TO_CHAR(SYSDATE,'YYYY') THEN TO_CHAR(SYSDATE,'MM') - SUBSTR(ECNY_DE,6,1) 
+                     WHEN SUBSTR(WRYC_BEGIN_TIME,1,4) = SUBSTR(ECNY_DE,1,4) THEN TO_NUMBER('12') - SUBSTR(ECNY_DE,6,1) 
+                     WHEN SUBSTR(ECNY_DE,1,4) + 1 = TO_CHAR(SYSDATE,'YYYY') AND TO_CHAR(SYSDATE,'YYYY') = SUBSTR(WRYC_BEGIN_TIME,1,4) THEN TO_NUMBER('15')
+                     WHEN TO_CHAR(SYSDATE,'YYYY') > SUBSTR(ECNY_DE,1,4) + 1  THEN TO_NUMBER('15') + TRUNC((SUBSTR(WRYC_BEGIN_TIME,1,4) - SUBSTR(ECNY_DE,1,4)-1)/2) 
+                END) - ((SELECT SUM(WRYC_REQST_DAYCNT) FROM  MHS_WRYC WHERE EMPNO = A.EMPNO AND SUBSTR(WRYC_BEGIN_TIME,1,4) = TO_CHAR(SYSDATE,'YYYY') AND WRYC_SE_CODE IN ('01','02')) 
+                - (select COUNT(c.job_de) from MHS_WRYC, STM_JOB_DAY c 
+				  where C.hvof_at = '1'  AND  EMPNO = A.EMPNO AND C.JOB_DE BETWEEN WRYC_BEGIN_TIME AND WRYC_END_TIME
+			      AND SUBSTR(C.JOB_DE,1,4) = TO_CHAR(SYSDATE,'YYYY') AND WRYC_SE_CODE IN ('01','02')
+ 				)) END AS REMAINDER_DAYCNT       
+             ]]>
+       </trim>
+          FROM MHS_WRYC  A , MHS_EMP B
+          WHERE 
+		 		A.EMPNO = B.EMPNO(+)  
+		 		AND SUBSTR(WRYC_BEGIN_TIME,1,4) = TO_CHAR(SYSDATE,'YYYY')
+                AND SUBSTR(WRYC_END_TIME,1,4) = TO_CHAR(SYSDATE,'YYYY')
+		 		
+		    <if test="empno != null and empno != ''">
+		 		AND A.EMPNO =  #{empno} 
+       		</if>
+            
+
+    </select> 
+    
+    <select id="selectMhshrd002List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.pub.wks.mhshrd002.service.mapper.Mhshrd002Mapper.selectMhshrd002List */
+        
+		 SELECT 
+		 		A.EMPNO
+		 		,(SELECT SNM FROM dbvision_intra.GW_STAFF WHERE EMP_NO = A.EMPNO) EMP_NM
+       		  	,(SELECT JPOS FROM dbvision_intra.GW_STAFF WHERE EMP_NO = A.EMPNO) JPOS
+       		  	,(SELECT DEPT FROM dbvision_intra.GW_STAFF WHERE EMP_NO = A.EMPNO) DEPT_NM
+       		  	,(SELECT DEPT_CODE FROM MHS_EMP WHERE EMPNO = A.EMPNO) DEPT_CODE
+       		  	,REQST_DTLS 
+				,WRYC_REQST_SN
+				,ELCTSCT_SE_SN
+				,WRYC_SE_CODE
+				,FNC_COMCODENM('C281', WRYC_SE_CODE) AS WRYC_SE_CODE_NM
+				,TO_CHAR(TO_DATE(REQST_DE, 'YYYY-MM-DD'),'YYYY-MM-DD') AS REQST_DE
+				,WRYC_REQST_DAYCNT - (select COUNT(c.job_de) from STM_JOB_DAY c 
+				  where C.hvof_at = '1'  AND  EMPNO = A.EMPNO AND C.JOB_DE BETWEEN WRYC_BEGIN_TIME AND WRYC_END_TIME
+			      AND SUBSTR(C.JOB_DE,1,4) = TO_CHAR(SYSDATE,'YYYY') AND WRYC_SE_CODE IN ('01','02')
+ 				) AS WRYC_REQST_DAYCNT
+				,(SELECT CPHONE FROM dbvision_intra.GW_STAFF WHERE EMP_NO = A.EMPNO) EMGNC_TELNO
+				,TO_CHAR(TO_DATE(WRYC_BEGIN_TIME, 'YYYY-MM-DD-HH24'),'YYYY-MM-DD') AS WRYC_BEGIN_FROM_TIME
+				,TO_CHAR(TO_DATE(WRYC_END_TIME, 'YYYY-MM-DD-HH24'),'YYYY-MM-DD') AS WRYC_END_TO_TIME
+				,TO_CHAR(TO_DATE(WRYC_BEGIN_TIME, 'YYYY-MM-DD-HH24'),'YYYY-MM-DD') AS WRYC_BEGIN_TIME
+				,TO_CHAR(TO_DATE(WRYC_END_TIME, 'YYYY-MM-DD-HH24'),'YYYY-MM-DD') AS WRYC_END_TIME
+				,TO_CHAR(TO_DATE(WRYC_BEGIN_TIME, 'YYYY-MM-DD-HH24'),'YYYY-MM-DD') AS WRYC_FROM_TIME
+				,TO_CHAR(TO_DATE(WRYC_END_TIME, 'YYYY-MM-DD-HH24'),'YYYY-MM-DD') AS WRYC_TO_TIME
+				,AGENT_EMPNO
+				,'' AGENT_EMP_NM
+				,WTHDRAW_AT
+				,ELCTSCT_DOC_NO
+				,WTHDRAW_ELCTSCT_DOC_NO
+				,ELCTSCT_STTUS_CODE
+				,NVL('','승인') ELCTSCT_STTUS_CODE_NM
+				,WTHDRAW_ELCTSCT_STTUS_CODE
+				,ELCTSCT_EMPNO
+				,WTHDRAW_ELCTSCT_EMPNO
+				,REG_DT
+				,REG_ID
+				,UPT_DT
+				,UPT_ID
+				,'' REG_NM
+				,'' UPT_NM
+		 FROM   MHS_WRYC A
+		
+		 <trim prefix="WHERE" prefixOverrides="AND|OR">
+		 	 <if test="empno != null and empno != ''">
+		   		AND EMPNO = #{empno} 
+		   	 </if>
+		   	 <if test="applyBeginTime != null and applyBeginTime != '' and applyEndTime != null and applyEndTime != ''">
+		   		AND TO_CHAR(TO_DATE(REQST_DE, 'YYYY-MM-DD'),'YYYY-MM-DD') BETWEEN TO_DATE(REPLACE(#{applyBeginTime},'-',''))  AND TO_DATE(REPLACE(#{applyEndTime},'-','')) 
+		   	 </if>
+		   	 <if test="wrycSeCode != null and wrycSeCode != ''">
+		   		AND WRYC_SE_CODE = #{wrycSeCode}
+		   	 </if>
+		   	 <if test="applcYy != null  and applcYy != ''">
+                AND SUBSTR(WRYC_BEGIN_TIME,1,4) = #{applcYy}
+            </if>
+		   	 <if test="wrycBeginTime != null and wrycBeginTime != ''">
+		   	 <![CDATA[
+		   		AND WRYC_BEGIN_TIME >= REPLACE(#{wrycBeginTime},'-','') 
+		   		]]>
+		   	 </if>
+		   	 <if test="wrycEndTime != null and wrycEndTime != ''">
+		   	 <![CDATA[
+		   		AND WRYC_END_TIME <= REPLACE(#{wrycEndTime},'-','') 
+		   		]]>
+		   	 </if>
+		   	 ORDER BY REQST_DE desc
+       	 </trim>
+		
+    </select>
+    
+    <select id="selectAltRewardHvofDeMhshrd002" parameterType="egovMapForNull" resultType="egovMapForNull">
+        SELECT 
+			EMPNO,
+			VAC_SN,
+			FNC_DATESTR(VAC_OCCRRNC_DE) AS VAC_OCCRRNC_DE,
+			REWARDVAC_TIME,
+			VAC_STTUS,
+			FNC_COMCODENM('C217' , VAC_STTUS) AS VAC_STTUS_NM,
+			VAC_OCCRRNC_YY
+        FROM
+            MHS_ALT_REWARD_VAC
+        WHERE
+            EMPNO = #{empno}
+            AND
+            VAC_OCCRRNC_YY = #{vacOccrrncYy}
+            <if test="vacSttus != null and vacSttus != ''">
+            AND VAC_STTUS = #{vacSttus}
+            </if>
+    </select>
+    
+    <select id="selectPubwks014" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.pub.wks.pubwks014.service.mapper.Pubwks014Mapper.selectPubwks014 */
+        SELECT
+               EMPNO,
+               WRYC_REQST_SN,
+               ELCTSCT_SE_SN,
+               WRYC_SE_CODE,
+               REQST_DE,
+               REQST_DTLS,
+               WRYC_REQST_DAYCNT,
+               EMGNC_TELNO,
+               WRYC_BEGIN_TIME,
+               WRYC_END_TIME,
+               AGENT_EMPNO,
+               WTHDRAW_AT,
+               ELCTSCT_DOC_NO,
+               WTHDRAW_ELCTSCT_DOC_NO,
+               ELCTSCT_STTUS_CODE,
+               WTHDRAW_ELCTSCT_STTUS_CODE,
+               ELCTSCT_EMPNO,
+               WTHDRAW_ELCTSCT_EMPNO,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_WRYC A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="empno != null and empno != ''">
+                AND EMPNO = #{empno}
+            </if>
+            <if test="wrycReqstSn != null and wrycReqstSn != ''">
+                AND WRYC_REQST_SN = #{wrycReqstSn}
+            </if>
+            <if test="elctsctSeSn != null and elctsctSeSn != ''">
+                AND ELCTSCT_SE_SN = #{elctsctSeSn}
+            </if>
+        </trim>
+    </select>
+
+    <update id="saveMhshrd002" parameterType="kr.co.dbvision.api.mhs.hrd.mhshrd002.entity.Mhshrd002">
+        /* kr.co.dbvision.api.pub.wks.mhshrd002.service.mapper.Mhshrd002Mapper.saveMhshrd002 */
+        MERGE INTO MHS_WRYC A
+             USING (SELECT
+                    #{empno} EMPNO,
+                    #{wrycReqstSn} WRYC_REQST_SN,
+                    #{elctsctSeSn} ELCTSCT_SE_SN
+                    FROM DUAL) B
+                ON (
+                    A.EMPNO = B.EMPNO AND 
+                    A.WRYC_REQST_SN = B.WRYC_REQST_SN AND 
+                    A.ELCTSCT_SE_SN = B.ELCTSCT_SE_SN
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+        
+                AGENT_EMPNO= #{agentEmpno},
+                WRYC_SE_CODE= #{wrycSeCode},
+                EMGNC_TELNO= #{emgncTelno},
+                WRYC_BEGIN_TIME= REPLACE(#{wrycBeginTime}, '-', ''),
+                WRYC_END_TIME= REPLACE(#{wrycEndTime}, '-', ''),
+                REQST_DTLS= #{reqstDtls},
+                WRYC_REQST_DAYCNT=#{wrycReqstDaycnt},
+                UPT_DT = SYSDATE,
+                UPT_ID = #{empno}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+               EMPNO,
+               WRYC_REQST_SN,
+               ELCTSCT_SE_SN,
+               WRYC_SE_CODE,
+               REQST_DE,
+               REQST_DTLS,
+               WRYC_REQST_DAYCNT,
+               EMGNC_TELNO,
+               WRYC_BEGIN_TIME,
+               WRYC_END_TIME,
+               AGENT_EMPNO,
+               WTHDRAW_AT,
+               ELCTSCT_DOC_NO,
+               WTHDRAW_ELCTSCT_DOC_NO,
+               ELCTSCT_STTUS_CODE,
+               WTHDRAW_ELCTSCT_STTUS_CODE,
+               ELCTSCT_EMPNO,
+               WTHDRAW_ELCTSCT_EMPNO,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+               #{empno},
+               (SELECT NVL(MAX(WRYC_REQST_SN)+1,0) FROM MHS_WRYC),
+               '1',
+               #{wrycSeCode},
+               REPLACE(#{reqstDe},'-',''),
+               #{reqstDtls},
+               #{wrycReqstDaycnt},
+               #{emgncTelno},
+               REPLACE(#{wrycBeginTime}, '-', ''),
+               REPLACE(#{wrycEndTime}, '-', ''),
+               #{agentEmpno},
+               #{wthdrawAt},
+               #{elctsctDocNo},
+               #{wthdrawElctsctDocNo},
+               #{elctsctSttusCode},
+               #{wthdrawElctsctSttusCode},
+               #{elctsctEmpno},
+               #{wthdrawElctsctEmpno},
+               SYSDATE,
+               #{empno}
+               
+        )
+    </update>
+
+    <delete id="deleteMhshrd002" parameterType="kr.co.dbvision.api.mhs.hrd.mhshrd002.entity.Mhshrd002">
+        /* kr.co.dbvision.api.pub.wks.mhshrd002.service.mapper.Mhshrd002Mapper.deleteMhshrd002 */
+        DELETE FROM MHS_WRYC
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND EMPNO = #{empno}
+                AND WRYC_REQST_SN = #{wrycReqstSn}
+                AND ELCTSCT_SE_SN = #{elctsctSeSn}
+        </trim>
+    </delete>
+</mapper>

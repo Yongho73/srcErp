@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.stm.mng.stmmng003.service.mapper.Stmmng003Mapper">
+
+    <select id="selectStmmng003List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.stm.mng.stmmng003.service.mapper.Stmmng003Mapper.selectStmmng003List */
+        SELECT
+               CODEKIND_CODE,
+               CODEKIND_NM,
+               CODE_LT,
+               SYS_SE,
+               CODE_DC AS CODE_KIND_DC,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM STM_CODEKIND A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="codekindCode != null and codekindCode != ''">
+                AND CODEKIND_CODE LIKE '%'||#{codekindCode}||'%'
+            </if>
+            <if test="codekindNm != null and codekindNm != ''">
+                AND CODEKIND_NM LIKE '%'||#{codekindNm}||'%'
+            </if>
+            <if test="sysSe != null and sysSe != ''">
+                AND SYS_SE = #{sysSe}
+            </if>
+            <if test="sRegDt != null and sRegDt != ''">
+                <![CDATA[
+                AND REG_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+                ]]>
+            </if>
+            <if test="eRegDt != null and eRegDt != ''">
+                <![CDATA[
+                AND REG_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+                ]]>
+             </if>
+        </trim>
+        ORDER BY CODEKIND_CODE, CODEKIND_NM
+    </select>
+
+    <select id="selectStmmng003" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.stm.mng.stmmng003.service.mapper.Stmmng003Mapper.selectStmmng003 */
+        SELECT
+               CODEKIND_CODE,
+               CODEKIND_NM,
+               CODE_LT,
+               SYS_SE,
+               CODE_DC,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM STM_CODEKIND A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="codekindCode != null and codekindCode != ''">
+                AND CODEKIND_CODE = #{codekindCode}
+            </if>
+        </trim>
+    </select>
+
+    <update id="saveStmmng003" parameterType="kr.co.dbvision.api.stm.mng.stmmng003.entity.Stmmng003">
+        /* kr.co.dbvision.api.stm.mng.stmmng003.service.mapper.Stmmng003Mapper.saveStmmng003 */
+        MERGE INTO STM_CODEKIND A
+             USING (SELECT
+                    #{codekindCode} CODEKIND_CODE
+                    FROM DUAL) B
+                ON (
+                    A.CODEKIND_CODE = B.CODEKIND_CODE
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               CODEKIND_NM= #{codekindNm},
+               CODE_LT= #{codeLt},
+               SYS_SE= #{sysSe},
+               CODE_DC= #{codeKindDc},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               CODEKIND_CODE,
+               CODEKIND_NM,
+               CODE_LT,
+               SYS_SE,
+               CODE_DC,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{codekindCode},
+               #{codekindNm},
+               #{codeLt},
+               #{sysSe},
+               #{codeKindDc},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deleteStmmng003" parameterType="kr.co.dbvision.api.stm.mng.stmmng003.entity.Stmmng003">
+        /* kr.co.dbvision.api.stm.mng.stmmng003.service.mapper.Stmmng003Mapper.deleteStmmng003 */
+        DELETE FROM STM_CODEKIND
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND CODEKIND_CODE = #{codekindCode}
+        </trim>
+    </delete>
+    
+    <delete id="deleteCodeKindStmmng003" parameterType="kr.co.dbvision.api.stm.mng.stmmng003.entity.Stmmng003">
+        /* kr.co.dbvision.api.stm.mng.stmmng003.service.mapper.Stmmng003Mapper.deleteCodeKindStmmng003 */
+        DELETE FROM STM_CODE
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND CODEKIND_CODE = #{codekindCode}
+        </trim>
+    </delete>
+    
+    <select id="selectCodeStmmng003List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.stm.mng.stmmng003.service.mapper.Stmmng003Mapper.selectCodeStmmng003List */
+        SELECT
+               CODE,
+               CODEKIND_CODE AS CODEKIND,
+               CODE_KOR_NM,
+               CODE_ENG_NM,
+               CODE_DC,
+               ORDR,
+               USE_AT,
+               DFLT_AT,
+               FACTOR,
+               REFER1_DC,
+               REFER2_DC,
+               REFER3_DC,
+               REFER4_DC,
+               CODE_THIRD_NM,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM STM_CODE A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="code != null and code != ''">
+                AND CODE = #{code}
+            </if>
+            <if test="codekindCode != null and codekindCode != ''">
+                AND CODEKIND_CODE = #{codekindCode}
+            </if>
+            <if test="sRegDt != null and sRegDt != ''">
+                <![CDATA[
+                AND REG_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+                ]]>
+            </if>
+            <if test="eRegDt != null and eRegDt != ''">
+                <![CDATA[
+                AND REG_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+                ]]>
+             </if>
+        </trim>
+        ORDER BY ORDR
+    </select>
+
+    <select id="selectCodeStmmng003" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.stm.mng.stmmng003.service.mapper.Stmmng003Mapper.selectCodeStmmng003 */
+        SELECT
+               CODE,
+               CODEKIND_CODE,
+               CODE_KOR_NM,
+               CODE_ENG_NM,
+               CODE_DC,
+               ORDR,
+               USE_AT,
+               DFLT_AT,
+               FACTOR,
+               REFER1_DC,
+               REFER2_DC,
+               REFER3_DC,
+               REFER4_DC,
+               CODE_THIRD_NM,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM STM_CODE A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="code != null and code != ''">
+                AND CODE = #{code}
+            </if>
+            <if test="codekind != null and codekind != ''">
+                AND CODEKIND_CODE = #{codekind}
+            </if>
+        </trim>
+    </select>
+    
+    <update id="saveCodeStmmng003" parameterType="kr.co.dbvision.api.stm.mng.stmmng003.entity.Stmmng003">
+        /* kr.co.dbvision.api.stm.mng.stmmng003.service.mapper.Stmmng003Mapper.saveCodeStmmng003 */
+        MERGE INTO STM_CODE A
+             USING (SELECT
+                    #{code} CODE,
+                    #{codekind} CODEKIND_CODE
+                    FROM DUAL) B
+                ON (
+                    A.CODE = B.CODE AND 
+                    A.CODEKIND_CODE = B.CODEKIND_CODE
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               CODE_KOR_NM= #{codeKorNm},
+               CODE_ENG_NM= #{codeEngNm},
+               CODE_DC= #{codeDc},
+               ORDR= #{ordr},
+               USE_AT= #{useAt},
+               DFLT_AT= #{dfltAt},
+               FACTOR= #{factor},
+               REFER1_DC= #{refer1Dc},
+               REFER2_DC= #{refer2Dc},
+               REFER3_DC= #{refer3Dc},
+               REFER4_DC= #{refer4Dc},
+               CODE_THIRD_NM= #{codeThirdNm},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               CODE,
+               CODEKIND_CODE,
+               CODE_KOR_NM,
+               CODE_ENG_NM,
+               CODE_DC,
+               ORDR,
+               USE_AT,
+               DFLT_AT,
+               FACTOR,
+               REFER1_DC,
+               REFER2_DC,
+               REFER3_DC,
+               REFER4_DC,
+               CODE_THIRD_NM,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{code},
+               #{codekind},
+               #{codeKorNm},
+               #{codeEngNm},
+               #{codeDc},
+               #{ordr},
+               #{useAt},
+               #{dfltAt},
+               #{factor},
+               #{refer1Dc},
+               #{refer2Dc},
+               #{refer3Dc},
+               #{refer4Dc},
+               #{codeThirdNm},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deleteCodeStmmng003" parameterType="kr.co.dbvision.api.stm.mng.stmmng003.entity.Stmmng003">
+        /* kr.co.dbvision.api.stm.mng.stmmng003.service.mapper.Stmmng003Mapper.deleteCodeStmmng003 */
+        DELETE FROM STM_CODE
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND CODE = #{code}
+                AND CODEKIND_CODE = #{codekind}
+        </trim>
+    </delete>
+    
+    <select id="selectStmCodeListAll" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.stm.mng.stmmng003.service.impl.Stmmng003Mapper.selectStmCodeListAll */
+        SELECT 
+            CODE,
+            CODE_KOR_NM,
+            ORDR,
+            DECODE(USE_AT, '1', '사용', '0', '미사용', '미사용') AS USE_AT,
+            CODEKIND_CODE
+        FROM STM_CODE
+        
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="codekindCode != null and codekindCode != ''">
+                AND CODEKIND_CODE = #{codekindCode}
+            </if>
+            <if test="useAt != null and useAt != ''">
+                AND USE_AT = #{useAt}
+            </if>      
+            <if test="codeKorNm != null and codeKorNm != ''">
+                AND CODE_KOR_NM LIKE '%' || #{codeKorNm} || '%'
+            </if>     
+        </trim>
+        ORDER BY CODEKIND_CODE,CODE
+    </select>
+</mapper>

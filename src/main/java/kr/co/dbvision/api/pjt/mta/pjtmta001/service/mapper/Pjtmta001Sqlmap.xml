@@ -1,0 +1,531 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.pjt.mta.pjtmta001.service.mapper.Pjtmta001Mapper">
+    
+    <select id="selectPjtmta001ProjectList" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.pjt.mta.pjtmta001.service.mapper.Pjtmta001Mapper.selectPjtmta001ProjectList */
+        SELECT (SELECT BCNC_NM FROM STM_CUSTOMER WHERE BCNC_CODE = A.BCNC_CODE) AS BCNC_NM,
+                PROJECT_NM,
+                DECODE(COMPT_AT, '1', '완료', '0', '진행', '2', '보류') AS COMPT_AT,
+                PROJECT_SN,
+                BCNC_CHARGER_NM,
+                CHARGER_CTTPC,
+                NVL2((SELECT MAX(REPORT_YM) FROM PJT_MNTNCE_REPORT WHERE PROJECT_SN = A.PROJECT_SN), 
+                	(SELECT SUBSTR(MAX(REPORT_YM)+1,1,4)||'-'||SUBSTR(MAX(REPORT_YM)+1,5,2) FROM PJT_MNTNCE_REPORT WHERE PROJECT_SN = A.PROJECT_SN)
+                	,'') AS NEXT_REPORT_YM
+        FROM PJT_PROJECT A
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND PROJECT_SE = '200' 
+                AND CNTRCT_TY != '400'
+            <if test="projectSn != null and projectSn != ''">
+                AND PROJECT_SN = #{projectSn}
+            </if>
+            <if test="requstSn != null and requstSn != ''">
+                AND REQUST_SN = #{requstSn}
+            </if>
+            <if test="bcncNm != null and bcncNm != ''">
+                AND (SELECT BCNC_NM FROM STM_CUSTOMER WHERE BCNC_CODE = A.BCNC_CODE) LIKE '%' || #{bcncNm} || '%'
+            </if>
+            <if test="comptAt != null and comptAt != ''">
+                AND COMPT_AT = #{comptAt}
+            </if>
+        </trim>
+    </select>
+
+    <select id="selectPjtmta001List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.pjt.mta.pjtmta001.service.mapper.Pjtmta001Mapper.selectPjtmta001List */
+        SELECT ROWNUM, B.* FROM (SELECT ROWNUM AS NUM, A.* FROM (SELECT
+               PROJECT_SN,
+               REQUST_SN,
+               REQUST_STEP,
+               TO_CHAR(REQUST_DT, 'YYYY-MM-DD') AS REQUST_DT,
+               RQESTER_DEPT,
+               RQESTER_TELNO,
+               RQESTER_EMAIL,
+               TO_CHAR(COMPT_REQUST_DT, 'YYYY-MM-DD') AS COMPT_REQUST_DT,
+               REQUST_MENU,
+               REQUST_CN,
+               PRIOR_RANK,
+               REQUST_TY,
+               DRCTR_EMPNO,
+               DRCT_CN,
+               TO_CHAR(A.COMPT_DE, 'YYYY-MM-DD') AS COMPT_DE,
+               ATCHMNFL_SN,
+               OPERTOR_EMPNO,
+               OPERT_TY,
+               CONFMER_NM,
+               FNC_DATESTR(COMPT_CONFM_DT) AS COMPT_CONFM_DT,
+               CONFM_OPN,
+               STSFDG_CODE,
+               COMPT_CONFM_AT,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM,
+               (select to_char(max(opert_end_dt),'yyyy-mm-dd') from pjt_mntnce_opert
+                where project_sn = a.project_sn and requst_sn = a.requst_sn) as opert_end_dt
+
+          FROM PJT_MNTNCE_REQUST A
+          <trim prefix="WHERE" prefixOverrides="AND|OR">
+          	<if test="projectSn != null and projectSn != ''">
+                AND PROJECT_SN = #{projectSn}
+            </if>
+          </trim>
+        ORDER BY REQUST_SN ASC) A
+        ORDER BY NUM DESC) B
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            
+            <if test="requstSn != null and requstSn != ''">
+                AND B.REQUST_SN = #{requstSn}
+            </if>
+            <if test="bgnRequstDe != null and bgnRequstDe != ''">
+                <![CDATA[AND B.REQUST_DT >= #{bgnRequstDe}]]>
+            </if>
+            <if test="endRequstDe != null and endRequstDe != ''">
+                <![CDATA[AND B.REQUST_DT <= #{endRequstDe}]]>
+            </if>
+            <if test="sttusSe != null and sttusSe != ''">
+                AND B.REQUST_STEP = #{sttusSe}
+            </if>
+            <if test="comptConfmAt != null and comptConfmAt != ''">
+                AND B.COMPT_CONFM_AT = #{comptConfmAt}
+            </if>
+            <if test="requstCn != null and requstCn != ''">
+                AND B.REQUST_CN LIKE '%'||#{requstCn}||'%'
+            </if>
+        </trim>
+        ORDER BY REQUST_SN DESC
+    </select>
+    
+    <select id="searchPjtHnf" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.pjt.mta.pjtmta001.service.mapper.Pjtmta001Mapper.searchPjtHnf */
+        SELECT 
+			A.PROJECT_SN  ,
+            B.PROJECT_NM,
+            B.BCNC_CODE,
+            (SELECT BCNC_NM FROM STM_CUSTOMER WHERE BCNC_CODE = B.BCNC_CODE) AS BCNC_NM,
+            PROJECT_PM_EMPNO,
+            PROJECT_PM_NM,
+			PRTCPNT_EMPNO ,
+			PRTCPNT_NM ,
+            CHARGER_CTTPC,
+            BCNC_CHARGER_NM
+    	  FROM  PJT_HNF_PLAN A, PJT_PROJECT B
+	 	  WHERE ROWNUM = 1 
+            AND A.PROJECT_SN = B.PROJECT_SN
+	 	  <if test="projectSn != null and projectSn != ''">
+          	AND A.PROJECT_SN = #{projectSn}
+          </if>
+	 	  ORDER BY HNF_PLAN_SN
+    </select>
+
+    <select id="selectPjtmta001" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.pjt.mta.pjtmta001.service.mapper.Pjtmta001Mapper.selectPjtmta001 */
+        SELECT A.PROJECT_SN,
+               REQUST_SN,
+               (SELECT BCNC_NM FROM STM_CUSTOMER WHERE BCNC_CODE = B.BCNC_CODE) AS BCNC_NM,
+               B.PROJECT_NM,
+               REQUST_STEP,
+               TO_CHAR(REQUST_DT, 'YYYY-MM-DD') AS REQUST_DT,
+               RQESTER,
+               RQESTER_DEPT,
+               RQESTER_TELNO,
+               RQESTER_EMAIL,
+               TO_CHAR(COMPT_REQUST_DT, 'YYYY-MM-DD') AS COMPT_REQUST_DT,
+               REQUST_MENU,
+               REQUST_CN,
+               PRIOR_RANK,
+               REQUST_TY,
+               DRCTR_EMPNO,
+               (SELECT KOR_NM FROM  MHS_EMP WHERE EMPNO  = A.DRCTR_EMPNO) AS DRCTR_NM,
+               DRCT_CN,
+               TO_CHAR(A.COMPT_DE, 'YYYY-MM-DD') AS COMPT_DE,
+               ATCHMNFL_SN,
+               OPERTOR_EMPNO,
+               (SELECT KOR_NM FROM  MHS_EMP WHERE EMPNO  = A.OPERTOR_EMPNO) AS OPERTOR_NM,
+               OPERT_TY,
+               CONFMER_NM,
+               TO_CHAR(COMPT_CONFM_DT, 'YYYY-MM-DD') AS COMPT_CONFM_DT,
+               CONFM_OPN,
+               STSFDG_CODE,
+               COMPT_CONFM_AT,
+               A.REG_DT,
+               A.REG_ID,
+               A.UPT_DT,
+               A.UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM,
+                B.REGIST_EMPNO,
+               (SELECT  USER_NM    
+                FROM  STM_USERS  
+                WHERE EMPNO  = B.REGIST_EMPNO) AS REGIST_NM
+          FROM PJT_MNTNCE_REQUST A, PJT_PROJECT B
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND A.PROJECT_SN = B.PROJECT_SN
+            <if test="projectSn != null and projectSn != ''">
+                AND A.PROJECT_SN = #{projectSn}
+            </if>
+            <if test="requstSn != null and requstSn != ''">
+                AND REQUST_SN = #{requstSn}
+            </if>
+      
+        </trim>
+    </select>
+
+    <update id="savePjtmta001" parameterType="kr.co.dbvision.api.pjt.mta.pjtmta001.entity.Pjtmta001">
+        /* kr.co.dbvision.api.pjt.mta.pjtmta001.service.mapper.Pjtmta001Mapper.savePjtmta001 */
+        MERGE INTO PJT_MNTNCE_REQUST A
+             USING (SELECT
+                    #{projectSn} PROJECT_SN,
+                    #{requstSn} REQUST_SN
+                    FROM DUAL) B
+                ON (
+                    A.PROJECT_SN = B.PROJECT_SN AND 
+                    A.REQUST_SN = B.REQUST_SN
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               REQUST_STEP= #{requstStep},
+               REQUST_DT= #{requstDt},
+               RQESTER_DEPT= REPLACE(#{rqesterDept},'-',''),
+               RQESTER_TELNO= #{rqesterTelno},
+               RQESTER_EMAIL= #{rqesterEmail},
+               COMPT_REQUST_DT= #{comptRequstDt},
+               REQUST_MENU= #{requstMenu},
+               REQUST_CN= #{requstCn},
+               PRIOR_RANK= #{priorRank},
+               REQUST_TY= #{requstTy},
+               DRCTR_EMPNO= #{drctrEmpno},
+               DRCT_CN= #{drctCn},
+               COMPT_DE = REPLACE(#{comptDe},'-',''),
+               ATCHMNFL_SN= #{atchmnflSn},
+               OPERTOR_EMPNO= #{opertorEmpno},
+               OPERT_TY= #{opertTy},
+               CONFMER_NM= #{confmerNm},
+               COMPT_CONFM_DT= #{comptConfmDt},
+               CONFM_OPN= #{confmOpn},
+               STSFDG_CODE= #{stsfdgCode},
+               COMPT_CONFM_AT= #{comptConfmAt},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               PROJECT_SN,
+               REQUST_SN,
+               REQUST_STEP,
+               REQUST_DT,
+               RQESTER_DEPT,
+               RQESTER_TELNO,
+               RQESTER_EMAIL,
+               COMPT_REQUST_DT,
+               REQUST_MENU,
+               REQUST_CN,
+               PRIOR_RANK,
+               REQUST_TY,
+               DRCTR_EMPNO,
+               DRCT_CN,
+               COMPT_DE,
+               ATCHMNFL_SN,
+               OPERTOR_EMPNO,
+               OPERT_TY,
+               CONFMER_NM,
+               COMPT_CONFM_DT,
+               CONFM_OPN,
+               STSFDG_CODE,
+               COMPT_CONFM_AT,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{projectSn},
+               #{requstSn},
+               #{requstStep},
+               #{requstDt},
+               REPLACE(#{rqesterDept},'-',''),
+               #{rqesterTelno},
+               #{rqesterEmail},
+               #{comptRequstDt},
+               #{requstMenu},
+               #{requstCn},
+               #{priorRank},
+               #{requstTy},
+               #{drctrEmpno},
+               #{drctCn},
+               #{atchmnflSn},
+               #{opertorEmpno},
+               #{opertTy},
+               #{confmerNm},
+               #{comptConfmDt},
+               #{confmOpn},
+               #{stsfdgCode},
+               #{comptConfmAt},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deletePjtmta001" parameterType="kr.co.dbvision.api.pjt.mta.pjtmta001.entity.Pjtmta001">
+        /* kr.co.dbvision.api.pjt.mta.pjtmta001.service.mapper.Pjtmta001Mapper.deletePjtmta001 */
+        DELETE FROM PJT_MNTNCE_REQUST
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND PROJECT_SN = #{projectSn}
+                AND REQUST_SN = #{requstSn}
+        </trim>
+    </delete>
+    
+    <insert parameterType="EgovMapForNull" id="insertPjtMtaRequst">
+        /* kr.co.dbvision.api.pjt.mta.pjtmta001.service.mapper.Pjtmta001Mapper.insertPjtMtaRequst */
+        INSERT INTO PJT_MNTNCE_REQUST(
+               PROJECT_SN,
+               REQUST_SN,           
+               REQUST_DT,
+               RQESTER_TELNO,
+               RQESTER_EMAIL,
+               COMPT_REQUST_DT,
+               REQUST_MENU,
+               REQUST_CN,
+               PRIOR_RANK,
+               REQUST_TY,
+               ATCHMNFL_SN,
+               REG_DT,
+               REG_ID,
+               RQESTER,
+               DRCTR_EMPNO,
+               OPERTOR_EMPNO,
+               DRCT_CN,
+			   COMPT_DE,
+               REQUST_STEP,
+               OPERT_TY
+        ) VALUES(
+               #{projectSn},
+               (SELECT LPAD(NVL(MAX(REQUST_SN),0) + 1,7,'0') FROM PJT_MNTNCE_REQUST),
+               #{requstDt},
+               #{rqesterTelno},
+               #{rqesterEmail},
+               #{comptRequstDt},
+               #{requstMenu},
+               #{requstCn},
+               #{priorRank},
+               #{requstTy},
+               #{atchmnflSn},
+               SYSDATE,
+               #{regId},
+               #{rqester},
+               #{drctrEmpno},
+               #{opertorEmpno},
+               #{drctCn},
+               #{comptDe},
+               #{requstStep},
+               #{opertTy}
+        ) 
+    </insert>
+    
+    <update parameterType="EgovMapForNull" id="updateMtaRequst">
+           /* kr.co.dbvision.api.pjt.mta.pjtmta001.service.mapper.Pjtmta001Mapper.updateMtaRequst */
+           UPDATE PJT_MNTNCE_REQUST SET
+               REQUST_STEP= #{requstStep},
+               REQUST_DT= #{requstDt},
+               RQESTER_TELNO= #{rqesterTelno},
+               RQESTER_EMAIL= #{rqesterEmail},
+               COMPT_REQUST_DT= #{comptRequstDt},
+               REQUST_MENU= #{requstMenu},
+               REQUST_CN= #{requstCn},
+               PRIOR_RANK= #{priorRank},
+               REQUST_TY= #{requstTy},
+               DRCTR_EMPNO= #{drctrEmpno},
+               DRCT_CN= #{drctCn},
+               COMPT_DE = REPLACE(#{comptDe},'-',''),
+               ATCHMNFL_SN= #{atchmnflSn},
+               OPERTOR_EMPNO= #{opertorEmpno},
+               OPERT_TY= #{opertTy},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId},
+               CONFMER_NM = #{confmerNm},
+               COMPT_CONFM_DT = #{comptConfmDt},
+               STSFDG_CODE = #{stsfdgCode},
+               CONFM_OPN = #{confmOpn},
+               COMPT_CONFM_AT = #{comptConfmAt}
+           WHERE 1=1
+           AND PROJECT_SN = #{projectSn}
+           AND REQUST_SN = #{requstSn} 
+    </update>
+    
+     <delete parameterType="EgovMapForNull" id="deletePjtMtaRequst">
+        /* kr.co.dbvision.api.pjt.mta.pjtmta001.service.mapper.Pjtmta001Mapper.deletePjtMtaRequst */
+        DELETE FROM PJT_MNTNCE_REQUST WHERE PROJECT_SN = #{projectSn} AND REQUST_SN = #{requstSn}
+    </delete>
+    
+    <select id="selectPjtmta001OpertList" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.pjt.mta.pjtmta001.service.mapper.Pjtmta001Mapper.selectPjtmta001OpertList */
+        SELECT
+            REQUST_SN,
+            OPERT_SN,
+            PROJECT_SN,
+            OPERTOR_EMPNO,
+            (SELECT  USER_NM    
+                FROM  STM_USERS  
+                WHERE EMPNO  = A.OPERTOR_EMPNO) AS OPERTOR_NM,
+            TO_CHAR(OPERT_BEGIN_DT, 'YYYY-MM-DD') AS OPERT_BEGIN_DT,
+            TO_CHAR(OPERT_END_DT, 'YYYY-MM-DD') AS OPERT_END_DT,
+            OPERT_CN,
+            REG_DT,
+            REG_ID,
+            UPT_DT,
+            UPT_ID
+        FROM PJT_MNTNCE_OPERT A
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="projectSn != null and projectSn != ''">
+                AND PROJECT_SN = #{projectSn}
+            </if>
+            <if test="requstSn != null and requstSn != ''">
+                AND REQUST_SN = #{requstSn}
+            </if>
+        </trim>
+    </select>
+    
+    <insert parameterType="EgovMapForNull" id="insertPjtMtaOpert">
+        /* kr.co.dbvision.api.pjt.mta.pjtmta001.service.mapper.Pjtmta001Mapper.insertPjtMtaOpert */
+        INSERT INTO PJT_MNTNCE_OPERT(
+                REQUST_SN,
+				OPERT_SN,
+				PROJECT_SN,
+				OPERTOR_EMPNO,
+				OPERT_BEGIN_DT,
+				OPERT_END_DT,
+				OPERT_CN,
+				REG_DT,
+				REG_ID
+        ) VALUES(
+               #{requstSn},
+               (SELECT NVL(MAX(OPERT_SN) + 1,'0') FROM PJT_MNTNCE_OPERT WHERE PROJECT_SN = #{projectSn} AND REQUST_SN = #{requstSn}),
+               #{projectSn},
+               #{opertorEmpno},
+               #{opertBeginDt},
+               #{opertEndDt},
+               #{opertCn},
+               SYSDATE,
+               #{regId}
+        ) 
+    </insert>
+    
+    <select id="selectPjtmta001Opert" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.pjt.mta.pjtmta001.service.mapper.Pjtmta001Mapper.selectPjtmta001Opert */
+        SELECT REQUST_SN,
+				OPERT_SN,
+				PROJECT_SN,
+				OPERTOR_EMPNO,
+				(SELECT  USER_NM    
+                FROM  STM_USERS  
+                WHERE EMPNO  = A.OPERTOR_EMPNO) AS OPERTOR_NM,
+				TO_CHAR(OPERT_BEGIN_DT, 'YYYY-MM-DD') AS OPERT_BEGIN_DT,
+				TO_CHAR(OPERT_END_DT, 'YYYY-MM-DD') AS OPERT_END_DT,
+				OPERT_CN,
+				REG_DT,
+				REG_ID,
+				UPT_DT,
+				UPT_ID
+          FROM PJT_MNTNCE_OPERT A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="projectSn != null and projectSn != ''">
+                AND PROJECT_SN = #{projectSn}
+            </if>
+            <if test="requstSn != null and requstSn != ''">
+                AND REQUST_SN = #{requstSn}
+            </if>
+            <if test="opertSn != null and opertSn != ''">
+                AND OPERT_SN = #{opertSn}
+            </if>
+        </trim>
+    </select>
+    
+    <update parameterType="EgovMapForNull" id="updatePjtMtaOpert">
+           /* kr.co.dbvision.api.pjt.mta.pjtmta001.service.mapper.Pjtmta001Mapper.updatePjtMtaOpert */
+           UPDATE PJT_MNTNCE_OPERT SET
+               OPERTOR_EMPNO = #{opertorEmpno},
+               OPERT_BEGIN_DT = #{opertBeginDt},
+               OPERT_END_DT = #{opertEndDt},
+               OPERT_CN = #{opertCn},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+           WHERE 1=1
+           AND PROJECT_SN = #{projectSn}
+           AND REQUST_SN = #{requstSn} 
+           AND OPERT_SN = #{opertSn}
+    </update>
+    
+    <delete parameterType="EgovMapForNull" id="deletePjtMtaOpert">
+        /* kr.co.dbvision.api.pjt.mta.pjtmta001.service.mapper.Pjtmta001Mapper.deletePjtMtaOpert */
+        DELETE FROM PJT_MNTNCE_OPERT
+        WHERE PROJECT_SN = #{projectSn} 
+        AND REQUST_SN = #{requstSn}
+        <if test="opertSn != '' and opertSn != null">       
+            AND OPERT_SN = #{opertSn}
+        </if> 
+    </delete>
+    
+    <update parameterType="EgovMapForNull" id="updatePjtMtaSttus">
+           /* kr.co.dbvision.api.pjt.mta.pjtmta001.service.mapper.Pjtmta001Mapper.updatePjtMtaOpert */
+           UPDATE PJT_MNTNCE_REQUST SET  
+               REQUST_STEP= '300', 
+               COMPT_DE = #{comptDe}
+               
+           WHERE 1=1
+           AND PROJECT_SN = #{projectSn}
+           AND REQUST_SN = #{requstSn}
+    </update>
+    
+    <select id="selectFileInfosMta" parameterType="egovMapForNull" resultType="egovMapForNull">
+    
+        SELECT FILE_SN ATCH_FILE_ID,               
+               STRE_FLPTH FILE_COURS,
+               STRE_FILE_NM FIL_STORE_FILE_NM,
+               ORGINL_FILE_NM FILE_ORG_FILE_NM,
+               FILE_SIZE FILE_SIZE,
+               FILE_EXTSN_NM FILE_EXT              
+          FROM DBVISION_HOME.STM_ATCHMNFL@com72home
+         WHERE FILE_SN IN
+
+        <if test="atchFileIdArr.length != 0">       
+            <foreach collection="atchFileIdArr" item="item" index="index" open="(" separator="," close=")">
+            #{item} 
+            </foreach>
+        </if>            
+                            
+    </select>   
+    
+    <select id="selectPjtmta001Hnf" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.pjt.mta.pjtmta001.service.mapper.Pjtmta001Mapper.selectPjtmta001Hnf */
+        SELECT *
+        FROM (SELECT PRTCPNT_NM AS OPERTOR_NM, 
+                (SELECT EMPNO    
+                 FROM  STM_USERS  
+                 WHERE USER_NM  = A.PRTCPNT_NM) AS OPERTOR_EMPNO,
+		        B.REGIST_EMPNO AS DRCTR_EMPNO,
+		               (SELECT  USER_NM    
+		                FROM  STM_USERS  
+		                WHERE EMPNO  = B.REGIST_EMPNO) AS DRCTR_NM
+		        from PJT_HNF_ACMSLT A, PJT_PROJECT B
+		        where A.PROJECT_SN = B.PROJECT_SN 
+		        AND A.PROJECT_SN = #{projectSn}
+		        and ACMSLT_STDR_DE = (SELECT MAX(ACMSLT_STDR_DE) FROM PJT_HNF_ACMSLT WHERE A.PROJECT_SN = #{projectSn})
+		        AND (SELECT EMPNO    
+		                 FROM  STM_USERS  
+		                 WHERE USER_NM  = A.PRTCPNT_NM) IS NOT NULL
+		        ORDER BY DRCTR_EMPNO, OPERTOR_EMPNO DESC)
+		WHERE ROWNUM=1
+    </select>
+    
+</mapper>

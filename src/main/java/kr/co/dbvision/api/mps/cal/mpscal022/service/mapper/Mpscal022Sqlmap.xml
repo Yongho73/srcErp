@@ -1,0 +1,370 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mps.cal.mpscal022.service.mapper.Mpscal022Mapper">
+
+    <select id="selectMpscalEmpList" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.cal.mpscal022.service.mapper.Mpscal022Mapper.selectMpscalEmpList */
+        SELECT
+               EMPNO,
+               BPLC_CODE,
+               KOR_NM,
+               HFFS_SE,
+               DEPT_CODE,
+               BABY_SHRTEN_WORK_AT,
+               SALPEAK_AT,
+               HFFS_SE,
+               FNC_COMCODENM('C278',HFFS_SE) AS HFFS_SE_NM,
+               EMPL_SE,               
+               DTY_CODE,
+               FNC_COMCODENM('C103',DTY_CODE) AS DTY_CODE_NM,
+               RSPOFC_CODE,
+               FNC_GETRSPOFCNM(RSPOFC_CODE) AS RSPOFC_CODE_NM,
+               CLSF_CODE,
+               FNC_GETCLSFNM(CLSF_CODE) AS CLSF_CODE_NM,
+               JSSFC_CODE,
+               FNC_GETJSSFCNM(JSSFC_CODE) AS JSSFC_CODE_NM,
+               FNC_GETDEPTNM(DEPT_CODE) AS DEPT_CODE_NM,
+               FNC_DATESTR(ECNY_DE) AS ECNY_DE,
+               FNC_DATESTR(RETIRE_DE) AS RETIRE_DE,
+               FNC_COMCODENM('C068',EMPL_SE) AS EMPL_SE_NM,
+               BABY_SHRTEN_WORK_AT,
+               RETIRE_ANNTY_KIND_CODE,
+               FNC_COMCODENM('C086',RETIRE_ANNTY_KIND_CODE) AS RETIRE_ANNTY_KIND_CODE_NM,
+               SALARY_APRP_CODE,
+               FNC_COMCODENM('C067',SALARY_APRP_CODE) AS SALARY_APRP_CODE_NM,
+               INCMTAXRT_CODE,
+               FNC_COMCODENM('C366',INCMTAXRT_CODE) AS INCMTAXRT_CODE_NM,
+               FLEXBIZ_AT,
+               TO_CHAR((TO_DATE(RETIRE_ANNTY_SBSCRB_DE,'YYYY-MM-DD')),'YYYY-MM-DD') AS RETIRE_ANNTY_SBSCRB_DE,
+               RETIRE_ANNTY_DPSTNM,
+               RETIRE_ANNTY_BANK_CODE,
+               RETIRE_ANNTY_ACNUTNO
+               
+          FROM MHS_EMP A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="empno != null and empno != ''">
+                AND EMPNO = #{empno}
+            </if>
+            <if test="hffsSe != null and hffsSe != ''">
+                AND HFFS_SE = #{hffsSe}
+            </if>
+            <if test="deptCode != null and deptCode != ''">
+                AND DEPT_CODE = #{deptCode}
+            </if>
+        </trim>
+    </select>
+
+    <select id="selectMpscal022List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.cal.mpscal022.service.mapper.Mpscal022Mapper.selectMpscal022List */
+        SELECT
+               A.STTEMNT_DE,
+               A.EMPNO,
+               A.NPN_ACQS_DE,
+               A.HLTHINS_ACQS_DE,
+               A.EPIS_ACQS_DE,
+               A.NPN_AT,
+               A.HLTHINS_AT,
+               A.EPIS_AT,
+               A.IACI_AT,
+               A.PROCESS_AT,
+               A.MARM_NPN_AMT,
+               A.NPN_LABRR_AMT,
+               A.NPN_BPRPRR_AMT,
+               A.MARM_HISR_AMT,
+               A.HEALTH_LABRR_AMT,
+               A.HEALTH_BPRPRR_AMT,
+               A.RCPER_LABRR_AMT,
+               A.RCPER_BPRPRR_AMT,
+               A.MARM_EPIS_AMT,
+               A.LABOR_LABRR_AMT,
+               A.LABOR_BPRPRR_AMT,
+               A.LABOR_STABLE_AMT,
+               A.IACI_BPRPRR_AMT,
+               A.MNTHLY_AMT_BEYEAR_AMT,
+               A.MNTHLY_AMT_MT,
+               A.LTCI_RDCXPT_AT,
+               A.NPN_POSTPNE_AT,
+               A.HLTHINS_POSTPNE_AT,
+               A.EPIS_POSTPNE_AT,
+               A.IACI_POSTPNE_AT,
+               A.UNPAID_RECKN_DE,
+               A.PAY_RE_DE,
+               A.MTINCOME_AMT,
+               A.MONDECL_RESN_CN,
+               A.POSTPNE_RESN_CN,
+               A.POSTPNE_SDT,
+               A.POSTPNE_EDT,
+               A.POSTPNE_TRMNATDE,
+               A.BFCHG_CN,
+               A.AFCHG_CN,
+               A.INSRNC_CANCEL_NO,
+               A.PAYPOSTPNE_SE_CODE,
+               A.CHANGE_SE_CODE,
+               A.CHANGE_INSRNC_CODE,
+               B.HFFS_SE,
+               B.DEPT_CODE,
+               TO_CHAR((TO_DATE(B.RETIRE_ANNTY_SBSCRB_DE,'YYYY-MM-DD')),'YYYY-MM-DD') AS RETIRE_ANNTY_SBSCRB_DE,
+               B.RETIRE_ANNTY_DPSTNM,
+               B.RETIRE_ANNTY_BANK_CODE,
+               B.RETIRE_ANNTY_ACNUTNO
+
+          FROM MPS_SLNRC_STMT A , MHS_EMP B
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                A.EMPNO = B.EMPNO
+            <if test="empno != null and empno != ''">
+                AND A.EMPNO = #{empno}
+            </if>
+            <if test="hffsSe != null and hffsSe != ''">
+                AND B.HFFS_SE = #{hffsSe}
+            </if>
+            <if test="deptCode != null and deptCode != ''">
+                AND B.DEPT_CODE = #{deptCode}
+            </if>
+        </trim>
+    </select>
+    
+    <select id="selectMpscal022" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.cal.mpscal022.service.mapper.Mpscal022Mapper.selectMpscal022 */
+        SELECT
+               STTEMNT_DE,
+               EMPNO,
+               NPN_ACQS_DE,
+               HLTHINS_ACQS_DE,
+               EPIS_ACQS_DE,
+               NPN_AT,
+               HLTHINS_AT,
+               EPIS_AT,
+               IACI_AT,
+               PROCESS_AT,
+               MARM_NPN_AMT,
+               NPN_LABRR_AMT,
+               NPN_BPRPRR_AMT,
+               MARM_HISR_AMT,
+               HEALTH_LABRR_AMT,
+               HEALTH_BPRPRR_AMT,
+               RCPER_LABRR_AMT,
+               RCPER_BPRPRR_AMT,
+               MARM_EPIS_AMT,
+               LABOR_LABRR_AMT,
+               LABOR_BPRPRR_AMT,
+               LABOR_STABLE_AMT,
+               IACI_BPRPRR_AMT,
+               MNTHLY_AMT_BEYEAR_AMT,
+               MNTHLY_AMT_MT,
+               LTCI_RDCXPT_AT,
+               NPN_POSTPNE_AT,
+               HLTHINS_POSTPNE_AT,
+               EPIS_POSTPNE_AT,
+               IACI_POSTPNE_AT,
+               UNPAID_RECKN_DE,
+               PAY_RE_DE,
+               MTINCOME_AMT,
+               MONDECL_RESN_CN,
+               POSTPNE_RESN_CN,
+               POSTPNE_SDT,
+               POSTPNE_EDT,
+               POSTPNE_TRMNATDE,
+               BFCHG_CN,
+               AFCHG_CN,
+               INSRNC_CANCEL_NO,
+               PAYPOSTPNE_SE_CODE,
+               CHANGE_SE_CODE,
+               CHANGE_INSRNC_CODE
+
+          FROM MPS_SLNRC_STMT
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="empno != null and empno != ''">
+                AND EMPNO = #{empno}
+            </if>
+        </trim>
+    </select>
+
+    <update id="saveMpscal022" parameterType="kr.co.dbvision.api.mps.cal.mpscal022.entity.Mpscal022">
+        /* kr.co.dbvision.api.mps.cal.mpscal022.service.mapper.Mpscal022Mapper.saveMpscal022 */
+        MERGE INTO MPS_SLNRC_STMT A
+             USING (SELECT
+                    #{empno} EMPNO
+                    FROM DUAL) B
+                ON (
+                    A.EMPNO = B.EMPNO
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               STTEMNT_DE= REPLACE(#{sttemntDe},'-',''),
+               NPN_ACQS_DE= REPLACE(#{npnAcqsDe},'-',''),
+               HLTHINS_ACQS_DE= REPLACE(#{hlthinsAcqsDe},'-',''),
+               EPIS_ACQS_DE= REPLACE(#{episAcqsDe},'-',''),
+               NPN_AT= #{npnAt},
+               HLTHINS_AT= #{hlthinsAt},
+               EPIS_AT= #{episAt},
+               IACI_AT= #{iaciAt},
+               PROCESS_AT= #{processAt},
+               MARM_NPN_AMT= #{marmNpnAmt},
+               NPN_LABRR_AMT= #{npnLabrrAmt},
+               NPN_BPRPRR_AMT= #{npnBprprrAmt},
+               MARM_HISR_AMT= #{marmHisrAmt},
+               HEALTH_LABRR_AMT= #{healthLabrrAmt},
+               HEALTH_BPRPRR_AMT= #{healthBprprrAmt},
+               RCPER_LABRR_AMT= #{rcperLabrrAmt},
+               RCPER_BPRPRR_AMT= #{rcperBprprrAmt},
+               MARM_EPIS_AMT= #{marmEpisAmt},
+               LABOR_LABRR_AMT= #{laborLabrrAmt},
+               LABOR_BPRPRR_AMT= #{laborBprprrAmt},
+               LABOR_STABLE_AMT= #{laborStableAmt},
+               IACI_BPRPRR_AMT= #{iaciBprprrAmt},
+               MNTHLY_AMT_BEYEAR_AMT= #{mnthlyAmtBeyearAmt},
+               MNTHLY_AMT_MT= #{mnthlyAmtMt},
+               LTCI_RDCXPT_AT= #{ltciRdcxptAt},
+               NPN_POSTPNE_AT= #{npnPostpneAt},
+               HLTHINS_POSTPNE_AT= #{hlthinsPostpneAt},
+               EPIS_POSTPNE_AT= #{episPostpneAt},
+               IACI_POSTPNE_AT= #{iaciPostpneAt},
+               UNPAID_RECKN_DE= REPLACE(#{unpaidRecknDe},'-',''),
+               PAY_RE_DE= REPLACE(#{payReDe},'-',''),
+               MTINCOME_AMT= #{mtincomeAmt},
+               MONDECL_RESN_CN= #{mondeclResnCn},
+               POSTPNE_RESN_CN= #{postpneResnCn},
+               POSTPNE_SDT= #{postpneSdt},
+               POSTPNE_EDT= #{postpneEdt},
+               POSTPNE_TRMNATDE= #{postpneTrmnatde},
+               BFCHG_CN= #{bfchgCn},
+               AFCHG_CN= #{afchgCn},
+               INSRNC_CANCEL_NO= #{insrncCancelNo},
+               PAYPOSTPNE_SE_CODE= #{paypostpneSeCode},
+               CHANGE_SE_CODE= #{changeSeCode},
+               CHANGE_INSRNC_CODE= #{changeInsrncCode},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               STTEMNT_DE,
+               EMPNO,
+               NPN_ACQS_DE,
+               HLTHINS_ACQS_DE,
+               EPIS_ACQS_DE,
+               NPN_AT,
+               HLTHINS_AT,
+               EPIS_AT,
+               IACI_AT,
+               PROCESS_AT,
+               MARM_NPN_AMT,
+               NPN_LABRR_AMT,
+               NPN_BPRPRR_AMT,
+               MARM_HISR_AMT,
+               HEALTH_LABRR_AMT,
+               HEALTH_BPRPRR_AMT,
+               RCPER_LABRR_AMT,
+               RCPER_BPRPRR_AMT,
+               MARM_EPIS_AMT,
+               LABOR_LABRR_AMT,
+               LABOR_BPRPRR_AMT,
+               LABOR_STABLE_AMT,
+               IACI_BPRPRR_AMT,
+               MNTHLY_AMT_BEYEAR_AMT,
+               MNTHLY_AMT_MT,
+               LTCI_RDCXPT_AT,
+               NPN_POSTPNE_AT,
+               HLTHINS_POSTPNE_AT,
+               EPIS_POSTPNE_AT,
+               IACI_POSTPNE_AT,
+               UNPAID_RECKN_DE,
+               PAY_RE_DE,
+               MTINCOME_AMT,
+               MONDECL_RESN_CN,
+               POSTPNE_RESN_CN,
+               POSTPNE_SDT,
+               POSTPNE_EDT,
+               POSTPNE_TRMNATDE,
+               BFCHG_CN,
+               AFCHG_CN,
+               INSRNC_CANCEL_NO,
+               PAYPOSTPNE_SE_CODE,
+               CHANGE_SE_CODE,
+               CHANGE_INSRNC_CODE,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               REPLACE(#{sttemntDe},'-',''),
+               #{empno},
+               REPLACE(#{npnAcqsDe},'-',''),
+               REPLACE(#{hlthinsAcqsDe},'-',''),
+               REPLACE(#{episAcqsDe},'-',''),
+               #{npnAt},
+               #{hlthinsAt},
+               #{episAt},
+               #{iaciAt},
+               #{processAt},
+               #{marmNpnAmt},
+               #{npnLabrrAmt},
+               #{npnBprprrAmt},
+               #{marmHisrAmt},
+               #{healthLabrrAmt},
+               #{healthBprprrAmt},
+               #{rcperLabrrAmt},
+               #{rcperBprprrAmt},
+               #{marmEpisAmt},
+               #{laborLabrrAmt},
+               #{laborBprprrAmt},
+               #{laborStableAmt},
+               #{iaciBprprrAmt},
+               #{mnthlyAmtBeyearAmt},
+               #{mnthlyAmtMt},
+               #{ltciRdcxptAt},
+               #{npnPostpneAt},
+               #{hlthinsPostpneAt},
+               #{episPostpneAt},
+               #{iaciPostpneAt},
+               REPLACE(#{unpaidRecknDe},'-',''),
+               REPLACE(#{payReDe},'-',''),
+               #{mtincomeAmt},
+               #{mondeclResnCn},
+               #{postpneResnCn},
+               #{postpneSdt},
+               #{postpneEdt},
+               #{postpneTrmnatde},
+               #{bfchgCn},
+               #{afchgCn},
+               #{insrncCancelNo},
+               #{paypostpneSeCode},
+               #{changeSeCode},
+               #{changeInsrncCode},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deleteMpscal022" parameterType="kr.co.dbvision.api.mps.cal.mpscal022.entity.Mpscal022">
+        /* kr.co.dbvision.api.mps.cal.mpscal022.service.mapper.Mpscal022Mapper.deleteMpscal022 */
+        DELETE FROM MPS_SLNRC_STMT
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND EMPNO = #{empno}
+        </trim>
+    </delete>
+    
+    <update id="updateMhsEmp" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrb.mhshrb001.service.impl.Mhshrb001Mapper.updateMhsEmpBase */
+        UPDATE MHS_EMP SET
+               RETIRE_ANNTY_KIND_CODE = #{retireAnntyKindCode},
+               SALARY_APRP_CODE = #{salaryAprpCode},
+               INCMTAXRT_CODE = #{incmtaxrtCode},
+               RETIRE_ANNTY_SBSCRB_DE = REPLACE(#{retireAnntySbscrbDe},'-',''),
+               RETIRE_ANNTY_DPSTNM = #{retireAnntyDpstnm},
+               RETIRE_ANNTY_BANK_CODE = #{retireAnntyBankCode},
+               RETIRE_ANNTY_ACNUTNO = #{retireAnntyAcnutno},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+         WHERE EMPNO = #{empno}
+    </update>
+</mapper>

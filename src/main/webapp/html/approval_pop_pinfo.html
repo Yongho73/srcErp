@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html class="no-js" lang="ko">
+<HEAD>
+<META content="IE=11.0000" http-equiv="X-UA-Compatible">
+<META charset="UTF-8">
+<META http-equiv="Content-Script-Type" content="text/javascript; charet=utf-8">
+<META http-equiv="Content-Style-Type" content="text/css; charet=utf-8">
+<META name="HandheldFriendly" content="True">
+<META http-equiv="cleartype" content="on">
+<META http-equiv="X-UA-Compatible" content="IE=edge">
+<META http-equiv="Expires" content="-1">
+<META http-equiv="Pragma" content="no-cache">
+<META http-equiv="Cache-Control" content="no-cache">
+<META content="DBVision-XERP" property="og:title">
+<META name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, minimum-scale=1.0, user-scalable=yes">
+<META name="keywords" content="DBVision-XERP">
+<META name="description" content="DBVision-XERP">
+<LINK href="../img/icon/dbv.ico" rel="shortcut icon" type="image/x-icon">
+
+<TITLE>XERP</TITLE>
+
+<LINK href="../css/dhtmlx/skin/dhtmlx.css" rel="stylesheet" type="text/css">
+<LINK href="../glyphicons/css/bootstrap-glyphicons.css" rel="stylesheet" type="text/css">
+
+<!-- jquery -->
+<SCRIPT src="../js/jquery-1.11.1.min.js"></SCRIPT>
+<SCRIPT src="../js/jquery-ui-custom.min.js"></SCRIPT>
+ 
+<!-- css -->
+<LINK href="../css/base.css" rel="stylesheet" type="text/css">
+<LINK href="../css/sub.css" rel="stylesheet" type="text/css">
+
+<link type="image/x-icon" href="http://intra.dbvision.co.kr/img/login/dbv.ico" rel="Shortcut Icon" />
+<link rel="stylesheet" type="text/css" href="http://intra.dbvision.co.kr/css/sub.css" />
+	<link rel="stylesheet" type="text/css" href="http://intra.dbvision.co.kr/css/table.css" />
+	<script type="text/javascript" src="http://intra.dbvision.co.kr/js/jquery.js"></script>
+	<script type='text/javascript' src='http://intra.dbvision.co.kr/js/jquery.simplemodal.js'></script>
+	<script type="text/javascript">
+	$(document).ready(function(){
+		 $("#open_approval").click(function(){
+		  $("#modal_content").modal(); 
+		 });
+		 $("#approval_close").click(function(){
+		  $.modal.close();
+		 });
+	}); 
+	
+function quitBox(cmd)
+{   
+    if (cmd=='quit')
+    {
+        open(location, '_self').close();
+    }   
+    return false;   
+}
+
+</script>
+
+<style>
+html, body  { overflow: hidden; }
+</style>
+<LINK href="css/payment_sub.css" rel="stylesheet" type="text/css">
+
+
+</HEAD>
+
+
+
+<body style="box-sizing:border-box;">
+
+	<div class="sign_pop">
+		
+			
+		<div class="d_pop_tab">
+			<ul class="pop_tab">
+				<a href="approval_pop_pinfo.html"><li class="active">기본정보</li></a>
+				<a href="approval_pop_psignline.html"><li class="">결재선</li></a>
+				<a href="approval_pop_preceive.html"><li class="">수신처</li></a>
+				<a href="approval_pop_ppublic.html"><li class="">공람처</li></a>
+			</ul>
+		</div>
+		 
+		<div class="detail_type04" style=""><!-- pop_search2   style="border-top:solid 1px #4882b1"-->
+			<table>
+				<caption>결재양식</caption>
+				<colgroup>
+					<col width="130" />
+					<col width="" />
+					<col width="100" />
+					<col width="" />
+				</colgroup>
+				<tr>
+					<th><label for="stylename">제목</label></th>
+					<td colspan="3"><input type="text" id="stylename" title="제목" style="width:70%;" value="연차신청서">
+			<input type="checkbox" name="urgent" value="urgent" id="urgent_box" checked><label for="urgent_box"><span></span>긴급결재</label>
+		</td>
+				</tr>
+				<tr>
+					<th><label for="keeping">문서보존기한</label></th>
+					<td colspan="3">
+					
+					
+						<select id="keeping" name="keeping" style="min-width:200px">
+							<option value="0" selected>선택</option>
+							<option value="1">1년</option>
+							<option value="2">2년</option>
+							<option value="3">3년</option>
+							<option value="4">4년</option>
+							<option value="5">5년</option>
+						</select>
+					</td>
+				</tr>
+				
+				
+				<tr>
+					<th><label for="keeping">문서보존기한</label></th>
+					<td colspan="3">					
+						
+						<form>
+							<fieldset>
+								<legend>공개여부</legend>
+								<label>
+									<input type="radio" name="open_close" value="open" id="open"/ checked> <label for="open"><span></span>공개</label>
+									<input type="radio" name="open_close" value="open_some" id="open_some"/> <label for="open_some"><span></span>부분 공개</label>
+									<input type="radio" name="open_close" value="close" id="close"/> <label for="close"><span></span>비공개</label>
+								</label>
+								<label for="id" style=" margin-left:10%;"><span class="secret"></span><span></span>비공개사유&nbsp;</label>
+									<select  style="min-width:200px;">
+										<option value="0" selected>선택</option>
+										<option value="1">1년</option>
+										<option value="2">2년</option>
+										<option value="3">3년</option>
+										<option value="4">4년</option>
+										<option value="5">5년</option>
+									</select>
+							</fieldset>
+						</form>
+										
+					</td>
+				</tr>
+				<tr>
+					<th><label for="keeping">열람권한</label></th>
+					<td colspan="3">					
+						
+						<form>
+							<fieldset>
+								<legend>열람권한</legend>				                
+									<input type="radio" name="autority" value="10" id="partner"/ checked> <label for="partner"><span></span>결재선, 협조자 등 결재 참여자</label><br>
+									<input type="radio" name="autority" value="20" id="belongdep"/> <label for="belongdep"><span></span>기안자 소속부서</label><br>
+									<input type="radio" name="autority" value="30" id="alldep"/> <label for="alldep"><span></span>전체 부서</label>				                
+							</fieldset>
+						</form>
+										
+					</td>
+				</tr>
+				<tr>
+					<th><label for="keeping">문서보존기한</label></th>
+					<td colspan="3">					
+						
+						<form>
+							<fieldset>
+								<legend>공개여부</legend>
+								<label>
+									<input type="radio" name="openstatus" value="y10" id="y10"/ checked> <label for="y10"><span></span>1년</label>
+									<input type="radio" name="openstatus" value="y20" id="y20"/> <label for="y20"><span></span>3년</label>
+									<input type="radio" name="openstatus" value="y30" id="y30"/> <label for="y30"><span></span>5년</label>
+									<input type="radio" name="openstatus" value="y40" id="y40"/> <label for="y40"><span></span>10년</label>
+									<input type="radio" name="openstatus" value="y90" id="y90"/> <label for="y90"><span></span>영구보존</label>
+								</label>
+							</fieldset>
+						</form>
+										
+					</td>
+				</tr>
+								
+			</table>
+		</div>
+
+
+		<div class="detail_type04" style="margin-top:10px"><!-- pop_search2   style="border-top:solid 1px #4882b1"-->
+			<table>
+				<caption>결재양식</caption>
+				<colgroup>
+					<col width="130" />
+					<col width="" />
+					<col width="100" />
+					<col width="" />
+				</colgroup>
+				<tr>
+					<th><label for="stylename">휴가 중 연락처</label></th>
+					<td colspan="3"><input type="text" id="stylename" title="제목" style="width:25%;" value="">
+				</td>
+				</tr>
+				
+				
+				<tr>
+					<th><label for="receiptG">휴가기간</label></th>
+					<td colspan="3">
+						<input name="brthdy" id="brthdy" type="text" maxlength="8" style="width:15%" value="">&nbsp; ∼  &nbsp;<input name="brthdy" id="brthdy" type="text" maxlength="8" style="width:15%" value="">
+					
+					</td>
+				</tr>
+				<tr>
+					<th><label for="keeping">휴가구분</label></th>
+					<td colspan="3">
+					
+					
+						<select id="keeping" name="keeping" style="min-width:200px">
+							<option value="0" selected>선택</option>
+							<option value="05">0.5일</option>
+							<option value="1">1일</option>
+							<option value="2">2일</option>
+							<option value="3">3일</option>
+							<option value="4">4일</option>
+							<option value="5">5일</option>
+							<option value="6">6일</option>
+							<option value="7">7일</option>
+						</select>
+					</td>
+				</tr>	
+									
+				
+			</table>
+		</div>
+		
+		
+	</div><!--//pop_wrap-->
+
+<div style="text-align:center; position:absolute; display:block;width:100%;bottom:50px;">
+	<button type="button" class="btn_save2" onclick="return quitBox('quit');" />저장</button>&nbsp;<button type="button" class="btn_close2" onclick="return quitBox('quit');" />닫기</button>
+</div>	
+ 
+</BODY>
+</HTML>

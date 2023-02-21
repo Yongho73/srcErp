@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mhs.hrm.mhshrm010.service.mapper.Mhshrm010Mapper">
+
+    <select id="selectMhshrm010List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm010.service.mapper.Mhshrm010Mapper.selectMhshrm010List */
+        SELECT
+               BSRP_SE_CODE,
+               CLSF_CODE,
+               DAYCT_AMT,
+               STAYNGCT_AMT,
+               TRNSPORTCT_AMT,
+               CGFFD_AMT,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_BSRPSTDR A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="bsrpSeCode != null and bsrpSeCode != ''">
+                AND BSRP_SE_CODE = #{bsrpSeCode}
+            </if>
+            <if test="clsfCode != null and clsfCode != ''">
+                AND CLSF_CODE = #{clsfCode}
+            </if>
+            <if test="sRegDt != null and sRegDt != ''">
+                <![CDATA[
+                AND REG_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+                ]]>
+            </if>
+            <if test="eRegDt != null and eRegDt != ''">
+                <![CDATA[
+                AND REG_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+                ]]>
+             </if>
+        </trim>
+        ORDER BY BSRP_SE_CODE,CLSF_CODE
+    </select>
+    
+    <select id="selectMhshrm010ListForExcel" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm010.service.mapper.Mhshrm010Mapper.selectMhshrm010ListForExcel */
+        SELECT
+               FNC_COMCODENM('C024',A.BSRP_SE_CODE) AS BSRP_SE_CODE,
+               (SELECT B.CLSF_NM FROM MHS_CLSF_CODE B WHERE B.CLSF_CODE = A.CLSF_CODE) AS CLSF_CODE,
+               DAYCT_AMT,
+               STAYNGCT_AMT,
+               TRNSPORTCT_AMT,
+               CGFFD_AMT,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_BSRPSTDR A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="bsrpSeCode != null and bsrpSeCode != ''">
+                AND BSRP_SE_CODE = #{bsrpSeCode}
+            </if>
+            <if test="clsfCode != null and clsfCode != ''">
+                AND CLSF_CODE = #{clsfCode}
+            </if>
+            <if test="sRegDt != null and sRegDt != ''">
+                <![CDATA[
+                AND REG_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+                ]]>
+            </if>
+            <if test="eRegDt != null and eRegDt != ''">
+                <![CDATA[
+                AND REG_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+                ]]>
+             </if>
+        </trim>
+        ORDER BY BSRP_SE_CODE,CLSF_CODE
+    </select>
+
+    <select id="selectMhshrm010" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm010.service.mapper.Mhshrm010Mapper.selectMhshrm010 */
+        SELECT
+               BSRP_SE_CODE,
+               CLSF_CODE,
+               DAYCT_AMT,
+               STAYNGCT_AMT,
+               TRNSPORTCT_AMT,
+               CGFFD_AMT,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_BSRPSTDR A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="bsrpSeCode != null and bsrpSeCode != ''">
+                AND BSRP_SE_CODE = #{bsrpSeCode}
+            </if>
+            <if test="clsfCode != null and clsfCode != ''">
+                AND CLSF_CODE = #{clsfCode}
+            </if>
+        </trim>
+    </select>
+    
+    <select id="insertMhshrm010UseChk" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm010.service.mapper.Mhshrm010Mapper.insertMhshrm010UseChk */
+        SELECT COUNT(*) AS CNT
+          FROM MHS_BSRPSTDR
+         WHERE  BSRP_SE_CODE = TRIM(#{bsrpSeCode})
+           AND  CLSF_CODE = TRIM(#{clsfCode})
+     </select>
+     
+    <select id="deleteMhshrm010UseChk" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm010.service.mapper.Mhshrm010Mapper.deleteMhshrm010UseChk */
+		SELECT NVL(SUM(X.CNT),0) AS CNT, MAX(X.TBL) AS TBL
+		FROM (
+	        SELECT 0 AS CNT , '준비중' AS TBL
+	          FROM DUAL
+	         WHERE #{bsrpSeCode} = #{bsrpSeCode}
+	           AND #{clsfCode} = #{clsfCode}
+        ) X
+        WHERE X.CNT > 0
+     </select>
+
+    <update id="saveMhshrm010" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm010.service.mapper.Mhshrm010Mapper.saveMhshrm010 */
+        MERGE INTO MHS_BSRPSTDR A
+             USING (SELECT
+                    #{bsrpSeCode} BSRP_SE_CODE,
+                    #{clsfCode} CLSF_CODE
+                    FROM DUAL) B
+                ON (
+                    A.BSRP_SE_CODE = B.BSRP_SE_CODE AND 
+                    A.CLSF_CODE = B.CLSF_CODE
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               DAYCT_AMT= #{dayctAmt},
+               STAYNGCT_AMT= #{stayngctAmt},
+               TRNSPORTCT_AMT= #{trnsportctAmt},
+               CGFFD_AMT= #{cgffdAmt},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               BSRP_SE_CODE,
+               CLSF_CODE,
+               DAYCT_AMT,
+               STAYNGCT_AMT,
+               TRNSPORTCT_AMT,
+               CGFFD_AMT,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{bsrpSeCode},
+               #{clsfCode},
+               #{dayctAmt},
+               #{stayngctAmt},
+               #{trnsportctAmt},
+               #{cgffdAmt},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deleteMhshrm010" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm010.service.mapper.Mhshrm010Mapper.deleteMhshrm010 */
+        DELETE FROM MHS_BSRPSTDR
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND BSRP_SE_CODE = #{bsrpSeCode}
+                AND CLSF_CODE = #{clsfCode}
+        </trim>
+    </delete>
+</mapper>

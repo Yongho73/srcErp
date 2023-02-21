@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mtx.bsc.mtxbsc001.service.mapper.Mtxbsc001Mapper">
+
+    <select id="selectMtxbsc001List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mtx.bsc.mtxbsc001.service.mapper.Mtxbsc001Mapper.selectMtxbsc001List */
+        SELECT
+               APPLC_YY,
+               INCOME_SE_CODE,
+               LIVE_SE_CODE,
+               INCOME_NM,
+               NEED_EXPENS_AMT,
+               INCOME_RATE,
+               USE_AT,
+               RM,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MFS_RATE_MGRT A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="applcYy != null and applcYy != ''">
+                AND APPLC_YY = #{applcYy}
+            </if>
+            <if test="incomeSeCode != null and incomeSeCode != ''">
+                AND INCOME_SE_CODE = #{incomeSeCode}
+            </if>
+            <if test="liveSeCode != null and liveSeCode != ''">
+                AND LIVE_SE_CODE = #{liveSeCode}
+            </if>
+            <if test="sRegDt != null and sRegDt != ''">
+                <![CDATA[
+                AND REG_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+                ]]>
+            </if>
+            <if test="eRegDt != null and eRegDt != ''">
+                <![CDATA[
+                AND REG_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+                ]]>
+             </if>
+        </trim>
+    </select>
+
+    <select id="selectMtxbsc001" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mtx.bsc.mtxbsc001.service.mapper.Mtxbsc001Mapper.selectMtxbsc001 */
+        SELECT
+               APPLC_YY,
+               INCOME_SE_CODE,
+               LIVE_SE_CODE,
+               INCOME_NM,
+               NEED_EXPENS_AMT,
+               INCOME_RATE,
+               USE_AT,
+               RM,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MFS_RATE_MGRT A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="applcYy != null and applcYy != ''">
+                AND APPLC_YY = #{applcYy}
+            </if>
+            <if test="incomeSeCode != null and incomeSeCode != ''">
+                AND INCOME_SE_CODE = #{incomeSeCode}
+            </if>
+            <if test="liveSeCode != null and liveSeCode != ''">
+                AND LIVE_SE_CODE = #{liveSeCode}
+            </if>
+        </trim>
+    </select>
+
+    <update id="saveMtxbsc001" parameterType="kr.co.dbvision.api.mtx.bsc.mtxbsc001.entity.Mtxbsc001">
+        /* kr.co.dbvision.api.mtx.bsc.mtxbsc001.service.mapper.Mtxbsc001Mapper.saveMtxbsc001 */
+        MERGE INTO MFS_RATE_MGRT A
+             USING (SELECT
+                    #{applcYy} APPLC_YY,
+                    #{incomeSeCode} INCOME_SE_CODE,
+                    #{liveSeCode} LIVE_SE_CODE
+                    FROM DUAL) B
+                ON (
+                    A.APPLC_YY = B.APPLC_YY AND 
+                    A.INCOME_SE_CODE = B.INCOME_SE_CODE AND 
+                    A.LIVE_SE_CODE = B.LIVE_SE_CODE
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               INCOME_NM= #{incomeNm},
+               NEED_EXPENS_AMT= #{needExpensAmt},
+               INCOME_RATE= #{incomeRate},
+               USE_AT= #{useAt},
+               RM= #{rm},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               APPLC_YY,
+               INCOME_SE_CODE,
+               LIVE_SE_CODE,
+               INCOME_NM,
+               NEED_EXPENS_AMT,
+               INCOME_RATE,
+               USE_AT,
+               RM,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+               #{applcYy},
+               #{incomeSeCode},
+               #{liveSeCode},
+               #{incomeNm},
+               #{needExpensAmt},
+               #{incomeRate},
+               #{useAt},
+               #{rm},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deleteMtxbsc001" parameterType="kr.co.dbvision.api.mtx.bsc.mtxbsc001.entity.Mtxbsc001">
+        /* kr.co.dbvision.api.mtx.bsc.mtxbsc001.service.mapper.Mtxbsc001Mapper.deleteMtxbsc001 */
+        DELETE FROM MFS_RATE_MGRT
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND APPLC_YY = #{applcYy}
+                AND INCOME_SE_CODE = #{incomeSeCode}
+                AND LIVE_SE_CODE = #{liveSeCode}
+        </trim>
+    </delete>
+    
+    <select id="searchapplcYearList" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mtx.bsc.mtxbsc001.service.mapper.Mtxbsc001Mapper.searchapplcYearList */
+        SELECT 
+        APPLC_YY AS KEY, 
+        APPLC_YY AS VALUE 
+        FROM
+        (
+                SELECT TO_CHAR(SYSDATE,'YYYY') AS APPLC_YY FROM DUAL
+                UNION           
+                SELECT
+                       APPLC_YY
+                  FROM MFS_RATE_MGRT A
+                  GROUP  BY APPLC_YY
+        ) ORDER BY 1 DESC
+        
+    </select>
+    
+    <update id="insertCopyApplcYy" parameterType="EgovMapForNull">
+     /* kr.co.dbvision.api.mtx.bsc.mtxbsc001.service.mapper.Mtxbsc001Mapper.insertCopyApplcYy */
+        INSERT INTO MFS_RATE_MGRT (
+           APPLC_YY, INCOME_SE_CODE, LIVE_SE_CODE, 
+           INCOME_NM, NEED_EXPENS_AMT, INCOME_RATE, 
+           USE_AT,RM,REG_DT, REG_ID 
+           ) 
+       SELECT
+       APPLC_YY+1, INCOME_SE_CODE, LIVE_SE_CODE, 
+       INCOME_NM, NEED_EXPENS_AMT, INCOME_RATE, 
+       USE_AT, RM,SYSDATE AS REG_DT,REG_ID
+              FROM MFS_RATE_MGRT A
+             WHERE  APPLC_YY =  #{applcYy}
+             ORDER BY INCOME_SE_CODE
+    
+    </update>
+    
+    <delete id="deleteApplcYyYear" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mtx.bsc.mtxbsc001.service.mapper.Mtxbsc001Mapper.deleteApplcYyYear */
+        DELETE FROM MFS_RATE_MGRT WHERE APPLC_YY = #{applcYy}+1
+    </delete>
+</mapper>

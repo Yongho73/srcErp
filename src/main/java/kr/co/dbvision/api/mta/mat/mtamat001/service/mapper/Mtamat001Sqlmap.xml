@@ -1,0 +1,381 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mta.mat.mtamat001.service.mapper.Mtamat001Mapper">
+
+	<select id="selectMtaCompanyList" parameterType="egovMapForNull" resultType="egovMapForNull">
+	SELECT ROWNUM AS RNUM 
+	     , A.* 
+	FROM (	
+		SELECT PROJ_NO AS PROJECT_NO
+			 , 'DBV'||A.COMPANY_CD AS COMP_CD
+			 , COMP_NM
+			 , PROJ_SDT 
+			 , PROJ_EDT
+		FROM DBVISION_INTRA.x_project A
+		   , DBVISION_INTRA.x_COMPANY B
+		   , mta_requst C
+		WHERE 'DBV'||A.COMPANY_CD = B.COMP_CD(+)
+		 AND A.PROJ_NO = C.PROJECT_NO(+)
+		 AND PROJ_CD = 2
+		  <if test="compNm != null and compNm != ''">
+	                AND COMP_NM LIKE '%' || #{compNm} || '%'
+	      </if>
+	      <if test="sProjectDt != null and sProjectDt != ''">
+	                <![CDATA[
+	                AND PROJ_EDT >= TO_DATE(#{sProjectDt} || '000000','YYYY-MM-DDHH24MISS')
+	                ]]>
+	        </if>
+	        <if test="eProjectDt != null and eProjectDt != ''">
+	                <![CDATA[
+	                AND PROJ_SDT <= TO_DATE(#{eProjectDt} || '235959','YYYY-MM-DDHH24MISS')
+	                ]]>
+	        </if>
+	    
+		GROUP BY  proj_no, A.COMPANY_CD, COMP_NM, PROJ_SDT, PROJ_EDT
+		ORDER BY PROJ_NO DESC, PROJ_SDT DESC
+	) A
+	
+	</select>
+    <select id="selectMtaRequstList" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mta.mat.mtamat001.service.impl.Mtamat001Mapper.selectMtaRequstList */
+       SELECT ROWNUM AS RNUM
+       		 ,PROJECT_NO
+       		 ,REQUST_NO
+       		 ,FNC_COMCODENM('C925',REQUST_STEP) AS REQUST_STEP
+       		 ,REQUST_DT
+       		 ,COMPT_REQUST_DT
+       		 ,REQUST_CN
+       		 ,REQUST_TY
+       		 ,COMPT_CONFM_DT
+       		 ,OPERT_END_DT
+       		 ,REG_DT
+       		 ,REG_ID
+       		 ,UPT_DT
+       		 ,UPT_ID
+       FROM (
+        SELECT A.PROJECT_NO,
+        	   A.REQUST_NO,
+        	   COMP_NM,
+               REQUST_STEP,
+               TO_CHAR(REQUST_DT,'YYYY-MM-DD') AS REQUST_DT,
+               TO_CHAR(COMPT_REQUST_DT,'YYYY-MM-DD') AS COMPT_REQUST_DT,
+               REQUST_CN,
+               REQUST_TY,
+               TO_CHAR(COMPT_CONFM_DT,'YYYY-MM-DD') AS COMPT_CONFM_DT,
+               (SELECT MAX(TO_CHAR(OPERT_END_DT,'YYYY-MM-DD')) FROM MTA_OPERT WHERE REQUST_NO = A.REQUST_NO)  AS OPERT_END_DT,
+               TO_CHAR(A.REG_DT,'YYYY-MM-DD HH24:MI:SS') AS REG_DT,
+               A.REG_ID,
+               TO_CHAR(A.UPT_DT,'YYYY-MM-DD HH24:MI:SS') AS UPT_DT,
+               A.UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+          FROM MTA_REQUST A, DBVISION_INTRA.X_COMPANY B, DBVISION_INTRA.X_PROJECT C
+          WHERE 1=1
+           AND A.PROJECT_NO = C.PROJ_NO
+           AND B.COMP_CD = 'DBV'||C.COMPANY_CD
+            <if test="projectNo != null and projectNo != ''">
+                AND PROJECT_NO = #{projectNo}
+            </if>
+            <if test="requstNo != null and requstNo != ''">
+                AND REQUST_NO = #{requstNo}
+            </if>
+            <if test="compNm != null and compNm != ''">
+	                AND COMP_NM LIKE '%' || #{compNm} || '%'
+	        </if>
+	        <if test="sRequstDt != null and sRequstDt != ''">
+	                <![CDATA[
+	                AND REQUST_DT >= TO_DATE(#{sRequstDt} || '000000','YYYY-MM-DDHH24MISS')
+	                ]]>
+	        </if>
+	        <if test="eRequstDt != null and eRequstDt != ''">
+	                <![CDATA[
+	                AND REQUST_DT <= TO_DATE(#{eRequstDt} || '235959','YYYY-MM-DDHH24MISS')
+	                ]]>
+	        </if>
+	        <if test="requstStep != null and requstStep != ''">
+                AND REQUST_STEP = #{requstStep}
+            </if>
+            <if test="comptConfmAt != null and comptConfmAt != ''">
+                AND COMPT_CONFM_AT = #{comptConfmAt}
+            </if>
+	       ORDER BY REQUST_DT DESC
+         ) 
+		  
+    </select>
+
+    <select id="selectMtaRequst" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mta.mat.mtamat001.service.impl.Mtamat001Mapper.selectMtaRequst */
+        SELECT
+        	   ROWNUM as RNUM,
+               PROJECT_NO,
+               REQUST_NO,
+               COMP_NM,
+               REQUST_STEP,
+               TO_CHAR(REQUST_DT,'YYYY-MM-DD') AS REQUST_DT,
+               REQUST_DEPT,
+               REQUST_TELNO,
+               REQUST_EMAIL,
+               TO_CHAR(COMPT_REQUST_DT,'YYYY-MM-DD') AS COMPT_REQUST_DT,
+               REQUST_CN,
+               PRIOR_TY,
+               REQUST_TY,
+               DRCTR_EMPNO,
+               (SELECT KOR_NM FROM MHS_EMP A, MTA_REQUST B 
+               		WHERE A.EMPNO = B.DRCTR_EMPNO
+                	<if test="requstNo != null and requstNo != ''">
+                		AND REQUST_NO = #{requstNo}
+            		</if>
+            	)                                   AS DRCTR_EMP_NM,
+               DRCT_CN,
+               ATCHMNFL AS ATCHMNFL_LIST,
+               OPERTOR_EMPNO,
+               (SELECT KOR_NM FROM MHS_EMP A, MTA_REQUST B 
+               		WHERE A.EMPNO = B.OPERTOR_EMPNO
+                	<if test="requstNo != null and requstNo != ''">
+                		AND REQUST_NO = #{requstNo}
+            		</if>
+            	)                                   AS OPERTOR_EMP_NM,
+               OPERT_TY,
+               CONFMER_NM,
+               TO_CHAR(COMPT_CONFM_DT,'YYYY-MM-DD') AS COMPT_CONFM_DT,
+               COMPT_CONFM_AT,
+               CONFM_OPN,
+               STSFDG_LEVEL,
+               A.REG_DT,
+               A.REG_ID,
+               A.UPT_DT,
+               A.UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MTA_REQUST A, DBVISION_INTRA.x_project B,  DBVISION_INTRA.X_COMPANY C
+
+		 WHERE A.PROJECT_NO = B.PROJ_NO
+           AND 'DBV'||B.COMPANY_CD = C.COMP_CD
+            <if test="projectNo != null and projectNo != ''">
+                AND PROJECT_NO = #{projectNo}
+            </if>
+            <if test="requstNo != null and requstNo != ''">
+                AND REQUST_NO = #{requstNo}
+            </if>
+    </select>
+
+    <insert id="insertMtaRequst" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mta.mat.mtamat001.service.impl.Mtamat001Mapper.insertMtaRequst */
+        INSERT INTO MTA_REQUST
+        (
+            PROJECT_NO,
+            REQUST_NO,
+            REQUST_STEP,
+            REQUST_DT,
+            REQUST_DEPT,
+            REQUST_TELNO,
+            REQUST_EMAIL,
+            COMPT_REQUST_DT,
+            REQUST_CN,
+            PRIOR_TY,
+            REQUST_TY,
+            DRCTR_EMPNO,
+            DRCT_CN,
+            ATCHMNFL,
+            OPERTOR_EMPNO,
+            OPERT_TY,
+            CONFMER_NM,
+            COMPT_CONFM_DT,
+            COMPT_CONFM_AT,
+            CONFM_OPN,
+            STSFDG_LEVEL,
+            REG_DT,
+            REG_ID
+        )
+        VALUES
+        (
+            #{projectNo},
+            (select * from (select NVL(max(requst_no),0)+1 from mta_requst)),
+            '1',
+            #{requstDt},
+            #{requstDept},
+            #{requstTelno},
+            #{requstEmail},
+            #{comptRequstDt},
+            #{requstCn},
+            #{priorTy},
+            #{requstTy},
+            #{drctrEmpno},
+            #{drctCn},
+            #{atchmnfl},
+            #{opertorEmpno},
+            #{opertTy},
+            #{confmerNm},
+            #{comptConfmDt},
+            '0',
+            #{confmOpn},
+            #{stsfdgLevel},
+            SYSDATE,
+            #{regId}
+        )
+    </insert>
+
+    <update id="updateMtaRequst" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mta.mat.mtamat001.service.impl.Mtamat001Mapper.updateMtaRequst */
+        UPDATE MTA_REQUST SET
+
+               REQUST_STEP= #{requstStep},
+               REQUST_DT= #{requstDt},
+               REQUST_DEPT= #{requstDept},
+               REQUST_TELNO= #{requstTelno},
+               REQUST_EMAIL= #{requstEmail},
+               COMPT_REQUST_DT= #{comptRequstDt},
+               REQUST_CN= #{requstCn},
+               PRIOR_TY= #{priorTy},
+               REQUST_TY= #{requstTy},
+               DRCTR_EMPNO= #{drctrEmpno},
+               DRCT_CN= #{drctCn},
+               ATCHMNFL= #{atchmnfl},
+               OPERTOR_EMPNO= #{opertorEmpno},
+               OPERT_TY= #{opertTy},
+               CONFMER_NM= #{confmerNm},
+               COMPT_CONFM_DT= #{comptConfmDt},
+               COMPT_CONFM_AT= #{comptConfmAt},
+               CONFM_OPN= #{confmOpn},
+               STSFDG_LEVEL= #{stsfdgLevel},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+               AND PROJECT_NO = #{projectNo}
+               AND REQUST_NO = #{requstNo}
+        </trim>
+    </update>
+
+    <delete id="deleteMtaRequst" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mta.mat.mtamat001.service.impl.Mtamat001Mapper.deleteMtaRequst */
+        DELETE FROM MTA_REQUST
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND PROJECT_NO = #{projectNo}
+                AND REQUST_NO = #{requstNo}
+        </trim>
+    </delete>
+    
+    <select id="searchMtaRequstOpertList" parameterType="egovMapForNull" resultType="egovMapForNull">
+    	SELECT ROWNUM AS RNUM
+    		 , PROJECT_NO
+    		 , REQUST_NO
+    		 , OPERT_SN
+    		 , OPERTOR_EMPNO
+    		 , KOR_NM AS OPERTOR_EMP_NM
+    		 , TO_CHAR(OPERT_BEGIN_DT,'YYYY-MM-DD') AS OPERT_BEGIN_DT
+    		 , TO_CHAR(OPERT_END_DT,'YYYY-MM-DD') AS OPERT_END_DT
+    		 , OPERT_CN
+    		 , A.REG_DT
+    		 , A.REG_ID
+    		 , A.UPT_DT
+    		 , A.UPT_ID
+        FROM MTA_OPERT A, MHS_EMP B
+        WHERE 1=1
+        AND A.OPERTOR_EMPNO = B.EMPNO
+            <if test="projectNo != null and projectNo != ''">
+                AND PROJECT_NO = #{projectNo}
+            </if>
+            <if test="requstNo != null and requstNo != ''">
+                AND REQUST_NO = #{requstNo}
+            </if>
+    </select>
+    
+     <delete id="deleteMtaRequstOpert" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mta.mat.mtamat001.service.impl.Mtamat001Mapper.deleteMtaRequst */
+        DELETE FROM MTA_OPERT
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND REQUST_NO = #{requstNo}
+                AND OPERT_SN = #{opertSn}
+        </trim>
+    </delete>
+    
+    <insert id="insertMtaRequstOpert" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mta.mat.mtamat001.service.impl.Mtamat001Mapper.insertMtaRequst */
+        INSERT INTO MTA_OPERT
+        (
+            PROJECT_NO,
+            REQUST_NO,
+            OPERT_SN,
+            OPERTOR_EMPNO,
+            OPERT_BEGIN_DT,
+            OPERT_END_DT,
+            OPERT_CN,
+            REG_DT,
+            REG_ID
+        )
+        VALUES
+        (
+            #{projectNo},
+			#{requstNo},
+            (SELECT * FROM (SELECT NVL(MAX(OPERT_SN),0)+1 FROM MTA_OPERT WHERE REQUST_NO = #{requstNo})),
+            #{opertorEmpno},
+            #{opertBeginDt},
+            #{opertEndDt},
+            #{opertCn},
+			SYSDATE,
+            #{regId}
+        )
+    </insert>
+    
+     <update id="updateMtaRequstOpert" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mta.mat.mtamat001.service.impl.Mtamat001Mapper.updateMtaRequst */
+        UPDATE MTA_OPERT SET
+               OPERTOR_EMPNO= #{opertorEmpno},
+               OPERT_BEGIN_DT= #{opertBeginDt},
+               OPERT_END_DT= #{opertEndDt},
+               OPERT_CN= #{opertCn},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+               AND PROJECT_NO = #{projectNo}
+               AND REQUST_NO = #{requstNo}
+               AND OPERT_SN = #{opertSn}
+        </trim>
+    </update>
+    
+    <select id="searchMtaRequstOpertReg" parameterType="egovMapForNull" resultType="egovMapForNull">
+    	    select a.project_no, a.requst_no, comp_nm 
+    	    from mta_requst a, mta_opert b, DBVISION_INTRA.x_project c, DBVISION_INTRA.x_COMPANY D
+			where a.requst_no = b.requst_no(+) and a.project_no = c.proj_no and 'DBV'||c.company_cd = d.comp_cd
+			<if test="projectNo != null and projectNo != ''">
+                AND a.PROJECT_NO = #{projectNo}
+            </if>
+            <if test="requstNo != null and requstNo != ''">
+                AND a.REQUST_NO = #{requstNo}
+            </if>
+			group by a.project_no, a.requst_no, comp_nm
+    </select>
+    
+     <select id="searchMtaRequstOpertDetail" parameterType="egovMapForNull" resultType="egovMapForNull">
+    	    select b.project_no
+    	    	 , b.requst_no
+    	    	 , comp_nm
+    	    	 , OPERT_SN
+    	    	 , b.OPERTOR_EMPNO
+    			 , KOR_NM AS OPERTOR_EMP_NM
+    		 	 , TO_CHAR(OPERT_BEGIN_DT,'YYYY-MM-DD') AS OPERT_BEGIN_DT
+    			 , TO_CHAR(OPERT_END_DT,'YYYY-MM-DD') AS OPERT_END_DT
+    		 	 , OPERT_CN
+    			 , b.REG_DT
+    			 , b.REG_ID
+    			 , b.UPT_DT
+    			 , b.UPT_ID
+    	    from mta_requst a, mta_opert b, DBVISION_INTRA.x_project c,DBVISION_INTRA.x_COMPANY d, mhs_emp e
+			where a.requst_no = b.requst_no and a.project_no = c.proj_no and 'DBV'||c.company_cd = d.comp_cd and b.opertor_empno = e.empno
+            <if test="requstNo != null and requstNo != ''">
+                AND b.REQUST_NO = #{requstNo}
+            </if>
+            <if test="opertSn != null and opertSn != ''">
+                AND b.OPERT_SN = #{opertSn}
+            </if>
+    </select>
+    
+
+    
+</mapper>

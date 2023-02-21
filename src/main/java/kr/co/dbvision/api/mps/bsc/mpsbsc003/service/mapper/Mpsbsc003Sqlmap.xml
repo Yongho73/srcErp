@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mps.bsc.mpsbsc003.service.mapper.Mpsbsc003Mapper">
+
+    <select id="selectComboYearMpsbsc003List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.bsc.mpsbsc003.service.mapper.Mpsbsc003Mapper.selectComboYearMpsbsc003List */
+        SELECT 
+        APPLC_YY AS KEY, 
+        APPLC_YY AS VALUE 
+        FROM
+        (
+                SELECT TO_CHAR(SYSDATE,'YYYY') AS APPLC_YY FROM DUAL
+                UNION            
+                SELECT
+                       APPLC_YY
+                  FROM MPS_APPLY_MONTH A
+                  GROUP  BY APPLC_YY
+        ) ORDER BY 1 DESC
+                
+    </select>
+
+    <select id="selectMpsbsc003List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.bsc.mpsbsc003.service.mapper.Mpsbsc003Mapper.selectMpsbsc003List */
+       	SELECT
+                  A.SALARYTY_CODE		/*급여유형코드*/
+                 ,C.PYMNTDDC_SE
+                 ,FNC_COMCODENM('C062', A.SALARYTY_CODE) SALARYTY_CODE_NM		/*급여유형명*/
+                 ,FNC_COMCODENM('C064', C.PYMNTDDC_SE ) AS PYMNTDDC_SE_NM   	/*지급공제구분*/
+                 ,A.SALARYITEM_CODE			/*급여항목코드*/
+                 ,C.SALARYITEM_NM			/*급여항목명*/
+                 ,NVL(APPLC_YY, ${applcYy}) AS APPLC_YY
+                 ,B.PYMNT1_AT    	/*1월 적용여부*/
+                 ,B.PYMNT2_AT    
+                 ,B.PYMNT3_AT    
+                 ,B.PYMNT4_AT    
+                 ,B.PYMNT5_AT    
+                 ,B.PYMNT6_AT    
+                 ,B.PYMNT7_AT    
+                 ,B.PYMNT8_AT    
+                 ,B.PYMNT9_AT    
+                 ,B.PYMNT10_AT   
+                 ,B.PYMNT11_AT   
+                 ,B.PYMNT12_AT   
+
+             FROM MPS_ITEM_STDR A
+                 ,(SELECT 
+                 APPLC_YY
+						, B.SALARYTY_CODE AS SALARYTY_CODE
+						,B.SALARYITEM_CODE AS SALARYITEM_CODE
+						,MAX(DECODE(SUBSTR(B.APPLC_YM, 5, 6), '01', B.PYMNT_AT)) AS PYMNT1_AT
+						,MAX(DECODE(SUBSTR(B.APPLC_YM, 5, 6), '02', B.PYMNT_AT)) AS PYMNT2_AT
+						,MAX(DECODE(SUBSTR(B.APPLC_YM, 5, 6), '03', B.PYMNT_AT)) AS PYMNT3_AT
+						,MAX(DECODE(SUBSTR(B.APPLC_YM, 5, 6), '04', B.PYMNT_AT)) AS PYMNT4_AT
+						,MAX(DECODE(SUBSTR(B.APPLC_YM, 5, 6), '05', B.PYMNT_AT)) AS PYMNT5_AT
+						,MAX(DECODE(SUBSTR(B.APPLC_YM, 5, 6), '06', B.PYMNT_AT)) AS PYMNT6_AT
+						,MAX(DECODE(SUBSTR(B.APPLC_YM, 5, 6), '07', B.PYMNT_AT)) AS PYMNT7_AT
+						,MAX(DECODE(SUBSTR(B.APPLC_YM, 5, 6), '08', B.PYMNT_AT)) AS PYMNT8_AT
+						,MAX(DECODE(SUBSTR(B.APPLC_YM, 5, 6), '09', B.PYMNT_AT)) AS PYMNT9_AT
+						,MAX(DECODE(SUBSTR(B.APPLC_YM, 5, 6), '10', B.PYMNT_AT)) AS PYMNT10_AT
+						,MAX(DECODE(SUBSTR(B.APPLC_YM, 5, 6), '11', B.PYMNT_AT)) AS PYMNT11_AT
+						,MAX(DECODE(SUBSTR(B.APPLC_YM, 5, 6), '12', B.PYMNT_AT)) AS PYMNT12_AT
+					FROM MPS_APPLY_MONTH B
+				   WHERE  B.APPLC_YY = #{applcYy}
+                  GROUP BY B.APPLC_YY, SALARYITEM_CODE, SALARYTY_CODE
+                  ) B
+                 ,MPS_SALARYITEM C
+            WHERE A.SALARYTY_CODE = B.SALARYTY_CODE(+) 
+              AND A.SALARYITEM_CODE = B.SALARYITEM_CODE(+)
+              AND A.SALARYITEM_CODE = C.SALARYITEM_CODE
+              AND A.USE_AT = '1'        
+            <if test="salarytyCode != null and salarytyCode != ''">
+                AND A.SALARYTY_CODE = #{salarytyCode}
+            </if>  
+	        <if test="pymntddcSe != null and pymntddcSe != ''">
+	        	AND C.PYMNTDDC_SE = #{pymntddcSe}
+	        </if>            
+        ORDER BY A.SALARYTY_CODE, A.SALARYITEM_CODE, C.PYMNTDDC_SE, C.OUTPT_ORDR
+    </select>
+
+
+    <delete id="deleteAllMpsbsc003" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mps.bsc.mpsbsc003.service.mapper.Mpsbsc003Mapper.deleteAllMpsbsc003 */
+        DELETE FROM MPS_APPLY_MONTH WHERE  APPLC_YY = #{nextYy}
+    </delete>
+
+	<update id="saveCopyMpsbsc003" parameterType="EgovMapForNull">
+	 /* kr.co.dbvision.api.mps.bsc.mpsbsc003.service.mapper.Mpsbsc003Mapper.saveCopyMpsbsc003 */
+
+		INSERT INTO MPS_APPLY_MONTH (
+		   APPLC_YY, APPLC_YM, SALARYTY_CODE, 
+		   SALARYITEM_CODE, PYMNT_AT, REG_DT, REG_ID) 
+		SELECT 
+		 #{nextYy} APPLC_YY, #{nextYy}||SUBSTR(APPLC_YM,5,6), SALARYTY_CODE, 
+		 SALARYITEM_CODE, PYMNT_AT, SYSDATE AS REG_DT,   #{regId}
+		FROM MPS_APPLY_MONTH
+		WHERE APPLC_YY = #{applcYy}
+	 </update>
+
+
+
+
+    <select id="selectMpsbsc003" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.bsc.mpsbsc003.service.mapper.Mpsbsc003Mapper.selectMpsbsc003 */
+        SELECT
+               SALARYTY_CODE,
+               SALARYITEM_CODE,
+               APPLC_YM,
+               PYMNT_AT,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MPS_APPLY_MONTH A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="salarytyCode != null and salarytyCode != ''">
+                AND SALARYTY_CODE = #{salarytyCode}
+            </if>
+            <if test="salaryitemCode != null and salaryitemCode != ''">
+                AND SALARYITEM_CODE = #{salaryitemCode}
+            </if>
+            <if test="applcYm != null and applcYm != ''">
+                AND APPLC_YM = #{applcYm}
+            </if>
+        </trim>
+    </select>
+
+    <update id="saveMpsbsc003" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mps.bsc.mpsbsc003.service.mapper.Mpsbsc003Mapper.saveMpsbsc003 */
+        MERGE INTO MPS_APPLY_MONTH A
+             USING (SELECT
+                    #{salarytyCode} SALARYTY_CODE,
+                    #{salaryitemCode} SALARYITEM_CODE,
+                    #{applcYy} APPLC_YY,
+                    #{applcYm} APPLC_YM
+                    FROM DUAL) B
+                ON (
+                    A.SALARYTY_CODE = B.SALARYTY_CODE AND 
+                    A.SALARYITEM_CODE = B.SALARYITEM_CODE AND 
+                    A.APPLC_YY = B.APPLC_YY AND
+                    A.APPLC_YM = B.APPLC_YM
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               PYMNT_AT= #{pymntAt},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+               APPLC_YY,
+               APPLC_YM,
+               SALARYTY_CODE,
+               SALARYITEM_CODE,
+               PYMNT_AT,
+               REG_DT,
+               REG_ID
+        ) VALUES (
+			   #{applcYy},
+			   #{applcYm},
+               #{salarytyCode},
+               #{salaryitemCode},
+               #{pymntAt},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deleteMpsbsc003" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mps.bsc.mpsbsc003.service.mapper.Mpsbsc003Mapper.deleteMpsbsc003 */
+        DELETE FROM MPS_APPLY_MONTH
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND SALARYTY_CODE = #{salarytyCode}
+                AND SALARYITEM_CODE = #{salaryitemCode}
+                AND APPLC_YM = #{applcYm}
+        </trim>
+    </delete>
+</mapper>

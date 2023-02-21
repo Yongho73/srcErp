@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.lib.ui.cmm.dept.service.mapper.DeptMapper">
+
+    <select id="searchTreeDept" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.lib.ui.cmm.dept.service.impl.DeptMapper.searchTreeDept */
+        SELECT * FROM (
+        SELECT
+               NVL(A.UPPER_ORGNZT_CODE,'ROOT') UPPER_ORGNZT_CODE,
+               ORGNZT_CODE,
+               DEPT_CODE,
+               ORGNZT_NM,
+               ORGNZT_MNGR_EMPNO,
+               (SELECT KOR_NM FROM MHS_EMP WHERE EMPNO = ORGNZT_MNGR_EMPNO) AS ORGNZT_MNGR_EMP_NM,
+               ORGNZT_SE_CODE,
+               FNC_COMCODENM('C097',ORGNZT_SE_CODE) as ORGNZT_SE_CODE_NM,
+               ORGNZT_LVL,
+               FNC_DATESTR(USE_BEGIN_DE) AS USE_BEGIN_DE,
+               FNC_DATESTR(USE_END_DE) AS USE_END_DE,
+               USE_AT,
+               DECODE(USE_AT, '1', '사용', '0', '미사용', '미사용') AS USE_AT_NM,
+               TO_CHAR(REG_DT,'YYYY-MM-DD') AS REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM,
+               
+               (SELECT DEPT_KIND_CODE FROM MHS_DEPT WHERE A.DEPT_CODE = DEPT_CODE) AS DEPT_KIND_CODE,
+               (SELECT DEPT_KOR_NM FROM MHS_DEPT WHERE A.DEPT_CODE = DEPT_CODE) AS DEPT_KOR_NM,
+               (SELECT DEPT_ENG_NM FROM MHS_DEPT WHERE A.DEPT_CODE = DEPT_CODE) AS DEPT_ENG_NM,
+               (SELECT DEPT_ABRV FROM MHS_DEPT WHERE A.DEPT_CODE = DEPT_CODE) AS DEPT_ABRV,
+               (SELECT SORT_ORDR FROM MHS_DEPT WHERE A.DEPT_CODE = DEPT_CODE) AS SORT_ORDR,
+               (SELECT DEPT_TELNO FROM MHS_DEPT WHERE A.DEPT_CODE = DEPT_CODE) AS DEPT_TELNO,
+               (SELECT DEPT_FAX_TELNO FROM MHS_DEPT WHERE A.DEPT_CODE = DEPT_CODE) AS DEPT_FAX_TELNO,
+               (SELECT DEPT_EMAIL FROM MHS_DEPT WHERE A.DEPT_CODE = DEPT_CODE) AS DEPT_EMAIL,
+               (SELECT DPRLR_EMPNO FROM MHS_DEPT WHERE A.DEPT_CODE = DEPT_CODE) AS DPRLR_EMPNO,
+               (SELECT KOR_NM FROM MHS_EMP WHERE EMPNO = (SELECT DPRLR_EMPNO FROM MHS_DEPT WHERE A.DEPT_CODE = DEPT_CODE)) AS DPRLR_EMPNO_NM,
+               (SELECT BUGT_USE_DEPT FROM MHS_DEPT WHERE A.DEPT_CODE = DEPT_CODE) AS BUGT_USE_DEPT,
+               (SELECT USE_BEGIN_DE FROM MHS_DEPT WHERE A.DEPT_CODE = DEPT_CODE) AS DEPT_USE_BEGIN_DE,
+               (SELECT USE_END_DE FROM MHS_DEPT WHERE A.DEPT_CODE = DEPT_CODE) AS DEPT_USE_END_DE,
+               (SELECT USE_AT FROM MHS_DEPT WHERE A.DEPT_CODE = DEPT_CODE) AS DEPT_USE_AT
+
+          FROM MHS_ORGNZT A
+          
+          <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="deptCode != null and deptCode != ''">
+                <![CDATA[
+                    AND ORGNZT_LVL <= (SELECT MAX(ORGNZT_LVL) 
+                                       FROM ( SELECT ORGNZT_CODE, DEPT_CODE, MAX(ORGNZT_LVL) AS ORGNZT_LVL  
+                                              FROM MHS_ORGNZT 
+                                              GROUP BY DEPT_CODE, ORGNZT_CODE) 
+                                       WHERE DEPT_CODE = A.DEPT_CODE AND ORGNZT_CODE LIKE '%'||#{deptCode}||'%' )
+                ]]>
+            </if>
+            <if test="deptKorNm != null and deptKorNm != ''">
+                <![CDATA[
+                    AND ORGNZT_LVL <= (SELECT MAX(ORGNZT_LVL) 
+                                       FROM ( SELECT ORGNZT_NM, DEPT_CODE, MAX(ORGNZT_LVL) AS ORGNZT_LVL  
+                                              FROM MHS_ORGNZT 
+                                              GROUP BY DEPT_CODE, ORGNZT_NM) 
+                                       WHERE DEPT_CODE = A.DEPT_CODE AND ORGNZT_NM LIKE '%'||#{deptKorNm}||'%' )
+                ]]>
+            </if>
+            <if test="orgnztCode != null and orgnztCode != ''">
+                <![CDATA[
+                    AND ORGNZT_LVL <= (SELECT MAX(ORGNZT_LVL) 
+                                       FROM ( SELECT ORGNZT_CODE, DEPT_CODE, MAX(ORGNZT_LVL) AS ORGNZT_LVL  
+                                              FROM MHS_ORGNZT 
+                                              GROUP BY DEPT_CODE, ORGNZT_CODE) 
+                                       WHERE DEPT_CODE = A.DEPT_CODE AND ORGNZT_CODE LIKE '%'||#{orgnztCode}||'%' )
+                ]]>
+            </if>
+            <if test="orgnztNm != null and orgnztNm != ''">
+                <![CDATA[
+                    AND ORGNZT_LVL <= (SELECT MAX(ORGNZT_LVL) 
+                                       FROM ( SELECT ORGNZT_NM, DEPT_CODE, MAX(ORGNZT_LVL) AS ORGNZT_LVL  
+                                              FROM MHS_ORGNZT 
+                                              GROUP BY DEPT_CODE, ORGNZT_NM) 
+                                       WHERE DEPT_CODE = A.DEPT_CODE AND ORGNZT_NM LIKE '%'||#{orgnztNm}||'%' )
+                ]]>
+            </if>
+            <if test="useAt != null and useAt != ''">
+                <if test="useAt == 1 or useAt == '1'">
+                    AND USE_AT = #{useAt} 
+                </if>
+                <if test="useAt == 0 or useAt == '0'">
+                <![CDATA[
+                    AND ORGNZT_LVL <= (SELECT MAX(ORGNZT_LVL) 
+                                       FROM ( SELECT USE_AT, DEPT_CODE, MAX(ORGNZT_LVL) AS ORGNZT_LVL  
+                                              FROM MHS_ORGNZT 
+                                              GROUP BY DEPT_CODE, USE_AT) 
+                                       WHERE DEPT_CODE = A.DEPT_CODE AND USE_AT =#{useAt} )
+                ]]>
+                </if>
+            </if>
+            <if test="dpetcode != null and eRegDt != ''">
+                <![CDATA[
+                AND REG_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+                ]]>
+             </if>
+        </trim>
+          
+        START WITH A.ORGNZT_CODE = '0000'
+        CONNECT BY PRIOR A.ORGNZT_CODE = A.UPPER_ORGNZT_CODE ORDER SIBLINGS BY A.DEPT_CODE) A WHERE A.ORGNZT_CODE != '0000'
+    </select>
+    
+    
+    <select id="selectMhsDeptList" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.lib.ui.cmm.dept.service.impl.DeptMapper.selectMhsDeptList */
+        SELECT * FROM (
+        SELECT
+               NVL(A.UPPER_ORGNZT_CODE,'ROOT') UPPER_ORGNZT_CODE,
+               ORGNZT_CODE AS DEPT_CODE,
+               ORGNZT_NM AS DEPT_KOR_NM,
+               ORGNZT_MNGR_EMPNO,
+               (SELECT KOR_NM FROM MHS_EMP WHERE EMPNO = ORGNZT_MNGR_EMPNO) AS ORGNZT_MNGR_EMP_NM,
+               ORGNZT_SE_CODE,
+               FNC_COMCODENM('C097',ORGNZT_SE_CODE) as ORGNZT_SE_CODE_NM,
+               ORGNZT_LVL,
+               FNC_DATESTR(USE_BEGIN_DE) AS USE_BEGIN_DE,
+               FNC_DATESTR(USE_END_DE) AS USE_END_DE,
+               USE_AT,
+               DECODE(USE_AT, '1', '사용', '0', '미사용', '미사용') AS USE_AT_NM,
+               TO_CHAR(REG_DT,'YYYY-MM-DD') AS REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM,
+               
+               (SELECT DEPT_KIND_CODE FROM MHS_DEPT WHERE A.DEPT_CODE = DEPT_CODE) AS DEPT_KIND_CODE,
+               (SELECT DEPT_ENG_NM FROM MHS_DEPT WHERE A.DEPT_CODE = DEPT_CODE) AS DEPT_ENG_NM,
+               (SELECT DEPT_ABRV FROM MHS_DEPT WHERE A.DEPT_CODE = DEPT_CODE) AS DEPT_ABRV,
+               (SELECT SORT_ORDR FROM MHS_DEPT WHERE A.DEPT_CODE = DEPT_CODE) AS SORT_ORDR,
+               (SELECT DEPT_TELNO FROM MHS_DEPT WHERE A.DEPT_CODE = DEPT_CODE) AS DEPT_TELNO,
+               (SELECT DEPT_FAX_TELNO FROM MHS_DEPT WHERE A.DEPT_CODE = DEPT_CODE) AS DEPT_FAX_TELNO,
+               (SELECT DEPT_EMAIL FROM MHS_DEPT WHERE A.DEPT_CODE = DEPT_CODE) AS DEPT_EMAIL,
+               (SELECT DPRLR_EMPNO FROM MHS_DEPT WHERE A.DEPT_CODE = DEPT_CODE) AS DPRLR_EMPNO,
+               (SELECT KOR_NM FROM MHS_EMP WHERE EMPNO = (SELECT DPRLR_EMPNO FROM MHS_DEPT WHERE A.DEPT_CODE = DEPT_CODE)) AS DPRLR_EMPNO_NM,
+               (SELECT BUGT_USE_DEPT FROM MHS_DEPT WHERE A.DEPT_CODE = DEPT_CODE) AS BUGT_USE_DEPT,
+               (SELECT USE_BEGIN_DE FROM MHS_DEPT WHERE A.DEPT_CODE = DEPT_CODE) AS DEPT_USE_BEGIN_DE,
+               (SELECT USE_END_DE FROM MHS_DEPT WHERE A.DEPT_CODE = DEPT_CODE) AS DEPT_USE_END_DE,
+               (SELECT USE_AT FROM MHS_DEPT WHERE A.DEPT_CODE = DEPT_CODE) AS DEPT_USE_AT
+
+          FROM MHS_ORGNZT A
+          
+          <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="deptCode != null and deptCode != ''">
+                <![CDATA[
+                    AND ORGNZT_CODE LIKE '%'||#{deptCode}||'%'
+                ]]>
+            </if>
+            <if test="deptKorNm != null and deptKorNm != ''">
+                <![CDATA[
+                    AND ORGNZT_NM LIKE '%'||#{deptKorNm}||'%'
+                ]]>
+            </if>
+            <if test="orgnztCode != null and orgnztCode != ''">
+                <![CDATA[
+                    AND ORGNZT_CODE LIKE '%'||#{orgnztCode}||'%'
+                ]]>
+            </if>
+            <if test="orgnztNm != null and orgnztNm != ''">
+                <![CDATA[
+                    AND ORGNZT_NM LIKE '%'||#{orgnztNm}||'%'
+                ]]>
+            </if>
+            <if test="useAt != null and useAt != ''">
+                <![CDATA[
+                    AND USE_AT =#{useAt}
+                ]]>
+            </if>
+            <if test="dpetcode != null and eRegDt != ''">
+                <![CDATA[
+                AND REG_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+                ]]>
+             </if>
+        </trim>
+        START WITH ORGNZT_CODE = '0000'
+        CONNECT BY PRIOR ORGNZT_CODE = UPPER_ORGNZT_CODE ORDER SIBLINGS BY DEPT_CODE) A WHERE DEPT_CODE != '0000'
+    </select>
+    
+    <select id="selectMhsDeptCode" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.lib.ui.cmm.dept.service.impl.DeptMapper.selectMhsDeptCode */
+        SELECT
+               DEPT_CODE,
+               DEPT_KOR_NM,
+               DEPT_ENG_NM,
+               DEPT_ABRV,
+               BPLC_CODE,
+               DEPT_TELNO,
+               DEPT_FAX_TELNO,
+               USE_BEGIN_DE,
+               USE_AT,
+               SORT_ORDR,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID
+          FROM MHS_DEPT AA
+	   <trim prefix="WHERE" prefixOverrides="AND|OR">
+       <if test="deptCode != null and deptCode != ''">
+           AND AA.DEPT_CODE LIKE '%' || #{deptCode} || '%'
+       </if>
+       <if test="deptKorNm != null and deptKorNm != ''">
+           AND AA.DEPT_KOR_NM LIKE '%' || #{deptKorNm} || '%'
+       </if>
+       <if test="useAt != null and useAt != ''">
+           AND AA.USE_AT = #{useAt}
+       </if>
+       <if test="bplcCode != null and bplcCode != ''">
+           AND AA.BPLC_CODE = #{bplcCode}
+       </if>
+       </trim>
+    </select>
+    
+    <select id="selectMhsClsfList" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.lib.ui.cmm.dept.service.impl.DeptMapper.selectMhsClsfList */
+        SELECT
+               CLSF_CODE,
+               CLSF_NM
+
+          FROM MHS_CLSF_CODE A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="clsfNm != null and clsfNm != ''">
+                 (   CLSF_CODE  LIKE '%' || #{clsfNm} || '%'  OR CLSF_NM  LIKE '%' || #{clsfNm} || '%'  )
+            </if>
+        </trim>
+        ORDER BY SORT_ORDR
+    </select>
+	    
+</mapper>

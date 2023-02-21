@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mhs.hrb.mhshrb011.service.mapper.Mhshrb011Mapper">
+
+    <select id="selectMhshrb011List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrb.mhshrb011.service.mapper.Mhshrb011Mapper.selectMhshrb011List */
+        SELECT
+               EMPNO,
+               KOR_NM,
+               (select DEPT_KOR_NM FROM MHS_DEPT B WHERE B.DEPT_CODE = A.DEPT_CODE) AS DEPT_NM,
+               HFFS_SE,
+               CASE WHEN SLRCLD_AT = 'S' THEN '양력'
+                    WHEN SLRCLD_AT = 'R' THEN '음력'
+                    ELSE '양력'
+               END AS SLRCLD_AT,
+               A.OFCPS_CODE,
+               (SELECT OFCPS_NM FROM MHS_OFCPS_CODE WHERE OFCPS_CODE = A.OFCPS_CODE) AS OFCPS_CODE_NM,
+               TO_CHAR(TO_DATE(BRTHDY),'YYYY-MM-DD') AS BRTHDY,
+               CASE WHEN SLRCLD_AT = 'S' THEN SUBSTR(#{beginTime},1,4) || TO_CHAR(TO_DATE(BRTHDY),'-MM-DD') 
+                    WHEN SLRCLD_AT = 'R' AND TO_CHAR(TO_DATE(BRTHDY),'MM') = '12' THEN SUBSTR(#{beginTime},1,4) || TO_CHAR(TO_DATE(FNC_GET_BIRTH_CONVERT(SUBSTR(#{beginTime},1,4)-1||TO_CHAR(TO_DATE(BRTHDY),'MMDD'))),'-MM-DD')
+                    WHEN SLRCLD_AT = 'R' THEN SUBSTR(#{beginTime},1,4) || TO_CHAR(TO_DATE(FNC_GET_BIRTH_CONVERT(SUBSTR(#{beginTime},1,4)||TO_CHAR(TO_DATE(BRTHDY),'MMDD'))),'-MM-DD')
+                    ELSE SUBSTR(#{beginTime},1,4) || TO_CHAR(TO_DATE(BRTHDY),'-MM-DD') 
+               END AS NOWBRTHDY, 
+               TO_CHAR(SYSDATE,'YYYY') - SUBSTR(BRTHDY,1,4) + 1 AS AGE
+              
+          FROM MHS_EMP A
+          
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+     
+            <if test="empno != null and empno != ''">
+                AND EMPNO = #{empno}
+            </if>
+                AND HFFS_SE = 'J01'
+            <if test="empNm != null and empNm != ''">
+            	AND KOR_NM = #{empNm}
+            </if>
+            <if test="beginTime != null and beginTime != ''">
+                <![CDATA[
+            	AND ((TO_CHAR(TO_DATE(BRTHDY),'MM') >= SUBSTR(#{beginTime},6,2) AND SLRCLD_AT IN ('S'))
+            	OR  (TO_CHAR(TO_DATE(FNC_GET_BIRTH_CONVERT(TO_CHAR(SYSDATE,'YYYY')||TO_CHAR(TO_DATE(BRTHDY),'MMDD'))), 'MM') >= SUBSTR(#{beginTime},6,2) AND SLRCLD_AT IN ('R')))
+            	]]>
+            </if>
+            <if test="endTime != null and endTime != ''">
+                <![CDATA[
+         		 AND ((TO_CHAR(TO_DATE(BRTHDY),'MM') <= SUBSTR(#{endTime},6,2) AND SLRCLD_AT IN ('S'))
+         		 OR  (TO_CHAR(TO_DATE(FNC_GET_BIRTH_CONVERT(TO_CHAR(SYSDATE,'YYYY')||TO_CHAR(TO_DATE(BRTHDY),'MMDD'))), 'MM') <= SUBSTR(#{endTime},6,2) AND SLRCLD_AT IN ('R')))
+            	]]>
+            </if>
+          	ORDER BY NOWBRTHDY
+        </trim>
+    </select>
+
+    <select id="selectMhshrb011" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrb.mhshrb011.service.mapper.Mhshrb011Mapper.selectMhshrb011List */
+        SELECT
+               EMPNO,
+               KOR_NM,
+               (select DEPT_KOR_NM FROM MHS_DEPT B WHERE B.DEPT_CODE = A.DEPT_CODE) AS DEPT_NM,
+               HFFS_SE,
+               CASE WHEN SLRCLD_AT = 'S' THEN '양력'
+                    WHEN SLRCLD_AT = 'R' THEN '음력'
+                    ELSE '양력'
+               END AS SLRCLD_AT,
+               A.OFCPS_CODE,
+               (SELECT OFCPS_NM FROM MHS_OFCPS_CODE WHERE OFCPS_CODE = A.OFCPS_CODE) AS OFCPS_CODE_NM,
+               TO_CHAR(TO_DATE(BRTHDY),'YYYY-MM-DD') AS BRTHDY,
+               CASE WHEN SLRCLD_AT = 'S' THEN SUBSTR(#{beginTime},1,4) || TO_CHAR(TO_DATE(BRTHDY),'-MM-DD') 
+                    WHEN SLRCLD_AT = 'R' THEN SUBSTR(#{beginTime},1,4) || TO_CHAR(TO_DATE(FNC_GET_BIRTH_CONVERT(SUBSTR(#{beginTime},1,4)||TO_CHAR(TO_DATE(BRTHDY),'MMDD'))),'-MM-DD')
+                    ELSE SUBSTR(#{beginTime},1,4) || TO_CHAR(TO_DATE(BRTHDY),'-MM-DD') 
+               END AS NOWBRTHDY, 
+               TO_CHAR(SYSDATE,'YYYY') - SUBSTR(BRTHDY,1,4) + 1 AS AGE
+              
+          FROM MHS_EMP A
+          
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+     
+            <if test="empno != null and empno != ''">
+                AND EMPNO = #{empno}
+            </if>
+                AND HFFS_SE = 'J01'
+            <if test="empNm != null and empNm != ''">
+            	AND KOR_NM = #{empNm}
+            </if>
+            <if test="beginTime != null and beginTime != ''">
+                <![CDATA[
+            	AND ((TO_CHAR(TO_DATE(BRTHDY),'MM') >= SUBSTR(#{beginTime},6,2) AND SLRCLD_AT IN ('S',''))
+            	OR  (TO_CHAR(TO_DATE(FNC_GET_BIRTH_CONVERT(TO_CHAR(SYSDATE,'YYYY')||TO_CHAR(TO_DATE(BRTHDY),'MMDD'))), 'MM') >= SUBSTR(#{beginTime},6,2) AND SLRCLD_AT IN ('R')))
+            	]]>
+            </if>
+            <if test="endTime != null and endTime != ''">
+                <![CDATA[
+         		 AND ((TO_CHAR(TO_DATE(BRTHDY),'MM') <= SUBSTR(#{endTime},6,2) AND SLRCLD_AT IN ('S',''))
+         		 OR  (TO_CHAR(TO_DATE(FNC_GET_BIRTH_CONVERT(TO_CHAR(SYSDATE,'YYYY')||TO_CHAR(TO_DATE(BRTHDY),'MMDD'))), 'MM') <= SUBSTR(#{endTime},6,2) AND SLRCLD_AT IN ('R')))
+            	]]>
+            </if>
+          	ORDER BY NOWBRTHDY
+        </trim>
+    </select>
+
+    <update id="saveMhshrb011" parameterType="kr.co.dbvision.api.mhs.hrb.mhshrb011.entity.Mhshrb011">
+        /* kr.co.dbvision.api.mhs.hrb.mhshrb011.service.mapper.Mhshrb011Mapper.saveMhshrb011 */
+        MERGE INTO MHS_EMP A
+             USING (SELECT
+                    #{empno} EMPNO
+                    FROM DUAL) B
+                ON (
+                    A.EMPNO = B.EMPNO
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               BPLC_CODE= #{bplcCode},
+               KOR_NM= #{korNm},
+               ENG_NM= #{engNm},
+               CHCRT_NM= #{chcrtNm},
+               EMPL_SE= #{emplSe},
+               ECNY_SE_CODE= #{ecnySeCode},
+               DEPT_CODE= #{deptCode},
+               HFFS_SE= #{hffsSe},
+               ECNY_DE= REPLACE(#{ecnyDe},'-',''),
+               IHIDNUM= #{ihidnum},
+               SEXDSTN_SE= #{sexdstnSe},
+               NATVFRGN_SE_CODE= #{natvfrgnSeCode},
+               NLTY_CODE= #{nltyCode},
+               SRCLS_CODE= #{srclsCode},
+               CLSF_CODE= #{clsfCode},
+               OFCPS_CODE= #{ofcpsCode},
+               JSSFC_CODE= #{jssfcCode},
+               DTY_CODE= #{dtyCode},
+               RSPOFC_CODE= #{rspofcCode},
+               JBLN_CODE= #{jblnCode},
+               ZIP= #{zip},
+               OWNHOM_ADRES= #{ownhomAdres},
+               OWNHOM_DETAIL_ADRES= REPLACE(#{ownhomDetailAdres},'-',''),
+               OWNHOM_ENG_ADRES= #{ownhomEngAdres},
+               OWNHOM_TELNO= #{ownhomTelno},
+               LXTN_TELNO= #{lxtnTelno},
+               MBTLNUM= #{mbtlnum},
+               EMGNC_TELNO= #{emgncTelno},
+               EMAIL= #{email},
+               INDVDL_EMAIL= #{indvdlEmail},
+               BRTHDY= #{brthdy},
+               SLRCLD_AT= #{slrcldAt},
+               MRRG_AT= #{mrrgAt},
+               RETIRE_DE= REPLACE(#{retireDe},'-',''),
+               RETIRE_SE= #{retireSe},
+               LAYOFF_SE_CODE= #{layoffSeCode},
+               PHOTO_ATCHMNFL_NO= #{photoAtchmnflNo},
+               SIGN_ATCHMNFL_NO= #{signAtchmnflNo},
+               CASHIER_AT= #{cashierAt},
+               HDADPT_AT= #{hdadptAt},
+               HDADPT_DEPT_CODE= REPLACE(#{hdadptDeptCode},'-',''),
+               DISP_DEPT_CODE= REPLACE(#{dispDeptCode},'-',''),
+               DPRLR_AT= #{dprlrAt},
+               LBUN_SBSCRB_AT= #{lbunSbscrbAt},
+               MUTAID_SBSCRB_AT= #{mutaidSbscrbAt},
+               DISP_WORK_AT= #{dispWorkAt},
+               FLEXBIZ_AT= #{flexbizAt},
+               BABY_SHRTEN_WORK_AT= #{babyShrtenWorkAt},
+               SALPEAK_AT= #{salpeakAt},
+               SALARY_APRP_CODE= #{salaryAprpCode},
+               ANSALSYS_AT= #{ansalsysAt},
+               APNTC_SDT= #{apntcSdt},
+               APNTC_EDT= #{apntcEdt},
+               INCMTAXRT_CODE= #{incmtaxrtCode},
+               SALARY_PYMNT_AT= #{salaryPymntAt},
+               RETIRE_ANNTY_KIND_CODE= #{retireAnntyKindCode},
+               NXTTRM_PROMT_DE= REPLACE(#{nxttrmPromtDe},'-',''),
+               RETIRE_ANNTY_SBSCRB_DE= REPLACE(#{retireAnntySbscrbDe},'-',''),
+               RETIRE_ANNTY_DPSTNM= #{retireAnntyDpstnm},
+               RETIRE_ANNTY_BANK_CODE= #{retireAnntyBankCode},
+               RETIRE_ANNTY_ACNUTNO= #{retireAnntyAcnutno},
+               LAYOFF_ALT_HNF_AT= #{layoffAltHnfAt},
+               NON_TMLMT_CNTRCT_CHANGE_DE= REPLACE(#{nonTmlmtCntrctChangeDe},'-',''),
+               CUR_CLSF_EMPLMNDAY= #{curClsfEmplmnday},
+               SENIOR_SE= #{seniorSe},
+               RETIRE_ANNTY_DC_SBSCRB_DE= REPLACE(#{retireAnntyDcSbscrbDe},'-',''),
+               LAST_PROMT_DE= REPLACE(#{lastPromtDe},'-',''),
+               NON_TMLMT_CNTTK_CHANGE_DE= REPLACE(#{nonTmlmtCnttkChangeDe},'-',''),
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               EMPNO,
+               BPLC_CODE,
+               KOR_NM,
+               ENG_NM,
+               CHCRT_NM,
+               EMPL_SE,
+               ECNY_SE_CODE,
+               DEPT_CODE,
+               HFFS_SE,
+               ECNY_DE,
+               IHIDNUM,
+               SEXDSTN_SE,
+               NATVFRGN_SE_CODE,
+               NLTY_CODE,
+               SRCLS_CODE,
+               CLSF_CODE,
+               OFCPS_CODE,
+               JSSFC_CODE,
+               DTY_CODE,
+               RSPOFC_CODE,
+               JBLN_CODE,
+               ZIP,
+               OWNHOM_ADRES,
+               OWNHOM_DETAIL_ADRES,
+               OWNHOM_ENG_ADRES,
+               OWNHOM_TELNO,
+               LXTN_TELNO,
+               MBTLNUM,
+               EMGNC_TELNO,
+               EMAIL,
+               INDVDL_EMAIL,
+               BRTHDY,
+               SLRCLD_AT,
+               MRRG_AT,
+               RETIRE_DE,
+               RETIRE_SE,
+               LAYOFF_SE_CODE,
+               PHOTO_ATCHMNFL_NO,
+               SIGN_ATCHMNFL_NO,
+               CASHIER_AT,
+               HDADPT_AT,
+               HDADPT_DEPT_CODE,
+               DISP_DEPT_CODE,
+               DPRLR_AT,
+               LBUN_SBSCRB_AT,
+               MUTAID_SBSCRB_AT,
+               DISP_WORK_AT,
+               FLEXBIZ_AT,
+               BABY_SHRTEN_WORK_AT,
+               SALPEAK_AT,
+               SALARY_APRP_CODE,
+               ANSALSYS_AT,
+               APNTC_SDT,
+               APNTC_EDT,
+               INCMTAXRT_CODE,
+               SALARY_PYMNT_AT,
+               RETIRE_ANNTY_KIND_CODE,
+               NXTTRM_PROMT_DE,
+               RETIRE_ANNTY_SBSCRB_DE,
+               RETIRE_ANNTY_DPSTNM,
+               RETIRE_ANNTY_BANK_CODE,
+               RETIRE_ANNTY_ACNUTNO,
+               LAYOFF_ALT_HNF_AT,
+               NON_TMLMT_CNTRCT_CHANGE_DE,
+               CUR_CLSF_EMPLMNDAY,
+               SENIOR_SE,
+               RETIRE_ANNTY_DC_SBSCRB_DE,
+               LAST_PROMT_DE,
+               NON_TMLMT_CNTTK_CHANGE_DE,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{empno},
+               #{bplcCode},
+               #{korNm},
+               #{engNm},
+               #{chcrtNm},
+               #{emplSe},
+               #{ecnySeCode},
+               #{deptCode},
+               #{hffsSe},
+               REPLACE(#{ecnyDe},'-',''),
+               #{ihidnum},
+               #{sexdstnSe},
+               #{natvfrgnSeCode},
+               #{nltyCode},
+               #{srclsCode},
+               #{clsfCode},
+               #{ofcpsCode},
+               #{jssfcCode},
+               #{dtyCode},
+               #{rspofcCode},
+               #{jblnCode},
+               #{zip},
+               #{ownhomAdres},
+               REPLACE(#{ownhomDetailAdres},'-',''),
+               #{ownhomEngAdres},
+               #{ownhomTelno},
+               #{lxtnTelno},
+               #{mbtlnum},
+               #{emgncTelno},
+               #{email},
+               #{indvdlEmail},
+               #{brthdy},
+               #{slrcldAt},
+               #{mrrgAt},
+               REPLACE(#{retireDe},'-',''),
+               #{retireSe},
+               #{layoffSeCode},
+               #{photoAtchmnflNo},
+               #{signAtchmnflNo},
+               #{cashierAt},
+               #{hdadptAt},
+               REPLACE(#{hdadptDeptCode},'-',''),
+               REPLACE(#{dispDeptCode},'-',''),
+               #{dprlrAt},
+               #{lbunSbscrbAt},
+               #{mutaidSbscrbAt},
+               #{dispWorkAt},
+               #{flexbizAt},
+               #{babyShrtenWorkAt},
+               #{salpeakAt},
+               #{salaryAprpCode},
+               #{ansalsysAt},
+               #{apntcSdt},
+               #{apntcEdt},
+               #{incmtaxrtCode},
+               #{salaryPymntAt},
+               #{retireAnntyKindCode},
+               REPLACE(#{nxttrmPromtDe},'-',''),
+               REPLACE(#{retireAnntySbscrbDe},'-',''),
+               #{retireAnntyDpstnm},
+               #{retireAnntyBankCode},
+               #{retireAnntyAcnutno},
+               #{layoffAltHnfAt},
+               REPLACE(#{nonTmlmtCntrctChangeDe},'-',''),
+               #{curClsfEmplmnday},
+               #{seniorSe},
+               REPLACE(#{retireAnntyDcSbscrbDe},'-',''),
+               REPLACE(#{lastPromtDe},'-',''),
+               REPLACE(#{nonTmlmtCnttkChangeDe},'-',''),
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deleteMhshrb011" parameterType="kr.co.dbvision.api.mhs.hrb.mhshrb011.entity.Mhshrb011">
+        /* kr.co.dbvision.api.mhs.hrb.mhshrb011.service.mapper.Mhshrb011Mapper.deleteMhshrb011 */
+        DELETE FROM MHS_EMP
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND EMPNO = #{empno}
+        </trim>
+    </delete>
+</mapper>

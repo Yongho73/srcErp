@@ -1,0 +1,6 @@
+@charset "utf-8";
+
+/********** body **********/
+html {height:100%; overflow:auto}
+body {background:#fff url(../img/common/body_bg.png) repeat-y left}
+dl,ul,ol,menu,li{list-style:none;font-family:Malgun Gothic,'맑은 고딕','Nanum Gothic','나눔고딕',dotum,tahoma,sans-serif}

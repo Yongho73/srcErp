@@ -1,0 +1,424 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper
+	namespace="kr.co.dbvision.api.pjt.pmg.pjtpmg001.service.mapper.Pjtpmg001Mapper">
+
+	<select id="selectPjtBugtPlanList"
+		parameterType="egovMapForNull" resultType="egovMapForNull">
+		/*
+		kr.co.dbvision.api.pjt.pmg.pjtpmg001.service.impl.Pjtpmg001Mapper.selectPjtProjectList
+		*/
+			SELECT '계약금액' AS GUBUN1, '1' AS GUBUN, NULL AS ACNT_CODE, NULL AS
+				   CODE_KOR_NM, NULL AS ORDR, NULL AS CODE, CNTRCT_AMT - (CNTRCT_AMT * 0.1) AS BUGT_AMT
+			FROM PJT_PROJECT
+			WHERE PROJECT_SN = #{projectSn}
+		UNION ALL
+			SELECT '직접비' AS GUBUN1 , '2' AS GUBUN, CODEKIND_CODE AS ACNT_CODE,
+				   CODE_KOR_NM AS CODE_KOR_NM, ORDR , CODE
+				, (SELECT SUM(BUGT_AMT)
+					FROM PJT_BUGT_PLAN
+					WHERE PROJECT_SN = #{projectSn}
+					AND PRMPC_TY = A.CODE AND ACNT_CODE = A.CODEKIND_CODE) AS BUGT_AMT
+			FROM STM_CODE A
+			WHERE CODEKIND_CODE = 'C071'
+		UNION ALL
+			SELECT '소 계' AS GUBUN1, '3' AS GUBUN, 'C071' AS ACNT_CODE, NULL AS
+				   CODE_KOR_NM, NULL AS ORDR, NULL AS CODE, SUM(A.BUGT_AMT) AS BUGT_AMT
+			FROM PJT_BUGT_PLAN A, STM_CODE B
+			WHERE A.PRMPC_TY = B.CODE AND A.ACNT_CODE = B.CODEKIND_CODE AND ACNT_CODE =
+			'C071' AND PROJECT_SN=#{projectSn}
+		UNION ALL
+			SELECT '간접비' AS GUBUN1, '4' AS GUBUN, CODEKIND_CODE AS ACNT_CODE,
+				   CODE_KOR_NM AS CODE_KOR_NM, ORDR, NULL AS CODE
+				, (SELECT (BUGT_SUM * 0.35) BUGT
+					FROM ( SELECT SUM(A.BUGT_AMT) AS BUGT_SUM, CNTRCT_AMT
+						   FROM PJT_BUGT_PLAN A, STM_CODE B, PJT_PROJECT C
+						   WHERE A.PRMPC_TY = B.CODE
+						   AND A.PROJECT_SN = C.PROJECT_SN
+						   AND A.ACNT_CODE = B.CODEKIND_CODE
+						   AND ACNT_CODE = 'C071'
+						   AND A.PROJECT_SN=#{projectSn}
+						   GROUP BY CNTRCT_AMT
+						 ) A
+				   ) AS BUDG_AMT
+			FROM STM_CODE A
+			WHERE CODEKIND_CODE = 'C072'
+		UNION ALL
+			SELECT '손익' AS GUBUN1, '5' AS GUBUN, NULL AS ACNT_CODE, NULL AS CODE_KOR_NM,
+				   NULL AS ORDR, NULL AS CODE, (CNTRCT_AMT - (CNTRCT_AMT * 0.1)) - B.BUGT_AMT - BUGT AS BUGT_AMT
+			FROM PJT_PROJECT A,
+				 (SELECT NULL AS GUBUN1, '3' AS GUBUN, NULL AS ACNT_CODE, '소 계' AS
+				  		 CODE_KOR_NM, NULL AS ORDR, SUM(A.BUGT_AMT) AS BUGT_AMT , A.PROJECT_SN
+				  FROM PJT_BUGT_PLAN A, STM_CODE B
+				  WHERE A.PRMPC_TY = B.CODE AND A.ACNT_CODE = B.CODEKIND_CODE 
+				  AND ACNT_CODE = 'C071' AND A.PROJECT_SN = #{projectSn}
+				  GROUP BY PROJECT_SN) B,
+				 (SELECT (BUGT_SUM * 0.35) BUGT
+				  FROM ( SELECT SUM(A.BUGT_AMT) AS BUGT_SUM, CNTRCT_AMT
+				  		 FROM PJT_BUGT_PLAN A, STM_CODE B, PJT_PROJECT C
+				  WHERE A.PRMPC_TY = B.CODE
+				  AND A.PROJECT_SN = C.PROJECT_SN
+				  AND A.ACNT_CODE = B.CODEKIND_CODE
+				  AND ACNT_CODE = 'C071'
+				  AND A.PROJECT_SN = #{projectSn}
+				  GROUP BY CNTRCT_AMT
+				  ) A ) C
+			WHERE A.PROJECT_SN = #{projectSn}
+			AND A.PROJECT_SN = B.PROJECT_SN
+		ORDER BY GUBUN, ORDR 
+	</select>
+	
+	<select id="selectPjtBugtPlanDtlList"
+		parameterType="egovMapForNull" resultType="egovMapForNull">
+		/*kr.co.dbvision.api.pjt.pmg.pjtpmg001.service.impl.Pjtpmg001Mapper.selectPjtProjectList*/
+		SELECT ROWNUM AS RNUM, A.* FROM	(
+			SELECT PROJECT_SN
+				  ,BUGT_PLAN_SN
+				  ,ACNT_CODE
+			  	  ,PRMPC_TY
+				  ,BUGT_TIT
+				  ,BUGT_AMT
+				  ,BUGT_SUMMARY
+				  ,TO_CHAR(TO_DATE(BUGT_REGISTDT),'YYYY-MM-DD') AS BUGT_REGISTDT
+				  ,UPT_DT
+				  ,UPT_ID
+                  ,(SELECT USER_NM FROM STM_USERS
+               		WHERE USER_ID = A.REG_ID) AS REG_ID
+               	  ,TO_CHAR(REG_DT, 'YYYY-MM-DD') AS REG_DT 
+		   FROM PJT_BUGT_PLAN A
+		   WHERE PROJECT_SN = #{projectSn}
+	   UNION ALL
+			SELECT DISTINCT #{projectSn} AS PROJECT_SN, 
+			       NULL AS BUGT_PLAN_SN,
+			       'C072' AS ACNT_CODE,
+			       '간접비(직접비 X 35%)' AS PRMPC_TY,
+			       '간접비' AS BUGT_TIT,
+			       (SELECT (BUGT_SUM * 0.35) BUGT
+								FROM ( SELECT NVL(SUM(A.BUGT_AMT),0) AS BUGT_SUM, CNTRCT_AMT
+									   FROM PJT_BUGT_PLAN A, STM_CODE B, PJT_PROJECT C
+									   WHERE A.PRMPC_TY = B.CODE
+									   AND A.PROJECT_SN = C.PROJECT_SN
+									   AND A.ACNT_CODE = B.CODEKIND_CODE
+									   AND ACNT_CODE = 'C071'
+									   AND A.PROJECT_SN=#{projectSn}
+									   GROUP BY CNTRCT_AMT
+									 ) A
+							   ) AS BUDG_AMT,
+			         '※ 간접비는 직접비 등록 시 자동계산되어 표기됩니다.' AS BUGT_SUMMARY,
+			         (SELECT TO_CHAR(REG_DT,'YYYY-MM-DD') AS REG_DT FROM PJT_PROJECT WHERE PROJECT_SN=#{projectSn}) AS BUGT_REGISTDT,
+			         NULL AS UPT_DT,
+			         NULL AS UPT_ID,
+                     NULL AS REG_ID,
+                     NULL AS REG_DT
+			         FROM PJT_BUGT_PLAN
+			         WHERE PROJECT_SN = #{projectSn}	
+			         ) A	
+		 <trim prefix="WHERE" prefixOverrides="AND|OR">
+        	 <if test="prmpcTy != null and prmpcTy != ''">
+               AND PRMPC_TY = #{prmpcTy}
+             </if>
+             <if test="acntCode != null and acntCode != ''">
+               AND ACNT_CODE = #{acntCode}
+             </if>
+        </trim>
+        
+	</select>
+	
+	 <insert id="insertPjtBugtPlanDtlList" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg002.service.impl.Pjtpmg002Mapper.insertPjtProject */
+        INSERT INTO PJT_BUGT_PLAN
+        (
+            PROJECT_SN  ,
+			BUGT_PLAN_SN ,
+			ACNT_CODE  ,
+			PRMPC_TY ,
+			BUGT_TIT,
+			BUGT_AMT,
+			BUGT_SUMMARY,
+			BUGT_REGISTDT ,
+            REG_DT,
+            REG_ID
+        )
+        VALUES 
+        (
+            #{projectSn},
+            (SELECT NVL((MAX(BUGT_PLAN_SN) + 1),0) FROM PJT_BUGT_PLAN WHERE PROJECT_SN = #{projectSn}),
+            #{acntCode},
+            #{prmpcTy},
+            #{bugtTit},
+            #{bugtAmt},
+            #{bugtSummary},
+            #{bugtRegistdt},
+            SYSDATE,
+            #{regId}
+        )
+    </insert>
+	
+	<update id="updatePjtBugtPlanDtlList" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg002.service.impl.Pjtpmg002Mapper.updatePjtProject */
+        UPDATE PJT_BUGT_PLAN SET
+			ACNT_CODE = #{acntCode},
+			PRMPC_TY = #{prmpcTy} ,
+			BUGT_TIT = #{bugtTit},
+			BUGT_AMT = #{bugtAmt},
+			BUGT_SUMMARY = #{bugtSummary},
+			BUGT_REGISTDT = #{bugtRegistdt} ,
+            UPT_DT = SYSDATE,
+            UPT_ID = #{uptId}
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+               AND PROJECT_SN = #{projectSn}
+               AND BUGT_PLAN_SN = #{bugtPlanSn}
+        </trim>
+    </update>
+    
+    <delete id="deletePjtBugtPlanDtlList" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg002.service.impl.Pjtpmg002Mapper.deletePjtProject */
+        DELETE FROM PJT_BUGT_PLAN
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+               AND BUGT_PLAN_SN = #{bugtPlanSn}
+               AND PROJECT_SN = #{projectSn}
+        </trim>
+    </delete>
+    
+     <select id="selectPjtBugtBaseDt" parameterType="egovMapForNull" resultType="egovMapForNull">
+		/*kr.co.dbvision.api.pjt.pmg.pjtpmg001.service.impl.Pjtpmg001Mapper.selectPjtBugtBasisDt*/
+		SELECT FNC_PROJ_EXPEND_DT(#{projectSn}, '0') AS BASIS_DT_LIST,
+		       FNC_PROJ_EXPEND_DT(#{projectSn}, '1') AS COLUMN_LIST
+		FROM   DUAL
+	</select>
+	
+    <select id="selectPjtBugtBasisDt" parameterType="egovMapForNull" resultType="String">
+		/*kr.co.dbvision.api.pjt.pmg.pjtpmg001.service.impl.Pjtpmg001Mapper.selectPjtBugtBasisDt*/
+		SELECT FNC_PROJ_EXPEND_DT(#{projectSn}, '1') AS COLUMN_LIST FROM DUAL
+	</select>
+	
+	<select id="selectPjtBugtStmCode" parameterType="egovMapForNull" resultType="egovMapForNull">
+		/*kr.co.dbvision.api.pjt.pmg.pjtpmg001.service.impl.Pjtpmg001Mapper.selectPjtBugtStmCode*/
+		SELECT DECODE(CODEKIND_CODE, 'C071', '직접비', '간접비') AS GUBUN1, CODEKIND_CODE  AS GUBUN ,CODE AS ACC_CD, CODE_KOR_NM 
+		  FROM STM_CODE WHERE CODEKIND_CODE = #{codekindCode}
+	  ORDER BY CODEKIND_CODE, ORDR
+	</select>
+	
+	<select id="selectPjtProjectAmt" parameterType="egovMapForNull" resultType="String">
+		/*kr.co.dbvision.api.pjt.pmg.pjtpmg001.service.impl.Pjtpmg001Mapper.selectPjtBugtStmCode*/
+		SELECT TRUNC(CNTRCT_AMT / 1.1) AS CNTRCT_AMT FROM PJT_PROJECT
+		WHERE PROJECT_SN = #{projectSn}
+	</select>
+	
+	 <select id="selectPjtBugtAcmsltSum" parameterType="egovMapForNull" resultType="egovMapForNull">	 	
+	 	/*kr.co.dbvision.api.pjt.pmg.pjtpmg001.service.impl.Pjtpmg001Mapper.selectPjtBugtAcmsltList*/
+	 	SELECT NVL(SUM(USE_AMT),0) AS USE_AMT
+		  FROM PJT_BUGT_ACMSLT
+		 WHERE PROJECT_SN = #{projectSn}
+		   AND SUBSTR(TO_CHAR(BUGT_USEDT,'YYYYMMDD'), 1,6) = #{bugtUseDt}
+		   AND PRMPC_TY = #{prmpcTy} 		  
+	</select>
+	
+	<select id="selectPjtProjectMonth" parameterType="egovMapForNull" resultType="String">
+		/*kr.co.dbvision.api.pjt.pmg.pjtpmg001.service.impl.Pjtpmg001Mapper.selectPjtBugtStmCode*/
+		SELECT CEIL(MONTHS_BETWEEN(NVL(REAL_END_DE, PROJECT_END_DE), NVL(REAL_BEGIN_DE, PROJECT_BEGIN_DE))) FROM PJT_PROJECT
+        WHERE PROJECT_SN = #{projectSn}
+	</select>
+
+	<select id="selectPjtBugtAcmsltDtlList" parameterType="egovMapForNull" resultType="egovMapForNull">
+	SELECT A.*, ROWNUM AS RNUM FROM (  
+			SELECT   PROJECT_SN,
+					 ORDR,
+	                 A.BUGT_ACMSLT_SN,
+			         TO_CHAR(A.BUGT_USEDT,'YYYY-MM-DD') AS BUGT_USEDT,
+				 	 A.USE_SUMMARY AS BUGT_SUMMARY,
+				 	 A.USE_AMT AS BUGT_AMT,
+				 	 A.PRMPC_TY,
+				 	 B.CODE_KOR_NM,  /*  계정과목명   */
+				 	 B.CODEKIND_CODE AS CODEKIND_CODE,
+				 	 TO_CHAR(A.BUGT_USEDT, 'YYYY-MM') AS REG_DT,
+                     (SELECT USER_NM FROM STM_USERS
+               		 WHERE USER_ID = A.REG_ID) AS REG_ID
+			 FROM    PJT_BUGT_ACMSLT A, STM_CODE B
+			 WHERE   A.PROJECT_SN = #{projectSn}
+			 AND     A.PRMPC_TY  = B.CODE AND A.ACNT_CODE = B.CODEKIND_CODE	
+	        	 <if test="prmpcTy != null and prmpcTy != ''">
+	               AND PRMPC_TY = #{prmpcTy}
+	             </if>
+	             <if test="acntCode != null and acntCode != ''">
+	               AND ACNT_CODE = #{acntCode}
+	             </if>
+	             <if test="bugtUsedt != null and bugtUsedt != ''">
+	               AND TO_CHAR(BUGT_USEDT,'YYYYMM') = #{bugtUsedt}
+	             </if>
+	             
+	    UNION ALL
+	    
+	    SELECT #{projectSn} AS PROJECT_SN,
+	    	   9999 AS ORDR,
+	    	   NULL AS BUGT_ACMSLT_SN,
+	    	   null AS BUGT_USEDT,
+	    	   '※ 간접비는 직접비 등록 시 자동계산되어 표기됩니다.' AS BUGT_SUMMARY,
+	    	   (
+	    	    (SELECT SUM(BUGT_AMT) FROM 
+	    	   									    ( SELECT PROJECT_SN,
+	    	   									    		 ORDR,
+	   	   											  		 A.BUGT_ACMSLT_SN,
+				                                             TO_CHAR(A.BUGT_USEDT,'YYYY-MM-DD') AS BUGT_USEDT,
+				                                             A.USE_SUMMARY AS BUGT_SUMMARY,
+				                                             A.USE_AMT AS BUGT_AMT,
+				                                             A.PRMPC_TY,
+				                                             B.CODE_KOR_NM,  /*  계정과목명   */
+				                                             B.CODEKIND_CODE AS CODEKIND_CODE,
+				                                             TO_CHAR(A.REG_DT, 'YYYY-MM-DD') AS REG_DT,
+				                                             (SELECT USER_NM FROM STM_USERS
+				                                              WHERE USER_ID = A.REG_ID) AS REG_ID
+				                                     FROM PJT_BUGT_ACMSLT A, STM_CODE B
+				                                     WHERE A.PROJECT_SN = #{projectSn}
+				                                     AND A.PRMPC_TY  = B.CODE AND A.ACNT_CODE = B.CODEKIND_CODE	
+										            <if test="acntCode != null and acntCode != ''">
+										              AND ACNT_CODE = 'C071'
+										            </if>
+										            <if test="bugtUsedt != null and bugtUsedt != ''">
+										              AND TO_CHAR(BUGT_USEDT,'YYYYMM') = #{bugtUsedt}
+										            </if>))) * 0.35 AS BUGT_AMT,
+			   '간접비(직접비 X 35%)' AS PRMPC_TY,
+			   '간접비(직접비 X 35%)' AS CODE_KOR_NM,
+			   'C072' AS CODEKIND_CODE,
+			   NULL AS REG_DT,
+			   NULL AS REG_ID 
+			   FROM DUAL
+			   WHERE 1=1
+			   ) A
+		 <trim prefix="WHERE" prefixOverrides="AND|OR">
+        	 <if test="prmpcTy != null and prmpcTy != ''">
+               AND PRMPC_TY = #{prmpcTy}
+             </if>
+             <if test="acntCode != null and acntCode != ''">
+               AND CODEKIND_CODE = #{acntCode}
+             </if>
+             <if test="codeKorNm != null and codeKorNm != ''">
+               AND PRMPC_TY = #{codeKorNm}
+             </if>
+        </trim>
+        ORDER BY codekind_code,  BUGT_USEDT DESC, ORDR,  BUGT_ACMSLT_SN DESC
+	</select>
+	
+	<insert id="insertPjtBugtAcmsltDtlList" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg002.service.impl.Pjtpmg002Mapper.insertPjtProject */
+        INSERT INTO PJT_BUGT_ACMSLT
+        (
+            PROJECT_SN  ,
+			BUGT_ACMSLT_SN ,
+			ACNT_CODE  ,
+			PRMPC_TY ,
+			USE_AMT,
+			USE_SUMMARY,
+			BUGT_USEDT ,
+            REG_DT,
+            REG_ID
+        )
+        VALUES
+        (
+            #{projectSn},
+            (SELECT NVL((MAX(BUGT_ACMSLT_SN) + 1),0) FROM PJT_BUGT_ACMSLT WHERE PROJECT_SN = #{projectSn}),
+            'C071',
+            #{prmpcTy},
+            #{useAmt},
+            #{useSummary},
+            #{bugtUsedt},
+            SYSDATE,
+            #{regId}
+        )
+    </insert>
+	
+	<update id="updatePjtBugtAcmsltDtlList" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg002.service.impl.Pjtpmg002Mapper.updatePjtProject */
+        UPDATE PJT_BUGT_ACMSLT SET
+			ACNT_CODE = 'C071',
+			PRMPC_TY = #{prmpcTy} ,
+			USE_AMT = #{useAmt},
+			USE_SUMMARY = #{useSummary},
+			BUGT_USEDT = #{bugtUsedt} ,
+            UPT_DT = SYSDATE,
+            UPT_ID = #{uptId}
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+        	 <if test="projectSn != null and projectSn != ''">
+               AND PROJECT_SN = #{projectSn}
+             </if>
+             <if test="bugtAcmsltSn != null and bugtAcmsltSn != ''">
+               AND BUGT_ACMSLT_SN = #{bugtAcmsltSn}
+             </if>
+        </trim>
+    </update>
+	
+	<delete id="deletePjtBugtAcmsltDtlList" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg002.service.impl.Pjtpmg002Mapper.deletePjtProject */
+        DELETE FROM PJT_BUGT_ACMSLT
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+               AND BUGT_ACMSLT_SN = #{bugtAcmsltSn}
+               AND PROJECT_SN = #{projectSn}
+        </trim>
+    </delete>
+    
+    <select id="selectPjtBugtPlanAcmsltList" parameterType="egovMapForNull" resultType="egovMapForNull">
+
+		SELECT DECODE(GUBUN,'C071', '직접비', 'C072', '간접비') AS GUBUN1,
+		       GUBUN,
+		       PRMPC_TY,
+		       CODE_KOR_NM,
+		       NVL(BUGT_AMT,'0') AS BUGT_AMT,
+		       USE_AMT,
+		       BALANCE,
+		       NVL2(TRUNC((USE_AMT / BUGT_AMT) * 100,2), TRUNC((USE_AMT / BUGT_AMT) * 100,2) || ' %', '')  AS AVG
+		FROM (
+		    SELECT GUBUN,
+		           PRMPC_TY,
+		           CODE_KOR_NM,
+		           DECODE(BUGT_AMT,'0',NULL,BUGT_AMT) AS BUGT_AMT,
+		           DECODE(USE_AMT,'0',NULL,USE_AMT) AS USE_AMT,
+		           DECODE( BUGT_AMT - USE_AMT,'0',NULL,BUGT_AMT - USE_AMT) AS BALANCE
+		    FROM (
+		            SELECT  A.CODEKIND_CODE AS GUBUN, 
+		                    A.CODE AS PRMPC_TY, 
+		                    A.CODE_KOR_NM AS CODE_KOR_NM,
+		                    NVL((SELECT SUM(BUGT_AMT)   FROM PJT_BUGT_PLAN    WHERE PRMPC_TY = A.CODE AND PROJECT_SN = #{projectSn}), '0') AS BUGT_AMT,
+		                    NVL((SELECT SUM(USE_AMT) FROM PJT_BUGT_ACMSLT WHERE PRMPC_TY = A.CODE AND PROJECT_SN = #{projectSn}), '0') AS USE_AMT
+		             FROM STM_CODE A
+		             WHERE A.CODEKIND_CODE IN ( 'C071')
+		             ORDER BY A.CODEKIND_CODE, A.ORDR
+		            )
+		) 
+      
+	</select>
+	
+	<select id="selectPjtBugtPlanAcmsltIndirectList" parameterType="egovMapForNull" resultType="egovMapForNull">
+	 SELECT GUBUN1, GUBUN, PRMPC_TY, CODE_KOR_NM,  TRUNC(nvl(BUGT_AMT, 0)) as BUGT_AMT, USE_AMT, TRUNC(TO_CHAR(BUGT_AMT - USE_AMT)) AS BALANCE, TRUNC((USE_AMT / BUGT_AMT) * 100,2) || ' %' AS AVG
+       FROM (
+        SELECT '간접비' AS GUBUN1, CODEKIND_CODE AS GUBUN, CODE_KOR_NM AS PRMPC_TY,
+                   CODE_KOR_NM AS CODE_KOR_NM
+                , to_char((SELECT ( BUGT_SUM * 0.35) BUGT
+                    FROM ( SELECT SUM(A.BUGT_AMT) AS BUGT_SUM, CNTRCT_AMT
+                           FROM PJT_BUGT_PLAN A, STM_CODE B, PJT_PROJECT C
+                           WHERE A.PRMPC_TY = B.CODE
+                           AND A.PROJECT_SN = C.PROJECT_SN
+                           AND A.ACNT_CODE = B.CODEKIND_CODE
+                           AND ACNT_CODE = 'C071'
+                           AND A.PROJECT_SN= #{projectSn}
+                           GROUP BY CNTRCT_AMT
+                         ) A
+                   )) AS BUGT_AMT
+                , TO_CHAR((SELECT TRUNC( BUGT_SUM * 0.35) BUGT
+                    FROM ( SELECT SUM(A.USE_AMT) AS BUGT_SUM, CNTRCT_AMT
+                           FROM PJT_BUGT_ACMSLT A, STM_CODE B, PJT_PROJECT C
+                           WHERE A.PRMPC_TY = B.CODE
+                           AND A.PROJECT_SN = C.PROJECT_SN
+                           AND A.ACNT_CODE = B.CODEKIND_CODE
+                           AND ACNT_CODE = 'C071'
+                           AND A.PROJECT_SN= #{projectSn}
+                           GROUP BY CNTRCT_AMT
+                         ) A)) as use_amt, null as balance, null as avg
+            FROM STM_CODE A
+            WHERE CODEKIND_CODE = 'C072'
+           ) 
+           </select>
+	
+
+</mapper>

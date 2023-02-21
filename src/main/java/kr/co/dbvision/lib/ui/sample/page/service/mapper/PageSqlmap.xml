@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.lib.ui.sample.page.service.mapper.PageMapper">
+
+	<select id="selectColSpanList" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.lib.ui.sample.page.service.impl.EmpMapper.selectColSpanList */
+        SELECT 1 AS NUM, 'NAME1' AS NM1, 'NAME2' AS NM2, 100 AS AMT FROM DUAL
+		UNION ALL
+		SELECT 2 AS NUM, 'NAME2' AS NM1, 'NAME2' AS NM2, 40 AS AMT FROM DUAL
+		UNION ALL
+		SELECT 3 AS NUM, 'NAME3' AS NM1, 'NAME3' AS NM2, 60 AS AMT FROM DUAL
+		UNION ALL
+		SELECT 4 AS NUM, 'SUBSUM' AS NM1, '' AS NM2, 200 AS AMT FROM DUAL
+		UNION ALL
+		SELECT 5 AS NUM, 'NAME_11' AS NM1, 'NAME1' AS NM2, 210 AS AMT FROM DUAL
+		UNION ALL
+		SELECT 6 AS NUM, 'NAME_12' AS NM1, 'NAME2' AS NM2, 70 AS AMT FROM DUAL
+		UNION ALL
+		SELECT 7 AS NUM, 'NAME_13' AS NM1, 'NAME3' AS NM2, 20 AS AMT FROM DUAL
+		UNION ALL
+		SELECT 8 AS NUM, 'SUBSUM' AS NM1, '' AS NM2, 300 AS AMT FROM DUAL
+    </select>
+    
+    <select id="selectDateList" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.lib.ui.sample.page.service.impl.EmpMapper.selectColSpanList */
+        SELECT 1 AS NUM, 'NAME1' AS NM1, '2011-12-01' AS NM2, '/xerp/img/sub/icon_pdf.png^이미지^javascript:fn_CalGridImg(1);^_self' AS NM3 FROM DUAL
+		UNION ALL
+        SELECT 2 AS NUM, 'NAME2' AS NM1, '2011-11-01' AS NM2, '/xerp/img/sub/icon_pdf.png^이미지^javascript:fn_CalGridImg(2);^_self' AS NM3 FROM DUAL
+		UNION ALL
+        SELECT 3 AS NUM, 'NAME3' AS NM1, '2019-12-01' AS NM2, '/xerp/img/sub/icon_pdf.png^이미지^javascript:fn_CalGridImg(3);^_self' AS NM3 FROM DUAL
+		UNION ALL
+        SELECT 4 AS NUM, 'NAME4' AS NM1, '2020-12-01' AS NM2, '/xerp/img/sub/icon_pdf.png^이미지^javascript:fn_CalGridImg(4);^_self' AS NM3 FROM DUAL
+		UNION ALL
+        SELECT 5 AS NUM, 'NAME5' AS NM1, '2011-03-01' AS NM2, '/xerp/img/sub/icon_pdf.png^이미지^javascript:fn_CalGridImg(5);^_self' AS NM3 FROM DUAL
+    </select>
+
+</mapper>

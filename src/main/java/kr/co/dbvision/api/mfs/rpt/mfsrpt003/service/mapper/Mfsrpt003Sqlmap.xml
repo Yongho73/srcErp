@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mfs.rpt.mfsrpt003.service.mapper.Mfsrpt003Mapper">
+
+    <select id="selectMfsSlipCommList" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mfs.rpt.mfsrpt003.service.impl.Mfsrpt003Mapper.selectMfsSlipCommList */
+        SELECT
+               ACCT_SLIP_NO,
+               BIZPLC_CD,
+               ACC_CLS,
+               DEPT_CD,
+               MAKE_EMP_NO,
+               CONFIRM_EMP_NO,
+               SLIP_DT,
+               SLIP_TYPE_CD,
+               SLIPMAKE_DT,
+               SLIPMAKE_DEPT_CD,
+               AMT,
+               SLIP_MODIFY_YN,
+               SLIP_APPR_DT,
+               SLIP_FIX_DT,
+               SUMMARY_DESC,
+               SLIP_AUTO_CD,
+               SIGN_CD,
+               FNC_COMCODENM('C082', SIGN_CD)  AS SIGN_NM,
+               SIGN_DATE,
+               SIGN_EMP_NO,
+               FNC_GETKORNM(SIGN_EMP_NO) AS SIGN_EMP_NM,
+               SIGN_NO,
+               ACCSIGN_CD,
+               ACCSIGN_DATE,
+               ACCSIGN_EMP_NO,
+               ACCSIGN_NO,
+               ACC_EMP_NO,
+               APPR_EMP_NO,
+               SLIP_STATUS_CD,
+               PROFIT_CLS,
+               REAL_SLIP_NO,
+               REQSIGN_CD,
+               REQSIGN_NO,
+               CAUSEACTSIGN_CD,
+               CAUSEACTSIGN_NO,
+               ACC_SLIP_SIGN_CD,
+               ACC_SLIP_SIGN_NO,
+               ACC_SLIP_SIGN_DATE,
+               ACCFIX_DT,
+               ACCFIX_NO,
+               ACCFIX_EMP_NO,
+               BIGO,
+               PAYMENT_CLS,
+               DESCRIPTION,
+               REQ_EMP_NO,
+               REG_DATE,
+               REG_ID,
+               UPT_DATE,
+               UPT_ID,
+               REG_CLS,
+               BUGT_AMT,
+               BALANCE_AMT,
+               CRD_SLIP_NO
+               
+          FROM MFS_SLIP_COMM A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="acctSlipNo != null and acctSlipNo != ''">
+                AND ACCT_SLIP_NO = #{acctSlipNo}
+            </if>
+ 			 <if test="searchSregDt != null and searchSregDt != ''">
+                AND SLIPMAKE_DT BETWEEN #{searchSregDt} AND #{searchEregDt} 
+            </if>
+            <if test="bizplcCd != null and bizplcCd != ''">
+            	AND BIZPLC_CD = #{bizplcCd}
+            </if>
+            <if test="acctSlipNo != null and acctSlipNo != ''">
+                AND ACCT_SLIP_NO  LIKE '%' || #{acctSlipNo} || '%' 
+            </if>
+             <if test="summaryDesc != null and summaryDesc != ''">
+                AND SUMMARY_DESC  LIKE '%' || #{summaryDesc} || '%' 
+            </if>
+        </trim>
+    </select>
+
+    <select id="selectMfsSlipComm" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mfs.rpt.mfsrpt003.service.impl.Mfsrpt003Mapper.selectMfsSlipComm */
+      
+      SELECT   COM.ACCT_SLIP_NO                            	/* 결의번호 */
+		     , FNC_DATESTR(COM.SLIPMAKE_DT) AS SLIPMAKE_DT /* 결의일자 */
+		     , FNC_MONEYSTR(COM.AMT) AS AMT                                    	/* 총사용금액 */
+		     , COM.SUMMARY_DESC                            	/* 적요 */
+		     , FNC_MONEYSTR(COM.BUGT_AMT) AS   		BUGT_AMT                          		/* 예산총액 */
+		     , FNC_MONEYSTR(COM.BALANCE_AMT) AS  	BALANCE_AMT							/* 예산잔액 */
+		     , ACCT.BUGT_CD                                	/* 예산코드 */
+		     , FNC_GETBUGTNM(SUBSTR(COM.SLIP_DT,1,4),ACCT.BUGT_CD,ACCT.BUGT_CLS,ACCT.CORP_CD) AS BUGT_NM
+		     , ACCT.BUGT_YY                                	/* 예산년도 */
+		     , ACCT.BUGT_CLS                            	/* 예산일련번호 */
+		     , ACCT.CORP_CD                                	/* 사업장 */        
+		     , FNC_COMCODENM('C082', COM.SIGN_CD)  AS SIGN_CD 	/* 결재상태 */
+		     , ACCT.ACCT_CD AS  CR_ACCT_CD					/* 대변계정 */
+		     , (SELECT ACCT_NM FROM MFS_ACCT_TITLE WHERE ACCT_CD = ACCT.ACCT_CD AND CORP_CD = ACCT.CORP_CD) AS CR_ACCT_NM
+		     , (SELECT ACCT_CD FROM MFS_SLIP_ACCT WHERE  ACCT_SLIP_NO = #{acctSlipNo} AND DR_CR_CD = 'D' GROUP BY  ACCT_CD) AS DR_ACCT_CD /* 차변계정 */
+		     , (SELECT ACCT_NM FROM MFS_ACCT_TITLE WHERE ACCT_CD = (SELECT ACCT_CD FROM MFS_SLIP_ACCT WHERE  ACCT_SLIP_NO = #{acctSlipNo} AND DR_CR_CD = 'D' GROUP BY  ACCT_CD) AND CORP_CD = ACCT.CORP_CD) AS DR_ACCT_NM
+		     , COM.BIGO
+		  FROM MFS_SLIP_COMM COM
+		     , MFS_SLIP_ACCT ACCT
+		     
+		 WHERE ACCT.ACCT_SLIP_NO = COM.ACCT_SLIP_NO
+		   AND ACCT.DR_CR_CD = 'C'	
+		
+            <if test="acctSlipNo != null and acctSlipNo != ''">
+                AND ACCT.ACCT_SLIP_NO = #{acctSlipNo}
+            </if>
+    </select>
+    
+     <select id="selectMfsBiztripSlipList" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mfs.rpt.mfsrpt003.service.impl.Mfsrpt003Mapper.selectMfsBiztripSlipList */
+		SELECT CORP_CD			         /*사업장코드*/
+			, FNC_COMCODENM('C276', CORP_CD) as  CORP_NM
+			, EMP_NO   					 /*사원 번호*/
+			, FNC_GETKORNM(EMP_NO) AS KOR_NM
+			, GRADE_CD					/*직급 코드*/
+			, FNC_GETCLSFNM(GRADE_CD) AS GRADE_NM
+			, BIZTRIP_NO				/*출장 번호*/
+			, BIZTRIP_SEQ				/*출장 순번*/
+			, DEPART_AREA_NM		/*출발 지역명*/
+			, TEAVEL_NM			/*경유지 명*/
+			, ARRIVAL_AREA_NM		/*도착 지역명*/
+			, DEPT_CD					/*부서코드*/
+			, FNC_GETDEPTNM(DEPT_CD) DEPT_NM
+			, FNC_MONEYSTR(FARE_AMT) AS 	     FARE_AMT	        /*비행기 운임 비용*/
+			, FNC_MONEYSTR(DAY_WON_AMT) AS 	     DAY_WON_AMT		/*일 원화비용*/
+			, FNC_MONEYSTR(MEAL_WON_AMT) AS 	 MEAL_WON_AMT		/*식대 원화 비용*/
+			, FNC_MONEYSTR(LODGING_WON_AMT) AS 	 LODGING_WON_AMT	/*숙박 원화 비용*/
+			, FNC_MONEYSTR(READY_WON_AMT) AS 	 READY_WON_AMT		/*준비 원화 비용*/
+			, FNC_MONEYSTR(REQ_TAMT) AS 	     REQ_TAMT			/*신청 총금액*/
+			, AGENT_EMP_NO			/*직무대행 사원 번호*/
+			, ACCT_SLIP_NO					/*전표번호(출장결의시)*/
+			, BIZTRIP_REQ_DT			/*신청일자*/
+			, FNC_DATESTR(BIZTRIP_SDT) AS 	BIZTRIP_SDT			/*출장 시작일자*/
+			, FNC_DATESTR(BIZTRIP_EDT) AS 	BIZTRIP_EDT			/*출장 종료일자*/
+			, FNC_COMCODENM('C197', CHIKC_CD) AS CHIKC_NM
+			, CHIKC_CD
+			FROM MFS_BIZTRIP_EXP
+		 <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="acctSlipNo != null and acctSlipNo != ''">
+                AND ACCT_SLIP_NO = #{acctSlipNo}
+            </if>
+        </trim>
+		ORDER BY BIZTRIP_REQ_DT, BIZTRIP_SEQ
+	</select>
+
+    <insert id="insertMfsSlipComm" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mfs.rpt.mfsrpt003.service.impl.Mfsrpt003Mapper.insertMfsSlipComm */
+        INSERT INTO MFS_SLIP_COMM
+        (
+            ACCT_SLIP_NO,
+            BIZPLC_CD,
+            ACC_CLS,
+            DEPT_CD,
+            MAKE_EMP_NO,
+            CONFIRM_EMP_NO,
+            SLIP_DT,
+            SLIP_TYPE_CD,
+            SLIPMAKE_DT,
+            SLIPMAKE_DEPT_CD,
+            AMT,
+            SLIP_MODIFY_YN,
+            SLIP_APPR_DT,
+            SLIP_FIX_DT,
+            SUMMARY_DESC,
+            SLIP_AUTO_CD,
+            SIGN_CD,
+            SIGN_DATE,
+            SIGN_EMP_NO,
+            SIGN_NO,
+            ACCSIGN_CD,
+            ACCSIGN_DATE,
+            ACCSIGN_EMP_NO,
+            ACCSIGN_NO,
+            ACC_EMP_NO,
+            APPR_EMP_NO,
+            SLIP_STATUS_CD,
+            PROFIT_CLS,
+            REAL_SLIP_NO,
+            REQSIGN_CD,
+            REQSIGN_NO,
+            CAUSEACTSIGN_CD,
+            CAUSEACTSIGN_NO,
+            ACC_SLIP_SIGN_CD,
+            ACC_SLIP_SIGN_NO,
+            ACC_SLIP_SIGN_DATE,
+            ACCFIX_DT,
+            ACCFIX_NO,
+            ACCFIX_EMP_NO,
+            BIGO,
+            PAYMENT_CLS,
+            DESCRIPTION,
+            REQ_EMP_NO,
+            REG_DATE,
+            UPT_DATE,
+            REG_CLS,
+            BUGT_AMT,
+            BALANCE_AMT,
+            CRD_SLIP_NO,
+            REG_DT,
+            REG_ID
+        )
+        VALUES
+        (
+            #{acctSlipNo},
+            #{bizplcCd},
+            #{accCls},
+            #{deptCd},
+            #{makeEmpNo},
+            #{confirmEmpNo},
+            #{slipDt},
+            #{slipTypeCd},
+            #{slipmakeDt},
+            #{slipmakeDeptCd},
+            #{amt},
+            #{slipModifyYn},
+            #{slipApprDt},
+            #{slipFixDt},
+            #{summaryDesc},
+            #{slipAutoCd},
+            #{signCd},
+            #{signDate},
+            #{signEmpNo},
+            #{signNo},
+            #{accsignCd},
+            #{accsignDate},
+            #{accsignEmpNo},
+            #{accsignNo},
+            #{accEmpNo},
+            #{apprEmpNo},
+            #{slipStatusCd},
+            #{profitCls},
+            #{realSlipNo},
+            #{reqsignCd},
+            #{reqsignNo},
+            #{causeactsignCd},
+            #{causeactsignNo},
+            #{accSlipSignCd},
+            #{accSlipSignNo},
+            #{accSlipSignDate},
+            #{accfixDt},
+            #{accfixNo},
+            #{accfixEmpNo},
+            #{bigo},
+            #{paymentCls},
+            #{description},
+            #{reqEmpNo},
+            #{regDate},
+            #{uptDate},
+            #{regCls},
+            #{bugtAmt},
+            #{balanceAmt},
+            #{crdSlipNo},
+            SYSDATE,
+            #{regId}
+        )
+    </insert>
+
+    <update id="updateMfsSlipComm" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mfs.rpt.mfsrpt003.service.impl.Mfsrpt003Mapper.updateMfsSlipComm */
+        UPDATE MFS_SLIP_COMM SET
+
+               BIZPLC_CD= #{bizplcCd},
+               ACC_CLS= #{accCls},
+               DEPT_CD= #{deptCd},
+               MAKE_EMP_NO= #{makeEmpNo},
+               CONFIRM_EMP_NO= #{confirmEmpNo},
+               SLIP_DT= #{slipDt},
+               SLIP_TYPE_CD= #{slipTypeCd},
+               SLIPMAKE_DT= #{slipmakeDt},
+               SLIPMAKE_DEPT_CD= #{slipmakeDeptCd},
+               AMT= #{amt},
+               SLIP_MODIFY_YN= #{slipModifyYn},
+               SLIP_APPR_DT= #{slipApprDt},
+               SLIP_FIX_DT= #{slipFixDt},
+               SUMMARY_DESC= #{summaryDesc},
+               SLIP_AUTO_CD= #{slipAutoCd},
+               SIGN_CD= #{signCd},
+               SIGN_DATE= #{signDate},
+               SIGN_EMP_NO= #{signEmpNo},
+               SIGN_NO= #{signNo},
+               ACCSIGN_CD= #{accsignCd},
+               ACCSIGN_DATE= #{accsignDate},
+               ACCSIGN_EMP_NO= #{accsignEmpNo},
+               ACCSIGN_NO= #{accsignNo},
+               ACC_EMP_NO= #{accEmpNo},
+               APPR_EMP_NO= #{apprEmpNo},
+               SLIP_STATUS_CD= #{slipStatusCd},
+               PROFIT_CLS= #{profitCls},
+               REAL_SLIP_NO= #{realSlipNo},
+               REQSIGN_CD= #{reqsignCd},
+               REQSIGN_NO= #{reqsignNo},
+               CAUSEACTSIGN_CD= #{causeactsignCd},
+               CAUSEACTSIGN_NO= #{causeactsignNo},
+               ACC_SLIP_SIGN_CD= #{accSlipSignCd},
+               ACC_SLIP_SIGN_NO= #{accSlipSignNo},
+               ACC_SLIP_SIGN_DATE= #{accSlipSignDate},
+               ACCFIX_DT= #{accfixDt},
+               ACCFIX_NO= #{accfixNo},
+               ACCFIX_EMP_NO= #{accfixEmpNo},
+               BIGO= #{bigo},
+               PAYMENT_CLS= #{paymentCls},
+               DESCRIPTION= #{description},
+               REQ_EMP_NO= #{reqEmpNo},
+               REG_DATE= #{regDate},
+               UPT_DATE= #{uptDate},
+               REG_CLS= #{regCls},
+               BUGT_AMT= #{bugtAmt},
+               BALANCE_AMT= #{balanceAmt},
+               CRD_SLIP_NO= #{crdSlipNo},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+               AND ACCT_SLIP_NO = #{acctSlipNo}
+        </trim>
+    </update>
+
+    <delete id="deleteMfsSlipComm" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mfs.rpt.mfsrpt003.service.impl.Mfsrpt003Mapper.deleteMfsSlipComm */
+        DELETE FROM MFS_SLIP_COMM
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND ACCT_SLIP_NO = #{acctSlipNo}
+        </trim>
+    </delete>
+</mapper>

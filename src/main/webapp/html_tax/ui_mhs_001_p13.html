@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html class="no-js" lang="ko">
+<HEAD>
+<meta charset="utf-8">
+<LINK href="../img/icon/dbv.ico" rel="shortcut icon" type="image/x-icon">
+
+<TITLE>XERP</TITLE>
+
+<LINK href="../css/dhtmlx/skin/dhtmlx.css" rel="stylesheet" type="text/css">
+<LINK href="../glyphicons/css/bootstrap-glyphicons.css" rel="stylesheet" type="text/css">
+
+<!-- jquery -->
+<SCRIPT src="../js/jquery-1.11.1.min.js"></SCRIPT>
+<SCRIPT src="../js/jquery-ui-custom.min.js"></SCRIPT>
+ 
+<!-- css -->
+<LINK href="../css/default.css" rel="stylesheet" type="text/css">
+<LINK href="../css/contents.css" rel="stylesheet" type="text/css">
+
+</HEAD>
+
+
+<body>
+	<!--컨텐츠-->
+		<div class="path_info" style="">
+            <ul id="menu_path" style=""><li><a class="home" href="#n"></a></li><li><a href="#"> 연말정산 </a></li><li><a href="#">그밖의소득공제</a></li></ul>
+        </div>
+        
+		<DIV class="btn" style="float:right;text-align:right; vertical-align:middle;" title="저장">
+			<BUTTON class="btn_common02_new_red" id="btn_help" type="button" title="세액계산">
+				<SPAN class="glyphicon glyphicon-hourglass mr5"></SPAN>세액계산
+			</BUTTON>
+			<BUTTON class="btn_common02_new" id="btnRemove" type="button" title="닫기">
+				<SPAN class="glyphicon glyphicon-remove"></SPAN>
+			</BUTTON>
+		</DIV>
+		 
+      
+	<DIV class="search_box" style="width:100%; overflow:hidden;">
+		<TABLE style="width:100%;">
+			<TBODY>
+				<TR>
+					<td style="position:relative; vertical-align:middle;">
+					    
+						<div style="position:relative;display:inline-block;float:left;">
+							<label>귀속년도</LABEL>
+							 <input name="searchEregDt" class="input_calen" onkeyup="gf_AutoDate(event, this)" onkeypress="gf_AutoDate(event, this)" type="text" style="width: 40px;" maxlength="4" value="2019">
+						</div>
+						<div style="position:relative;display:inline-block;float:left;padding-left:50px;">
+							<label>귀속시작일</LABEL>
+							 <input name="searchEregDt" class="input_calen" onkeyup="gf_AutoDate(event, this)" onkeypress="gf_AutoDate(event, this)" type="text" style="width: 90px;" maxlength="10" value="2019-01-01">
+						</div>
+						<div style="position:relative;display:inline-block;float:left;padding-left:50px;">
+							<label>귀속종료일</LABEL>
+							 <input name="searchEregDt" class="input_calen" onkeyup="gf_AutoDate(event, this)" onkeypress="gf_AutoDate(event, this)" type="text" style="width:90px;" maxlength="10" value="2019-12-31">
+						</div>
+					<!-- 
+						<DIV class="btn2" style="position:relative;display:inline-block;float:right;">
+							<BUTTON id="btnSearch" type="button">
+								<SPAN class="glyphicon glyphicon-search f15"></SPAN>
+							</BUTTON>
+							<BUTTON id="btnClear" type="button">
+								<SPAN class="glyphicon glyphicon-refresh f15 mr5" style="color:#fff;margin-left:4px;"></SPAN>
+							</BUTTON>
+						</DIV>
+					-->
+					</td>
+				</TR>
+			</TBODY>
+		</TABLE>
+	</DIV>
+	<!--//search_box-->
+      
+       
+   
+    <div class="basic_div" style="padding:10px;">
+    	<ul class="tax_people_ul">
+    		<li><a href=""><span class="a"></span>인적공제</a></li>
+			<li><a href=""><span class="b"></span>신용,직불,교육</a></li>
+			<li><a href=""><span class="c"></span>전근무지공제(상세)</a></li>
+			<li><a href=""><span class="d"></span>기부금등록</a></li>
+			<li><a href=""><span class="e"></span>의료비명세서</a></li>
+			<li><a href=""><span class="f"></span>연금·저축</a></li>
+			<li><a href=""><span class="g"></span>월세액</a></li>
+			<li><a href=""><span class="h"></span>연금보험료공제</a></li>
+			<li><a href=""><span class="i"></span>특별소득공제</a></li>
+			<li class="active"><a href=""><span class="j"></span>그밖의소득공제</a></li>
+			<li><a href=""><span class="k"></span>세액감면및공제</a></li>
+			<li><a href=""><span class="l"></span>추가제출서류</a></li>
+    	</ul>
+    	
+    	<div class="" style="position:relative;">
+			<div style="float: right;position:relative;" class="mb5">
+				<button class="btn_common01_new_red how_save_btn" type="button"><SPAN class="glyphicon glyphicon-pencil mr5"></SPAN>작성방법</button>
+			</div>
+    	</div>
+    	
+     	
+    	
+    		<div class="detail_type024_sub type_bd" style="position:relative;">
+			<table>
+				<caption>그밖의소득공제</caption>
+				
+				<colgroup>
+					<col style="width:10%;min-width:130px;" />
+					<col style="width:20%;min-width:250px;" />
+					<col style="width:10%;min-width:100px;" />
+					<col style="width:60%;" />
+				</colgroup>
+				
+				<tbody>
+					<tr>
+						<td colspan="2" class="ac cellgray">개인연금저축(2000년 이전 가입)</td>
+						<td class="al"><input type="text" class="ar w100"></td>
+						<td class="al">
+							공제금액은 개인연금저축 납입액의 40%까지 공제됩니다.<br>
+							해당 공제를 신청할 때에는 연금·저축 등 소득·세액 공제명세서를 작성해야 합니다.
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2" class="ac cellgray">소기업·소상공인 공제부금</td>
+						<td class="al"><input type="text" class="ar w100"></td>
+						<td class="al"></td>
+					</tr>
+					<tr>
+						<td rowspan="4" class="ac cellgray">주택마련저축</td>
+						<td class="ac cellgray">청약저축</td>
+						<td class="al"><input type="text" class="ar w100 readonly" readonly disabled="disabled"></td>
+						<td rowspan="4" class="al">
+							해당 과세기간의 총급여액이 7천만원 이하인 근로소득자가 실제 납입함 금액[연 120만원 한도(2015년 이후 주택청약종합저축 납입액에 대해서는 연 240만원 한도)]을 기준으로 40%까지 공제됩니다.<br>
+							(2014년 이전 가입자 중 총급여 7천만원을 초과하는 자는 2017년 납입 분까지 종전 규정에 따라 공제)해당 공제를 신청할 때에는 연금·저축 등 소득·세액 공제명세서를 작성해야 합니다. 
+						</td>
+					</tr>
+					<tr>
+						<td class="ac cellgray">근로자주택마련저축</td>
+						<td class="al"><input type="text" class="ar w100 readonly" readonly disabled="disabled"></td>
+					</tr>
+					<tr>
+						<td class="ac cellgray">주택청약종합저축</td>
+						<td class="al"><input type="text" class="ar w100 readonly" readonly disabled="disabled"></td>
+					</tr>
+					<tr>
+						<th class="ac brddd">주택청약종합저축 소득공제 계</th>
+						<th class="al brddd" style="padding-left:10px"><input type="text" class="ar w100 readonly" value="0" readonly disabled="disabled"></th>
+					</tr>
+					
+					
+					
+					
+					
+					<tr>
+						<td rowspan="5" class="ac cellgray">투자조합 출자 등</td>
+						<td class="ac cellgray">2013년<br>조합등록자(10%)</td>
+						<td class="al"><input type="text" class="ar w100"></td>
+						<td rowspan="5" class="al">
+							 「조세특례제한법」 제16조에 따라 중소기업창업투자조합 등에 출자 또는 투자한 금액을 적습니다.<br>
+							 공제금액은 출자금액 등의 10%까지 공제되나, 개인투자조합 또는 벤처기업에 직접투자하는 경우 2012년에는 출자금액 등의 20%<br>
+							 2013년에는 출자금액 등의 30%, 2014년에는 출자금액 등의 5천만원 이하분은 50%,<br>
+							 5천만원 초과분은 30%, 2015년 이후 출자금액 등의 1천5백만원 이하분은 100%,<br>
+							 5천만원 이하분은 50%, 5천만원 초과분은 30%까지 공제됩니다.
+						</td>
+					</tr>
+					<tr>
+						<td class="ac cellgray">2013년<br>벤처투자(20%)</td>
+						<td class="al"><input type="text" class="ar w100"></td>
+					</tr>
+					<tr>
+						<td class="ac cellgray">2014년<br>조합등록자(10%)</td>
+						<td class="al"><input type="text" class="ar w100"></td>
+					</tr>
+					<tr>
+						<td class="ac cellgray">2014년<br>벤처투자(50%, 30%)</td>
+						<td class="al"><input type="text" class="ar w100"></td>
+					</tr>
+					<tr>
+						<td class="ac cellgray">2015년~2017년<br>조합등록자(10%)</td>
+						<td class="al"><input type="text" class="ar w100"></td>
+					</tr>
+					
+					
+				</tbody>
+				</table>
+		</div>
+		
+		
+
+</div>
+	
+</BODY>
+</HTML>

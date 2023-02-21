@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.pjt.pmg.pjtpmg005.service.mapper.Pjtpmg005Mapper">
+
+    <select id="selectPjtpmg005List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg005.service.mapper.Pjtpmg005Mapper.selectPjtpmg005List */
+        WITH PROJECT_HNF AS (
+        SELECT 
+            SUBSTR(ACMSLT_STDR_DE,0,4) AS ACMSLT_STDR_DE, 
+            PRTCPNT_NM, 
+            PRTCPNT_EMPNO,
+            TO_CHAR(SUM(PARTCPTN_MAN_MONTH),'FM9990.00') AS TOTAL_MM,
+            FNC_COMCODENM('C021', (SELECT MAX(TCHNLGY_GRAD) FROM PJT_HNF_ACMSLT
+                WHERE SUBSTR(ACMSLT_STDR_DE,0,4) = #{applcYy}
+                AND PRTCPNT_NM = A.PRTCPNT_NM)) as TCHNLGY_GRAD,
+            DECODE(NVL(EXTRL_SERVC_AT,'0'),'0','정규직','프리랜서') AS EXTRL_SERVC_AT,
+            (SELECT TO_CHAR(SUM(D.PARTCPTN_MAN_MONTH),'FM9990.00')
+                 FROM  PJT_HNF_ACMSLT D    
+                 WHERE  D.PRTCPNT_NM = A.PRTCPNT_NM    
+            AND  D.ACMSLT_STDR_DE = #{applcYy} || '01'
+            <if test="projectSn != null and projectSn != ''">
+                    AND PROJECT_SN = #{projectSn} 
+                </if>  ) AS C1,
+            (SELECT TO_CHAR(SUM(D.PARTCPTN_MAN_MONTH),'FM9990.00')
+                 FROM  PJT_HNF_ACMSLT D    
+                 WHERE  D.PRTCPNT_NM = A.PRTCPNT_NM    
+            AND  D.ACMSLT_STDR_DE = #{applcYy} || '02' 
+            <if test="projectSn != null and projectSn != ''">
+                    AND PROJECT_SN = #{projectSn} 
+                </if> ) AS C2,
+            (SELECT TO_CHAR(SUM(D.PARTCPTN_MAN_MONTH),'FM9990.00')
+                 FROM  PJT_HNF_ACMSLT D    
+                 WHERE  D.PRTCPNT_NM = A.PRTCPNT_NM    
+            AND  D.ACMSLT_STDR_DE = #{applcYy} || '03' 
+            <if test="projectSn != null and projectSn != ''">
+                    AND PROJECT_SN = #{projectSn} 
+                </if> ) AS C3,
+            (SELECT TO_CHAR(SUM(D.PARTCPTN_MAN_MONTH),'FM9990.00')
+                 FROM  PJT_HNF_ACMSLT D    
+                 WHERE  D.PRTCPNT_NM = A.PRTCPNT_NM    
+            AND  D.ACMSLT_STDR_DE = #{applcYy} || '04'
+            <if test="projectSn != null and projectSn != ''">
+                    AND PROJECT_SN = #{projectSn} 
+                </if>  ) AS C4,
+            (SELECT TO_CHAR(SUM(D.PARTCPTN_MAN_MONTH),'FM9990.00')
+                 FROM  PJT_HNF_ACMSLT D    
+                 WHERE  D.PRTCPNT_NM = A.PRTCPNT_NM    
+            AND  D.ACMSLT_STDR_DE = #{applcYy} || '05' 
+            <if test="projectSn != null and projectSn != ''">
+                    AND PROJECT_SN = #{projectSn} 
+                </if> ) AS C5,
+            (SELECT TO_CHAR(SUM(D.PARTCPTN_MAN_MONTH),'FM9990.00')  
+                 FROM  PJT_HNF_ACMSLT D    
+                 WHERE  D.PRTCPNT_NM = A.PRTCPNT_NM    
+            AND  D.ACMSLT_STDR_DE = #{applcYy} || '06' 
+            <if test="projectSn != null and projectSn != ''">
+                    AND PROJECT_SN = #{projectSn} 
+                </if> ) AS C6,
+            (SELECT TO_CHAR(SUM(D.PARTCPTN_MAN_MONTH),'FM9990.00') 
+                 FROM  PJT_HNF_ACMSLT D    
+                 WHERE  D.PRTCPNT_NM = A.PRTCPNT_NM    
+            AND  D.ACMSLT_STDR_DE = #{applcYy} || '07'
+            <if test="projectSn != null and projectSn != ''">
+                    AND PROJECT_SN = #{projectSn} 
+                </if>  ) AS C7,
+            (SELECT TO_CHAR(SUM(D.PARTCPTN_MAN_MONTH),'FM9990.00')    
+                 FROM  PJT_HNF_ACMSLT D    
+                 WHERE  D.PRTCPNT_NM = A.PRTCPNT_NM    
+            AND  D.ACMSLT_STDR_DE = #{applcYy} || '08'
+            <if test="projectSn != null and projectSn != ''">
+                    AND PROJECT_SN = #{projectSn} 
+                </if>  ) AS C8,
+            (SELECT TO_CHAR(SUM(D.PARTCPTN_MAN_MONTH),'FM9990.00')
+                 FROM  PJT_HNF_ACMSLT D    
+                 WHERE  D.PRTCPNT_NM = A.PRTCPNT_NM    
+            AND  D.ACMSLT_STDR_DE = #{applcYy} || '09'
+            <if test="projectSn != null and projectSn != ''">
+                    AND PROJECT_SN = #{projectSn} 
+                </if>  ) AS C9,
+            (SELECT TO_CHAR(SUM(D.PARTCPTN_MAN_MONTH),'FM9990.00')    
+                 FROM  PJT_HNF_ACMSLT D    
+                 WHERE  D.PRTCPNT_NM = A.PRTCPNT_NM    
+            AND  D.ACMSLT_STDR_DE = #{applcYy} || '10'
+            <if test="projectSn != null and projectSn != ''">
+                    AND PROJECT_SN = #{projectSn} 
+                </if>  ) AS C10,
+            (SELECT TO_CHAR(SUM(D.PARTCPTN_MAN_MONTH),'FM9990.00')
+                 FROM  PJT_HNF_ACMSLT D    
+                 WHERE  D.PRTCPNT_NM = A.PRTCPNT_NM    
+            AND  D.ACMSLT_STDR_DE = #{applcYy} || '11'
+            <if test="projectSn != null and projectSn != ''">
+                    AND PROJECT_SN = #{projectSn} 
+                </if>  ) AS C11,
+            (SELECT TO_CHAR(SUM(D.PARTCPTN_MAN_MONTH),'FM9990.00')
+                 FROM  PJT_HNF_ACMSLT D    
+                 WHERE  D.PRTCPNT_NM = A.PRTCPNT_NM    
+            AND  D.ACMSLT_STDR_DE = #{applcYy} || '12'
+            <if test="projectSn != null and projectSn != ''">
+                    AND PROJECT_SN = #{projectSn} 
+                </if>  ) AS C12
+            FROM PJT_HNF_ACMSLT A
+            <trim prefix="WHERE" prefixOverrides="AND|OR">
+                <if test="applcYy != null and applcYy != ''">
+                    AND SUBSTR(ACMSLT_STDR_DE,0,4) = #{applcYy} 
+                </if>
+                <if test="prtcpntNm != null and prtcpntNm != ''">
+                    AND PRTCPNT_NM = #{prtcpntNm} 
+                </if>
+                <if test="tchnlgyGrad != null and tchnlgyGrad != ''">
+                    AND (SELECT MAX(TCHNLGY_GRAD) FROM PJT_HNF_ACMSLT
+			                WHERE SUBSTR(ACMSLT_STDR_DE,0,4) = #{applcYy}
+			                AND PRTCPNT_NM = A.PRTCPNT_NM) = #{tchnlgyGrad} 
+                </if>
+                <if test="extrlServcAt != null and extrlServcAt != ''">
+                    AND EXTRL_SERVC_AT = #{extrlServcAt} 
+                </if>
+                <if test="projectSn != null and projectSn != ''">
+                    AND PROJECT_SN = #{projectSn} 
+                </if>
+            </trim>
+            GROUP BY SUBSTR(ACMSLT_STDR_DE,0,4), PRTCPNT_NM, PRTCPNT_EMPNO, DECODE(NVL(EXTRL_SERVC_AT,'0'),'0','정규직','프리랜서')
+            ORDER BY PRTCPNT_NM
+            )
+			SELECT 
+			    EXTRL_SERVC_AT AS ACMSLT_STDR_DE,  
+			    '' AS PRTCPNT_NM, 
+			    '' AS PRTCPNT_EMPNO, 
+			    TO_CHAR(SUM(TOTAL_MM),'FM9990.00') AS TOTAL_MM,
+			    '' AS TCHNLGY_GRAD, 
+			    '' AS EXTRL_SERVC_AT, 
+			    TO_CHAR(SUM(C1),'FM9990.00') AS C1, 
+			    TO_CHAR(SUM(C2),'FM9990.00') AS C2,
+			    TO_CHAR(SUM(C3),'FM9990.00') AS C3, 
+			    TO_CHAR(SUM(C4),'FM9990.00') AS C4, 
+			    TO_CHAR(SUM(C5),'FM9990.00') AS C5, 
+			    TO_CHAR(SUM(C6),'FM9990.00') AS C6, 
+			    TO_CHAR(SUM(C7),'FM9990.00') AS C7,
+			    TO_CHAR(SUM(C8),'FM9990.00') AS C8, 
+			    TO_CHAR(SUM(C9),'FM9990.00') AS C9, 
+			    TO_CHAR(SUM(C10),'FM9990.00') AS C10, 
+			    TO_CHAR(SUM(C11),'FM9990.00') AS C11, 
+			    TO_CHAR(SUM(C12),'FM9990.00') AS C12
+			FROM PROJECT_HNF A
+			GROUP BY EXTRL_SERVC_AT, ACMSLT_STDR_DE
+			UNION ALL
+			SELECT 
+			    '투입공수(총계)' AS ACMSLT_STDR_DE,  
+                '' AS PRTCPNT_NM, 
+                '' AS PRTCPNT_EMPNO, 
+                TO_CHAR(SUM(TOTAL_MM),'FM9990.00') AS TOTAL_MM,
+                '' AS TCHNLGY_GRAD, 
+                '' AS EXTRL_SERVC_AT, 
+                TO_CHAR(SUM(C1),'FM9990.00') AS C1, 
+                TO_CHAR(SUM(C2),'FM9990.00') AS C2,
+                TO_CHAR(SUM(C3),'FM9990.00') AS C3, 
+                TO_CHAR(SUM(C4),'FM9990.00') AS C4, 
+                TO_CHAR(SUM(C5),'FM9990.00') AS C5, 
+                TO_CHAR(SUM(C6),'FM9990.00') AS C6, 
+                TO_CHAR(SUM(C7),'FM9990.00') AS C7,
+                TO_CHAR(SUM(C8),'FM9990.00') AS C8, 
+                TO_CHAR(SUM(C9),'FM9990.00') AS C9, 
+                TO_CHAR(SUM(C10),'FM9990.00') AS C10, 
+                TO_CHAR(SUM(C11),'FM9990.00') AS C11, 
+                TO_CHAR(SUM(C12),'FM9990.00') AS C12
+            FROM PROJECT_HNF A
+			UNION ALL
+			SELECT ACMSLT_STDR_DE, PRTCPNT_NM, PRTCPNT_EMPNO, TOTAL_MM, TCHNLGY_GRAD, EXTRL_SERVC_AT,
+			        C1,C2,C3,C4,C5,C6,C7,C8,C9,C10,C11,C12
+			FROM PROJECT_HNF
+    </select>
+
+    <select id="selectPjtpmg005" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg005.service.mapper.Pjtpmg005Mapper.selectPjtpmg005 */
+        SELECT 
+		    A.PROJECT_SN, 
+		    PROJECT_NM, 
+		    PRTCPNT_NM, 
+		    PRTCPNT_EMPNO, 
+		    FNC_GET_EMP_CLSF_NM(PRTCPNT_EMPNO) AS PRTCPNT_CLSF,
+		    SUM(PARTCPTN_MAN_MONTH) AS PARTCPTN_MAN_MONTH,
+		    C.ACMSLT_STDR_DE
+		FROM PJT_HNF_ACMSLT A, PJT_PROJECT B,
+		    (SELECT 
+		        PROJECT_SN, 
+		        LISTAGG(SUBSTR(ACMSLT_STDR_DE,5,2)||'월',', ') WITHIN GROUP (ORDER BY SUBSTR(ACMSLT_STDR_DE,5,2)) AS ACMSLT_STDR_DE
+		    FROM PJT_HNF_ACMSLT
+		    WHERE SUBSTR(ACMSLT_STDR_DE,0,4) = #{acmsltStdrDe}
+		    <if test="monthDe != null and monthDe != ''">
+		    AND LTRIM(SUBSTR(ACMSLT_STDR_DE,5,2),0) = #{monthDe}
+		    </if>
+		    AND PRTCPNT_EMPNO = #{prtcpntEmpno}
+		    GROUP BY PROJECT_SN) C
+		WHERE A.PROJECT_SN = B.PROJECT_SN
+		AND A.PROJECT_SN = C.PROJECT_SN
+		AND SUBSTR(A.ACMSLT_STDR_DE,0,4) = #{acmsltStdrDe}
+		<if test="monthDe != null and monthDe != ''">
+        AND LTRIM(SUBSTR(A.ACMSLT_STDR_DE,5,2),0) = #{monthDe}
+        </if>
+		AND PRTCPNT_EMPNO = #{prtcpntEmpno}
+		GROUP BY A.PROJECT_SN, PROJECT_NM, PRTCPNT_NM, PRTCPNT_EMPNO, C.ACMSLT_STDR_DE
+		ORDER BY PROJECT_SN DESC
+    </select>
+
+    <update id="savePjtpmg005" parameterType="kr.co.dbvision.api.pjt.pmg.pjtpmg005.entity.Pjtpmg005">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg005.service.mapper.Pjtpmg005Mapper.savePjtpmg005 */
+        MERGE INTO PJT_HNF_ACMSLT A
+             USING (SELECT
+
+                    FROM DUAL) B
+                ON (
+
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deletePjtpmg005" parameterType="kr.co.dbvision.api.pjt.pmg.pjtpmg005.entity.Pjtpmg005">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg005.service.mapper.Pjtpmg005Mapper.deletePjtpmg005 */
+        DELETE FROM PJT_HNF_ACMSLT
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+        </trim>
+    </delete>
+    
+    <select id="selectPjtpmg005ProjectList" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg005.service.mapper.Pjtpmg005Mapper.selectPjtpmg005ProjectList */
+        SELECT (SELECT BCNC_NM FROM STM_CUSTOMER WHERE BCNC_CODE = A.BCNC_CODE) AS BCNC_NM,
+                PROJECT_NM,
+                DECODE(COMPT_AT, '1', '완료', '0', '진행', '2', '보류') AS COMPT_AT,
+                PROJECT_SN,
+                BCNC_CHARGER_NM,
+                CHARGER_CTTPC,
+                NVL2((SELECT MAX(REPORT_YM) FROM PJT_MNTNCE_REPORT WHERE PROJECT_SN = A.PROJECT_SN), 
+                    (SELECT SUBSTR(MAX(REPORT_YM)+1,1,4)||'-'||SUBSTR(MAX(REPORT_YM)+1,5,2) FROM PJT_MNTNCE_REPORT WHERE PROJECT_SN = A.PROJECT_SN)
+                    ,'') AS NEXT_REPORT_YM
+        FROM PJT_PROJECT A
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="projectSn != null and projectSn != ''">
+                AND PROJECT_SN = #{projectSn}
+            </if>
+            <if test="requstSn != null and requstSn != ''">
+                AND REQUST_SN = #{requstSn}
+            </if>
+            <if test="bcncNm != null and bcncNm != ''">
+                AND (SELECT BCNC_NM FROM STM_CUSTOMER WHERE BCNC_CODE = A.BCNC_CODE) LIKE '%' || #{bcncNm} || '%'
+            </if>
+            <if test="comptAt != null and comptAt != ''">
+                AND COMPT_AT = #{comptAt}
+            </if>
+        </trim>
+    </select>
+</mapper>

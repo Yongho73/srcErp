@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mhs.hrm.mhshrm004.service.mapper.Mhshrm004Mapper">
+
+    <select id="selectMhshrm004List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm004.service.mapper.Mhshrm004Mapper.selectMhshrm004List */
+        SELECT
+               CLSF_CODE,
+               CLSF_NM,
+               CLSF_OUTPT_NM,
+               FNC_DATESTR(USE_BEGIN_DE) AS USE_BEGIN_DE,
+               FNC_DATESTR(USE_END_DE) AS USE_END_DE,
+               USE_AT,
+               SORT_ORDR,
+               CLSF_EDU_FINISH_PNT,
+               SALARY_APRP_SE,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               PRMOT_LMTT_PD,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_CLSF_CODE A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="clsfCode != null and clsfCode != ''">
+                AND CLSF_CODE = #{clsfCode}
+            </if>
+            <if test="clsfNm != null and clsfNm != ''">
+                       AND CLSF_NM LIKE '%'|| #{clsfNm} ||'%' 
+            </if>
+            <if test="useAt != null and useAt != ''">
+                       AND USE_AT = #{useAt}
+            </if>
+            <if test="sRegDt != null and sRegDt != ''">
+                <![CDATA[
+                AND REG_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+                ]]>
+            </if>
+            <if test="eRegDt != null and eRegDt != ''">
+                <![CDATA[
+                AND REG_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+                ]]>
+             </if>
+        </trim>
+        ORDER BY SORT_ORDR
+    </select>
+
+    <select id="selectMhshrm004" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm004.service.mapper.Mhshrm004Mapper.selectMhshrm004 */
+        SELECT
+               CLSF_CODE,
+               CLSF_NM,
+               CLSF_OUTPT_NM,
+               USE_BEGIN_DE,
+               USE_END_DE,
+               USE_AT,
+               SORT_ORDR,
+               CLSF_EDU_FINISH_PNT,
+               SALARY_APRP_SE,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               PRMOT_LMTT_PD,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_CLSF_CODE A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="clsfCode != null and clsfCode != ''">
+                AND CLSF_CODE = #{clsfCode}
+            </if>
+        </trim>
+    </select>
+
+    <update id="saveMhshrm004" parameterType="kr.co.dbvision.api.mhs.hrm.mhshrm004.entity.Mhshrm004">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm004.service.mapper.Mhshrm004Mapper.saveMhshrm004 */
+        MERGE INTO MHS_CLSF_CODE A
+             USING (SELECT
+                    #{clsfCode} CLSF_CODE
+                    FROM DUAL) B
+                ON (
+                    A.CLSF_CODE = B.CLSF_CODE
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               CLSF_NM= #{clsfNm},
+               CLSF_OUTPT_NM= #{clsfOutptNm},
+               USE_BEGIN_DE= REPLACE(#{useBeginDe},'-',''),
+               USE_END_DE= REPLACE(#{useEndDe},'-',''),
+               USE_AT= #{useAt},
+               SORT_ORDR= #{sortOrdr},
+               CLSF_EDU_FINISH_PNT= #{clsfEduFinishPnt},
+               SALARY_APRP_SE= #{salaryAprpSe},
+               PRMOT_LMTT_PD= #{prmotLmttPd},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               CLSF_CODE,
+               CLSF_NM,
+               CLSF_OUTPT_NM,
+               USE_BEGIN_DE,
+               USE_END_DE,
+               USE_AT,
+               SORT_ORDR,
+               CLSF_EDU_FINISH_PNT,
+               SALARY_APRP_SE,
+               PRMOT_LMTT_PD,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{clsfCode},
+               #{clsfNm},
+               #{clsfOutptNm},
+               REPLACE(#{useBeginDe},'-',''),
+               REPLACE(#{useEndDe},'-',''),
+               #{useAt},
+               #{sortOrdr},
+               #{clsfEduFinishPnt},
+               #{salaryAprpSe},
+               #{prmotLmttPd},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deleteMhshrm004" parameterType="kr.co.dbvision.api.mhs.hrm.mhshrm004.entity.Mhshrm004">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm004.service.mapper.Mhshrm004Mapper.deleteMhshrm004 */
+        DELETE FROM MHS_CLSF_CODE
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND CLSF_CODE = #{clsfCode}
+        </trim>
+    </delete>
+    
+    
+    <!-- 사용여부 확인 -->
+    <select id="useCheckMhshrm004" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm004.service.mapper.Mhshrm004Mapper.useCheckMhshrm004 */
+        SELECT  * FROM (
+        SELECT BSRP_SE_CODE AS USE_CHECK FROM MHS_BSRPSTDR WHERE ROWNUM = '1' AND CLSF_CODE = #{clsfCode}
+        UNION
+        SELECT EMPNO AS USE_CHECK FROM MHS_EMP WHERE ROWNUM = '1' AND CLSF_CODE = #{clsfCode}
+        UNION 
+        SELECT GNFD_NO AS USE_CHECK FROM MHS_GNFD WHERE ROWNUM = '1' AND (AFCHG_CLSF_CODE = #{clsfCode} OR BFCHG_CLSF_CODE = #{clsfCode})
+        )
+        WHERE ROWNUM = '1'
+    </select>
+    
+    <!-- 직급콤보용  -->
+    <select id="selectMhshrb004ClsfCodeCombo" parameterType="egovMapForNull" resultType="egovMapForNull">
+     /* kr.co.dbvision.api.mhs.hrb.mhshrm004.service.mapper.Mhshrm004Mapper.selectMhshrb004ClsfCodeCombo */
+     SELECT
+               CLSF_CODE,
+               CLSF_NM,
+               CLSF_OUTPT_NM,
+               FNC_DATESTR(USE_BEGIN_DE) AS USE_BEGIN_DE,
+               FNC_DATESTR(USE_END_DE) AS USE_END_DE,
+               USE_AT,
+               SORT_ORDR,
+               CLSF_EDU_FINISH_PNT,
+               SALARY_APRP_SE,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+       FROM MHS_CLSF_CODE A
+      WHERE USE_AT = '1'
+    ORDER BY SORT_ORDR, CLSF_CODE
+    </select>
+</mapper>

@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mps.cal.mpscal022.service.mapper.MpscalStdrMapper">
+
+    <select id="selectMpscalStdrList" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.cal.mpscal022.service.mapper.MpscalStdrMapper.selectMpscalStdrList */
+        SELECT
+               A.SALARYTY_CODE,
+               A.SALARYITEM_CODE,
+               A.APPLC_STDR_SN,
+               A.CALC_STDR_SN,
+               A.APPLC_CODE,
+               A.CALC_SE,
+               A.CALC_NOMFRM_DTLS,
+               A.APPLC_SE,
+               A.REG_DT,
+               A.REG_ID,
+               A.UPT_DT,
+               A.UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MPS_CALC_STDR A, MPS_APPLCS_STDR B
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                A.SALARYITEM_CODE = B.SALARYITEM_CODE
+            AND A.APPLC_STDR_SN = B.APPLC_STDR_SN
+            AND A.APPLC_SE = '003'
+            <if test="empno != null and empno != ''">
+                AND A.APPLC_CODE = #{empno}
+            </if>
+            
+        </trim>
+    </select>
+
+    <select id="selectMpscalStdr" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.cal.mpscal022.service.mapper.MpscalStdrMapper.selectMpscalStdr */
+        SELECT
+               SALARYTY_CODE,
+               SALARYITEM_CODE,
+               APPLC_STDR_SN,
+               CALC_STDR_SN,
+               APPLC_CODE,
+               CALC_SE,
+               CALC_NOMFRM_DTLS,
+               APPLC_SE,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MPS_CALC_STDR A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="salarytyCode != null and salarytyCode != ''">
+                AND SALARYTY_CODE = #{salarytyCode}
+            </if>
+            <if test="salaryitemCode != null and salaryitemCode != ''">
+                AND SALARYITEM_CODE = #{salaryitemCode}
+            </if>
+            <if test="applcStdrSn != null and applcStdrSn != ''">
+                AND APPLC_STDR_SN = #{applcStdrSn}
+            </if>
+            <if test="calcStdrSn != null and calcStdrSn != ''">
+                AND CALC_STDR_SN = #{calcStdrSn}
+            </if>
+        </trim>
+    </select>
+
+    <update id="saveMpscalStdrApplcs" parameterType="kr.co.dbvision.api.mps.cal.mpscal022.entity.MpscalStdr">
+        <selectKey resultType="String" keyProperty="applcStdrSn" order="BEFORE">
+            <if test="applcStdrSn != null and applcStdrSn != ''">
+                SELECT #{applcStdrSn} AS applcStdrSn FROM DUAL
+            </if>
+            <if test="applcStdrSn == null or applcStdrSn == ''">
+                SELECT NVL(
+                           (SELECT APPLC_STDR_SN
+                              FROM MPS_CALC_STDR
+                             WHERE SALARYTY_CODE =   #{salarytyCode}
+                               AND SALARYITEM_CODE = #{salaryitemCode} 
+                               AND APPLC_CODE =      #{applcCode})
+                           ,(SELECT NVL(MAX(APPLC_STDR_SN),0)+1
+                               FROM MPS_APPLCS_STDR)
+                       ) AS applcStdrSn
+                  FROM DUAL
+            </if>
+        </selectKey>
+        /* kr.co.dbvision.api.mps.cal.mpscal022.service.mapper.MpscalStdrMapper.saveMpscalStdrApplcs */
+        MERGE INTO MPS_APPLCS_STDR A
+             USING (SELECT
+                    #{salarytyCode} SALARYTY_CODE,
+                    #{salaryitemCode} SALARYITEM_CODE,
+                    #{applcStdrSn} APPLC_STDR_SN
+                    FROM DUAL) B
+                ON (
+                    A.SALARYTY_CODE = B.SALARYTY_CODE AND 
+                    A.SALARYITEM_CODE = B.SALARYITEM_CODE AND 
+                    A.APPLC_STDR_SN = B.APPLC_STDR_SN
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+        
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               SALARYTY_CODE,
+               SALARYITEM_CODE,
+               APPLC_STDR_SN,
+               EMPL_SE_CODE,
+               APPLC_STDR_SE,
+               CALC_ORDR,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{salarytyCode},
+               #{salaryitemCode},
+               #{applcStdrSn},
+               #{emplSeCode},
+               #{applcStdrSe},
+               #{calcOrdr},
+               SYSDATE,
+               #{regId}
+               
+        )
+    </update>
+
+    <update id="saveMpscalStdrCalc" parameterType="kr.co.dbvision.api.mps.cal.mpscal022.entity.MpscalStdr">
+        <selectKey resultType="String" keyProperty="calcStdrSn" order="BEFORE">
+            <if test="calcStdrSn != null and calcStdrSn != ''">
+                SELECT #{calcStdrSn} AS calcStdrSn FROM DUAL
+            </if>
+            <if test="calcStdrSn == null or calcStdrSn == ''">
+                SELECT NVL(MAX(CALC_STDR_SN),0)+1 AS calcStdrSn
+                  FROM MPS_CALC_STDR
+                 WHERE SALARYTY_CODE =   #{salarytyCode}
+                   AND SALARYITEM_CODE = #{salaryitemCode} 
+                   AND APPLC_STDR_SN =   #{applcStdrSn}
+            </if>
+        </selectKey>
+        /* kr.co.dbvision.api.mps.cal.mpscal022.service.mapper.MpscalStdrMapper.saveMpscalStdr */
+        MERGE INTO MPS_CALC_STDR A
+             USING (SELECT
+                    #{salarytyCode} SALARYTY_CODE,
+                    #{salaryitemCode} SALARYITEM_CODE,
+                    #{applcCode} APPLC_CODE
+                    FROM DUAL) B
+                ON (
+                    A.SALARYTY_CODE = B.SALARYTY_CODE AND 
+                    A.SALARYITEM_CODE = B.SALARYITEM_CODE AND 
+                    A.APPLC_CODE = B.APPLC_CODE 
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET               
+               CALC_NOMFRM_DTLS= #{calcNomfrmDtls},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               SALARYTY_CODE,
+               SALARYITEM_CODE,
+               APPLC_STDR_SN,
+               CALC_STDR_SN,
+               
+               APPLC_CODE,
+               CALC_SE,
+               CALC_NOMFRM_DTLS,
+               APPLC_SE,
+               
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{salarytyCode},
+               #{salaryitemCode},
+               #{applcStdrSn},
+               #{calcStdrSn},
+               
+               #{applcCode},
+               #{calcSe},
+               #{calcNomfrmDtls},
+               #{applcStdrSe},
+               
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deleteMpscalStdr" parameterType="kr.co.dbvision.api.mps.cal.mpscal022.entity.MpscalStdr">
+        /* kr.co.dbvision.api.mps.cal.mpscal022.service.mapper.MpscalStdrMapper.deleteMpscalStdr */
+        DELETE FROM MPS_CALC_STDR
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND SALARYTY_CODE = #{salarytyCode}
+                AND SALARYITEM_CODE = #{salaryitemCode}
+                AND APPLC_STDR_SN = #{applcStdrSn}
+                AND CALC_STDR_SN = #{calcStdrSn}
+        </trim>
+    </delete>
+</mapper>

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html class="no-js" lang="ko">
+<HEAD>
+<meta charset="utf-8">
+<LINK href="../img/icon/dbv.ico" rel="shortcut icon" type="image/x-icon">
+
+<TITLE>XERP</TITLE>
+
+<LINK href="../css/dhtmlx/skin/dhtmlx.css" rel="stylesheet" type="text/css">
+<LINK href="../glyphicons/css/bootstrap-glyphicons.css" rel="stylesheet" type="text/css">
+
+<!-- jquery -->
+<SCRIPT src="../js/jquery-1.11.1.min.js"></SCRIPT>
+<SCRIPT src="../js/jquery-ui-custom.min.js"></SCRIPT>
+ 
+<!-- css -->
+<LINK href="../css/default.css" rel="stylesheet" type="text/css">
+<LINK href="../css/contents.css" rel="stylesheet" type="text/css">
+
+</HEAD>
+
+<body>
+	<!--컨텐츠-->
+		<div class="path_info" style="">
+            <ul id="menu_path" style=""><li><a class="home" href="#n"></a></li><li><a href="#"> 연말정산 </a></li><li><a href="#">근로소득원천징수부</a></li></ul>
+        </div>
+        
+		<DIV class="btn" style="float:right;text-align:right; vertical-align:middle;" title="저장">
+			<BUTTON class="btn_common02_new_red" id="btn_help" type="button" title="세액계산">
+				<SPAN class="glyphicon glyphicon-hourglass mr5"></SPAN>세액계산
+			</BUTTON>
+			<BUTTON class="btn_common02_new" id="btnRemove" type="button" title="닫기">
+				<SPAN class="glyphicon glyphicon-remove"></SPAN>
+			</BUTTON>
+		</DIV>
+		 
+      
+	<DIV class="search_box" style="width:100%; overflow:hidden;">
+		<TABLE style="width:100%;">
+			<TBODY>
+				<TR>
+					<td style="position:relative; vertical-align:middle;">
+					    
+						<div style="position:relative;display:inline-block;float:left;">
+							<label>귀속년도</LABEL>
+							<select id="divide" title="귀속년도" style="min-width:80px; display:inline-block;">
+								<option value="2019" selected>2019</option>
+								<option value="2018">2018</option>
+							</select>
+						</div>
+					 
+						<DIV class="btn2" style="position:relative;display:inline-block;float:right;">
+							<BUTTON id="btnSearch" type="button" title="조회">
+								<SPAN class="glyphicon glyphicon-search f15"></SPAN>
+							</BUTTON>
+							<BUTTON type="button" class="btnCommon" title="출력">
+								<SPAN class="glyphicon glyphicon-print f15 mr5" style="margin-left:4px;"></SPAN>
+							</BUTTON>
+						</DIV>
+					</td>
+				</TR>
+			</TBODY>
+		</TABLE>
+	</DIV>
+	<!--//search_box-->
+      
+       
+   
+    <div class="basic_div" style="padding:10px;">
+    	
+    	<div class="detail_type024 type_bd" style="position:relative;overflow:auto;overflow-x:visible;">
+			<table>
+				<caption>근로소득원천징수부</caption>
+				
+				<colgroup>
+					<col style="width:5%;min-width:80px;" />
+					<col style="width:5%;min-width:80px;" />
+					<col style="width:5%;min-width:80px;" />
+					<col style="width:5%;min-width:80px;" />
+					<col style="width:10%;min-width:100px;" />
+					<col style="width:10%;min-width:100px;" />
+					<col style="width:10%;min-width:100px;" />
+					<col style="width:10%;min-width:100px;" />
+					<col style="width:5%;min-width:80px;" />
+					<col style="width:5%;min-width:80px;" />
+					<col style="width:5%;min-width:80px;" />
+					<col style="width:5%;min-width:80px;" />
+					<col style="width:5%;min-width:80px;" />
+					<col style="width:5%;min-width:80px;" />
+					<col style="width:5%;min-width:80px;" />
+					<col style="width:5%;min-width:80px;" />					
+				</colgroup>
+				
+				<thead>
+					<tr>
+						<th colspan="14" class="ac brnavy">Ⅰ.근로소득지급명세</th>
+						<th colspan="2" class="ac brnavy">★</th>
+					</tr>
+					<tr>
+						<th colspan="14" class="ac brnavy">Ⅰ.근로소득지급명세</th>
+						<th colspan="2" class="ac brnavy">★</th>
+					</tr>
+					<tr>
+						<th rowspan="3" class="ac brnavy">월별</th>
+						<th rowspan="3" class="ac brnavy">15.지급<br>연월</th>
+						<th colspan="7" class="ac brnavy h45">1.총급여</th>
+						<th colspan="5" class="ac brnavy  h45">2.징수세액</th>
+						<th colspan="2" class="ac brnavy  h45">1.지급★</th>
+					</tr>
+					<tr>
+						<th rowspan="2" class="ac brnavy">16.급여</th>
+						<th rowspan="2" class="ac brnavy">17.상여</th>
+						<th rowspan="2" class="ac brnavy">18.인정상여</th>
+						<th rowspan="2" class="ac brnavy">19.주식매수선택권<br>행사이익</th>
+						<th rowspan="2" class="ac brnavy">20.우리사주조합<br>인출금</th>
+						<th rowspan="2" class="ac brnavy">21.임원퇴직소득금액<br>한도초과액</th>
+						<th rowspan="2" class="ac brnavy">30.계</th>
+						<th colspan="2" class="ac brnavy">간이세액표 적용 대상</th>
+						<th class="ac brnavy">그 외</th>
+						<th rowspan="2" class="ac brnavy">34.소득세계<br>(32+33)</th>
+						<th rowspan="2" class="ac brnavy">35.지방<br>소득세</th>
+						<th rowspan="2" class="ac brnavy">36.외화</th>
+						<th rowspan="2" class="ac brnavy">37.환율</th>
+					</tr>
+					<tr>
+						<th class="ac brnavy">31.급여구간</th>
+						<th class="ac brnavy">32.소득세</th>
+						<th class="ac brnavy">33.소득세</th>
+					</tr>
+					
+				</thead>
+				
+				<tbody>
+					<tr>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+					</tr>
+				</tbody>
+				</table>
+		</div>
+		
+		
+
+</div>
+
+</BODY>
+</HTML>

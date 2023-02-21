@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.pjt.osc.pjtosc001.service.mapper.Pjtosc001Mapper">
+
+    <select id="selectPjtosc001List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.pjt.osc.pjtosc001.service.mapper.Pjtosc001Mapper.selectPjtosc001List */
+        SELECT
+               A.OUTSRC_EMPNO as 사원번호,
+               NM,
+               DEPT_CODE,
+               IHIDNUM,
+               AGE,
+               SEXDSTN_SE,
+               JSSFC_CODE,
+               INPT_POSBL_AT,
+               CAREER_YCNT,
+               CAREER_MCNT,
+               A.TCHNLGY_GRAD_CODE,
+               CRQFS_AT,
+               A.ROLE_CODE,
+               LAST_ACDMCR_CODE,
+               HOPE_AREA_CODE,
+               IMG_SE_CODE,
+               EMAIL,
+               TELNO,
+               HP_NO,
+               ZIP,
+               ADRES,
+               DETAIL_ADRES,
+               A.RM,
+               CNTRCT_BGNDE,
+               CNTRCT_ENDDE,
+               CNTRCT_AMT
+          FROM PJT_OUTSRC_HR A, PJT_OUTSRC_CNTRCT B
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+        		AND A.OUTSRC_EMPNO = B.OUTSRC_EMPNO
+            <if test="outsrcEmpno != null and outsrcEmpno != ''">
+                AND OUTSRC_EMPNO = #{outsrcEmpno}
+            </if>
+            <if test="sRegDt != null and sRegDt != ''">
+                <![CDATA[
+                AND REG_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+                ]]>
+            </if>
+            <if test="eRegDt != null and eRegDt != ''">
+                <![CDATA[
+                AND REG_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+                ]]>
+             </if>
+        </trim>
+    </select>
+
+    <select id="selectPjtosc001" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.pjt.osc.pjtosc001.service.mapper.Pjtosc001Mapper.selectPjtosc001 */
+        SELECT
+               OUTSRC_EMPNO,
+               NM,
+               DEPT_CODE,
+               IHIDNUM,
+               AGE,
+               SEXDSTN_SE,
+               JSSFC_CODE,
+               INPT_POSBL_AT,
+               CAREER_YCNT,
+               CAREER_MCNT,
+               TCHNLGY_GRAD_CODE,
+               CRQFS_AT,
+               ROLE_CODE,
+               LAST_ACDMCR_CODE,
+               HOPE_AREA_CODE,
+               IMG_SE_CODE,
+               EMAIL,
+               TELNO,
+               HP_NO,
+               ZIP,
+               ADRES,
+               DETAIL_ADRES,
+               RM,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM PJT_OUTSRC_HR A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="outsrcEmpno != null and outsrcEmpno != ''">
+                AND OUTSRC_EMPNO = #{outsrcEmpno}
+            </if>
+        </trim>
+    </select>
+
+    <update id="savePjtosc001" parameterType="kr.co.dbvision.api.pjt.osc.pjtosc001.entity.Pjtosc001">
+        /* kr.co.dbvision.api.pjt.osc.pjtosc001.service.mapper.Pjtosc001Mapper.savePjtosc001 */
+        MERGE INTO PJT_OUTSRC_HR A
+             USING (SELECT
+                    #{outsrcEmpno} OUTSRC_EMPNO
+                    FROM DUAL) B
+                ON (
+                    A.OUTSRC_EMPNO = B.OUTSRC_EMPNO
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               NM= #{nm},
+               DEPT_CODE= #{deptCode},
+               IHIDNUM= #{ihidnum},
+               AGE= #{age},
+               SEXDSTN_SE= #{sexdstnSe},
+               JSSFC_CODE= #{jssfcCode},
+               INPT_POSBL_AT= #{inptPosblAt},
+               CAREER_YCNT= #{careerYcnt},
+               CAREER_MCNT= #{careerMcnt},
+               TCHNLGY_GRAD_CODE= #{tchnlgyGradCode},
+               CRQFS_AT= #{crqfsAt},
+               ROLE_CODE= #{roleCode},
+               LAST_ACDMCR_CODE= #{lastAcdmcrCode},
+               HOPE_AREA_CODE= #{hopeAreaCode},
+               IMG_SE_CODE= #{imgSeCode},
+               EMAIL= #{email},
+               TELNO= #{telno},
+               HP_NO= #{hpNo},
+               ZIP= #{zip},
+               ADRES= #{adres},
+               DETAIL_ADRES= #{detailAdres},
+               RM= #{rm},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               OUTSRC_EMPNO,
+               NM,
+               DEPT_CODE,
+               IHIDNUM,
+               AGE,
+               SEXDSTN_SE,
+               JSSFC_CODE,
+               INPT_POSBL_AT,
+               CAREER_YCNT,
+               CAREER_MCNT,
+               TCHNLGY_GRAD_CODE,
+               CRQFS_AT,
+               ROLE_CODE,
+               LAST_ACDMCR_CODE,
+               HOPE_AREA_CODE,
+               IMG_SE_CODE,
+               EMAIL,
+               TELNO,
+               HP_NO,
+               ZIP,
+               ADRES,
+               DETAIL_ADRES,
+               RM,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{outsrcEmpno},
+               #{nm},
+               #{deptCode},
+               #{ihidnum},
+               #{age},
+               #{sexdstnSe},
+               #{jssfcCode},
+               #{inptPosblAt},
+               #{careerYcnt},
+               #{careerMcnt},
+               #{tchnlgyGradCode},
+               #{crqfsAt},
+               #{roleCode},
+               #{lastAcdmcrCode},
+               #{hopeAreaCode},
+               #{imgSeCode},
+               #{email},
+               #{telno},
+               #{hpNo},
+               #{zip},
+               #{adres},
+               #{detailAdres},
+               #{rm},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deletePjtosc001" parameterType="kr.co.dbvision.api.pjt.osc.pjtosc001.entity.Pjtosc001">
+        /* kr.co.dbvision.api.pjt.osc.pjtosc001.service.mapper.Pjtosc001Mapper.deletePjtosc001 */
+        DELETE FROM PJT_OUTSRC_HR
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND OUTSRC_EMPNO = #{outsrcEmpno}
+        </trim>
+    </delete>
+</mapper>

@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.stm.mng.stmmng001.service.mapper.Stmmng001Mapper">
+		    
+    <select id="selectCheckRole" parameterType="egovMapForNull" resultType="egovMapForNull">
+    	/* kr.co.dbvision.api.stm.mng.stmmng001.service.impl.Stmmng001Mapper.selectRole */
+		SELECT CODE AS KEY,
+		       CODE_KOR_NM AS VALUE
+		  FROM STM_CODE
+		 WHERE CODEKIND_CODE = 'C008'
+		   AND USE_AT = '1'
+		   ORDER BY CODE_KOR_NM
+	</select>
+	
+	<select id="selectComboDept" parameterType="egovMapForNull" resultType="egovMapForNull">
+		/* kr.co.dbvision.api.stm.mng.stmmng001.service.impl.Stmmng001Mapper.selectComboDeptNm */
+		SELECT DEPT_CODE AS KEY, 
+		       DEPT_KOR_NM AS VALUE
+		  FROM MHS_DEPT
+		 GROUP BY DEPT_CODE, DEPT_KOR_NM
+		 ORDER BY DEPT_KOR_NM
+	</select>
+	
+    <select id="selectStmUsersList" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.stm.mng.stmmng001.service.impl.Stmmng001Mapper.selectStmUsersList */
+        SELECT
+               A.USER_ID,
+               A.EMPNO,
+               A.USER_PASSWORD,
+               A.USER_NM,
+               A.EMPL_AT,
+               A.USE_AT,
+               A.AUTHOR_SETTING,
+               A.PASSWORD_UPDT,
+               A.USER_IP,
+               A.REG_ID,
+               A.UPT_DT,
+               A.UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM,
+               
+               
+               DECODE(A.EMPL_AT,'1','사원','비사원') AS EMPL_AT_NM,
+               DECODE(A.USE_AT,'1','사용','미사용') AS USE_AT_NM,
+               (SELECT LISTAGG(ROLE_CODE, ',') WITHIN GROUP(ORDER BY ROLE_CODE) 
+                  FROM STM_ROLEUSER
+                 WHERE USER_ID = A.USER_ID) AS ROLE_CODE,
+               (SELECT LISTAGG(SC.CODE_KOR_NM, ',') WITHIN GROUP(ORDER BY SR.ROLE_CODE) 
+                  FROM STM_ROLEUSER SR , STM_CODE SC
+                 WHERE SR.ROLE_CODE = SC.CODE
+                   AND SR.USER_ID = A.USER_ID) ROLE_NM,
+                   
+               TO_CHAR(A.REG_DT,'YYYY-MM-DD HH24:MI:SS') AS REG_DT,
+               C.DEPT_KOR_NM AS DEPT_NM
+
+          FROM STM_USERS A, MHS_EMP B ,MHS_DEPT C
+          WHERE A.EMPNO = B.EMPNO
+           AND B.DEPT_CODE = C.DEPT_CODE
+           AND B.BPLC_CODE = C.BPLC_CODE
+            <if test="userId != null and userId != ''">
+                AND A.USER_ID LIKE '%' || #{userId} || '%'
+           </if>
+           <if test="userNm != null and userNm != ''">
+                AND A.USER_NM LIKE '%' || #{userNm} || '%'
+           </if>
+           <if test="useAt != null and useAt != ''">
+                AND A.USE_AT = #{useAt}
+           </if>
+           <if test="emplAt != null and emplAt != ''">
+                AND A.EMPL_AT = #{emplAt}
+           </if>
+           <if test="deptCode != null and deptCode != ''">
+                AND C.DEPT_CODE = #{deptCode}
+           </if>
+        ORDER BY A.USER_ID
+    </select>
+
+    <select id="selectStmUsers" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.stm.mng.stmmng001.service.impl.Stmmng001Mapper.selectStmUsers */
+        SELECT USER_ID,
+               EMPNO,
+               USER_PASSWORD,
+               USER_NM,
+               EMPL_AT,
+               USE_AT,
+               AUTHOR_SETTING,
+               PASSWORD_UPDT,
+               USER_IP,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM,
+               (SELECT LISTAGG(ROLE_CODE, ',') WITHIN GROUP(ORDER BY ROLE_CODE) 
+                  FROM STM_ROLEUSER
+                 WHERE USER_ID = A.USER_ID) AS ROLE_CODE,
+               (SELECT LISTAGG(SC.CODE_KOR_NM, ',') WITHIN GROUP(ORDER BY SR.ROLE_CODE) 
+                  FROM STM_ROLEUSER SR , STM_CODE SC
+                 WHERE SR.ROLE_CODE = SC.CODE
+                   AND SR.USER_ID = A.USER_ID) ROLE_NM,         
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+          FROM STM_USERS A
+          <trim prefix="WHERE" prefixOverrides="AND|OR">               
+           AND USER_ID = #{userId}
+          </trim>
+    </select>
+
+    <insert id="saveStmUsers" parameterType="kr.co.dbvision.api.stm.mng.stmmng001.entity.Stmmng001">
+        /* kr.co.dbvision.api.stm.mng.stmmng001.service.impl.Stmmng001Mapper.insertStmUsers */        
+       MERGE INTO STM_USERS A USING (SELECT #{userId} USER_ID FROM DUAL) B 
+          ON (A.USER_ID = B.USER_ID)
+        WHEN MATCHED THEN
+	        UPDATE SET
+	               EMPNO = #{empno},
+	               USER_PASSWORD = #{userPassword},
+	               USER_NM = #{userNm},
+	               USER_IP = #{userIp},
+	               EMPL_AT = #{emplAt},
+	               USE_AT = #{useAt},
+	               AUTHOR_SETTING = #{authorSetting},
+	               <if test="updatedPassword != null and updatedPassword != ''">
+                   PASSWORD_UPDT = SYSDATE,
+                   </if>  	               
+	               UPT_DT = SYSDATE,
+	               UPT_ID = #{uptId}
+        WHEN NOT MATCHED THEN                
+	        INSERT (
+	               USER_ID,
+	               EMPNO,
+	               USER_PASSWORD,
+	               USER_NM,
+	               USER_IP,
+	               EMPL_AT,
+	               USE_AT,
+	               AUTHOR_SETTING,
+	               <if test="updatedPassword != null and updatedPassword != ''">
+	               PASSWORD_UPDT,
+	               </if>
+	               REG_DT,
+	               REG_ID
+	        ) VALUES (
+	               #{userId},
+	               #{empno},
+		           #{userPassword},
+		           #{userNm},
+		           #{userIp},
+		           #{emplAt},
+		           #{useAt},
+		           #{authorSetting},
+		           <if test="updatedPassword != null and updatedPassword != ''">
+		           SYSDATE,
+		           </if>
+		           SYSDATE,
+		           #{regId}
+	        )
+    </insert>
+
+    <delete id="deleteStmUsers" parameterType="kr.co.dbvision.api.stm.mng.stmmng001.entity.Stmmng001">
+        /* kr.co.dbvision.api.stm.mng.stmmng001.service.impl.Stmmng001Mapper.deleteStmUsers */
+        DELETE FROM STM_USERS
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND USER_ID = #{userId}
+        </trim>
+    </delete>
+    
+    <insert id="saveRoleUser" parameterType="kr.co.dbvision.api.stm.mng.stmmng001.entity.Stmmng001">
+        /* kr.co.dbvision.api.stm.mng.stmmng001.service.impl.Stmmng001Mapper.insertRoleUser */
+         INSERT INTO STM_ROLEUSER (
+                   ROLE_CODE,
+                   USER_ID,
+                   REG_DT,
+                   REG_ID
+            ) VALUES (
+                   #{roleCode},
+                   #{userId},
+                   SYSDATE,
+                   #{regId}
+            )
+    </insert>
+	
+	<insert id="updateRoleUser" parameterType="kr.co.dbvision.api.stm.mng.stmmng001.entity.Stmmng001">
+		/* kr.co.dbvision.api.stm.mng.stmmng001.service.impl.Stmmng001Mapper.updateRoleUser */
+        MERGE INTO STM_ROLEUSER A USING (SELECT #{userId} USER_ID FROM DUAL) B 
+          ON (A.USER_ID = B.USER_ID)
+        WHEN MATCHED THEN
+	        UPDATE SET
+	               UPT_DT = SYSDATE,
+	               UPT_ID = #{uptId}
+        WHEN NOT MATCHED THEN                
+	        INSERT (
+	               ROLE_CODE,
+         		   USER_ID,
+		           REG_DT,
+		           REG_ID
+	        ) VALUES (
+	               #{roleCode},
+	               #{userId},
+	               SYSDATE,
+	               #{regId}
+	        )
+    </insert>
+
+    <delete id="deleteRoleUser" parameterType="kr.co.dbvision.api.stm.mng.stmmng001.entity.Stmmng001">
+		/* kr.co.dbvision.api.stm.mng.stmmng001.service.impl.Stmmng001Mapper.deleteRoleUser */
+        DELETE FROM STM_ROLEUSER
+         WHERE USER_ID = #{userId}
+    </delete>
+
+    <delete id="deleteUsermenu" parameterType="kr.co.dbvision.api.stm.mng.stmmng001.entity.Stmmng001">
+        /* kr.co.dbvision.api.stm.mng.stmmng001.service.impl.Stmmng001Mapper.deleteUsermenu */
+        DELETE FROM STM_USERMENU
+         WHERE USER_ID = #{userId}
+    </delete>
+
+    <delete id="deleteFavMenu" parameterType="kr.co.dbvision.api.stm.mng.stmmng001.entity.Stmmng001">
+        /* kr.co.dbvision.api.stm.mng.stmmng001.service.impl.Stmmng001Mapper.deleteFavMenu */
+        DELETE FROM STM_FAVMENU
+         WHERE USER_ID = #{userId}
+    </delete>
+
+</mapper>

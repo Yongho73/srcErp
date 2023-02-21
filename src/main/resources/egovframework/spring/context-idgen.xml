@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
+
+	<bean name="FileIdGnrService" class="egovframework.rte.fdl.idgnr.impl.EgovTableIdGnrServiceImpl" destroy-method="destroy">
+		<property name="dataSource" ref="dataSource" />
+		<property name="strategy" 	ref="mixPrefixFileId" />
+		<property name="blockSize" 	value="1"/>
+		<property name="table"	   	value="STM_IDS"/>
+		<property name="tableName"	value="FILE_ID"/>
+	</bean>
+	<bean name="mixPrefixFileId" class="egovframework.rte.fdl.idgnr.impl.strategy.EgovIdGnrStrategyImpl">
+		<property name="prefix"   value="F" />
+		<property name="cipers"   value="19" />
+		<property name="fillChar" value="0" />
+	</bean>	
+	<!-- 인사 : 인사발령Id -->
+	<bean name="GnfdSnGnrService" class="egovframework.rte.fdl.idgnr.impl.EgovTableIdGnrServiceImpl" destroy-method="destroy">
+		<property name="dataSource" ref="dataSource" />
+		<property name="strategy" 	ref="mixPrefixGnfd" />
+		<property name="blockSize" 	value="7"/>
+		<property name="table"	   	value="STM_IDS"/>
+		<property name="tableName"	value="MHS_GNFD"/>
+	</bean>
+	<bean name="mixPrefixGnfd" class="egovframework.rte.fdl.idgnr.impl.strategy.EgovIdGnrStrategyImpl">
+		<property name="prefix"   value="GNFDSN-" />
+		<property name="cipers"   value="13" />
+		<property name="fillChar" value="0" />
+	</bean>
+	<!-- 급여 : 항목적용유형 적용기준Id -->
+	<bean name="ApplcsStdrGnrService" class="egovframework.rte.fdl.idgnr.impl.EgovTableIdGnrServiceImpl" destroy-method="destroy">
+		<property name="dataSource" ref="dataSource" />
+		<property name="strategy" 	ref="mixPrefixApplcsStdr" />
+		<property name="blockSize" 	value="7"/>
+		<property name="table"	   	value="STM_IDS"/>
+		<property name="tableName"	value="MPS_APPLCS_STDR"/>
+	</bean>
+	<bean name="mixPrefixApplcsStdr" class="egovframework.rte.fdl.idgnr.impl.strategy.EgovIdGnrStrategyImpl">
+		<property name="prefix"   value="APSTDR-" />
+		<property name="cipers"   value="13" />
+		<property name="fillChar" value="0" />
+	</bean>
+	<!-- 프로젝트 : 산출물 ID -->
+	<bean name="OutputSnGnrService" class="egovframework.rte.fdl.idgnr.impl.EgovTableIdGnrServiceImpl" destroy-method="destroy">
+        <property name="dataSource" ref="dataSource" />
+        <property name="strategy"   ref="mixPrefixOutputSn" />
+        <property name="blockSize"  value="1"/>
+        <property name="table"      value="STM_IDS"/>
+        <property name="tableName"  value="OUTPUT_SN"/>
+    </bean>
+    <bean name="mixPrefixOutputSn" class="egovframework.rte.fdl.idgnr.impl.strategy.EgovIdGnrStrategyImpl">
+        <property name="prefix"   value="O" />
+        <property name="cipers"   value="19" />
+        <property name="fillChar" value="0" />
+    </bean> 	
+    <!-- 프로젝트 : 인력실적 ID -->
+	<bean name="HnfAcmsltSnGnrService" class="egovframework.rte.fdl.idgnr.impl.EgovTableIdGnrServiceImpl" destroy-method="destroy">
+        <property name="dataSource" ref="dataSource" />
+        <property name="strategy"   ref="mixPrefixHnfAcmsltSn" />
+        <property name="blockSize"  value="1"/>
+        <property name="table"      value="STM_IDS"/>
+        <property name="tableName"  value="HNF_ACMSLT_SN"/>
+    </bean>
+    <bean name="mixPrefixHnfAcmsltSn" class="egovframework.rte.fdl.idgnr.impl.strategy.EgovIdGnrStrategyImpl">
+        <property name="prefix"   value="H" />
+        <property name="cipers"   value="19" />
+        <property name="fillChar" value="0" />
+    </bean>
+    <!-- 전잘결재 : 양식번호 -->
+    <bean name="RaisNoGnrService" class="egovframework.rte.fdl.idgnr.impl.EgovTableIdGnrServiceImpl" destroy-method="destroy">
+        <property name="dataSource" ref="dataSource" />
+        <property name="strategy"   ref="mixPrefixRaisNo" />
+        <property name="blockSize"  value="1"/>
+        <property name="table"      value="STM_IDS"/>
+        <property name="tableName"  value="DOC_RAIS"/>
+    </bean>
+    <bean name="mixPrefixRaisNo" class="egovframework.rte.fdl.idgnr.impl.strategy.EgovIdGnrStrategyImpl">
+        <property name="prefix"   value="D" />
+        <property name="cipers"   value="19" />
+        <property name="fillChar" value="0" />
+    </bean>
+    <!-- 전잘결재 : 양식순번 -->
+    <bean name="RaisSnGnrService" class="egovframework.rte.fdl.idgnr.impl.EgovTableIdGnrServiceImpl" destroy-method="destroy">
+        <property name="dataSource" ref="dataSource" />
+        <property name="strategy"   ref="mixPrefixRaisSn" />
+        <property name="blockSize"  value="1"/>
+        <property name="table"      value="STM_IDS"/>
+        <property name="tableName"  value="RAIS_INFO_ITEM"/>
+    </bean>
+    <bean name="mixPrefixRaisSn" class="egovframework.rte.fdl.idgnr.impl.strategy.EgovIdGnrStrategyImpl">
+        <property name="prefix"   value="I" />
+        <property name="cipers"   value="19" />
+        <property name="fillChar" value="0" />
+    </bean>
+    <!-- 전자결재 : 위임전결번호 -->
+    <bean name="DcrbNoGnrService" class="egovframework.rte.fdl.idgnr.impl.EgovTableIdGnrServiceImpl" destroy-method="destroy">
+        <property name="dataSource" ref="dataSource" />
+        <property name="strategy"   ref="mixPrefixDcrbNo" />
+        <property name="blockSize"  value="1"/>
+        <property name="table"      value="STM_IDS"/>
+        <property name="tableName"  value="SGN_DCRB_REGLTN"/>
+    </bean>
+    <bean name="mixPrefixDcrbNo" class="egovframework.rte.fdl.idgnr.impl.strategy.EgovIdGnrStrategyImpl">
+        <property name="prefix"   value="D" />
+        <property name="cipers"   value="19" />
+        <property name="fillChar" value="0" />
+    </bean>
+    <!-- 전자결재 : 문서번호관리번호 -->
+    <bean name="NoSettingNoGnrService" class="egovframework.rte.fdl.idgnr.impl.EgovTableIdGnrServiceImpl" destroy-method="destroy">
+        <property name="dataSource" ref="dataSource" />
+        <property name="strategy"   ref="mixPrefixNoSettingNo" />
+        <property name="blockSize"  value="1"/>
+        <property name="table"      value="STM_IDS"/>
+        <property name="tableName"  value="SGN_DOCNO_SETTING"/>
+    </bean>
+    <bean name="mixPrefixNoSettingNo" class="egovframework.rte.fdl.idgnr.impl.strategy.EgovIdGnrStrategyImpl">
+        <property name="prefix"   value="N" />
+        <property name="cipers"   value="19" />
+        <property name="fillChar" value="0" />
+    </bean>  
+</beans> 

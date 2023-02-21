@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mhs.hrb.mhshrb001.service.mapper.Mhshrb001MapperTab12Fggg">
+
+	<!-- 계좌 Tab 11 -->
+	<select id="selectMhsEmpTab12Fggg" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrb.mhshrb001.service.mapper.Mhshrb001MapperTab12Fggg.selectMhsEmpTab12Fggg */
+        SELECT
+               EMPNO,
+               FGGG_SN,
+               FGGG_SE_CODE,
+               FGGG_TEST_NM,
+               FGGG_SCORE,
+               FGGG_GRAD_CODE,
+               GRAD_LVL,
+               OPERTNINSTT_NM,
+               ISSU_NO,
+               FNC_DATESTR(APYEXM_DE) AS APYEXM_DE,
+               FNC_DATESTR(ACQS_DE) AS ACQS_DE,
+               FNC_DATESTR(END_DE) AS END_DE,
+               DOC_ATCHMNFL_NO,
+               DOC_ATCHMNFL_NO AS DOC_ATCHMNFL_NO_EDIT,
+               RM,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_FGGG A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="empno != null and empno != ''">
+                AND EMPNO = #{empno}
+            </if>
+            <if test="fgggSn != null and fgggSn != ''">
+                AND FGGG_SN = #{fgggSn}
+            </if>
+            <if test="sRegDt != null and sRegDt != ''">
+                <![CDATA[
+                AND REG_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+                ]]>
+            </if>
+            <if test="eRegDt != null and eRegDt != ''">
+                <![CDATA[
+                AND REG_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+                ]]>
+             </if>
+        </trim>
+        ORDER BY FGGG_SN
+    </select>
+    
+    <select id="insertMhsEmpTab12FgggUseChk" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrb.mhshrb001.service.mapper.Mhshrb001MapperTab12Fggg.insertMhsEmpTab12FgggUseChk */
+        SELECT COUNT(*) AS CNT
+          FROM MHS_FGGG
+         WHERE  EMPNO = #{empno}
+           AND  FGGG_SE_CODE = TRIM(#{fgggSeCode})
+           AND  FGGG_TEST_NM = TRIM(#{fgggTestNm})
+     </select>
+        
+
+    <update id="saveMhsEmpTab12Fggg" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrb.mhshrb001.service.mapper.Mhshrb001MapperTab12Fggg.saveMhsEmpTab12Fggg */
+        <selectKey resultType="int" keyProperty="fgggSnNew" order="BEFORE">
+  			SELECT NVL(MAX(FGGG_SN),0) + 1 AS fgggSnNew
+  			FROM MHS_FGGG
+  			WHERE EMPNO = #{empno}
+  		</selectKey>
+  		
+        MERGE INTO MHS_FGGG A
+             USING (SELECT
+                    #{empno} EMPNO,
+                    #{fgggSn} FGGG_SN
+                    FROM DUAL) B
+                ON (
+                    A.EMPNO = B.EMPNO AND 
+                    A.FGGG_SN = B.FGGG_SN
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               FGGG_SE_CODE= #{fgggSeCode},
+               FGGG_TEST_NM= #{fgggTestNm},
+               FGGG_SCORE= #{fgggScore},
+               FGGG_GRAD_CODE= #{fgggGradCode},
+               GRAD_LVL= #{gradLvl},
+               OPERTNINSTT_NM= #{opertninsttNm},
+               ISSU_NO= #{issuNo},
+               APYEXM_DE= REPLACE(#{apyexmDe},'-',''),
+               ACQS_DE= REPLACE(#{acqsDe},'-',''),
+               END_DE= REPLACE(#{endDe},'-',''),
+               DOC_ATCHMNFL_NO= #{docAtchmnflNo},
+               RM= #{rm},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               EMPNO,
+               FGGG_SN,
+               FGGG_SE_CODE,
+               FGGG_TEST_NM,
+               FGGG_SCORE,
+               FGGG_GRAD_CODE,
+               GRAD_LVL,
+               OPERTNINSTT_NM,
+               ISSU_NO,
+               APYEXM_DE,
+               ACQS_DE,
+               END_DE,
+               DOC_ATCHMNFL_NO,
+               RM,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{empno},
+               #{fgggSnNew},
+               #{fgggSeCode},
+               #{fgggTestNm},
+               #{fgggScore},
+               #{fgggGradCode},
+               #{gradLvl},
+               #{opertninsttNm},
+               #{issuNo},
+               REPLACE(#{apyexmDe},'-',''),
+               REPLACE(#{acqsDe},'-',''),
+               REPLACE(#{endDe},'-',''),
+               #{docAtchmnflNo},
+               #{rm},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deleteMhsEmpTab12Fggg" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrb.mhshrb001.service.mapper.Mhshrb001MapperTab12Fggg.deleteMhsEmpTab12Fggg */
+        DELETE FROM MHS_FGGG
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND EMPNO = #{empno}
+                AND FGGG_SN = #{fgggSn}
+        </trim>
+    </delete>
+ 
+</mapper>

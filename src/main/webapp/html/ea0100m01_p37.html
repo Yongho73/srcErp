@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html class="no-js" lang="ko">
+<HEAD>
+<META content="IE=11.0000" http-equiv="X-UA-Compatible">
+<META charset="UTF-8">
+<META http-equiv="Content-Script-Type" content="text/javascript; charet=utf-8">
+<META http-equiv="Content-Style-Type" content="text/css; charet=utf-8">
+<META name="HandheldFriendly" content="True">
+<META http-equiv="cleartype" content="on">
+<META http-equiv="X-UA-Compatible" content="IE=edge">
+<META http-equiv="Expires" content="-1">
+<META http-equiv="Pragma" content="no-cache">
+<META http-equiv="Cache-Control" content="no-cache">
+<META content="DBVision-XERP" property="og:title">
+<META name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, minimum-scale=1.0, user-scalable=yes">
+<META name="keywords" content="DBVision-XERP">
+<META name="description" content="DBVision-XERP">
+<LINK href="img/icon/dbv.ico" rel="shortcut icon" type="image/x-icon">
+
+<TITLE>XERP</TITLE>
+
+<LINK href="../css/dhtmlx/skin/dhtmlx.css" rel="stylesheet" type="text/css">
+<LINK href="../glyphicons/css/bootstrap-glyphicons.css" rel="stylesheet" type="text/css">
+
+<!-- jquery -->
+<SCRIPT src="../js/jquery-1.11.1.min.js"></SCRIPT>
+<SCRIPT src="../js/jquery-ui-custom.min.js"></SCRIPT>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<!-- css -->
+<LINK href="../css/sub.css" rel="stylesheet" type="text/css">
+
+<link type="image/x-icon" href="http://intra.dbvision.co.kr/img/login/dbv.ico" rel="Shortcut Icon" />
+<link rel="stylesheet" type="text/css" href="http://intra.dbvision.co.kr/css/sub.css" />
+	<link rel="stylesheet" type="text/css" href="http://intra.dbvision.co.kr/css/table.css" />
+	<script type="text/javascript" src="http://intra.dbvision.co.kr/js/jquery.js"></script>
+	<script type='text/javascript' src='http://intra.dbvision.co.kr/js/jquery.simplemodal.js'></script>
+	<script type="text/javascript">
+	$(document).ready(function(){
+		 $("#open_approval").click(function(){
+		  $("#modal_content").modal(); 
+		 });
+		 $("#approval_close").click(function(){
+		  $.modal.close();
+		 });
+	}); 
+</script>
+
+<LINK href="css/payment_sub.css" rel="stylesheet" type="text/css">
+
+<style>
+html, body  { overflow: hidden; }
+	.top_approval{
+		text-align:right;
+		/*border-bottom:1px solid #dadce0;
+		margin-bottom:20px;*/
+	}
+	.btn_ainfo:hover{
+		background:#e14043;		
+		border-bottom:2px solid #ed5153;
+	}
+	
+	.btn_ainfo em{
+		width:12px;
+		height:12px;
+		line-height:12px;
+		background:url(../img/sub/ui-icons_ffffff_256x240.png) no-repeat -115px -100px;
+		display:inline-block;
+		vertical-align:middle;
+		margin-right:2px;
+	}
+	.btn_ainfo{
+		padding:5px 15px;
+		background:#ed5153;
+		color:#fff;
+		font-weight:bold;		
+		border-bottom:2px solid #e14043;
+		
+	}
+	.btn_afile:hover{
+		background:#2d9fee;
+		border-bottom:2px solid #51aded;
+	}
+	
+	.btn_afile{	
+		padding:5px 15px;
+		background:#51aded; /* #f1f3f4; */
+		color:#fff;
+		font-weight:bold;		
+		border-bottom:2px solid #2d9fee;
+		
+	}
+	.btn_afile em{
+		width:12px;
+		height:12px;
+		line-height:12px;
+		background:url(../img/sub/ui-icons_ffffff_256x240.png) no-repeat -100px -115px;
+		display:inline-block;
+		vertical-align:middle;
+		margin-right:2px;
+	}
+	.btn_afile span{
+		display:hidden;
+	}
+	.btn_asum{	
+		padding:5px 15px;
+		background:#536270;
+		color:#fff;
+		font-weight:bold;
+		border-bottom:2px solid #545e69;
+		
+	}
+	.btn_asum:hover{
+		background:#545e69;
+		border-bottom:2px solid #536270;
+	}
+	.btn_asum em{
+		width:10px;
+		height:10px;
+		line-height:12px;
+		background:url(../img/sub/ui-icons_ffffff_256x240.png) no-repeat -149px -148px;
+		display:inline-block;
+		vertical-align:middle;
+		margin-right:2px;
+	}
+	.btn_amanage{	
+		padding:5px 15px;
+		background:#4caf50;
+		color:#fff;
+		font-weight:bold;
+		border-bottom:2px solid #619963;
+		
+	}
+	.btn_amanage:hover{
+		background:#619963;
+		border-bottom:2px solid #536270;
+	}
+	.btn_amanage em{
+		width:10px;
+		height:10px;
+		line-height:12px;
+		background:url(../img/sub/ui-icons_ffffff_256x240.png) no-repeat -243px -132px;
+		display:inline-block;
+		vertical-align:middle;
+		margin-right:5px;		
+	}
+</style>
+
+</HEAD>
+
+
+<body>
+
+	<!-- 모달 팝업창 -->
+<div class="h500 pop" style="width:1005px; margin:0 auto;">
+		<div class="top_approval" style="background:#fff;">
+			<div class="doc_btn" style="">
+				<button type="button" class="btn_common02_new" onclick="var pop=window.open('approval_pop_pinfo.html', '연차신청서', 'width=1150, height=520px, scrollbars= 0, toolbar=0, menubar=no, location=no, status=no');"><SPAN class="glyphicon glyphicon-cog mr5"></SPAN><span>결재정보</span></button>&nbsp;<button type="button" class="btn_common02_new"><SPAN class="glyphicon glyphicon-file mr5"></SPAN><span>첨부파일</span></button>&nbsp;<button type="button" class="btn_common02_new" onclick="var pop=window.open('approval_pop_ppop.html', '요약', 'width=625, height=225px, scrollbars= 0, toolbar=0, menubar=no, location=no, status=no');"><SPAN class="glyphicon glyphicon-bookmark mr5"></SPAN><span>요약</span></button>&nbsp;<button type="button" class="btn_common02_new" onclick="var pop=window.open('ea0100m01_p37_1.html', '연차신청서', 'width=740, height=300px, scrollbars= 0, toolbar=0, menubar=no, location=no, status=no');"><SPAN class="glyphicon glyphicon-inbox mr5"></SPAN><span>이력관리</span></button>
+			</div>
+		</div>
+		
+		
+	<div class="pop_wrap" style="margin:0 auto; border-top:2px solid #667eba; ">		
+		<div class="folding">
+			<!--<button id="toggleBtn">감췄다보여줬다</button>-->
+			<button type="button" class="btn_common04" title="접기" id="close"><span class="close"></span><span class="hide">접기</span></button><button type="button" class="btn_common04" title="열기" id="open" style="display:none;"><span class="open"></span><span class="hide">열기</span></button>
+		</div>	
+		<div class="approval_pop_table detail_type03" style=""><!-- display:none;  pop_search2 -->
+			<table>
+				<caption>결재양식</caption>
+				<colgroup>
+					<col width="130" />
+					<col width="" />
+					<col width="130" />
+					<col width="" />
+				</colgroup>
+				<tr>
+					<th><label for="stylename">서식명</label></th>
+					<td colspan="3">연차신청서</td>
+				</tr>
+				<tr>
+					<th><label for="keeping">문서보존기한</label></th>
+					<td>3년</td>
+					<th><label for="date">열람범위</label></th>
+					<td><!--<input type="text" id="date" title="열람범위" style="width:180px" value="">-->소속부서</td>
+				</tr>
+				<tr>
+					<th><label for="stitle">제목</label></th>
+					<td colspan="3"><!-- <input type="text" id="stitle" title="제목" style="width:75%"> --><span class='urgent'>긴급</span> 결재 제목</td>
+				</tr>
+				<tr>
+					<th><label for="approvalB">결재선</label></th><!--  class="blue" -->
+					<td colspan="3">
+						(이사)홍길동 - (부장)홍길순&nbsp;<a href="#"><img src="../img/sub/icon_comment.png" alt="코멘트"></a>&nbsp;- (대리)홍길자</td>	
+				</tr>
+				
+				<tr>
+					<th><label for="receiptG">수신그룹</label></th>
+					<td>
+						<!--<input type="text" id="receiptG" title="수신그룹" style="width:180px" value="">-->부서명, 부서명 (직위)성명</td>
+					</td>
+					<th><label for="viewgroup">공람그룹</label></th>
+					<td>
+						<!--<input type="text" id="viewgroup" title="공람그룹" style="width:180px" value="">-->부서명 (직위)성명
+					</td>
+				</tr>				
+			</table>
+		</div>
+		<div>
+			<img src="./ex/doc_capture.jpg" alt="아래아문서캡쳐"/>
+		</div>
+	
+
+<div class="search_box2" style="background:#fff; text-align:center; margin:20px 0 15px 0;">
+		<div class="btn">
+			<button type="button" class="btn_save2" onclick="return quitBox('quit');" />결재상신</button>&nbsp;<button type="button" class="btn_save2" onclick="return quitBox('quit');" />결재승인</button>&nbsp;<button type="button" class="btn_close2" onclick="return quitBox('quit');" />결재반려</button>&nbsp;<button type="button" class="btn_close2" onclick="return quitBox('quit');" />확인</button>&nbsp;<button type="button" class="btn_close2" onclick="return quitBox('quit');" />회수</button>&nbsp;<button type="button" class="btn_save2" onclick="return quitBox('quit');" />수정</button>&nbsp;<button type="button" class="btn_close2" onclick="return quitBox('quit');" />◀</button>&nbsp;<button type="button" class="btn_close2" onclick="return quitBox('quit');" />▶</button>
+		</div>
+</div>
+
+	</div><!--//pop_wrap-->
+</div><!--//modal_content-->  
+ 
+
+
+<script type="text/javascript">
+
+$(function() {	
+	$("#close").click(function() {
+		$('.approval_pop_table').hide(500); //1000 > 1초 후에 지워짐 
+		$('#open').show();		//1000 > 1초 후에 지워짐 
+		$('#close').hide();		//1000 > 1초 후에 지워짐 
+	});
+	
+	$("#open").click(function() {
+		$('.approval_pop_table').show(500); //1000 > 1초 후에 지워짐 
+		$('#close').show();		//1000 > 1초 후에 지워짐 
+		$('#open').hide();
+	});
+	
+	$("#showBtn").click(function() {
+		$('p').show(500);
+	});
+	
+	//토글
+	$("#toggleBtn").click(function() {
+		$('.approval_pop_table').toggle(500);
+	});
+});
+function quitBox(cmd)
+{   
+    if (cmd=='quit')
+    {
+        open(location, '_self').close();
+    }   
+    return false;   
+}
+</script>
+</script>
+
+</BODY>
+</HTML>

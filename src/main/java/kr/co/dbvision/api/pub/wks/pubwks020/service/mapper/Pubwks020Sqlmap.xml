@@ -1,0 +1,414 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.pub.wks.pubwks020.service.mapper.Pubwks020Mapper">
+
+    <select id="makeCalendar" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.pub.wks.pubwks020.service.mapper.Pubwks020Mapper.makeCalendar */
+        SELECT
+               B.JOB_DE,
+               B.DE_SE_CODE,
+               FNC_COMCODENM('C127' , B.DE_SE_CODE) AS DE_SE_CODE_NM,
+               B.HVOF_AT
+          FROM STM_JOB_DAY B  
+          WHERE
+            <if test="workDay != null and workDay != ''">
+                <![CDATA[
+                B.JOB_DE LIKE #{workDay} || '%' 
+                ]]>
+            </if>
+          ORDER BY B.JOB_DE
+    </select>
+    
+    <select id="selectTmdiffForAdmin" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.pub.wks.pubwks020.service.mapper.Pubwks020Mapper.selectTmdiffForAdmin */
+        SELECT
+               A.EMPNO,
+               A.CONFM_SE_SN,
+               A.WORK_DAY,
+               A.WORK_BEGIN_TIME,
+               A.WORK_END_TIME,
+               A.WRKPLC_NM,
+               A.RECOG_TIME,
+               A.SHIFT_WORK_AT,
+               A.REG_DT,
+               A.REG_ID,
+               A.UPT_DT,
+               A.UPT_ID,
+               A.CONFM_STTUS_CODE,
+               FNC_COMCODENM('C197' , A.CONFM_STTUS_CODE) AS CONFM_STTUS_CODE_NM,
+               FNC_DATESTR(A.CONFM_DE) AS CONFM_DE,
+               A.CONFMER_EMPNO,
+               FNC_GETKORNM(A.CONFMER_EMPNO) AS CONFMER_EMPNM, 
+               A.RETURN_RESN,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+          FROM MHS_TMDIFF_WORK A 
+          WHERE
+               A.EMPNO = #{empno}
+               AND
+               A.WORK_DAY LIKE #{workDay} || '%'
+               AND
+               A.CONFM_STTUS_CODE IS NOT NULL               
+          ORDER BY A.WORK_DAY , A.CONFM_SE_SN
+    </select>
+
+    <select id="selectTmdiff" parameterType="egovMapForNull" resultType="egovMapForNull">
+    /* kr.co.dbvision.api.pub.wks.pubwks020.service.mapper.Pubwks020Mapper.selectTmdiff */
+        SELECT
+               A.EMPNO,
+               A.CONFM_SE_SN,
+               A.WORK_DAY,
+               A.WORK_BEGIN_TIME,
+               A.WORK_END_TIME,
+               A.WRKPLC_NM,
+               A.RECOG_TIME,
+               A.SHIFT_WORK_AT,
+               A.REG_DT,
+               A.REG_ID,
+               A.UPT_DT,
+               A.UPT_ID,
+               A.CONFM_STTUS_CODE,
+               FNC_COMCODENM('C197' , A.CONFM_STTUS_CODE) AS CONFM_STTUS_CODE_NM,
+               FNC_DATESTR(A.CONFM_DE) AS CONFM_DE,
+               A.CONFMER_EMPNO,
+               FNC_GETKORNM(A.CONFMER_EMPNO) AS CONFMER_EMPNM, 
+               A.RETURN_RESN,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+          FROM MHS_TMDIFF_WORK A 
+          WHERE
+               A.EMPNO = #{empno}
+               AND
+               A.WORK_DAY LIKE #{workDay} || '%'
+          ORDER BY A.WORK_DAY , A.CONFM_SE_SN
+    </select>
+    
+    <select id="selectIndvd" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.pub.wks.pubwks020.service.mapper.Pubwks020Mapper.selectIndvd */
+        SELECT
+            A.EMPNO,
+            FNC_GETKORNM(A.EMPNO) AS EMPNM,
+            A.SN,
+            A.WORK_TY_CODE,
+            A.USE_BEGIN_DE,
+            A.USE_END_DE,
+            A.WORK_BEGIN_TIME,
+            A.WORK_END_TIME,
+            A.RM,
+            A.CONFM_STTUS_CODE,
+            A.CONFM_DE,
+            A.CONFMER_EMPNO
+          FROM MHS_INDVDLWORKTYSEL A 
+          WHERE
+               A.CONFM_STTUS_CODE = '002'
+               AND
+               A.EMPNO = #{empno}
+            <if test="workDay != null and workDay != ''">
+                <![CDATA[
+                AND (A.USE_BEGIN_DE LIKE #{workDay} || '%' 
+                     OR 
+                     A.USE_END_DE LIKE #{workDay} || '%')
+                ]]>
+            </if>
+    </select>
+
+    <select id="selectPubwks020" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.pub.wks.pubwks020.service.mapper.Pubwks020Mapper.selectPubwks020 */
+        SELECT
+               REQST_NO,
+               EMPNO,
+               WORK_DAY,
+               WORK_BEGIN_TIME,
+               WORK_END_TIME,
+               WRKPLC_NM,
+               RECOG_TIME,
+               SHIFT_WORK_AT,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_TMDIFF_WORK A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="reqstNo != null and reqstNo != ''">
+                AND REQST_NO = #{reqstNo}
+            </if>
+            <if test="empno != null and empno != ''">
+                AND EMPNO = #{empno}
+            </if>
+        </trim>
+    </select>
+    
+    <select id="selectHistoryPubwks020" parameterType="egovMapForNull" resultType="EgovMapForNull">
+        SELECT
+            EMPNO,
+            CONFM_SE_SN,
+            FNC_DATESTR(WORK_DAY) AS WORK_DAY,
+            SUBSTR(WORK_BEGIN_TIME,1,2) || ' : ' || SUBSTR(WORK_BEGIN_TIME,3 ,2) AS WORK_BEGIN_TIME,
+            SUBSTR(WORK_END_TIME,1,2) || ' : ' || SUBSTR(WORK_END_TIME,3 ,2) AS WORK_END_TIME,
+            WRKPLC_NM,
+            FNC_GETKORNM(CONFMER_EMPNO) AS CONFMER_EMPNM,
+            CONFM_STTUS_CODE,
+            FNC_COMCODENM('C197' , CONFM_STTUS_CODE) AS CONFM_STTUS_CODE_NM,
+            FNC_DATESTR(CONFM_DE) AS CONFM_DE,
+            RETURN_RESN
+        FROM
+            MHS_TMDIFF_WORK
+        WHERE
+            EMPNO = #{empno}
+            AND
+            WORK_DAY = #{workDay}
+            AND
+            <![CDATA[
+            CONFM_SE_SN <= TO_NUMBER(#{confmSeSn})
+            ]]>
+        ORDER BY CONFM_SE_SN
+    </select>
+    
+    <select id="selectCalendarPubwks020" parameterType="kr.co.dbvision.api.pub.wks.pubwks020.entity.Pubwks020" resultType="EgovMapForNull">
+        /* kr.co.dbvision.api.pub.wks.pubwks020.service.mapper.Pubwks020Mapper.selectCalendarPubwks020 */
+        SELECT
+            JOB_DE,
+            HVOF_AT
+        FROM STM_JOB_DAY
+        WHERE 
+        <![CDATA[
+            JOB_DE >= #{useBeginDe}
+            AND
+            JOB_DE <= #{useEndDe}
+        ]]>
+        ORDER BY JOB_DE ASC
+    </select>
+
+    <update id="savePubwks020" parameterType="egovMapForNull">
+        /* kr.co.dbvision.api.pub.wks.pubwks020.service.mapper.Pubwks020Mapper.savePubwks020 */
+        MERGE INTO MHS_TMDIFF_WORK A
+             USING (SELECT
+                    #{empno} EMPNO,
+                    #{workDay} WORK_DAY,
+                    #{confmSeSn} CONFM_SE_SN
+                    FROM DUAL) B
+                ON (
+                    A.EMPNO = B.EMPNO AND
+                    A.WORK_DAY = B.WORK_DAY AND
+                    A.CONFM_SE_SN = B.CONFM_SE_SN
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               WORK_BEGIN_TIME= #{workBeginTime},
+               WORK_END_TIME= #{workEndTime},
+               WRKPLC_NM= #{wrkplcNm},
+               RECOG_TIME= #{recogTime},
+               SHIFT_WORK_AT= #{shiftWorkAt},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               EMPNO,
+               WORK_DAY,
+               WORK_BEGIN_TIME,
+               WORK_END_TIME,
+               WRKPLC_NM,
+               RECOG_TIME,
+               SHIFT_WORK_AT,
+               CONFM_SE_SN,
+               CONFM_STTUS_CODE,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{empno},
+               #{workDay},
+               #{workBeginTime},
+               #{workEndTime},
+               #{wrkplcNm},
+               #{recogTime},
+               #{shiftWorkAt},
+               (SELECT NVL(MAX(CONFM_SE_SN),0) + 1
+                 FROM MHS_TMDIFF_WORK
+                 WHERE 
+                    WORK_DAY = #{workDay}
+                    AND
+                    EMPNO = #{empno}),
+               #{confmSttusCode},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+    
+    <insert id="copyPubwks020" parameterType="EgovMapForNull">
+        INSERT INTO MHS_TMDIFF_WORK
+            (
+			EMPNO,
+			CONFM_SE_SN,
+			WORK_DAY,
+			WORK_BEGIN_TIME,
+			WORK_END_TIME,
+			WRKPLC_NM,
+			RECOG_TIME,
+			SHIFT_WORK_AT,
+			REG_DT,
+			REG_ID,
+			CONFM_STTUS_CODE
+            )
+            SELECT
+                EMPNO,
+                (SELECT MAX(CONFM_SE_SN) + 1
+                 FROM MHS_TMDIFF_WORK
+                 WHERE
+                    WORK_DAY = #{workDay}
+                    AND
+                    EMPNO = #{empno}
+                    AND
+                    CONFM_SE_SN = #{confmSeSn}),
+                WORK_DAY,
+                WORK_BEGIN_TIME,
+                WORK_END_TIME,
+                WRKPLC_NM,
+                RECOG_TIME,
+                SHIFT_WORK_AT,
+                SYSDATE,
+                #{regId},
+                ''
+            FROM
+                MHS_TMDIFF_WORK
+            WHERE
+                WORK_DAY = #{workDay}
+                AND
+                EMPNO = #{empno}
+                AND
+                CONFM_SE_SN = TO_NUMBER(#{confmSeSn})
+    </insert>
+   
+    <select id="selectForConfmSttusUpdate" parameterType="kr.co.dbvision.api.pub.wks.pubwks020.entity.Pubwks020" resultType="EgovMapForNull">
+        SELECT
+            EMPNO,
+            WORK_DAY,
+            MAX(CONFM_SE_SN) AS CONFM_SE_SN
+        FROM
+            MHS_TMDIFF_WORK
+        WHERE
+            EMPNO = #{empno}
+            AND
+            WORK_DAY LIKE #{workDay} || '%'
+        GROUP BY
+            EMPNO , WORK_DAY
+    </select>
+
+    <update id="updateConfmSttusPubwks020" parameterType="kr.co.dbvision.api.pub.wks.pubwks020.entity.Pubwks020">
+        /* kr.co.dbvision.api.pub.wks.pubwks020.service.mapper.Pubwks020Mapper.updateConfmSttusPubwks020 */
+        UPDATE 
+            MHS_TMDIFF_WORK
+        SET
+            CONFM_STTUS_CODE = #{confmSttusCode},
+            CONFM_DE = #{confmDe},
+            CONFMER_EMPNO = #{confmerEmpno},
+            RETURN_RESN = #{returnResn}
+        WHERE
+            EMPNO = #{empno}
+            AND
+            WORK_DAY = #{workDay} 
+            AND
+            CONFM_SE_SN = TO_NUMBER(#{confmSeSn})
+            <choose>
+                <when test="confmSttusCode == '001' and confmSttusCode != null and confmSttusCode != ''">
+                    AND (CONFM_STTUS_CODE IS NULL OR CONFM_STTUS_CODE = '003')
+                </when>
+                <when test="confmSttusCode == '002' and confmSttusCode != null and confmSttusCode != ''">
+                    AND CONFM_STTUS_CODE = '001'
+                </when>
+                <when test="confmSttusCode == '003' and confmSttusCode != null and confmSttusCode != ''">
+                    AND CONFM_STTUS_CODE = '001'
+                </when>
+            </choose>
+    </update>
+    
+    <select id="selectForSaveBundle" parameterType="kr.co.dbvision.api.pub.wks.pubwks020.entity.Pubwks020" resultType="EgovMapForNull">
+        SELECT
+            EMPNO,
+            WORK_DAY,
+            CONFM_SE_SN,
+            CONFM_STTUS_CODE
+        FROM
+            MHS_TMDIFF_WORK
+        WHERE
+            EMPNO = #{empno}
+            AND
+            WORK_DAY = #{workDay}
+            AND
+            CONFM_SE_SN = (SELECT MAX(CONFM_SE_SN)
+                           FROM MHS_TMDIFF_WORK
+                           WHERE 
+                                EMPNO = #{empno}
+                                AND
+                                WORK_DAY = #{workDay})
+    </select>
+
+    <insert id="saveBundlePubwks020" parameterType="kr.co.dbvision.api.pub.wks.pubwks020.entity.Pubwks020">
+        /* kr.co.dbvision.api.pub.wks.pubwks020.service.mapper.Pubwks020Mapper.saveBundlePubwks020 */
+        INSERT
+            INTO MHS_TMDIFF_WORK
+            (
+                EMPNO,
+                CONFM_SE_SN,
+                WORK_DAY,
+                WORK_BEGIN_TIME,
+                WORK_END_TIME,
+                WRKPLC_NM,
+                SHIFT_WORK_AT,
+                REG_DT,
+                REG_ID
+            )
+            VALUES   
+            (
+                #{empno},
+                (SELECT NVL(MAX(CONFM_SE_SN),0) + 1
+                 FROM MHS_TMDIFF_WORK
+                 WHERE 
+                    WORK_DAY = #{workDay}
+                    AND
+                    EMPNO = #{empno}),
+                #{workDay},
+                #{workBeginTime},
+                #{workEndTime},
+                #{wrkplcNm},
+                #{shiftWorkAt},
+                SYSDATE,
+                #{regId}
+            )
+    </insert>
+
+    <delete id="deletePubwks020" parameterType="egovMapForNull">
+        /* kr.co.dbvision.api.pub.wks.pubwks020.service.mapper.Pubwks020Mapper.deletePubwks020 */
+        DELETE FROM MHS_TMDIFF_WORK
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND EMPNO = #{empno}
+                AND WORK_DAY = #{workDay}
+                AND CONFM_SE_SN = #{confmSeSn}
+                AND CONFM_STTUS_CODE IS NULL
+        </trim>
+    </delete>
+    <delete id="deleteBundlePubwks020" parameterType="kr.co.dbvision.api.pub.wks.pubwks020.entity.Pubwks020">
+        /* kr.co.dbvision.api.pub.wks.pubwks020.service.mapper.Pubwks020Mapper.deleteBundlePubwks020 */
+        DELETE FROM MHS_TMDIFF_WORK
+        WHERE
+             EMPNO = #{empno}
+             AND
+             CONFM_STTUS_CODE IS NULL
+             AND 
+        <![CDATA[
+             (WORK_DAY >= #{useBeginDe} AND WORK_DAY <= #{useEndDe})
+        ]]>
+    </delete>
+</mapper>

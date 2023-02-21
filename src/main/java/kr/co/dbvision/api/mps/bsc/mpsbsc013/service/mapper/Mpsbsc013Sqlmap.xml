@@ -1,0 +1,374 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mps.bsc.mpsbsc013.service.mapper.Mpsbsc013Mapper">
+
+    <select id="selectMpsbsc013List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.bsc.mpsbsc013.service.mapper.Mpsbsc013Mapper.selectMpsbsc013List */
+        SELECT
+               APPLC_YY,
+               FNC_DATESTR(CHANGE_DE) AS CHANGE_DE,
+               LVWAGE_STDRAMT,
+               WRYC_ALLWNC_TARIFF,
+               OVTIME_ALLWNC_TARIFF,
+               HVOFWORK_ALLWNC_TARIFF,
+               NWORK_ALLWNC_TARIFF,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MPS_SALARY_ENVRN_SETTING A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="applcYy != null and applcYy != ''">
+                AND APPLC_YY = #{applcYy}
+            </if>
+            <if test="changeDe != null and changeDe != ''">
+                AND CHANGE_DE = REPLACE(#{changeDe},'-','')
+            </if>
+            <if test="sRegDt != null and sRegDt != ''">
+                <![CDATA[
+                AND REG_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+                ]]>
+            </if>
+            <if test="eRegDt != null and eRegDt != ''">
+                <![CDATA[
+                AND REG_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+                ]]>
+             </if>
+        </trim>
+        ORDER BY APPLC_YY, REG_DT
+    </select>
+
+    <select id="selectMpsbsc013" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.bsc.mpsbsc013.service.mapper.Mpsbsc013Mapper.selectMpsbsc013 */
+        SELECT
+               APPLC_YY,
+               CHANGE_DE,
+               LVWAGE_STDRAMT,
+               WRYC_ALLWNC_TARIFF,
+               OVTIME_ALLWNC_TARIFF,
+               HVOFWORK_ALLWNC_TARIFF,
+               NWORK_ALLWNC_TARIFF,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MPS_SALARY_ENVRN_SETTING A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="applcYy != null and applcYy != ''">
+                AND APPLC_YY = #{applcYy}
+            </if>
+            <if test="changeDe != null and changeDe != ''">
+                AND CHANGE_DE = REPLACE(#{changeDe},'-','')
+            </if>
+        </trim>
+    </select>
+
+    <update id="saveMpsbsc013" parameterType="kr.co.dbvision.api.mps.bsc.mpsbsc013.entity.Mpsbsc013">
+        /* kr.co.dbvision.api.mps.bsc.mpsbsc013.service.mapper.Mpsbsc013Mapper.saveMpsbsc013 */
+        MERGE INTO MPS_SALARY_ENVRN_SETTING A
+             USING (SELECT
+                    #{applcYy} APPLC_YY,
+                    REPLACE(#{changeDe},'-','') CHANGE_DE
+                    FROM DUAL) B
+                ON (
+                    A.APPLC_YY = B.APPLC_YY AND 
+                    A.CHANGE_DE = B.CHANGE_DE
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               LVWAGE_STDRAMT= #{lvwageStdramt},
+               WRYC_ALLWNC_TARIFF= #{wrycAllwncTariff},
+               OVTIME_ALLWNC_TARIFF= #{ovtimeAllwncTariff},
+               HVOFWORK_ALLWNC_TARIFF= #{hvofworkAllwncTariff},
+               NWORK_ALLWNC_TARIFF= #{nworkAllwncTariff},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               APPLC_YY,
+               CHANGE_DE,
+               LVWAGE_STDRAMT,
+               WRYC_ALLWNC_TARIFF,
+               OVTIME_ALLWNC_TARIFF,
+               HVOFWORK_ALLWNC_TARIFF,
+               NWORK_ALLWNC_TARIFF,
+               REG_ID,
+               REG_DT
+
+        ) VALUES (
+
+               #{applcYy},
+               REPLACE(#{changeDe},'-',''),
+               #{lvwageStdramt},
+               #{wrycAllwncTariff},
+               #{ovtimeAllwncTariff},
+               #{hvofworkAllwncTariff},
+               #{nworkAllwncTariff},
+               #{regId},
+               SYSDATE
+
+        )
+    </update>
+
+    <delete id="deleteMpsbsc013" parameterType="kr.co.dbvision.api.mps.bsc.mpsbsc013.entity.Mpsbsc013">
+        /* kr.co.dbvision.api.mps.bsc.mpsbsc013.service.mapper.Mpsbsc013Mapper.deleteMpsbsc013 */
+        DELETE FROM MPS_SALARY_ENVRN_SETTING
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND APPLC_YY = #{applcYy}
+                AND CHANGE_DE = REPLACE(#{changeDe},'-','')
+        </trim>
+    </delete>
+
+    <delete id="deleteMpsbsc013Tap2Tariff" parameterType="kr.co.dbvision.api.mps.bsc.mpsbsc013.entity.Mpsbsc013">
+        /* kr.co.dbvision.api.mps.bsc.mpsbsc013.service.mapper.Mpsbsc013Mapper.deleteMpsbsc013Tap2Tariff" */
+        DELETE FROM MPS_SNLRC_TARIFF
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND APPLC_YY = #{applcYy}
+                AND CHANGE_DE = REPLACE(#{changeDe},'-','')
+        </trim>
+    </delete>
+
+    <delete id="deleteMpsbsc013Tap3Rtrpay" parameterType="kr.co.dbvision.api.mps.bsc.mpsbsc013.entity.Mpsbsc013">
+        /* kr.co.dbvision.api.mps.bsc.mpsbsc013.service.mapper.Mpsbsc013Mapper.deleteMpsbsc013Tap3Rtrpay */
+        DELETE FROM MPS_RTRPAY_PYMNT_STDR
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND APPLC_YY = #{applcYy}
+                AND CHANGE_DE = REPLACE(#{changeDe},'-','')
+        </trim>
+    </delete>
+    
+    <select id="selectMpsbscTap2Tariff" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.bsc.mpsbsc013.service.mapper.Mpsbsc013Mapper.selectMpsbscTap2Tariff */
+        SELECT
+               APPLC_YY,
+               FNC_DATESTR(CHANGE_DE) AS CHANGE_DE,
+               NPN_LABRR_RT,
+               NPN_BSNM_RT,
+               NPN_UPLMT_AMT,
+               HLTHINS_LABRR_RT,
+               HLTHINS_BSNM_RT,
+               LTCI_HLTHINS_RT,
+               LTCI_LABRR_RT,
+               LTCI_BSNM_RT,
+               EPIS_LABRR_RT,
+               EPIS_BSNM_RT,
+               EPIS_ALOTM,
+               IACI_TARIFF,
+               NPN_LWLT_AMT,
+               HLTHINS_LWLT_AMT,
+               HLTHINS_UPLMT_AMT,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MPS_SNLRC_TARIFF A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="applcYy != null and applcYy != ''">
+                AND APPLC_YY = #{applcYy}
+            </if>
+            <if test="changeDe != null and changeDe != ''">
+                AND CHANGE_DE = REPLACE(#{changeDe},'-','')
+            </if>
+            <if test="sRegDt != null and sRegDt != ''">
+                <![CDATA[
+                AND REG_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+                ]]>
+            </if>
+            <if test="eRegDt != null and eRegDt != ''">
+                <![CDATA[
+                AND REG_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+                ]]>
+             </if>
+        </trim>
+    </select>
+    
+    <update id="saveMpsbscTap2Tariff" parameterType="kr.co.dbvision.api.mps.bsc.mpsbsc013.entity.Mpsbsc013">
+        /* kr.co.dbvision.api.mps.bsc.mpsbsc013.service.mapper.Mpsbsc013Mapper.saveMpsbscTap2Tariff */
+        MERGE INTO MPS_SNLRC_TARIFF A
+             USING (SELECT
+                    #{applcYy} APPLC_YY,
+                    REPLACE(#{changeDe},'-','') CHANGE_DE
+                    FROM DUAL) B
+                ON (
+                    A.APPLC_YY = B.APPLC_YY AND 
+                    A.CHANGE_DE = B.CHANGE_DE
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               NPN_LABRR_RT= #{npnLabrrRt},
+               NPN_BSNM_RT= #{npnBsnmRt},
+               NPN_UPLMT_AMT= #{npnUplmtAmt},
+               HLTHINS_LABRR_RT= #{hlthinsLabrrRt},
+               HLTHINS_BSNM_RT= #{hlthinsBsnmRt},
+               LTCI_HLTHINS_RT= #{ltciHlthinsRt},
+               LTCI_LABRR_RT= #{ltciLabrrRt},
+               LTCI_BSNM_RT= #{ltciBsnmRt},
+               EPIS_LABRR_RT= #{episLabrrRt},
+               EPIS_BSNM_RT= #{episBsnmRt},
+               EPIS_ALOTM= #{episAlotm},
+               IACI_TARIFF= #{iaciTariff},
+               NPN_LWLT_AMT= #{npnLwltAmt},
+               HLTHINS_LWLT_AMT= #{hlthinsLwltAmt},
+               HLTHINS_UPLMT_AMT= #{hlthinsUplmtAmt},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               APPLC_YY,
+               CHANGE_DE,
+               NPN_LABRR_RT,
+               NPN_BSNM_RT,
+               NPN_UPLMT_AMT,
+               HLTHINS_LABRR_RT,
+               HLTHINS_BSNM_RT,
+               LTCI_HLTHINS_RT,
+               LTCI_LABRR_RT,
+               LTCI_BSNM_RT,
+               EPIS_LABRR_RT,
+               EPIS_BSNM_RT,
+               EPIS_ALOTM,
+               IACI_TARIFF,
+               NPN_LWLT_AMT,
+               HLTHINS_LWLT_AMT,
+               HLTHINS_UPLMT_AMT,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{applcYy},
+               REPLACE(#{changeDe},'-',''),
+               #{npnLabrrRt},
+               #{npnBsnmRt},
+               #{npnUplmtAmt},
+               #{hlthinsLabrrRt},
+               #{hlthinsBsnmRt},
+               #{ltciHlthinsRt},
+               #{ltciLabrrRt},
+               #{ltciBsnmRt},
+               #{episLabrrRt},
+               #{episBsnmRt},
+               #{episAlotm},
+               #{iaciTariff},
+               #{npnLwltAmt},
+               #{hlthinsLwltAmt},
+               #{hlthinsUplmtAmt},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+    
+    <select id="selectMpsbscTap3Rtrpay" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.bsc.mpsbsc013.service.mapper.Mpsbsc013Mapper.selectMpsbscTap3Rtrpay */
+        SELECT
+               APPLC_YY,
+               FNC_DATESTR(CHANGE_DE) AS CHANGE_DE,
+               RETIREDAY_INCLS_AT,
+               MT_STDR_DAYCNT,
+               AVRGWAGECALC_SE_CODE,
+               BNSCALC_SE_CODE,
+               RETIRECALC_SE_CODE,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MPS_RTRPAY_PYMNT_STDR A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="applcYy != null and applcYy != ''">
+                AND APPLC_YY = #{applcYy}
+            </if>
+            <if test="changeDe != null and changeDe != ''">
+                AND CHANGE_DE = #{changeDe}
+            </if>
+            <if test="sRegDt != null and sRegDt != ''">
+                <![CDATA[
+                AND REG_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+                ]]>
+            </if>
+            <if test="eRegDt != null and eRegDt != ''">
+                <![CDATA[
+                AND REG_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+                ]]>
+             </if>
+        </trim>
+    </select>
+    
+    <update id="saveMpsbscTap3Rtrpay" parameterType="kr.co.dbvision.api.mps.bsc.mpsbsc013.entity.Mpsbsc013">
+        /* kr.co.dbvision.api.mps.bsc.mpsbsc013.service.mapper.Mpsbsc013Mapper.saveMpsbscTap3Rtrpay */
+        MERGE INTO MPS_RTRPAY_PYMNT_STDR A
+             USING (SELECT
+                    #{applcYy} APPLC_YY,
+                    #{changeDe} CHANGE_DE
+                    FROM DUAL) B
+                ON (
+                    A.APPLC_YY = B.APPLC_YY AND 
+                    A.CHANGE_DE = B.CHANGE_DE
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               RETIREDAY_INCLS_AT= #{retiredayInclsAt},
+               MT_STDR_DAYCNT= #{mtStdrDaycnt},
+               AVRGWAGECALC_SE_CODE= #{avrgwagecalcSeCode},
+               BNSCALC_SE_CODE= #{bnscalcSeCode},
+               RETIRECALC_SE_CODE= #{retirecalcSeCode},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               APPLC_YY,
+               CHANGE_DE,
+               RETIREDAY_INCLS_AT,
+               MT_STDR_DAYCNT,
+               AVRGWAGECALC_SE_CODE,
+               BNSCALC_SE_CODE,
+               RETIRECALC_SE_CODE,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{applcYy},
+               #{changeDe},
+               #{retiredayInclsAt},
+               #{mtStdrDaycnt},
+               #{avrgwagecalcSeCode},
+               #{bnscalcSeCode},
+               #{retirecalcSeCode},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+    
+</mapper>

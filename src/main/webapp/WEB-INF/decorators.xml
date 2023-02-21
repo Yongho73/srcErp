@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<decorators defaultdir="/WEB-INF/decorators">
+
+	<excludes>
+		<pattern>*/ubi4/*</pattern>
+		<pattern>*/js/*</pattern>
+		<pattern>*/css/*</pattern>
+		<pattern>*/img/*</pattern>
+		<pattern>*/images/*</pattern>
+		<pattern>*/webmail/*</pattern>
+		<pattern>*/popup/*</pattern>
+		<pattern>*/pop/*</pattern>
+		<pattern>*/editor/*</pattern>
+		<pattern>*/html/*</pattern>
+		<pattern>*/smartEditor/*</pattern>
+		<pattern>*/sockjs/*</pattern>
+		<pattern>*.htm</pattern>
+		<pattern>*.html</pattern>
+		<pattern>*/fonts/*</pattern>
+	</excludes>
+
+	<decorator name="default_meta"      	page="default/meta.jsp" />
+	<decorator name="default_css"       	page="default/css.jsp" />
+	<decorator name="default_js"        	page="default/js.jsp" />				
+	<decorator name="default_title"     	page="default/title.jsp" />
+	<decorator name="default_header" 	    page="default/header.jsp" />
+	<decorator name="default_resource" 	    page="default/resource.jsp" />
+	
+	<decorator name="login" page="layout/login.jsp">
+		<pattern>/</pattern>			
+	</decorator>
+	
+	<decorator name="sub" page="layout/sub.jsp">
+		<pattern>*/stmcmm*/*</pattern>		
+	</decorator>
+	
+	<decorator name="contents" page="layout/contents.jsp">
+		<pattern>*/stm*/*</pattern>
+		<pattern>*/stmmng*/*</pattern>
+		<pattern>*/mhs*/*</pattern>
+		<pattern>*/mps*/*</pattern>
+		<pattern>*/mfs*/*</pattern>
+		<pattern>*/mbs*/*</pattern>
+		<pattern>*/mta*/*</pattern>
+		<pattern>*/ynd*/*</pattern>
+		<pattern>*/pjt*/*</pattern>
+		<pattern>*/ets*/*</pattern>
+		<pattern>*/sample/*</pattern>
+		<pattern>*/tst*/*</pattern>
+		<pattern>*/mtx*/*</pattern>	
+        <pattern>*/pub*/*</pattern> 	 			
+	</decorator>
+	
+	<decorator name="popups" page="layout/popup.jsp">			
+		<pattern>*/*pop*/*</pattern>
+	</decorator>	
+
+</decorators>

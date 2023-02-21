@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html class="no-js" lang="ko">
+<HEAD>
+<META content="IE=11.0000" http-equiv="X-UA-Compatible">
+<META charset="UTF-8">
+<META http-equiv="Content-Script-Type" content="text/javascript; charet=utf-8">
+<META http-equiv="Content-Style-Type" content="text/css; charet=utf-8">
+<META name="HandheldFriendly" content="True">
+<META http-equiv="cleartype" content="on">
+<META http-equiv="X-UA-Compatible" content="IE=edge">
+<META http-equiv="Expires" content="-1">
+<META http-equiv="Pragma" content="no-cache">
+<META http-equiv="Cache-Control" content="no-cache">
+<META content="DBVision-XERP" property="og:title">
+<META name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, minimum-scale=1.0, user-scalable=yes">
+<META name="keywords" content="DBVision-XERP">
+<META name="description" content="DBVision-XERP">
+<LINK href="../img/icon/dbv.ico" rel="shortcut icon" type="image/x-icon">
+
+<TITLE>XERP</TITLE>
+
+<LINK href="../css/dhtmlx/skin/dhtmlx.css" rel="stylesheet" type="text/css">
+<LINK href="../glyphicons/css/bootstrap-glyphicons.css" rel="stylesheet" type="text/css">
+
+<!-- jquery -->
+<SCRIPT src="../js/jquery-1.11.1.min.js"></SCRIPT>
+<SCRIPT src="../js/jquery-ui-custom.min.js"></SCRIPT>
+ 
+<!-- css -->
+<LINK href="../css/base.css" rel="stylesheet" type="text/css">
+<LINK href="../css/sub.css" rel="stylesheet" type="text/css">
+
+<link type="image/x-icon" href="http://intra.dbvision.co.kr/img/login/dbv.ico" rel="Shortcut Icon" />
+<link rel="stylesheet" type="text/css" href="http://intra.dbvision.co.kr/css/sub.css" />
+	<link rel="stylesheet" type="text/css" href="http://intra.dbvision.co.kr/css/table.css" />
+	<script type="text/javascript" src="http://intra.dbvision.co.kr/js/jquery.js"></script>
+	<script type='text/javascript' src='http://intra.dbvision.co.kr/js/jquery.simplemodal.js'></script>
+	<script type="text/javascript">
+	$(document).ready(function(){
+		 $("#open_approval").click(function(){
+		  $("#modal_content").modal(); 
+		 });
+		 $("#approval_close").click(function(){
+		  $.modal.close();
+		 });
+	}); 
+
+function quitBox(cmd)
+{   
+    if (cmd=='quit')
+    {
+        open(location, '_self').close();
+    }   
+    return false;   
+}
+</script>
+<style>
+</style>
+
+
+<LINK href="css/payment_sub.css" rel="stylesheet" type="text/css">
+
+
+</HEAD>
+
+		
+		
+
+<body style="box-sizing:border-box;overflow: hidden;">
+<!-- 모달 팝업창 -->
+
+		<div style="padding:20px;margin:0 auto;width:630px;">
+			<textarea cols="100%" rows="8">
+			</textarea>
+		</div>
+		
+</div>
+<div style="text-align:center; position:absolute; display:block;width:100%;bottom:35px;">
+	<button type="button" class="btn_save2" onclick="return quitBox('quit');" />저장</button>&nbsp;<button type="button" class="btn_close2" onclick="return quitBox('quit');" />닫기</button>
+</div>
+		
+</BODY>
+</HTML>
+

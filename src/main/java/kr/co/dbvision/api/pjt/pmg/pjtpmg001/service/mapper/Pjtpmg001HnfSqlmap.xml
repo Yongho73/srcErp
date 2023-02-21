@@ -1,0 +1,614 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper
+	namespace="kr.co.dbvision.api.pjt.pmg.pjtpmg001.service.mapper.Pjtpmg001Mapper">
+
+	     <select id="selectPjtProjectHnfPlanList" parameterType="egovMapForNull" resultType="egovMapForNull">
+    	SELECT ROWNUM AS RNUM, A.* FROM(  
+    	  SELECT 
+			PROJECT_SN  ,
+			HNF_PLAN_SN ,
+			PRTCPNT_NM  ,
+			PRTCPNT_EMPNO ,
+			TCHNLGY_GRAD,
+			ROLE_CODE,
+			PARTCPTN_MAN_MONTH  ,
+			EXTRL_SERVC_AT ,
+			TO_CHAR(TO_DATE(PARTCPTN_BEGIN_DE) , 'YYYY-MM-DD') AS PARTCPTN_BEGIN_DE,
+			TO_CHAR(TO_DATE(PARTCPTN_END_DE) , 'YYYY-MM-DD') AS PARTCPTN_END_DE,
+			UPT_DT  ,
+			UPT_ID  
+    	  FROM  PJT_HNF_PLAN
+	 	  WHERE PROJECT_SN = #{projectSn}	
+	 	  ORDER BY ROLE_CODE, TCHNLGY_GRAD DESC, HNF_PLAN_SN) A
+    </select>
+    
+    <insert id="insertPjtProjectHnfPlanList" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg002.service.impl.Pjtpmg002Mapper.insertPjtProject */
+        INSERT INTO PJT_HNF_PLAN
+        (
+            PROJECT_SN  ,
+			HNF_PLAN_SN ,
+			PRTCPNT_NM  ,
+			PRTCPNT_EMPNO ,
+			TCHNLGY_GRAD,
+			ROLE_CODE,
+			PARTCPTN_MAN_MONTH,
+			EXTRL_SERVC_AT ,
+			PARTCPTN_BEGIN_DE,
+			PARTCPTN_END_DE,
+            REG_DT,
+            REG_ID
+        )
+        VALUES
+        (
+            #{projectSn},
+            (SELECT NVL((MAX(HNF_PLAN_SN) + 1),0) FROM PJT_HNF_PLAN WHERE PROJECT_SN = #{projectSn}),
+            #{prtcpntNm},
+            #{prtcpntEmpno},
+            #{tchnlgyGrad},
+            #{roleCode},
+            #{partcptnManMonth},
+            #{extrlServcAt},
+            #{partcptnBeginDe},
+            #{partcptnEndDe},
+            SYSDATE,
+            #{regId}
+        )
+    </insert>
+    
+     <update id="updatePjtProjectHnfPlanList" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg002.service.impl.Pjtpmg002Mapper.updatePjtProject */
+        UPDATE PJT_HNF_PLAN SET
+			PRTCPNT_NM = #{prtcpntNm},
+			PRTCPNT_EMPNO = #{prtcpntEmpno} ,
+			TCHNLGY_GRAD = #{tchnlgyGrad},
+			ROLE_CODE = #{roleCode},
+			PARTCPTN_MAN_MONTH = #{partcptnManMonth},
+			EXTRL_SERVC_AT = #{extrlServcAt} ,
+			PARTCPTN_BEGIN_DE = #{partcptnBeginDe},
+			PARTCPTN_END_DE = #{partcptnEndDe},
+            UPT_DT = SYSDATE,
+            UPT_ID = #{uptId}
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+        	 <if test="projectSn != null and projectSn != ''">
+               AND PROJECT_SN = #{projectSn}
+             </if>
+             <if test="hnfPlanSn != null and hnfPlanSn != ''">
+               AND HNF_PLAN_SN = #{hnfPlanSn}
+             </if>
+        </trim>
+    </update>
+    
+    <delete id="deletePjtProjectHnfPlanList" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg002.service.impl.Pjtpmg002Mapper.deletePjtProject */
+        DELETE FROM PJT_HNF_PLAN
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+               AND HNF_PLAN_SN = #{hnfPlanSn}
+               AND PROJECT_SN = #{projectSn}
+        </trim>
+    </delete>
+    
+    <select id="selectPjtProjectHnfPlanAcmsltList" parameterType="egovMapForNull" resultType="egovMapForNull">
+    	SELECT ROWNUM AS RNUM, A.* FROM (
+			SELECT    TCHNLGY_GRAD
+			              , FNC_COMCODENM('C021',TCHNLGY_GRAD) AS TCHNLGY_GRAD_NM
+						  , SUM(A) AS MANA_MM
+						  , SUM(B) AS MANP_MM
+						  , SUM(B) - SUM(A) AS REMAIN_MM
+						  , SUM(C) AS PREV_MANA_MM
+			        FROM (
+			            SELECT  TCHNLGY_GRAD, PARTCPTN_MAN_MONTH A,  0 AS B, 0 AS C
+			            FROM    PJT_HNF_ACMSLT
+			            WHERE PROJECT_SN  =  #{projectSn}
+			            UNION ALL
+			            SELECT  TCHNLGY_GRAD, 0 AS A,      PARTCPTN_MAN_MONTH AS B, 0 AS C
+			            FROM    PJT_HNF_PLAN
+			            WHERE   PROJECT_SN  =  #{projectSn}
+			            UNION ALL
+			            SELECT  TCHNLGY_GRAD, 0 AS A, 0 AS B, PARTCPTN_MAN_MONTH AS C
+			            FROM    PJT_HNF_ACMSLT
+			            WHERE   PROJECT_SN  =  #{projectSn}
+			            AND     ACMSLT_STDR_DE = TO_CHAR(ADD_MONTHS(SYSDATE, -1),'YYYYMM') 
+			       ) A
+			       GROUP BY TCHNLGY_GRAD
+			         UNION ALL
+					   SELECT    '0' AS TCHNLGY_GRAD
+						          , '합계' AS TECH_CD_NM
+								  , SUM(A) AS MANA_MM
+								  , SUM(B) AS MANP_MM
+								  , SUM(B) - SUM(A) AS REMAIN_MM
+								  , SUM(C) AS PREV_MANA_MM
+					        FROM (
+					            SELECT  TCHNLGY_GRAD, PARTCPTN_MAN_MONTH A,  0 AS B, 0 AS C
+					            FROM    PJT_HNF_ACMSLT
+					            WHERE PROJECT_SN  =  #{projectSn}
+					            UNION ALL
+					            SELECT  TCHNLGY_GRAD, 0 AS A,      PARTCPTN_MAN_MONTH AS B, 0 AS C
+					            FROM    PJT_HNF_PLAN
+					            WHERE   PROJECT_SN  = #{projectSn}
+					            UNION ALL
+					            SELECT  TCHNLGY_GRAD, 0 AS A, 0 AS B, PARTCPTN_MAN_MONTH AS C
+					            FROM    PJT_HNF_ACMSLT
+					            WHERE   PROJECT_SN  = #{projectSn}
+					            AND     ACMSLT_STDR_DE = TO_CHAR(ADD_MONTHS(SYSDATE, -1),'YYYYMM') 
+					       ) A            
+			       ORDER BY TCHNLGY_GRAD DESC 
+		) A
+    </select>
+    
+    <select id="selectPjtProjectHnfPlanAcmsltAddList" parameterType="egovMapForNull" resultType="egovMapForNull">
+        SELECT ROWNUM AS RNUM, A.* FROM (
+            SELECT    TCHNLGY_GRAD
+                          , FNC_COMCODENM('C021',TCHNLGY_GRAD) AS TCHNLGY_GRAD_NM
+                          , SUM(A) AS MANA_MM
+                          , '-' AS MANP_MM
+                          , SUM(B) - SUM(A) AS REMAIN_MM
+                          , SUM(C) AS PREV_MANA_MM
+                    FROM (
+                        SELECT  TCHNLGY_GRAD, PARTCPTN_MAN_MONTH A,  0 AS B, 0 AS C
+                        FROM    PJT_HNF_ACMSLT
+                        WHERE  TCHNLGY_GRAD NOT IN  (SELECT TCHNLGY_GRAD FROM PJT_HNF_PLAN WHERE PROJECT_SN  =  #{projectSn} GROUP BY TCHNLGY_GRAD)
+                        AND PROJECT_SN  =  #{projectSn}
+                   ) A
+                   GROUP BY TCHNLGY_GRAD
+                     UNION ALL
+                       SELECT    '0' AS TCHNLGY_GRAD
+                                  , '합계' AS TECH_CD_NM
+                                  , SUM(A) AS MANA_MM
+                                  , '-' AS MANP_MM
+                                  , SUM(B) - SUM(A) AS REMAIN_MM
+                                  , SUM(C) AS PREV_MANA_MM
+                            FROM (
+                                SELECT  TCHNLGY_GRAD, PARTCPTN_MAN_MONTH A,  0 AS B, 0 AS C
+                                FROM    PJT_HNF_ACMSLT
+                                WHERE  TCHNLGY_GRAD NOT IN  (SELECT TCHNLGY_GRAD FROM PJT_HNF_PLAN WHERE PROJECT_SN  =  #{projectSn} GROUP BY TCHNLGY_GRAD)
+                                AND PROJECT_SN  =  #{projectSn}
+                           ) A            
+                   ORDER BY TCHNLGY_GRAD DESC 
+        ) A
+    </select>
+    
+    <select id="selectPjtProjectHnfAcmsltList" parameterType="egovMapForNull" resultType="egovMapForNull">
+      /* kr.co.dbvision.api.pjt.pmg.pjtpmg002.service.impl.Pjtpmg002Mapper.selectPjtProjectHnfAcmsltList */
+		SELECT 
+		*
+		FROM
+		(
+		    SELECT 
+		        SUBSTR(ACMSLT_STDR_DE, 1, 4) || '-' || SUBSTR(ACMSLT_STDR_DE, 5, 2) AS ACMSLT_STDR_DE,
+		        PARTCPTN_MAN_MONTH ,
+		        HNF_ACMSLT_SN ,
+		        TCHNLGY_GRAD ,
+		        PROJECT_SN ,
+		        PRTCPNT_NM ,
+		        PRTCPNT_EMPNO  ,
+		        ROLE_CODE ,
+		        EXTRL_SERVC_AT AS EXTRL
+		        ,SUBSTR(ACMSLT_STDR_DE, 1, 6)  AS DIS_ORDER
+		        ,TO_NUMBER(''||ROW_NUMBER () over ( order by ACMSLT_STDR_DE DESC, ROLE_CODE ASC, TCHNLGY_GRAD DESC)) AS DIVIDE_CODE
+		    FROM  PJT_HNF_ACMSLT
+			 WHERE PROJECT_SN = #{projectSn}
+			 <if test="prtcpntNm != null and prtcpntNm != ''">
+               AND UPPER(PRTCPNT_NM) LIKE '%' || UPPER(#{prtcpntNm}) || '%'
+             </if>
+             <if test="searchSregDt != null and searchSregDt != ''">
+               AND  ACMSLT_STDR_DE  BETWEEN  REPLACE(TO_CHAR(TO_DATE(#{searchSregDt}),'YYYY-MM'), '-', '')  
+                                         AND REPLACE(TO_CHAR(TO_DATE(#{searchEregDt}),'YYYY-MM'), '-', '')
+             </if>
+		    UNION 
+		    SELECT 
+		             '소계' ACMSLT_STDR_DE ,
+		             SUM (PARTCPTN_MAN_MONTH) PARTCPTN_MAN_MONTH,
+		             '' HNF_ACMSLT_SN ,
+		             '' TCHNLGY_GRAD ,
+		             PROJECT_SN ,
+		             '' PRTCPNT_NM ,
+		             '' PRTCPNT_EMPNO  ,
+		             '' ROLE_CODE ,
+		             '0' EXTRL_SERVC_AT
+		            ,SUBSTR(ACMSLT_STDR_DE, 1, 6)  AS DIS_ORDER
+		            ,TO_NUMBER('88') AS DIVIDE_CODE            
+		        FROM PJT_HNF_ACMSLT
+			 WHERE PROJECT_SN = #{projectSn}
+			 <if test="prtcpntNm != null and prtcpntNm != ''">
+               AND UPPER(PRTCPNT_NM) LIKE '%' || UPPER(#{prtcpntNm}) || '%'
+             </if>
+             <if test="searchSregDt != null and searchSregDt != ''">
+               AND  ACMSLT_STDR_DE  BETWEEN  REPLACE(TO_CHAR(TO_DATE(#{searchSregDt}),'YYYY-MM'), '-', '')  
+                                         AND REPLACE(TO_CHAR(TO_DATE(#{searchEregDt}),'YYYY-MM'), '-', '')
+             </if>
+		    GROUP BY SUBSTR(ACMSLT_STDR_DE, 1, 6) , PROJECT_SN
+		UNION     
+		SELECT 
+		         '합계' ACMSLT_STDR_DE ,
+		         SUM (PARTCPTN_MAN_MONTH) PARTCPTN_MAN_MONTH,
+		         '' HNF_ACMSLT_SN ,
+		         '' TCHNLGY_GRAD ,
+		         '' PROJECT_SN ,
+		         '' PRTCPNT_NM ,
+		         '' PRTCPNT_EMPNO  ,
+		         '' ROLE_CODE ,
+		         '0' EXTRL_SERVC_AT
+		         ,SUBSTR(ACMSLT_STDR_DE, 1, 1)  AS DIS_ORDER   
+		        -- ,'000000'  AS DIS_ORDER      
+		         ,TO_NUMBER('99') AS DIVIDE_CODE       
+		    FROM PJT_HNF_ACMSLT
+			 WHERE PROJECT_SN = #{projectSn}
+			 <if test="prtcpntNm != null and prtcpntNm != ''">
+               AND UPPER(PRTCPNT_NM) LIKE '%' || UPPER(#{prtcpntNm}) || '%'
+             </if>
+             <if test="searchSregDt != null and searchSregDt != ''">
+               AND  ACMSLT_STDR_DE  BETWEEN  REPLACE(TO_CHAR(TO_DATE(#{searchSregDt}),'YYYY-MM'), '-', '')  
+                                         AND REPLACE(TO_CHAR(TO_DATE(#{searchEregDt}),'YYYY-MM'), '-', '')
+             </if>    
+              GROUP BY SUBSTR(ACMSLT_STDR_DE, 1, 1) 
+		  ) 
+		ORDER BY DIS_ORDER DESC,DIVIDE_CODE
+
+    </select>
+    
+    <select id="selectPjtProjectHnfAcmsltList_OLD" parameterType="egovMapForNull" resultType="egovMapForNull">
+    	SELECT ROWNUM AS RNUM, A.* FROM (
+	    	SELECT
+					SUBSTR(ACMSLT_STDR_DE, 1, 4) || '-' || SUBSTR(ACMSLT_STDR_DE, 5, 2) AS ACMSLT_STDR_DE,
+					PARTCPTN_MAN_MONTH ,
+					HNF_ACMSLT_SN ,
+					TCHNLGY_GRAD ,
+					PROJECT_SN ,
+					PRTCPNT_NM ,
+					PRTCPNT_EMPNO  ,
+					ROLE_CODE ,
+					EXTRL_SERVC_AT,
+	                UPT_DT,
+	                UPT_ID
+			 FROM  PJT_HNF_ACMSLT
+			 WHERE PROJECT_SN = #{projectSn}
+			 <if test="prtcpntNm != null and prtcpntNm != ''">
+               AND UPPER(PRTCPNT_NM) LIKE '%' || UPPER(#{prtcpntNm}) || '%'
+             </if>
+             <if test="searchSregDt != null and searchSregDt != ''">
+               AND  ACMSLT_STDR_DE  BETWEEN  REPLACE(TO_CHAR(TO_DATE(#{searchSregDt}),'YYYY-MM'), '-', '')  
+                                         AND REPLACE(TO_CHAR(TO_DATE(#{searchEregDt}),'YYYY-MM'), '-', '')
+             </if>
+		   ORDER BY ACMSLT_STDR_DE DESC, ROLE_CODE, TCHNLGY_GRAD DESC,  EXTRL_SERVC_AT,  HNF_ACMSLT_SN
+		   
+		   ) A
+    </select>
+    
+    <insert id="insertPjtProjectHnfAcmsltList" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg002.service.impl.Pjtpmg002Mapper.insertPjtProject */
+        INSERT INTO PJT_HNF_ACMSLT
+        (
+            PROJECT_SN  ,
+			HNF_ACMSLT_SN ,
+			PRTCPNT_NM  ,
+			PRTCPNT_EMPNO ,
+			TCHNLGY_GRAD,
+			ROLE_CODE,
+			PARTCPTN_MAN_MONTH,
+			EXTRL_SERVC_AT ,
+			ACMSLT_STDR_DE,
+            REG_DT,
+            REG_ID
+        )
+        VALUES
+        (
+            #{projectSn},
+            #{hnfAcmsltSn},
+            #{prtcpntNm},
+            #{prtcpntEmpno},
+            #{tchnlgyGrad},
+            #{roleCode},
+            #{partcptnManMonth},
+            #{extrlServcAt},
+            #{acmsltStdrDe},
+            SYSDATE,
+            #{regId}
+        )
+    </insert>
+    
+     <update id="updatePjtProjectHnfAcmsltList" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg002.service.impl.Pjtpmg002Mapper.updatePjtProject */
+        UPDATE PJT_HNF_ACMSLT SET
+			PRTCPNT_NM = #{prtcpntNm},
+			PRTCPNT_EMPNO = #{prtcpntEmpno} ,
+			TCHNLGY_GRAD = #{tchnlgyGrad},
+			ROLE_CODE = #{roleCode},
+			PARTCPTN_MAN_MONTH = #{partcptnManMonth},
+			EXTRL_SERVC_AT = #{extrlServcAt} ,
+			ACMSLT_STDR_DE = #{acmsltStdrDe},
+            UPT_DT = SYSDATE,
+            UPT_ID = #{uptId}
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+        	 <if test="projectSn != null and projectSn != ''">
+               AND PROJECT_SN = #{projectSn}
+             </if>
+             <if test="hnfAcmsltSn != null and hnfAcmsltSn != ''">
+               AND HNF_ACMSLT_SN = #{hnfAcmsltSn}
+             </if>
+        </trim>
+    </update>
+    
+    <delete id="deletePjtProjectHnfAcmsltList" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg002.service.impl.Pjtpmg002Mapper.deletePjtProject */
+        DELETE FROM PJT_HNF_ACMSLT
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+               AND HNF_ACMSLT_SN = #{hnfAcmsltSn}
+               AND PROJECT_SN = #{projectSn}
+        </trim>
+    </delete>
+    
+      <insert id="insertPjtProjectHnfAcmsltCopy" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg002.service.impl.Pjtpmg002Mapper.insertPjtProject */
+        INSERT INTO PJT_HNF_ACMSLT
+        (
+            PROJECT_SN  ,
+			HNF_ACMSLT_SN ,
+			PRTCPNT_NM  ,
+			PRTCPNT_EMPNO ,
+			TCHNLGY_GRAD,
+			ROLE_CODE,
+			PARTCPTN_MAN_MONTH,
+			EXTRL_SERVC_AT ,
+			ACMSLT_STDR_DE,
+            REG_DT,
+            REG_ID
+        )
+        SELECT A.PROJECT_SN ,
+              (SELECT 'H' || LPAD(NEXT_ID + A.NUM ,19,0)  FROM STM_IDS WHERE TABLE_NAME = 'HNF_ACMSLT_SN'),
+              PRTCPNT_NM	,
+                PRTCPNT_EMPNO ,
+                TCHNLGY_GRAD	,
+                ROLE_CODE	,
+                PARTCPTN_MAN_MONTH,
+                EXTRL_SERVC_AT,
+                ACMSLT_STDR_DE,
+                SYSDATE,
+                REG_ID	
+        FROM (        
+            SELECT  
+                PROJECT_SN,
+                ROWNUM AS NUM,
+                PRTCPNT_NM	,
+                PRTCPNT_EMPNO ,
+                TCHNLGY_GRAD	,
+                ROLE_CODE	,
+                PARTCPTN_MAN_MONTH,
+                EXTRL_SERVC_AT,
+                TO_CHAR(ADD_MONTHS(ACMSLT_STDR_DE||'01',+1), 'YYYYMM') AS ACMSLT_STDR_DE,
+                SYSDATE,
+                REG_ID	
+            FROM  PJT_HNF_ACMSLT
+            WHERE PROJECT_SN  =  #{projectSn}
+            AND   ACMSLT_STDR_DE  = (SELECT MAX(ACMSLT_STDR_DE) FROM PJT_HNF_ACMSLT  WHERE PROJECT_SN  = #{projectSn})
+        ) A
+    </insert>
+    
+    <insert id="insertPjtProjectHnfPlanCopy" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg002.service.impl.Pjtpmg002Mapper.insertPjtProject */
+        INSERT INTO PJT_HNF_ACMSLT
+			  (
+			  	  PROJECT_SN  ,
+                  HNF_ACMSLT_SN ,
+                  PRTCPNT_NM  ,
+                  PRTCPNT_EMPNO ,
+                  TCHNLGY_GRAD,
+                  ROLE_CODE,
+                  PARTCPTN_MAN_MONTH,
+                  EXTRL_SERVC_AT ,
+                  ACMSLT_STDR_DE,
+                  REG_DT,
+                  REG_ID
+				)
+			SELECT 
+				   PROJECT_SN 
+				,  #{hnfAcmsltSn}
+				,  PRTCPNT_NM
+				,  PRTCPNT_EMPNO
+				,  TCHNLGY_GRAD 
+				,  ROLE_CODE
+				,  PARTCPTN_MAN_MONTH
+				,  EXTRL_SERVC_AT
+				,  TO_CHAR(SYSDATE, 'YYYYMM')
+                ,  SYSDATE
+				,  REG_ID 
+		 FROM  PJT_HNF_PLAN
+		 WHERE PROJECT_SN = #{projectSn}	
+    </insert>
+    
+    <select id="selectPjtProjectDe" parameterType="egovMapForNull" resultType="egovMapForNull">
+    	SELECT TO_CHAR(TO_DATE(PROJECT_BEGIN_DE),'YYYY-MM-DD') AS PROJECT_BEGIN_DE
+     		 , TO_CHAR(TO_DATE(PROJECT_END_DE),'YYYY-MM-DD') AS PROJECT_END_DE
+		FROM PJT_PROJECT
+		WHERE PROJECT_SN = #{projectSn}
+    </select>
+    
+    <delete id="deletePjtProjectBugtHnfPlan" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg002.service.impl.Pjtpmg002Mapper.deletePjtProject */
+       DELETE FROM PJT_BUGT_PLAN
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+               AND ACNT_CODE = 'C071'
+               AND PRMPC_TY = '100'
+               AND PROJECT_SN = #{projectSn}
+        </trim>
+    </delete>
+    
+    <insert id="insertPjtProjectBugtHnfPlan" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg002.service.impl.Pjtpmg002Mapper.insertPjtProject */
+        INSERT INTO PJT_BUGT_PLAN 
+		(
+		    PROJECT_SN,
+		    BUGT_PLAN_SN,
+		    ACNT_CODE,
+		    PRMPC_TY,
+		    BUGT_TIT,
+		    BUGT_AMT,
+		    BUGT_SUMMARY,
+		    BUGT_REGISTDT
+		)
+		values
+		(
+		    #{projectSn},
+		    (SELECT * FROM (SELECT NVL(MAX(TO_NUMBER(BUGT_PLAN_SN)),0)+1 FROM PJT_BUGT_PLAN)),
+		    'C071',
+		    '100',
+		    null,
+		    (SELECT  SUM(TO_NUMBER(B.CODE_KOR_NM) * A.PARTCPTN_MAN_MONTH) AS AMT  
+				FROM    PJT_HNF_PLAN A, STM_CODE B
+				WHERE   A.PROJECT_SN  = #{projectSn}
+				AND     A.EXTRL_SERVC_AT = '0'
+				AND     B.CODEKIND_CODE     = 'C073'
+				AND     A.TCHNLGY_GRAD  = B.CODE),
+		    (SELECT LISTAGG(BUDG_REM, ', ') WITHIN GROUP (ORDER BY BUDG_REM) AS BUDG_REM
+				FROM (
+					SELECT	B.CODE_KOR_NM || '(' || TRIM(TO_CHAR( A.CODE_KOR_NM , '999,999,999,999,999'))  || '*' || PARTCPTN_MAN_MONTH || ')' AS BUDG_REM
+					FROM 
+					(
+						SELECT     A.TCHNLGY_GRAD,
+							 	   TO_NUMBER(B.CODE_KOR_NM) AS CODE_KOR_NM,
+							 	   RTRIM(TO_CHAR(SUM(A.PARTCPTN_MAN_MONTH),'FM9990.9999'),'.') AS PARTCPTN_MAN_MONTH	 				
+					    FROM       PJT_HNF_PLAN A, STM_CODE B
+					    WHERE      A.PROJECT_SN   = #{projectSn}
+					    AND        A.EXTRL_SERVC_AT  = '0'
+					    AND        B.CODEKIND_CODE = 'C073'
+					    AND        A.TCHNLGY_GRAD   = B.CODE
+					    GROUP BY   A.TCHNLGY_GRAD, CODE_KOR_NM
+					) A, STM_CODE B
+				    WHERE B.CODE = A.TCHNLGY_GRAD
+				    AND   B.CODEKIND_CODE= 'C021'
+				)),
+		    SYSDATE
+		)
+    </insert>
+    
+     <delete id="deletePjtProjectBugtHnfAcmslt" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg002.service.impl.Pjtpmg002Mapper.deletePjtProject */
+       DELETE FROM PJT_BUGT_ACMSLT
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+               AND ACNT_CODE = 'C071'
+               AND PRMPC_TY = '100'
+               AND PROJECT_SN = #{projectSn}
+               AND TO_CHAR(TO_DATE(BUGT_USEDT),'YYYYMM') = #{acmsltStdrDe}
+        </trim>
+    </delete>
+    
+   <insert id="insertPjtProjectBugtHnfAcmslt" parameterType="EgovMapForNull"> 
+     INSERT INTO PJT_BUGT_ACMSLT 
+		(
+		    PROJECT_SN,
+		    BUGT_ACMSLT_SN,
+		    ACNT_CODE,
+		    PRMPC_TY,
+		    BUGT_TIT,
+		    USE_AMT,
+		    USE_SUMMARY,
+		    BUGT_USEDT,
+            REG_DT,
+            REG_ID
+		)
+		values
+		(
+		    #{projectSn},
+		    (SELECT * FROM (SELECT NVL(MAX(TO_NUMBER(BUGT_ACMSLT_SN)),0)+1 FROM PJT_BUGT_ACMSLT)),
+		    'C071',
+		    '100',
+		    null,
+		    (SELECT  SUM(TO_NUMBER(B.CODE_KOR_NM) * A.PARTCPTN_MAN_MONTH) AS AMT  
+				FROM    PJT_HNF_ACMSLT A, STM_CODE B
+				WHERE   A.PROJECT_SN  = #{projectSn}
+				AND     A.EXTRL_SERVC_AT = '0'
+				AND     B.CODEKIND_CODE     = 'C073'
+				AND     A.TCHNLGY_GRAD  = B.CODE
+                AND     ACMSLT_STDR_DE = #{acmsltStdrDe}
+                ),
+		    (SELECT LISTAGG(BUDG_REM, ', ') WITHIN GROUP (ORDER BY BUDG_REM) AS BUDG_REM
+				FROM (
+					SELECT	B.CODE_KOR_NM || '(' || TRIM(TO_CHAR( A.CODE_KOR_NM , '999,999,999,999,999'))  || '*' || PARTCPTN_MAN_MONTH || ')' AS BUDG_REM
+					FROM 
+					(
+						SELECT     A.TCHNLGY_GRAD,
+							 	   TO_NUMBER(B.CODE_KOR_NM) AS CODE_KOR_NM,
+							 	   RTRIM(TO_CHAR(SUM(A.PARTCPTN_MAN_MONTH),'FM9990.9999'),'.') AS PARTCPTN_MAN_MONTH    			
+					    FROM       PJT_HNF_ACMSLT A, STM_CODE B
+					    WHERE      A.PROJECT_SN   = #{projectSn}
+					    AND        A.EXTRL_SERVC_AT  = '0'
+					    AND        B.CODEKIND_CODE = 'C073'
+					    AND        A.TCHNLGY_GRAD   = B.CODE
+                        AND     ACMSLT_STDR_DE = #{acmsltStdrDe}
+					    GROUP BY   A.TCHNLGY_GRAD, CODE_KOR_NM
+					) A, STM_CODE B
+				    WHERE B.CODE = A.TCHNLGY_GRAD
+				    AND   B.CODEKIND_CODE= 'C021'
+                    )
+                ),
+            (SELECT TO_CHAR(LAST_DAY(#{acmsltStdrDe} || '01'),'YYYYMMDD') FROM DUAL),
+		    SYSDATE,
+		    #{regId}
+		)
+	 </insert>
+	 
+	  <delete id="deletePjtProjectHnfAcmsltDeList" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg002.service.impl.Pjtpmg002Mapper.deletePjtProject */
+        DELETE FROM PJT_HNF_ACMSLT
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+               AND PROJECT_SN = #{projectSn}
+               AND ACMSLT_STDR_DE = TO_CHAR(SYSDATE, 'YYYYMM')
+        </trim>
+    </delete>
+    
+    <update id="updateIdsHnfAcmsltSnCnt" parameterType="EgovMapForNull">
+        UPDATE STM_IDS SET
+		NEXT_ID = NEXT_ID +1
+       	WHERE TABLE_NAME = 'HNF_ACMSLT_SN'
+    </update>
+    
+    <insert id="insertPjtProjectBugtHnfAcmsltCopy" parameterType="EgovMapForNull"> 
+         INSERT INTO PJT_BUGT_ACMSLT
+        (
+            PROJECT_SN  ,
+            BUGT_ACMSLT_SN ,
+            ACNT_CODE  ,
+            PRMPC_TY ,
+            BUGT_TIT,
+            USE_AMT,
+            USE_SUMMARY,
+            BUGT_USEDT ,
+            REG_DT,
+            REG_ID
+        )
+         SELECT A.PROJECT_SN ,
+              (SELECT * FROM (SELECT NVL(MAX(TO_NUMBER(BUGT_ACMSLT_SN)),0)+1 FROM PJT_BUGT_ACMSLT)),
+              ACNT_CODE ,
+                PRMPC_TY ,
+                BUGT_TIT    ,
+                USE_AMT ,
+                USE_SUMMARY,
+                BUGT_USEDT,
+                SYSDATE,
+                REG_ID  
+        FROM (        
+            SELECT  
+                PROJECT_SN,
+                ROWNUM AS NUM,
+                ACNT_CODE   ,
+                PRMPC_TY ,
+                BUGT_TIT    ,
+                USE_AMT ,
+                USE_SUMMARY,
+                LAST_DAY(TO_DATE(TO_CHAR(ADD_MONTHS(TO_CHAR(BUGT_USEDT,'YYYYMM')||'01',+1), 'YYYYMM')||'01')) AS BUGT_USEDT,
+                SYSDATE,
+                REG_ID  
+            FROM  PJT_BUGT_ACMSLT
+            WHERE PROJECT_SN  =  #{projectSn}
+            AND   BUGT_USEDT  = (SELECT MAX(BUGT_USEDT) FROM PJT_BUGT_ACMSLT  WHERE PROJECT_SN  = #{projectSn})
+            )A
+            WHERE PRMPC_TY = '100'
+     </insert>
+    
+
+    
+</mapper>

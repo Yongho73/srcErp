@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html class="no-js" lang="ko">
+<HEAD>
+<META content="IE=11.0000" http-equiv="X-UA-Compatible">
+<META charset="UTF-8">
+<META http-equiv="Content-Script-Type" content="text/javascript; charet=utf-8">
+<META http-equiv="Content-Style-Type" content="text/css; charet=utf-8">
+<META name="HandheldFriendly" content="True">
+<META http-equiv="cleartype" content="on">
+<META http-equiv="X-UA-Compatible" content="IE=edge">
+<META http-equiv="Expires" content="-1">
+<META http-equiv="Pragma" content="no-cache">
+<META http-equiv="Cache-Control" content="no-cache">
+<META content="DBVision-XERP" property="og:title">
+<META name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, minimum-scale=1.0, user-scalable=yes">
+<META name="keywords" content="DBVision-XERP">
+<META name="description" content="DBVision-XERP">
+
+<LINK href="../img/icon/dbv.ico" rel="shortcut icon" type="image/x-icon">
+
+<TITLE>XERP</TITLE>
+
+<LINK href="../css/dhtmlx/skin/dhtmlx.css" rel="stylesheet" type="text/css">
+<LINK href="../glyphicons/css/bootstrap-glyphicons.css" rel="stylesheet" type="text/css">
+
+<!-- jquery -->
+<SCRIPT src="../js/jquery-1.11.1.min.js"></SCRIPT>
+<SCRIPT src="../js/jquery-ui-custom.min.js"></SCRIPT>
+ 
+<!-- css -->
+<LINK href="../css/sub.css" rel="stylesheet" type="text/css">
+
+</HEAD>
+
+
+<body>
+	<!--컨텐츠-->
+		<div class="path_info" style="">
+             <ul id="menu_path" style=""><li><a class="home" href="#n"></a></li><li><a href="#"> 전자결재 </a></li><li><a href="#"> 양식관리 </a></li><!--<li><a href="#"> </a></li>--></ul>
+        </div>
+        
+        <DIV class="btn" style="float:right;text-align:right; vertical-align:middle;">
+				
+				<BUTTON class="btn_common02_new" id="btn_help" type="button" title="도움말">
+                      <SPAN class="glyphicon glyphicon-question-sign"></SPAN>
+                </BUTTON>
+                <BUTTON class="btn_common02_new" id="btnClose" type="button" title="닫기">
+                       <SPAN class="glyphicon glyphicon-remove"></SPAN>
+                </BUTTON>
+			</DIV>
+        
+	<!-- title_box -->
+	<DIV class="title_box" style="clear:none;">
+		<DIV class="path_info">
+			<UL id="menu_path"></UL>
+			<A class="btn_help" href="../stmmng008/searchStmBtn/view#n"><SPAN class="blind">도움말</SPAN>
+			</A>
+		</DIV>
+		<!--//path_info-->
+	</DIV>
+	<!--//title_box-->
+	<!-- search_box -->
+	<DIV class="search_box" id="searchFormStmBtn" style="min-width:1438px">
+		<TABLE style="width:100%;">
+			<TBODY>
+				<TR>
+					<td style="position:relative;  vertical-align:middle;">
+						<div style="position:relative;display:inline-block;float:left;">
+							<LABEL for="docmT">수신처구분</LABEL>
+							<select id="keeping" name="keeping" style="min-width:140px;">
+								<option value="0" selected>선택</option>
+								<option value="1">1</option>
+								<option value="2">2</option>
+								<option value="3">3</option>
+								<option value="4">4</option>
+								<option value="5">5</option>
+							</select>
+							
+						</div>
+						<div style="position:relative;display:inline-block;float:left; padding-left:80px; ">
+							<LABEL for="writer">수신부서</LABEL>
+							<INPUT name="btnNm" id="btnNm" type="text">&nbsp;&nbsp;<INPUT name="btnNm" id="btnNm" style="background:#dedede;"type="text" readonly>&nbsp;<button class="btn_common03" id="btnCodeSearch" type="button">
+                    		<span class="glyphicon  glyphicon glyphicon-search"> </span>
+							</button>
+						</div>
+						
+						<div style="position:relative;display:inline-block;float:left;  padding-left:80px;">
+							<LABEL for="docmT">외부수신기관</LABEL>
+							<INPUT name="btnNm" id="btnNm" type="text">
+							</button>
+						</div>
+						
+						
+						
+						<DIV class="btn2" style="position:relative;display:inline-block;float:right;">
+							<BUTTON id="btnSearch" type="button">
+								<SPAN class="glyphicon glyphicon-search f15"></SPAN>
+							</BUTTON>
+							<BUTTON id="btnClear" type="button">
+								<SPAN class="glyphicon glyphicon-refresh f15 mr5" style="color:#fff;margin-left:4px;"></SPAN>
+							</BUTTON>
+						</DIV>
+					</td>
+				</TR>
+			</TBODY>
+		</TABLE>
+	</DIV>
+	<!--//search_box-->
+	<!--//tabl_box-->
+	
+	<DIV class="tabl_box">
+		<!-- //tabl-1 -->
+		<!-- <DIV class="tdl-1"> -->
+		
+		<DIV class="tabl_box">
+		<!-- //tabl-1 -->
+		<DIV class="tdl-2" id="saveForm" style="width:37%;float:left;margin-right:20px;">
+		
+		
+		
+			<DIV class="list_type01">
+				<DIV class="list_top" style="">
+					<H4 class="title03 fl">버튼&nbsp;목록</H4>
+						<div style="float:left;text-align:left;">
+							<SPAN class="view"> 총 &nbsp; <SPAN id="spanCnt">5</SPAN>건</SPAN>
+						</div>
+						<div style="float:right;text-align:right;">
+							<BUTTON class="btn_common01_new" id="" type="button">행추가</BUTTON>
+							<BUTTON class="btn_common01_new" id="" type="button">행삭제</BUTTON>
+							<BUTTON class="btn_common01_new" id="" type="button">저장</BUTTON>
+						</div>
+					</SPAN>					
+				</DIV>
+				<!--//list_top-->
+
+				<DIV style="border:1px solid #4882b0;">
+					<img src="./ex/ea0100m01_p74left.jpg" alt="타이틀">
+				</DIV>
+			</DIV>
+			<!--//list_type01-->
+		</DIV>
+		<!-- //tabl-1 -->
+		<!-- //tdl-2 -->
+		<DIV class="tdl-1">
+			<DIV class="list_top02">
+				<H4 class="title03" id="h4_pr_title">버튼&nbsp;등록</H4>
+			</DIV>
+			<div style="float:right;text-align:right;">
+							<BUTTON class="btn_common01_new" id="" type="button">행추가</BUTTON>
+							<BUTTON class="btn_common01_new" id="" type="button">행삭제</BUTTON>
+							<BUTTON class="btn_common01_new" id="" type="button">저장</BUTTON>
+						</div>
+			<DIV class="detail_type01"  style="margin-top:45px;">
+					
+				<FORM id="saveFormStmBtn">
+					<TABLE>
+						<CAPTION>버튼</CAPTION>
+						<COLGROUP>
+							<COL width="50">
+							<COL width="130">
+							<COL width="">
+						</COLGROUP>
+						<TBODY>
+							<TR>
+								<TH class="ac">NO</TH>
+								<TH class="ac">구분</TH>
+								<TH class="ac">수신그룹</TH>
+							</TR>
+							<TR>
+								<td class="ac">1</td>
+								<td class="ac">부서</td>
+								<td class="ac">총무부
+									<button class="btn_common03" id="btnCodeSearch" type="button" style="margin-left:10px">
+									<span class="glyphicon  glyphicon glyphicon-search"> </span>
+									</button>
+								</td>
+							</TR>
+							<TR>
+								<td class="ac">2</td>
+								<td class="ac">개인</td>
+								<td class="ac">(전략기획부)홍길동
+									<button class="btn_common03" id="btnCodeSearch" type="button" style="margin-left:10px">
+									<span class="glyphicon  glyphicon glyphicon-search"> </span>
+									</button>
+								</td>
+							</TR>
+							
+						</TBODY>
+					</TABLE>
+				</FORM>
+				
+				<FORM id="saveFormStmBtn" class="mt20" style="border-top:solid 2px #1c93ed">
+					<TABLE>
+						<CAPTION>버튼</CAPTION>
+						<COLGROUP>
+							<COL width="50">
+							<COL width="">
+						</COLGROUP>
+						<TBODY>
+							<TR>
+								<TH class="ac">NO</TH>
+								<TH class="ac">외부기관</TH>
+							</TR>
+							<TR>
+								<td class="ac">1</td>
+								<td class="ac">수협은행
+									<button class="btn_common03" id="btnCodeSearch" type="button" style="margin-left:10px">
+									<span class="glyphicon  glyphicon glyphicon-search"> </span>
+									</button>
+								</td>
+							</TR>
+							
+						</TBODY>
+					</TABLE>
+				</FORM>
+			</DIV>
+			<!--//detail_type01-->
+
+		</DIV>
+		<!-- //tabl-2 -->
+</BODY>
+</HTML>

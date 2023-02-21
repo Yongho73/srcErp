@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html class="no-js" lang="ko">
+<HEAD>
+<META content="IE=11.0000" http-equiv="X-UA-Compatible">
+<META charset="UTF-8">
+<META http-equiv="Content-Script-Type" content="text/javascript; charet=utf-8">
+<META http-equiv="Content-Style-Type" content="text/css; charet=utf-8">
+<META name="HandheldFriendly" content="True">
+<META http-equiv="cleartype" content="on">
+<META http-equiv="X-UA-Compatible" content="IE=edge">
+<META http-equiv="Expires" content="-1">
+<META http-equiv="Pragma" content="no-cache">
+<META http-equiv="Cache-Control" content="no-cache">
+<META content="DBVision-XERP" property="og:title">
+<META name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, minimum-scale=1.0, user-scalable=yes">
+<META name="keywords" content="DBVision-XERP">
+<META name="description" content="DBVision-XERP">
+
+<LINK href="../img/icon/dbv.ico" rel="shortcut icon" type="image/x-icon">
+
+<TITLE>XERP</TITLE>
+
+<LINK href="../css/dhtmlx/skin/dhtmlx.css" rel="stylesheet" type="text/css">
+<LINK href="../glyphicons/css/bootstrap-glyphicons.css" rel="stylesheet" type="text/css">
+
+<!-- jquery -->
+<SCRIPT src="../js/jquery-1.11.1.min.js"></SCRIPT>
+<SCRIPT src="../js/jquery-ui-custom.min.js"></SCRIPT>
+ 
+<!-- css -->
+<LINK href="../css/sub.css" rel="stylesheet" type="text/css">
+
+</HEAD>
+
+
+<body>
+	<!--컨텐츠-->
+		<div class="path_info" style="">
+             <ul id="menu_path" style=""><li><a class="home" href="#n"></a></li><li><a href="#"> 전자결재 </a></li><li><a href="#"> 개인환경설정 </a></li><li><a href="#"> 대직근무관리</a></li></ul>
+        </div>
+        
+        <DIV class="btn" style="float:right;text-align:right; vertical-align:middle;">
+				<BUTTON class="btn_common02_new" id="btnExcel" type="button">
+					<SPAN class="glyphicon glyphicon-download-alt"></SPAN> 엑셀다운로드
+				</BUTTON>
+                <BUTTON class="btn_common02_new" id="btn_help" type="button" title="도움말">
+                     <SPAN class="glyphicon glyphicon-question-sign"></SPAN>
+                </BUTTON>
+                <BUTTON class="btn_common02_new" id="btnClose" type="button" title="닫기">
+                     <SPAN class="glyphicon glyphicon-remove"></SPAN>
+                </BUTTON>
+			</DIV>
+        
+	<!-- title_box -->
+	<DIV class="title_box" style="clear:none;">
+		<DIV class="path_info">
+			<UL id="menu_path"></UL>
+			<A class="btn_help" href="../stmmng008/searchStmBtn/view#n"><SPAN class="blind">도움말</SPAN>
+			</A>
+		</DIV>
+		<!--//path_info-->
+	</DIV>
+	<!--//title_box-->
+	<!-- search_box -->
+	<DIV class="search_box" id="searchFormStmBtn" style="min-width:1438px">
+		<TABLE style="width:100%;">
+			<TBODY>
+				<TR>
+					<td style="position:relative;  vertical-align:middle;">
+						<div style="position:relative;display:inline-block;float:left; ">
+							<LABEL for="docmT">결재자</LABEL>
+							<INPUT name="btnNm" id="btnNm" type="text">&nbsp;&nbsp;<INPUT name="btnNm" id="btnNm" style="background:#dedede;" type="text" readonly>&nbsp;<button class="btn_common03" id="btnCodeSearch" type="button">
+                    		<span class="glyphicon  glyphicon glyphicon-search"> </span>
+                		</button>
+						</div>
+						<div style="position:relative;display:inline-block;float:left; padding-left:80px; ">
+							<LABEL for="writer">대직자</LABEL>
+							<INPUT name="btnNm" id="btnNm" type="text">&nbsp;&nbsp;<INPUT name="btnNm" id="btnNm" style="background:#dedede;"type="text" readonly>&nbsp;<button class="btn_common03" id="btnCodeSearch" type="button">
+                    		<span class="glyphicon  glyphicon glyphicon-search"> </span>
+                		</button>
+						</div>
+						
+						<div style="position:relative;display:inline-block;float:left; padding-left:80px; ">
+							<LABEL for="writer">대직기간</LABEL>
+							<input name="searchSregDt" class="input_calen" id="searchSregDt" onkeyup="gf_AutoDate(event, this)" onkeypress="gf_AutoDate(event, this)" type="text" value="2018-12-31"> ~ <input name="searchEregDt" class="input_calen" id="searchEregDt" onkeyup="gf_AutoDate(event, this)" onkeypress="gf_AutoDate(event, this)" type="text" value="2019-12-31">				
+						</div>
+						
+						<DIV class="btn2" style="position:relative;display:inline-block;float:right;">
+							<BUTTON id="btnSearch" type="button">
+								<SPAN class="glyphicon glyphicon-search f15"></SPAN>
+							</BUTTON>
+							<BUTTON id="btnClear" type="button">
+								<SPAN class="glyphicon glyphicon-refresh f15 mr5" style="color:#fff;margin-left:4px;"></SPAN>
+							</BUTTON>
+						</DIV>
+					</td>
+				</TR>
+			</TBODY>
+		</TABLE>
+	</DIV>
+	<!--//search_box-->
+	<!--//tabl_box-->
+	
+	<DIV class="tabl_box">
+		<!-- //tabl-1 -->
+		<!-- <DIV class="tdl-1"> -->
+			<DIV class="list_type01">
+				<DIV class="list_top">
+						<H4 class="title03 fl">버튼&nbsp;목록</H4>
+							<div style="float:left;text-align:left;">
+								<SPAN class="view"> 총 &nbsp; <SPAN id="spanCnt">3</SPAN>건</SPAN>
+							</div>
+						</SPAN>
+				</DIV>
+				<DIV class="list_type01" style="width:1642px;">
+					<DIV style="width:1640px;border:1px solid #4882b0;">
+						<div style="display:block;"><img src="./ex/ea0100m01_p67up.jpg" alt="타이틀"></div>
+					</DIV>
+					
+					<DIV style="width:1640px;border:1px solid #4882b0;margin-top:20px;">
+						<div style="display:block;"><img src="./ex/ea0100m01_p67down.jpg" alt="타이틀"></div>
+					</DIV>
+						
+				</DIV>
+	</div>
+</BODY>
+</HTML>

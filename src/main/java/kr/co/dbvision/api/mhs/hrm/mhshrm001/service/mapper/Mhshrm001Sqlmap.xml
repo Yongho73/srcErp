@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mhs.hrm.mhshrm001.service.mapper.Mhshrm001Mapper">
+
+    <select id="selectMhshrm001List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm001.service.mapper.Mhshrm001Mapper.selectMhshrm001List */
+        SELECT
+               BPLC_CODE,
+               JURIRNO,
+               BPLC_KOR_NM,
+               BPLC_ENG_NM,
+               FNC_BIZRNO(BIZRNO)  AS BIZRNO,
+               ZIP,
+               ADRES,
+               DETAIL_ADRES,
+               DONG_CODE,
+               CAPITAL_AMT,
+               FNC_DATESTR(FOND_DE) AS FOND_DE,
+               REPRSNT_NM,
+               INDUTY,
+               BIZCND,
+               TELNO,
+               FAX_NO,
+               FNC_DATESTR(ACCNUT_BEGIN_DE) AS ACCNUT_BEGIN_DE,
+               NULL AS MEDUNION_NO,
+               NULL AS MEDUNION_NM,
+               HTAX_PASSWORD,
+               TAXOFC_NM,
+               TAXOFC_CODE,
+               LCLTYTAX_CMPTINST,
+               HTAX_ID,
+               HTAX_ACNUT_NO,
+               HTAX_BANK_CODE,
+               HTAX_CHARGER,
+               (SELECT KOR_NM FROM MHS_EMP WHERE EMPNO = HTAX_CHARGER) AS HTAX_CHARGER_NM,
+               HTAX_EMAIL,
+               HTAX_MBTLNUM,
+               SMRIZE_PAY_AT,
+               BSNM_UNIT_TAXT_AT,
+               SMRIZE_PAY_NO,
+               TAXT_SE,
+               USE_AT,
+               STACNT_MT,
+               REG_ID,
+               UPT_ID,
+               BPLC_AREA,
+               LCLTYTAX_CMPTINST_NM
+          FROM STM_BIZPLC A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="bplcCode != null and bplcCode != ''">
+                AND BPLC_CODE = #{bplcCode}
+            </if>
+            <if test="bplcKorNm != null and bplcKorNm != ''">
+                AND BPLC_KOR_NM  LIKE '%' || #{bplcKorNm} || '%' 
+            </if>
+            <if test="useAt != null and useAt != ''">
+                AND USE_AT = #{useAt}
+            </if>
+            <if test="sRegDt != null and sRegDt != ''">
+                <![CDATA[
+                AND REG_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+                ]]>
+            </if>    
+        </trim>
+        ORDER BY BPLC_CODE
+    </select>
+
+    <select id="selectMhshrm001" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm001.service.mapper.Mhshrm001Mapper.selectMhshrm001 */
+        SELECT
+               BPLC_CODE,
+               JURIRNO,
+               BPLC_KOR_NM,
+               BPLC_ENG_NM,
+               FNC_BIZRNO(BIZRNO)  AS BIZRNO,
+               ZIP,
+               ADRES,
+               DETAIL_ADRES,
+               DONG_CODE,
+               CAPITAL_AMT,
+               FNC_DATESTR(FOND_DE) AS FOND_DE,
+               REPRSNT_NM,
+               INDUTY,
+               BIZCND,
+               TELNO,
+               FAX_NO,
+               FNC_DATESTR(ACCNUT_BEGIN_DE) AS ACCNUT_BEGIN_DE,
+               NULL AS MEDUNION_NO,
+               NULL AS MEDUNION_NM,
+               HTAX_PASSWORD,
+               TAXOFC_NM,
+               TAXOFC_CODE,
+               LCLTYTAX_CMPTINST,
+               HTAX_ID,
+               HTAX_ACNUT_NO,
+               HTAX_BANK_CODE,
+               HTAX_CHARGER,
+               FNC_GETKORNM(HTAX_CHARGER) as HTAX_CHARGER_NM,
+               HTAX_EMAIL,
+               HTAX_MBTLNUM,
+               SMRIZE_PAY_AT,
+               BSNM_UNIT_TAXT_AT,
+               SMRIZE_PAY_NO,
+               TAXT_SE,
+               USE_AT,
+               STACNT_MT,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               BPLC_AREA,
+               LCLTYTAX_CMPTINST_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM STM_BIZPLC A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="bplcCode != null and bplcCode != ''">
+                AND BPLC_CODE = #{bplcCode}
+            </if>
+        </trim>
+    </select>
+    
+    <select id="selectStmBizplcCodeList" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm001.service.impl.Mhshrm001Mapper.selectStmBizplcCodeList */
+        SELECT
+               BPLC_CODE AS CODE,
+               BPLC_KOR_NM AS CODE_NM,
+               BPLC_ENG_NM AS CODE_ENG_NM,
+               USE_AT
+          FROM STM_BIZPLC A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="bplcCode != null and bplcCode != ''">
+                AND BPLC_CODE = #{bplcCode}
+            </if>
+            <if test="exceptCode != null and exceptCode != ''">
+                AND BPLC_CODE = #{exceptCode}
+            </if>
+            <if test="bplcKorNm != null and bplcKorNm != ''">
+                AND BPLC_KOR_NM  LIKE '%' || #{bplcKorNm} || '%' 
+            </if>
+            <if test="useAt != null and useAt != ''">
+                AND USE_AT = #{useAt}
+            </if>
+        </trim>
+        <if test="sortOrder == null or sortOrder == ''">
+        ORDER BY BPLC_CODE 
+        </if>
+        <if test="sortOrder != null and (sortOrder == 'asc' or sortOrder == 'ASC')">
+        ORDER BY BPLC_CODE ASC
+        </if>
+        <if test="sortOrder != null and (sortOrder == 'desc' or sortOrder == 'DESC')">
+        ORDER BY BPLC_CODE DESC
+        </if>
+    </select>
+
+    <update id="saveMhshrm001" parameterType="kr.co.dbvision.api.mhs.hrm.mhshrm001.entity.Mhshrm001">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm001.service.mapper.Mhshrm001Mapper.saveMhshrm001 */
+        MERGE INTO STM_BIZPLC A
+             USING (SELECT
+                    #{bplcCode} BPLC_CODE
+                    FROM DUAL) B
+                ON (
+                    A.BPLC_CODE = B.BPLC_CODE
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               BPLC_KOR_NM= #{bplcKorNm},
+               BPLC_ENG_NM= #{bplcEngNm},
+               BIZRNO= #{bizrno},
+               JURIRNO= #{jurirno},
+               ZIP= #{zip},
+               ADRES= #{adres},
+               DETAIL_ADRES= #{detailAdres},
+               DONG_CODE= #{dongCode},
+               CAPITAL_AMT= #{capitalAmt},
+               FOND_DE= REPLACE(#{fondDe},'-',''),
+               REPRSNT_NM= #{reprsntNm},
+               INDUTY= #{induty},
+               BIZCND= #{bizcnd},
+               TELNO= #{telno},
+               FAX_NO= #{faxNo},
+               ACCNUT_BEGIN_DE= REPLACE(#{accnutBeginDe},'-',''),
+               TAXOFC_NM= #{taxofcNm},
+               TAXOFC_CODE= #{taxofcCode},
+               HTAX_BANK_CODE= #{htaxBankCode},
+               TAXT_SE= #{taxtSe},
+               LCLTYTAX_CMPTINST= #{lcltytaxCmptinst},
+               LCLTYTAX_CMPTINST_NM= #{lcltytaxCmptinstNm},
+               BPLC_AREA= #{bplcArea},
+               HTAX_ID= #{htaxId},
+               HTAX_PASSWORD= #{htaxPassword},
+               HTAX_ACNUT_NO= #{htaxAcnutNo},
+               HTAX_CHARGER= #{htaxCharger},
+               HTAX_EMAIL= #{htaxEmail},
+               HTAX_MBTLNUM= #{htaxMbtlnum},
+               SMRIZE_PAY_NO= #{smrizePayNo},
+               SMRIZE_PAY_AT= #{smrizePayAt},
+               BSNM_UNIT_TAXT_AT= #{bsnmUnitTaxtAt},
+               STACNT_MT= #{stacntMt},
+               USE_AT= #{useAt},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               BPLC_CODE,
+               BPLC_KOR_NM,
+               BPLC_ENG_NM,
+               BIZRNO,
+               JURIRNO,
+               ZIP,
+               ADRES,
+               DETAIL_ADRES,
+               DONG_CODE,
+               CAPITAL_AMT,
+               FOND_DE,
+               REPRSNT_NM,
+               INDUTY,
+               BIZCND,
+               TELNO,
+               FAX_NO,
+               ACCNUT_BEGIN_DE,
+               TAXOFC_NM,
+               TAXOFC_CODE,
+               HTAX_BANK_CODE,
+               TAXT_SE,
+               LCLTYTAX_CMPTINST,
+               LCLTYTAX_CMPTINST_NM,
+               BPLC_AREA,
+               HTAX_ID,
+               HTAX_PASSWORD,
+               HTAX_ACNUT_NO,
+               HTAX_CHARGER,
+               HTAX_EMAIL,
+               HTAX_MBTLNUM,
+               SMRIZE_PAY_NO,
+               SMRIZE_PAY_AT,
+               BSNM_UNIT_TAXT_AT,
+               STACNT_MT,
+               USE_AT,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{bplcCode},
+               #{bplcKorNm},
+               #{bplcEngNm},
+               #{bizrno},
+               #{jurirno},
+               #{zip},
+               #{adres},
+               #{detailAdres},
+               #{dongCode},
+               #{capitalAmt},
+               REPLACE(#{fondDe},'-',''),
+               #{reprsntNm},
+               #{induty},
+               #{bizcnd},
+               #{telno},
+               #{faxNo},
+               REPLACE(#{accnutBeginDe},'-',''),
+               #{taxofcNm},
+               #{taxofcCode},
+               #{htaxBankCode},
+               #{taxtSe},
+               #{lcltytaxCmptinst},
+               #{lcltytaxCmptinstNm},
+               #{bplcArea},
+               #{htaxId},
+               #{htaxPassword},
+               #{htaxAcnutNo},
+               #{htaxCharger},
+               #{htaxEmail},
+               #{htaxMbtlnum},
+               #{smrizePayNo},
+               #{smrizePayAt},
+               #{bsnmUnitTaxtAt},
+               #{stacntMt},
+               #{useAt},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deleteMhshrm001" parameterType="kr.co.dbvision.api.mhs.hrm.mhshrm001.entity.Mhshrm001">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm001.service.mapper.Mhshrm001Mapper.deleteMhshrm001 */
+        DELETE FROM STM_BIZPLC
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND BPLC_CODE = #{bplcCode}
+        </trim>
+    </delete>
+</mapper>

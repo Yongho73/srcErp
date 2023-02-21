@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mps.cal.mpscal013.service.mapper.Mpscal013Mapper">
+
+    <select id="selectMpscalEmpList" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.cal.mpscal013.service.mapper.Mpscal013Mapper.selectMpscalEmpList */
+               SELECT A.EMPNO, 
+                      A.KOR_NM,
+                      FNC_GETDEPTNM(A.DEPT_CODE) AS DEPT_CODE_NM,
+                      FNC_GETCLSFNM(A.CLSF_CODE) AS CLSF_CODE_NM
+                FROM MHS_EMP A,
+                       (
+                SELECT EMPNO
+                  FROM MHS_EMP
+                 MINUS
+                SELECT EMPNO
+                  FROM MPS_SALARY_TRGTER
+                  WHERE PYMNT_SN = #{pymntSn}
+                       ) B
+         <trim prefix="WHERE" prefixOverrides="AND|OR">
+                    A.EMPNO = B.EMPNO
+                AND A.SALARY_PYMNT_AT = 1
+            <if test="bplcCode != null and bplcCode != ''">
+                AND BPLC_CODE = #{bplcCode}
+            </if>
+            <if test="emplSe != null and emplSe != ''">
+                AND EMPL_SE = #{emplSe}
+            </if>
+            <if test="hffsSe != null and hffsSe != ''">
+                AND HFFS_SE = #{hffsSe}
+            </if>
+            <if test="deptCode != null and deptCode != ''">
+               AND DEPT_CODE = #{deptCode}
+            </if>
+            <if test="clsfCode != null and clsfCode != ''">
+                AND CLSF_CODE = #{clsfCode}
+            </if>
+            <if test="deptCodeNm != null and deptCodeNm != ''">
+                AND FNC_GETDEPTNM(A.DEPT_CODE) = #{deptCodeNm}
+            </if>
+<!--             <if test="jssfcCode != null and jssfcCode != ''"> -->
+<!--                 AND JSSFC_CODE = #{jssfcCode} -->
+<!--             </if> -->
+        </trim>
+             ORDER BY EMPNO
+    </select>
+    
+    <select id="selectMpscalEmpMinusList" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.cal.mpscal013.service.mapper.Mpscal013Mapper.selectMpscalEmpMinusList */
+                SELECT A.EMPNO, 
+                       A.KOR_NM,
+                       FNC_GETDEPTNM(A.DEPT_CODE) AS DEPT_CODE_NM,
+                       FNC_GETCLSFNM(A.CLSF_CODE) AS CLSF_CODE_NM
+                  FROM MHS_EMP A
+    </select>
+    
+    
+    <select id="selectMpscal013List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.cal.mpscal013.service.mapper.Mpscal013Mapper.selectMpscal013List */
+        SELECT
+               A.APPLC_YM,
+               A.PYMNT_SN,
+               A.EMPNO,
+               A.EMP_SE_CODE,
+               A.DPSTR_NM,
+               B.BPLC_CODE,
+               FNC_GETCLSFNM(B.CLSF_CODE) AS CLSF_CODE_NM,
+               B.KOR_NM,
+               FNC_GETDEPTNM(B.DEPT_CODE) AS DEPT_CODE_NM,
+               A.RSPOFC_CODE,
+               A.DTY_CODE,
+               A.SRCLS_CODE,
+               A.JSSFC_CODE,
+               A.REG_DT,
+               A.REG_ID,
+               A.UPT_DT,
+               A.UPT_ID,
+               A.ACNUT_NO,
+               A.BANK_CODE
+<!--                 (SELECT   C.BANK_NM  FROM  MHS_ACNUT C  -->
+<!--                  WHERE  ACNUT_SE_CODE = NVL((SELECT SALARYTY_CODE FROM MPS_PYMNTDE WHERE APPLC_YM = A.APPLC_YM AND PYMNT_SN = A.PYMNT_SN),'001') -->
+<!--                  AND    A.EMPNO = C.EMPNO -->
+<!--                 ) AS BANK_NM, -->
+<!--                  (SELECT   C.ACNUTNO  FROM  MHS_ACNUT C  -->
+<!--                  WHERE  ACNUT_SE_CODE = NVL((SELECT SALARYTY_CODE FROM MPS_PYMNTDE WHERE APPLC_YM = A.APPLC_YM AND PYMNT_SN = A.PYMNT_SN),'001') -->
+<!--                  AND    A.EMPNO = C.EMPNO -->
+<!--                 ) AS ACNUTNO -->
+<!--                C.BANK_CODE, -->
+<!--                C.BANK_NM, -->
+<!--                C.ACNUTNO, -->
+<!--                C.ACNUT_SE_CODE  계좌구분코드 (001이면 급여) // if 없으면 등록되어있는 최상위 가져오기 -->
+          FROM MPS_SALARY_TRGTER A, MHS_EMP B
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+               A.EMPNO = B.EMPNO
+            <if test="applcYm != null and applcYm != ''">
+                AND A.APPLC_YM = REPLACE(#{applcYm}, '-', '')
+            </if>
+            <if test="pymntSn != null and pymntSn != ''">
+                AND A.PYMNT_SN = #{pymntSn}
+            </if>
+<!--             <if test="salarytyCode != null and salarytyCode != ''"> -->
+<!--             </if>AND C.SALARYTY_CODE = #{salarytyCode} -->
+        </trim>
+             ORDER BY A.EMPNO
+    </select>
+
+    <select id="selectMpscal013" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.cal.mpscal013.service.mapper.Mpscal013Mapper.selectMpscal013 */
+        SELECT
+               APPLC_YM,
+               PYMNT_SN,
+               EMPNO,
+               EMP_SE_CODE,
+               ACNUT_NO,
+               BANK_CODE,
+               DPSTR_NM,
+               BPLC_CODE,
+               DEPT_CODE,
+               CLSF_CODE,
+               RSPOFC_CODE,
+               DTY_CODE,
+               SRCLS_CODE,
+               JSSFC_CODE,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MPS_SALARY_TRGTER A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="applcYm != null and applcYm != ''">
+                AND APPLC_YM = #{applcYm}
+            </if>
+            <if test="pymntSn != null and pymntSn != ''">
+                AND PYMNT_SN = #{pymntSn}
+            </if>
+            <if test="empno != null and empno != ''">
+                AND EMPNO = #{empno}
+            </if>
+        </trim>
+    </select>
+
+    <update id="saveMpscal013" parameterType="kr.co.dbvision.api.mps.cal.mpscal013.entity.Mpscal013">
+        /* kr.co.dbvision.api.mps.cal.mpscal013.service.mapper.Mpscal013Mapper.saveMpscal013 */
+        MERGE INTO MPS_SALARY_TRGTER A
+             USING (SELECT
+                    REPLACE(#{applcYm}, '-', '') APPLC_YM,
+                    #{pymntSn} PYMNT_SN,
+                    #{empno} EMPNO
+                    FROM DUAL) B
+                ON (
+                    A.APPLC_YM = B.APPLC_YM AND 
+                    A.PYMNT_SN = B.PYMNT_SN AND 
+                    A.EMPNO = B.EMPNO
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               EMP_SE_CODE= #{empSeCode},
+               ACNUT_NO= #{acnutNo},
+               BANK_CODE= #{bankCode},
+               DPSTR_NM= #{dpstrNm},
+               BPLC_CODE= #{bplcCode},
+               DEPT_CODE= #{deptCode},
+               CLSF_CODE= #{clsfCode},
+               RSPOFC_CODE= #{rspofcCode},
+               DTY_CODE= #{dtyCode},
+               SRCLS_CODE= #{srclsCode},
+               JSSFC_CODE= #{jssfcCode},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               APPLC_YM,
+               PYMNT_SN,
+               EMPNO,
+               EMP_SE_CODE,
+               ACNUT_NO,
+               BANK_CODE,
+               DPSTR_NM,
+               BPLC_CODE,
+               DEPT_CODE,
+               CLSF_CODE,
+               RSPOFC_CODE,
+               DTY_CODE,
+               SRCLS_CODE,
+               JSSFC_CODE,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               REPLACE(#{applcYm}, '-', ''),
+               #{pymntSn},
+               #{empno},
+               #{empSeCode},
+               #{acnutNo},
+               #{bankCode},
+               #{dpstrNm},
+               #{bplcCode},
+               #{deptCode},
+               #{clsfCode},
+               #{rspofcCode},
+               #{dtyCode},
+               #{srclsCode},
+               #{jssfcCode},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deleteMpscal013" parameterType="kr.co.dbvision.api.mps.cal.mpscal013.entity.Mpscal013">
+        /* kr.co.dbvision.api.mps.cal.mpscal013.service.mapper.Mpscal013Mapper.deleteMpscal013 */
+        DELETE FROM MPS_SALARY_TRGTER 
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                
+                AND APPLC_YM = REPLACE(#{applcYm}, '-', '')
+                AND PYMNT_SN = #{pymntSn}
+                AND EMPNO = #{empno}
+        </trim>
+    </delete>
+    <delete id="deletepymnt" parameterType="kr.co.dbvision.api.mps.cal.mpscal013.entity.Mpscal013">
+        /* kr.co.dbvision.api.mps.cal.mpscal013.service.mapper.Mpscal013Mapper.deletepymnt */
+        DELETE FROM MPS_SALARY_PYMNT 
+  
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND APPLC_YM = REPLACE(#{applcYm}, '-', '')
+                AND PYMNT_SN = #{pymntSn}
+                AND EMPNO = #{empno}
+        </trim>
+    </delete>
+    
+    <select id="selectAcnutMpscal013" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.cal.mpscal013.service.mapper.Mpscal013Mapper.selectAcnutMpscal013 */
+        SELECT
+               A.EMPNO,
+               B.APPLC_YM,
+               B.PYMNT_SN,
+               A.ACNUT_SN,
+               A.ACNUT_SE_CODE,
+               A.BANK_CODE,
+               A.BANK_NM,
+               A.ACNUTNO,
+               A.DPSTR_NM,
+               A.BEGIN_DE,
+               A.END_DE,
+               A.BNKB_ATCHMNFLNO,
+               A.RM
+
+          FROM MHS_ACNUT A , MPS_SALARY_TRGTER B
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                    A.EMPNO = B.EMPNO
+            <if test="empno != null and empno != ''">
+                AND A.EMPNO = #{empno}
+            </if>
+            <if test="applcYm != null and applcYm != ''">
+                AND B.APPLC_YM = #{applcYm}
+            </if>
+        </trim>
+    </select>
+    
+</mapper>

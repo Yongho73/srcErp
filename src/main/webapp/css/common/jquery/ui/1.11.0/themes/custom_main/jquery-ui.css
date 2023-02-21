@@ -1,0 +1,340 @@
+
+
+
+.ui-datepicker .ui-datepicker-header {
+	padding: 0px;
+}
+
+.ui-datepicker {
+	background : #fff;
+}
+.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
+	/*background : #fff;
+	font-weight : normal;
+	color : #434445;*/
+}
+
+.ui-datepicker-today .ui-state-default {
+	font-weight: bold;
+	font-size: 13px;
+}
+
+.ui-datepicker-today .ui-state-hover {
+	font-weight: bold;
+	font-size: 13px;
+}
+
+.ui-datepicker .ui-datepicker-title {
+	margin: 0 2.0em;
+	line-height: 1.8em;
+	text-align: center;
+}
+
+.ui-datepicker .ui-datepicker-prev {
+	/*left: 20px;*/
+}
+
+.ui-datepicker .ui-datepicker-prev .ui-icon {
+	background: url('/mis/img/calen_prev.gif') no-repeat;
+	left:12px;
+	top:2px;
+	text-indent:-99999px;
+	overflow:hidden;
+}
+
+.ui-datepicker .ui-datepicker-next {
+	/*right: 20px;*/
+}
+
+.ui-datepicker .ui-datepicker-next .ui-icon {
+	background: url('/mis/img/calen_next.gif') no-repeat;
+	right:7px;
+	top:2px;
+	text-indent:-99999px;
+	overflow:hidden;
+}
+
+.ui-icon {
+	width : 20px;
+	height : 20px;
+}
+
+.ui-datepicker .ui-datepicker-prev span, .ui-datepicker .ui-datepicker-next span {
+    margin-top : 7px;
+	display:block;
+	position:absolute;
+}
+
+.ui-datepicker .ui-datepicker-prev-hover,
+.ui-datepicker .ui-datepicker-next-hover {
+	top: 2px;
+	cursor: pointer;
+}
+
+.ui-datepicker th {
+	font-family:"NanumGothic";
+}
+
+.ui-datepicker tr td:first-child span {
+	color: red;
+}
+
+.ui-datepicker tr td:first-child a {
+	color: red;
+}
+
+.ui-datepicker tr td:last-child span {
+	color: blue;
+}
+
+.ui-datepicker tr td:last-child a {
+	color: blue;
+}
+
+.ui-datepicker td {
+	padding : 0px;
+	font-family:"NanumGothic";
+	text-align:center;
+}
+
+.ui-datepicker {
+	/*width: 100%;*/
+	width: 188px;
+	padding: 5px;
+}
+
+
+.ui-widget-content {
+	/*background: #ffffff;*/
+}
+
+.ui-widget-content table{
+	width:100%;
+}
+
+.ui-datepicker-title {
+	font-size: 15px;
+	font-weight : bold;
+	font-family:"NanumGothic";
+}
+
+
+
+
+/* Interaction states
+----------------------------------
+.ui-state-default,
+.ui-widget-content .ui-state-default,
+.ui-widget-header .ui-state-default {
+	border: 1px solid #d3d3d3;
+	background: #e6e6e6 url("../smoothness/images/ui-bg_glass_75_e6e6e6_1x400.png") 50% 50% repeat-x;
+	font-weight: normal;
+	color: #555555;
+	font-size:12px;
+}
+.ui-state-default a,
+.ui-state-default a:link,
+.ui-state-default a:visited {
+	color: #333333;
+	text-decoration: none;
+	
+}
+.ui-state-hover,
+.ui-widget-content .ui-state-hover,
+.ui-widget-header .ui-state-hover,
+.ui-state-focus,
+.ui-widget-content .ui-state-focus,
+.ui-widget-header .ui-state-focus {
+	border: 1px solid #999999;
+	background: #dadada url("../smoothness/images/ui-bg_glass_75_dadada_1x400.png") 50% 50% repeat-x;
+	color: #212121;
+}
+
+.ui-state-active,
+.ui-widget-content .ui-state-active,
+.ui-widget-header .ui-state-active {
+	border: 1px solid #aaaaaa;
+	background: #ffffff url("../smoothness/images/ui-bg_glass_65_ffffff_1x400.png") 50% 50% repeat-x;
+	font-weight: bold;
+	color: #212121;
+}
+*/
+
+
+=======
+
+
+.ui-datepicker .ui-datepicker-header {
+	padding: 0px;
+}
+
+.ui-datepicker {
+	background : #fff;
+}
+.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
+	/*background : #fff;
+	font-weight : normal;
+	color : #434445;*/
+}
+
+.ui-datepicker-today .ui-state-default {
+	font-weight: bold;
+	font-size: 13px;
+}
+
+.ui-datepicker-today .ui-state-hover {
+	font-weight: bold;
+	font-size: 13px;
+}
+
+.ui-datepicker .ui-datepicker-title {
+	margin: 0 2.0em;
+	line-height: 1.8em;
+	text-align: center;
+}
+
+.ui-datepicker .ui-datepicker-prev {
+	/*left: 20px;*/
+}
+
+.ui-datepicker .ui-datepicker-prev .ui-icon {
+	background: url('/mis/img/calen_prev.gif') no-repeat;
+	left:12px;
+	top:2px;
+	text-indent:-99999px;
+	overflow:hidden;
+}
+
+.ui-datepicker .ui-datepicker-next {
+	/*right: 20px;*/
+}
+
+.ui-datepicker .ui-datepicker-next .ui-icon {
+	background: url('/mis/img/calen_next.gif') no-repeat;
+	right:7px;
+	top:2px;
+	text-indent:-99999px;
+	overflow:hidden;
+}
+
+.ui-icon {
+	width : 20px;
+	height : 20px;
+}
+
+.ui-datepicker .ui-datepicker-prev span, .ui-datepicker .ui-datepicker-next span {
+    margin-top : 7px;
+	display:block;
+	position:absolute;
+}
+
+.ui-datepicker .ui-datepicker-prev-hover,
+.ui-datepicker .ui-datepicker-next-hover {
+	top: 2px;
+	cursor: pointer;
+}
+
+.ui-datepicker th {
+	font-family:"NanumGothic";
+}
+
+.ui-datepicker tr td:first-child span {
+	color: red;
+}
+
+.ui-datepicker tr td:first-child a {
+	color: red;
+}
+
+.ui-datepicker tr td:last-child span {
+	color: blue;
+}
+
+.ui-datepicker tr td:last-child a {
+	color: blue;
+}
+
+.ui-datepicker td {
+	padding : 0px;
+	font-family:"NanumGothic";
+	text-align:center;
+}
+
+.ui-datepicker {
+	/*width: 100%;*/
+	width: 188px;
+	padding: 5px;
+}
+
+
+
+.ui-widget-content table{
+	width:100%;
+}
+
+.ui-datepicker-title {
+	font-size: 15px;
+	font-weight : bold;
+	font-family:"NanumGothic";
+}
+
+
+
+.ui-tabs-active {
+	/*color:#fff ;
+	background:#118fb8;
+	border-right:1px solid #006a8c ;*/
+	color:#769d02 !important;background:#fff !important;border: 2px solid #87b00e !important;
+	cursor:default !important;text-decoration:none;
+}
+
+.ui-tabs-active a{color: #6b8d07 !important}
+
+/*
+.ui-tabs-active:hover{color:#769d02 !important;background:#fff !important;border: 2px solid #87b00e !important;cursor:default !important;text-decoration:none;}	
+.ui-tabs-active:hover a {color: #7ba207 !important;}
+*/
+
+
+
+
+/* Interaction states
+----------------------------------
+.ui-state-default,
+.ui-widget-content .ui-state-default,
+.ui-widget-header .ui-state-default {
+	border: 1px solid #d3d3d3;
+	background: #e6e6e6 url("../smoothness/images/ui-bg_glass_75_e6e6e6_1x400.png") 50% 50% repeat-x;
+	font-weight: normal;
+	color: #555555;
+	font-size:12px;
+}
+.ui-state-default a,
+.ui-state-default a:link,
+.ui-state-default a:visited {
+	color: #333333;
+	text-decoration: none;
+	
+}
+.ui-state-hover,
+.ui-widget-content .ui-state-hover,
+.ui-widget-header .ui-state-hover,
+.ui-state-focus,
+.ui-widget-content .ui-state-focus,
+.ui-widget-header .ui-state-focus {
+	border: 1px solid #999999;
+	background: #dadada url("../smoothness/images/ui-bg_glass_75_dadada_1x400.png") 50% 50% repeat-x;
+	color: #212121;
+}
+
+.ui-state-active,
+.ui-widget-content .ui-state-active,
+.ui-widget-header .ui-state-active {
+	border: 1px solid #aaaaaa;
+	background: #ffffff url("../smoothness/images/ui-bg_glass_65_ffffff_1x400.png") 50% 50% repeat-x;
+	font-weight: bold;
+	color: #212121;
+}
+*/
+
+

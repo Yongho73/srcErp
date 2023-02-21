@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.stm.mng.stmmng004.service.mapper.Stmmng004Mapper">
+
+	<select id="selectRole" parameterType="egovMapForNull" resultType="egovMapForNull">
+		/* kr.co.dbvision.api.stm.mng.stmmng004.service.impl.Stmmng004Mapper.selectRole */
+		SELECT ROLE_CODE AS ROLE_CODE, 
+			   ROLE_NM AS ROLE_NM, 
+			   USE_AT, 
+			   REG_DT, 
+			   REG_ID, 
+			   UPT_DT, 
+			   UPT_ID,
+			   (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) REG_NM,
+		       (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) UPT_NM		        
+		  FROM STM_ROLE A
+		 WHERE 1 = 1
+		          
+		   <if test="roleNm != null and roleNm != ''">
+		   AND ROLE_NM like '%' || #{roleNm} || '%'
+		   </if>
+		         		  
+	  ORDER BY ROLE_NM	 
+	</select>
+		
+	<select id="selectMenu" parameterType="egovMapForNull" resultType="egovMapForNull">
+		/* kr.co.dbvision.api.stm.mng.stmmng004.service.impl.Stmmng004Mapper.selectMenu */
+		WITH  MENU_MGR AS  (
+        SELECT UPPER_MENU_ID AS UPPER_MENU_ID,
+               MENU_ID, 
+               MENU_NM, 
+               MENU_SE, 
+               ORDR, 
+               PROGRM_ID,
+               REG_DT, 
+               REG_ID, 
+               UPT_DT, 
+               UPT_ID,
+               1 LEVEL ,  
+               CONVERT(VARCHAR(255), REPLICATE('0',5-LEN(CONVERT(varchar(10), ORDR))) + CONVERT(varchar(10), ORDR)) AS MENU_LEVEL
+          FROM STM_MENU A
+         WHERE MENU_USE_AT = '1'
+         AND   MENU_ID = 'CHF000000'
+         UNION ALL
+         SELECT MM.UPPER_MENU_ID AS UPPER_MENU_ID,
+               MM.MENU_ID, 
+               MM.MENU_NM, 
+               MM.MENU_SE, 
+               MM.ORDR,
+               MM.PROGRM_ID,
+               MM.REG_DT, 
+               MM.REG_ID, 
+               MM.UPT_DT, 
+               MM.UPT_ID,
+               (MMGR.LEVEL + 1) AS LEVEL ,
+               CONVERT(varchar(255), (CONVERT(varchar(255) ,MMGR.MENU_LEVEL) +convert(varchar(255) ,LEVEL) + CONVERT(varchar(255), REPLICATE('0',5-LEN(CONVERT(varchar(10), MM.ORDR))) + CONVERT(varchar(10), MM.ORDR)) )) AS MENU_LEVEL
+          FROM STM_MENU  AS MM
+          INNER JOIN MENU_MGR MMGR 
+          ON MM.UPPER_MENU_ID = MMGR.MENU_ID
+          AND MENU_USE_AT = '1'
+         ) 
+         SELECT ISNULL(UPPER_MENU_ID,'ROOT') UPPER_MENU_ID,
+               MENU_ID, 
+               MENU_NM, 
+               MENU_SE, 
+               ORDR,
+               (SELECT PCKAGE_NM FROM STM_PROGRM WHERE PROGRM_ID = MENU_MGR.MENU_ID) AS PCKAGE_NM,
+               (SELECT SUB_PCKAGE_ID FROM STM_PROGRM WHERE PROGRM_ID = MENU_MGR.MENU_ID) AS SUB_PCKAGE_ID,
+               PROGRM_ID,
+               REG_DT, 
+               REG_ID, 
+               UPT_DT, 
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = MENU_MGR.REG_ID) REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = MENU_MGR.UPT_ID) UPT_NM
+         FROM MENU_MGR 
+         ORDER BY MENU_LEVEL  
+	</select>
+
+	<select id="selectRoleMenu" parameterType="egovMapForNull" resultType="egovMapForNull">
+		/* kr.co.dbvision.api.stm.mng.stmmng004.service.impl.Stmmng004Mapper.selectRoleMenu */
+		WITH  MENU_MGR AS  (
+        SELECT UPPER_MENU_ID AS UPPER_MENU_ID,
+               MENU_ID, 
+               MENU_NM, 
+               MENU_SE, 
+               ORDR, 
+               PROGRM_ID,
+               REG_DT, 
+               REG_ID, 
+               UPT_DT, 
+               UPT_ID,
+               1 LEVEL ,  
+               CONVERT(VARCHAR(255), REPLICATE('0',5-LEN(CONVERT(varchar(10), ORDR))) + CONVERT(varchar(10), ORDR)) AS MENU_LEVEL
+          FROM STM_MENU A
+         WHERE MENU_USE_AT = '1'
+         AND   MENU_ID = 'CHF000000'
+         UNION ALL
+         SELECT MM.UPPER_MENU_ID AS UPPER_MENU_ID,
+               MM.MENU_ID, 
+               MM.MENU_NM, 
+               MM.MENU_SE, 
+               MM.ORDR,
+               MM.PROGRM_ID,
+               MM.REG_DT, 
+               MM.REG_ID, 
+               MM.UPT_DT, 
+               MM.UPT_ID,
+               (MMGR.LEVEL + 1) AS LEVEL ,
+               CONVERT(varchar(255), (CONVERT(varchar(255) ,MMGR.MENU_LEVEL) +convert(varchar(255) ,LEVEL) + CONVERT(varchar(255), REPLICATE('0',5-LEN(CONVERT(varchar(10), MM.ORDR))) + CONVERT(varchar(10), MM.ORDR)) )) AS MENU_LEVEL
+          FROM STM_MENU  AS MM
+          INNER JOIN MENU_MGR MMGR 
+          ON MM.UPPER_MENU_ID = MMGR.MENU_ID
+          AND MENU_USE_AT = '1'
+         ) 
+         SELECT ISNULL(UPPER_MENU_ID,'ROOT') UPPER_MENU_ID,
+               MENU_ID, 
+               MENU_NM, 
+               MENU_SE, 
+               ORDR,
+               (SELECT PCKAGE_NM FROM STM_PROGRM WHERE PROGRM_ID = MENU_MGR.MENU_ID) AS PCKAGE_NM,
+               (SELECT SUB_PCKAGE_ID FROM STM_PROGRM WHERE PROGRM_ID = MENU_MGR.MENU_ID) AS SUB_PCKAGE_ID,
+               PROGRM_ID,
+               #{roleCode} ROLE_CODE,               
+               ISNULL((SELECT INQIRE_AUTHOR_AT FROM STM_ROLEMENU WHERE ROLE_CODE = #{roleCode} AND MENU_ID = MENU_MGR.MENU_ID),'0') AS INQIRE_AUTHOR_AT,
+               ISNULL((SELECT REGIST_AUTHOR_AT FROM STM_ROLEMENU WHERE ROLE_CODE = #{roleCode} AND MENU_ID = MENU_MGR.MENU_ID),'0') AS REGIST_AUTHOR_AT,
+               ISNULL((SELECT UPDT_AUTHOR_AT FROM STM_ROLEMENU WHERE ROLE_CODE = #{roleCode} AND MENU_ID = MENU_MGR.MENU_ID),'0') AS UPDT_AUTHOR_AT,
+               ISNULL((SELECT DELETE_AUTHOR_AT FROM STM_ROLEMENU WHERE ROLE_CODE = #{roleCode} AND MENU_ID = MENU_MGR.MENU_ID),'0') AS DELETE_AUTHOR_AT,
+               ISNULL((SELECT PRNTNG_AUTHOR_AT FROM STM_ROLEMENU WHERE ROLE_CODE = #{roleCode} AND MENU_ID = MENU_MGR.MENU_ID),'0') AS PRNTNG_AUTHOR_AT,
+               ISNULL((SELECT EXCEL_AUTHOR_AT FROM STM_ROLEMENU WHERE ROLE_CODE = #{roleCode} AND MENU_ID = MENU_MGR.MENU_ID),'0') AS EXCEL_AUTHOR_AT,
+               ISNULL((SELECT DATA_AUTHOR_SE FROM STM_ROLEMENU WHERE ROLE_CODE = #{roleCode} AND MENU_ID = MENU_MGR.MENU_ID),'0') AS DATA_AUTHOR_SE,
+               (CASE WHEN (SELECT DELETE_AT FROM STM_ROLEMENU WHERE ROLE_CODE = #{roleCode} AND MENU_ID = MENU_MGR.MENU_ID) ='0' THEN '1' ELSE '0' END)  AS MENU_AT,
+               REG_DT, 
+               REG_ID, 
+               UPT_DT, 
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = MENU_MGR.REG_ID) REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = MENU_MGR.UPT_ID) UPT_NM
+         FROM MENU_MGR 
+         WHERE MENU_MGR.MENU_ID != 'CHF000000'
+         ORDER BY MENU_LEVEL
+	</select>
+	
+	<select id="selectRoleMenuDetail" parameterType="egovMapForNull" resultType="egovMapForNull">
+		/* kr.co.dbvision.api.stm.mng.stmmng004.service.impl.Stmmng004Mapper.selectRoleMenuDetail */
+		SELECT ROLE_CODE,
+			   (SELECT CODE_KOR_NM FROM STM_CODE WHERE CODEKIND_CODE = 'C008' AND CODE = #{roleCode}) ROLE_NM,
+			   MENU_ID,
+		       INQIRE_AUTHOR_AT, 
+			   REGIST_AUTHOR_AT, 
+			   UPDT_AUTHOR_AT, 
+			   DELETE_AUTHOR_AT, 
+			   PRNTNG_AUTHOR_AT, 
+			   EXCEL_AUTHOR_AT, 
+			   DATA_AUTHOR_SE,
+			   REG_DT, 
+			   REG_ID, 
+			   UPT_DT, 
+			   UPT_ID,
+			   (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) REG_NM,
+		       (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) UPT_NM	
+          FROM STM_ROLEMENU A
+         WHERE ROLE_CODE = #{roleCode}
+           AND MENU_ID = #{menuId}      
+	</select>
+ 	
+	<select id="selectRoleUser" parameterType="egovMapForNull" resultType="egovMapForNull">
+		/* kr.co.dbvision.api.stm.mng.stmmng004.service.impl.Stmmng004Mapper.selectRoleUser */
+		SELECT USER_ID FROM STM_ROLEUSER WHERE ROLE_CODE = #{roleCode}             
+	</select>
+	
+	<select id="selectUserMenuOnly" parameterType="egovMapForNull" resultType="egovMapForNull">
+		/* kr.co.dbvision.api.stm.mng.stmmng004.service.impl.Stmmng004Mapper.selectUserMenuOnly */
+		SELECT MENU_ID
+          FROM STM_USERMENU A
+         WHERE USER_ID = #{userId}  
+	</select>
+	
+	<insert id="insertUserMenu" parameterType="EgovMapForNull">
+		/* kr.co.dbvision.api.stm.mng.stmmng004.service.impl.Stmmng004Mapper.insertUserMenu */
+        INSERT INTO STM_USERMENU (
+	           USER_ID, 
+			   MENU_ID, 
+			   INQIRE_AUTHOR_AT, 
+			   REGIST_AUTHOR_AT, 
+			   UPDT_AUTHOR_AT, 
+			   DELETE_AUTHOR_AT, 
+			   PRNTNG_AUTHOR_AT, 
+			   EXCEL_AUTHOR_AT, 
+			   DATA_AUTHOR_SE,
+			   DELETE_AT, 
+			   REG_DT, 
+			   REG_ID
+        ) VALUES (
+	            #{userId}
+	           ,#{menuId}
+	           ,#{inqireAuthorAt}
+	           ,#{registAuthorAt}
+	           ,#{updtAuthorAt}
+	           ,#{deleteAuthorAt}
+	           ,#{prntngAuthorAt}
+	           ,#{excelAuthorAt}
+	           ,#{dataAuthorSe}
+	           ,'0'
+	           ,GETDATE()
+	           ,#{regId}
+        )
+    </insert>
+	
+	<insert id="insertRoleMenu" parameterType="EgovMapForNull">
+		/* kr.co.dbvision.api.stm.mng.stmmng004.service.impl.Stmmng004Mapper.insertRoleMenu */
+        INSERT INTO STM_ROLEMENU (
+	           ROLE_CODE, 
+			   MENU_ID, 
+			   INQIRE_AUTHOR_AT, 
+			   REGIST_AUTHOR_AT, 
+			   UPDT_AUTHOR_AT, 
+			   DELETE_AUTHOR_AT, 
+			   PRNTNG_AUTHOR_AT, 
+			   EXCEL_AUTHOR_AT, 
+			   DATA_AUTHOR_SE, 
+			   DELETE_AT,
+			   REG_DT, 
+			   REG_ID
+        ) VALUES (
+	            #{roleCode}
+	           ,#{menuId}
+	           ,#{inqireAuthorAt}
+	           ,#{registAuthorAt}
+	           ,#{updtAuthorAt}
+	           ,#{deleteAuthorAt}
+	           ,#{prntngAuthorAt}
+	           ,#{excelAuthorAt}
+	           ,#{dataAuthorSe}
+	           ,#{deleteAt}
+	           ,GETDATE()
+	           ,#{regId}
+        )
+    </insert>
+
+    <update id="updateRoleMenu" parameterType="EgovMapForNull">
+		/* kr.co.dbvision.api.stm.mng.stmmng004.service.impl.Stmmng004Mapper.updateRoleMenu */
+        UPDATE STM_ROLEMENU SET        		 
+		       INQIRE_AUTHOR_AT = #{inqireAuthorAt}, 
+		       REGIST_AUTHOR_AT = #{registAuthorAt}, 
+		       UPDT_AUTHOR_AT = #{updtAuthorAt}, 
+		       DELETE_AUTHOR_AT = #{deleteAuthorAt}, 
+		       PRNTNG_AUTHOR_AT = #{prntngAuthorAt}, 
+		       EXCEL_AUTHOR_AT = #{excelAuthorAt}, 
+		       DATA_AUTHOR_SE = #{dataAuthorSe}, 		
+		       UPT_DT = GETDATE(), 
+		       UPT_ID = #{uptId}
+         WHERE ROLE_CODE = #{roleCode}
+           AND MENU_ID = #{menuId} 
+    </update>
+
+    <delete id="deleteRoleMenu" parameterType="EgovMapForNull">
+		/* kr.co.dbvision.api.stm.mng.stmmng004.service.impl.Stmmng004Mapper.deleteRoleMenu */
+        DELETE FROM STM_ROLEMENU
+         WHERE ROLE_CODE = #{roleCode}
+           AND MENU_ID = #{menuId} 
+    </delete>
+	
+	<delete id="deleteRoleMenuAll" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.stm.mng.stmmng004.service.impl.Stmmng004Mapper.deleteRoleMenuAll */
+        DELETE FROM STM_ROLEMENU
+         WHERE ROLE_CODE = #{roleCode}          
+    </delete>
+    
+</mapper>

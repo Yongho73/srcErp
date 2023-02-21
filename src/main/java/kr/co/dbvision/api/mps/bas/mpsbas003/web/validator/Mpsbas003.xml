@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE form-validation PUBLIC
+    "-//Apache Software Foundation//DTD Commons Validator Rules Configuration 1.1//EN"
+    "http://jakarta.apache.org/commons/dtds/validator_1_1.dtd">
+
+<form-validation>
+
+    <formset>
+        <form name="Mpsbas003">
+            <field property="applcBeginYm" depends="required">
+                <arg0 key="적용 시작 년월는"/>
+            </field>
+            <field property="lwltAmt" depends="required">
+                <arg0 key="하한 금액는"/>
+            </field>
+            <field property="uplmtAmt" depends="required">
+                <arg0 key="상한 금액는"/>
+            </field>
+        </form>
+    </formset>
+
+</form-validation>

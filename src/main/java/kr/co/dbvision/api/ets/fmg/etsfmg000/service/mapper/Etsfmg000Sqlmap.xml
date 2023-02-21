@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.ets.fmg.etsfmg000.service.mapper.Etsfmg000Mapper">
+		
+    <select id="selectEtsfmg000List" parameterType="kr.co.dbvision.api.ets.fmg.etsfmg000.entity.Etsfmg000" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.ets.fmg.etsfmg000.service.mapper.Etsfmg000Mapper.selectEtsfmg000List */
+        SELECT
+               RAIS_NO,
+               RAISNM,
+               RAIS_HTML,
+               ATCHMNFL,
+               USE_AT,
+               PRSRV_TMLMT_CODE,
+               WEB_DRFT_AT,
+               DOC_CLS_CODE,
+               REG_ID,
+               REG_DT,
+               UPT_ID,
+               UPT_DT,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM SGN_DOC_RAIS A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="raisNo != null and raisNo != ''">
+                AND RAIS_NO LIKE '%' || #{raisNo} || '%'
+            </if>
+            <if test="raisnm != null and raisnm != ''">
+                AND RAISNM LIKE '%' || #{raisnm} || '%'
+            </if>
+            <if test="sRegDt != null and sRegDt != ''">
+                <![CDATA[
+                AND REG_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+                ]]>
+            </if>
+            <if test="eRegDt != null and eRegDt != ''">
+                <![CDATA[
+                AND REG_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+                ]]>
+             </if>
+        </trim>
+    </select>
+
+    <select id="selectEtsfmg000" parameterType="kr.co.dbvision.api.ets.fmg.etsfmg000.entity.Etsfmg000" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.ets.fmg.etsfmg000.service.mapper.Etsfmg000Mapper.selectEtsfmg000 */
+        SELECT
+               RAIS_NO,
+               RAISNM,
+               RAIS_HTML,
+               ATCHMNFL,
+               USE_AT,
+               PRSRV_TMLMT_CODE,
+               WEB_DRFT_AT,
+               DOC_CLS_CODE,
+               REG_ID,
+               REG_DT,
+               UPT_ID,
+               UPT_DT,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM SGN_DOC_RAIS A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="raisNo != null and raisNo != ''">
+                AND RAIS_NO = #{raisNo}
+            </if>
+        </trim>
+    </select>
+    
+    <select id="selectEtsfmg000Item" parameterType="kr.co.dbvision.api.ets.fmg.etsfmg000.entity.Etsfmg000" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.ets.fmg.etsfmg000.service.mapper.Etsfmg000Mapper.selectEtsfmg000Item */
+        SELECT
+               RAIS_SN, 
+			   RAIS_NO, 
+			   RAIS_ITEMCO, 
+			   ITEMNM, 
+			   ITEM_FOM, 
+			   ITEM_CODE, 
+			   MUST_AT, 
+			   USE_AT, 
+			   REG_ID, 
+			   REG_DT, 
+			   UPT_ID, 
+			   UPT_DT, 
+			   ITEM_OPT,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM SGN_RAIS_INFO_ITEM A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="raisNo != null and raisNo != ''">
+                AND RAIS_NO = #{raisNo}
+            </if>
+        </trim>
+    </select>
+    
+    <insert id="insertEtsfmg000" parameterType="kr.co.dbvision.api.ets.fmg.etsfmg000.entity.Etsfmg000">
+        /* kr.co.dbvision.api.ets.fmg.etsfmg000.service.mapper.Etsfmg000Mapper.insertEtsfmg000 */
+        INSERT INTO SGN_DOC_RAIS (
+
+               RAIS_NO,
+               RAISNM,
+               RAIS_HTML,
+               ATCHMNFL,
+               USE_AT,
+               PRSRV_TMLMT_CODE,
+               WEB_DRFT_AT,
+               DOC_CLS_CODE,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{raisNo},
+               #{raisnm},
+               #{raisHtml},
+               #{atchmnfl},
+               #{useAt},
+               #{prsrvTmlmtCode},
+               #{webDrftAt},
+               #{docClsCode},
+               SYSDATE,
+               #{regId}
+        )
+    </insert>
+    
+    <update id="updateEtsfmg000" parameterType="kr.co.dbvision.api.ets.fmg.etsfmg000.entity.Etsfmg000">
+        /* kr.co.dbvision.api.ets.fmg.etsfmg000.service.mapper.Etsfmg000Mapper.updateEtsfmg000 */
+        UPDATE SGN_DOC_RAIS SET
+
+               RAISNM = #{raisnm},
+               RAIS_HTML = #{raisHtml},
+               ATCHMNFL = #{atchmnfl},
+               USE_AT = #{useAt},
+               PRSRV_TMLMT_CODE = #{prsrvTmlmtCode},
+               WEB_DRFT_AT = #{webDrftAt},
+               DOC_CLS_CODE = #{docClsCode},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+               
+         WHERE RAIS_NO = #{raisNo}
+        
+    </update>
+    
+    <update id="saveEtsfmg000Item" parameterType="kr.co.dbvision.api.ets.fmg.etsfmg000.entity.Etsfmg000Item">
+        /* kr.co.dbvision.api.ets.fmg.etsfmg000.service.mapper.Etsfmg000Mapper.saveEtsfmg000Item */       
+        MERGE INTO SGN_RAIS_INFO_ITEM 
+        USING DUAL ON (  
+               RAIS_NO = #{raisNo} AND RAIS_SN = #{raisSn}
+        )
+        WHEN MATCHED THEN
+        UPDATE SET
+               
+               RAIS_ITEMCO = #{raisItemco},
+               ITEM_FOM = #{itemFom},
+               ITEM_CODE = #{itemCode},
+               ITEMNM = #{itemnm},
+               MUST_AT = #{mustAt},                
+               USE_AT = #{useAt},
+               ITEM_OPT = #{itemOpt},                
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               RAIS_NO,
+               RAIS_SN,  
+               RAIS_ITEMCO,
+               ITEM_FOM,
+               ITEM_CODE,                
+               ITEMNM,   
+               MUST_AT, 
+               USE_AT,
+               ITEM_OPT,
+               REG_DT,
+               REG_ID 
+
+        ) VALUES (
+
+               #{raisNo},
+               #{raisSn},
+               #{raisItemco},
+               #{itemFom},
+               #{itemCode},
+               #{itemnm},
+               #{mustAt},
+               #{useAt},
+               #{itemOpt},
+               SYSDATE,
+               #{regId}
+        )
+    </update>
+
+    <delete id="deleteEtsfmg000" parameterType="kr.co.dbvision.api.ets.fmg.etsfmg000.entity.Etsfmg000">
+        /* kr.co.dbvision.api.ets.fmg.etsfmg000.service.mapper.Etsfmg000Mapper.deleteEtsfmg000 */
+        DELETE FROM SGN_DOC_RAIS
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND RAIS_NO = #{raisNo}
+        </trim>
+    </delete>
+    
+    <delete id="deleteEtsfmg000Item" parameterType="kr.co.dbvision.api.ets.fmg.etsfmg000.entity.Etsfmg000Item">
+        /* kr.co.dbvision.api.ets.fmg.etsfmg000.service.mapper.Etsfmg000Mapper.deleteEtsfmg000Item */
+        DELETE FROM SGN_RAIS_INFO_ITEM
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND RAIS_NO = #{raisNo}
+                <if test="raisSn != null and raisSn != ''">
+                AND RAIS_SN = #{raisSn}
+            	</if>
+        </trim>
+    </delete>
+    
+</mapper>

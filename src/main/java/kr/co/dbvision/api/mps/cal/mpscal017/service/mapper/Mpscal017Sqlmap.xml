@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mps.cal.mpscal017.service.mapper.Mpscal017Mapper">
+    
+    <select id="selectComboYearMpscal017List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.cal.mpscal017.service.mapper.Mpscal017Mapper.selectComboYearMpscal017List */
+        SELECT 
+        APPLC_YY AS KEY, 
+        APPLC_YY AS VALUE 
+        FROM
+        (
+                SELECT TO_CHAR(SYSDATE, 'YYYY') AS APPLC_YY FROM DUAL
+                UNION            
+                SELECT
+                       SUBSTR(APPLC_YM, 1, 4) AS APPLC_YY
+                  FROM MPS_PYMNTDE A
+                  GROUP  BY SUBSTR(APPLC_YM, 1 ,4)
+        ) ORDER BY 1 DESC
+                
+    </select>
+    
+    <select id="selectMpscal017List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.cal.mpscal017.service.mapper.Mpscal017Mapper.selectMpscal017List */
+       SELECT
+               TO_CHAR(TO_DATE(APPLC_YM, 'YYYYMM' ), 'YYYY-MM') AS APPLC_YM,
+               PYMNT_SN,
+               TO_CHAR(TO_DATE(PYMNT_DE), 'YYYY-MM-DD') AS PYMNT_DE,
+               JSSFC_CODE,
+               FNC_GETJSSFCNM(JSSFC_CODE) AS JSSFC_CODE_NM,
+               ACNUT_SE_CODE,
+               PYMNT_DTLS,
+               SALARYTY_CODE,
+               FNC_COMCODENM('C062', SALARYTY_CODE) AS SALARYTY_CODE_NM,
+               CLOS_AT,
+               OTHBC_AT,
+               OTHBC_DT,
+               JSSFC_CODE,
+               ACNUT_SE_CODE
+          FROM MPS_PYMNTDE A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="belongYm != null and belongYm != ''">
+                AND APPLC_YM  = #{belongYm} 
+            </if>
+            <if test="applcYm != null and applcYm != ''">
+                AND APPLC_YM  = REPLACE(#{applcYm}, '-','')
+            </if>
+        </trim>
+        ORDER BY PYMNT_SN
+    </select>
+    
+    <select id="selectMpscal017MonthList" parameterType="egovMapForNull" resultType="egovMapForNull">
+     /* kr.co.dbvision.api.mps.cal.mpscal017.service.mapper.Mpscal017Mapper.selectMpscal017MonthList */
+        <![CDATA[
+            SELECT
+                 SUBSTR(BELONG_YM, 1, 4) AS BELONG_YY,
+                 SUBSTR(BELONG_YM, 5, 8) ||'월' AS BELONG_MM
+                 ,BELONG_YM
+            FROM
+            (SELECT TO_CHAR(TO_DATE(#{belongYy}||'01', 'YYYYMM' )+LEVEL-1, 'YYYYMM') AS BELONG_YM
+             FROM DUAL
+             CONNECT BY LEVEL <= (TO_DATE(#{belongYy}||'12', 'YYYYMM') - TO_DATE(#{belongYy}||'01', 'YYYYMM')+ 1))
+             WHERE SUBSTR(BELONG_YM, 1, 4) = #{belongYy}
+             GROUP BY BELONG_YM
+             ORDER BY BELONG_YM ASC
+         ]]>     
+     </select>
+    
+    <select id="getPymntSnMpscal017" parameterType="egovMapForNull" resultType="String">
+        /* kr.co.dbvision.api.mps.cal.mpscal017.service.mapper.Mpscal017Mapper.getPymntSnMpscal017 */
+        
+         SELECT NVL(MAX(PYMNT_SN),0) +1 AS  PYMNT_SN FROM MPS_PYMNTDE WHERE APPLC_YM = REPLACE(#{applcYm},'-','') 
+     </select>   
+     
+
+    <select id="selectMpscal017" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.cal.mpscal017.service.mapper.Mpscal017Mapper.selectMpscal017 */
+        SELECT
+               APPLC_YM,
+               PYMNT_SN,
+               PYMNT_DE,
+               PYMNT_DTLS,
+               CLOS_AT,
+               OTHBC_AT,
+               OTHBC_DT,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MPS_PYMNTDE A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="applcYm != null and applcYm != ''">
+                AND APPLC_YM = REPLACE(#{applcYm},'-','') 
+            </if>
+            <if test="pymntSn != null and pymntSn != ''">
+                AND PYMNT_SN = #{pymntSn}
+            </if>
+        </trim>
+    </select>
+
+    <update id="saveMpscal017" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mps.cal.mpscal017.service.mapper.Mpscal017Mapper.saveMpscal017 */
+        MERGE INTO MPS_PYMNTDE A
+             USING (SELECT
+                    REPLACE(#{applcYm},'-','') APPLC_YM,
+                    #{pymntSn} PYMNT_SN
+                    FROM DUAL) B
+                ON (
+                    A.APPLC_YM = B.APPLC_YM AND 
+                    A.PYMNT_SN = B.PYMNT_SN
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               PYMNT_DE= REPLACE(#{pymntDe},'-',''),
+               PYMNT_DTLS= #{pymntDtls},
+               SALARYTY_CODE= #{salarytyCode},
+               CLOS_AT= #{closAt},
+               OTHBC_AT = #{othbcAt},
+               OTHBC_DT = SYSDATE,
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               APPLC_YM,
+               PYMNT_SN,
+               PYMNT_DE,
+               PYMNT_DTLS,
+               SALARYTY_CODE,
+               CLOS_AT,
+               OTHBC_AT,
+               OTHBC_DT,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+               REPLACE(#{applcYm},'-',''),
+               #{pymntSn},
+               REPLACE(#{pymntDe},'-',''),
+               #{pymntDtls},
+               #{salarytyCode},
+               #{closAt},
+               #{othbcAt},
+               SYSDATE,
+               SYSDATE,
+               #{regId}
+        )
+    </update>
+
+    <delete id="deleteMpscal017" parameterType="kr.co.dbvision.api.mps.cal.mpscal017.entity.Mpscal017">
+        /* kr.co.dbvision.api.mps.cal.mpscal017.service.mapper.Mpscal017Mapper.deleteMpscal017 */
+        DELETE FROM MPS_PAYMENT
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND CNTRCT_NO = #{cntrctNo}
+                AND EMPNO = #{empno}
+                AND CNTRCT_DE = #{cntrctDe}
+        </trim>
+    </delete>
+</mapper>

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html class="no-js" lang="ko">
+<HEAD>
+<meta charset="utf-8">
+<LINK href="../img/icon/dbv.ico" rel="shortcut icon" type="image/x-icon">
+
+<TITLE>XERP</TITLE>
+
+<LINK href="../css/dhtmlx/skin/dhtmlx.css" rel="stylesheet" type="text/css">
+<LINK href="../glyphicons/css/bootstrap-glyphicons.css" rel="stylesheet" type="text/css">
+
+<!-- jquery -->
+<SCRIPT src="../js/jquery-1.11.1.min.js"></SCRIPT>
+<SCRIPT src="../js/jquery-ui-custom.min.js"></SCRIPT>
+ 
+<!-- css -->
+<LINK href="../css/default.css" rel="stylesheet" type="text/css">
+<LINK href="../css/contents.css" rel="stylesheet" type="text/css">
+
+</HEAD>
+
+<body>
+	<!--컨텐츠-->
+		<div class="path_info" style="">
+            <ul id="menu_path" style=""><li><a class="home" href="#n"></a></li><li><a href="#"> 연말정산 </a></li><li><a href="#"> 근로소득원천징수영수증</a></li></ul>
+        </div>
+        
+		<DIV class="btn" style="float:right;text-align:right; vertical-align:middle;">
+			<BUTTON class="btn_common02_new" type="button" title="조회">
+				<SPAN class="glyphicon glyphicon-search mr5"></SPAN>조회
+			</BUTTON>
+			<BUTTON class="btn_common02_new" type="button" title="추가">
+				<SPAN class="glyphicon glyphicon-plus mr5"></SPAN>추가
+			</BUTTON>
+			<BUTTON class="btn_common02_new" type="button" title="삭제">
+				<SPAN class="glyphicon glyphicon-trash mr5"></SPAN>삭제
+			</BUTTON>
+			<BUTTON class="btn_common02_new" type="button" title="저장">
+				<SPAN class="glyphicon glyphicon-ok mr5"></SPAN>저장
+			</BUTTON>
+			<BUTTON class="btn_common02_new" type="button" title="인쇄">
+				<SPAN class="glyphicon glyphicon-print mr5"></SPAN>인쇄
+			</BUTTON>
+			<BUTTON class="btn_common02_new" type="button" title="엑셀">
+				<SPAN class="glyphicon glyphicon-download-alt mr5"></SPAN>엑셀
+			</BUTTON>
+			<BUTTON class="btn_common02_new" type="button" title="도움말">
+				<SPAN class="glyphicon glyphicon-question-sign"></SPAN>
+			</BUTTON>
+			<BUTTON class="btn_common02_new" type="button" title="닫기">
+				<SPAN class="glyphicon glyphicon-remove"></SPAN>
+			</BUTTON>
+		</DIV>
+	
+       
+   
+    <div class="basic_div" style="padding:10px; clear:both;margin:0 auto; width:400px;">
+    	
+    	  	
+    	<div class="detail_type024_sub">
+			<table>
+				<caption>인적공제</caption>
+				
+				<colgroup>
+					<col style="width:30%;min-width:70px;" />
+					<col style="width:70%;min-width:70px;" />
+				</colgroup>
+				
+				<tbody>
+					<tr>
+						<th class="ar brddd">귀속년도</th>
+						<td class="al">
+							<input type="text" style="width: 60px;text-align:left;" maxlength="4" value="2018">
+						</td>
+					</tr>
+					<tr>
+						<th class="ar brddd">신청자</th>
+						<td class="al"><input type="text" class="al w60 readonly" value="160201" readonly disabled="disabled">&nbsp;<input type="text" class="al w80 readonly" value="홍길동" readonly disabled="disabled"></td>
+					</tr>
+					<tr>
+						<th class="ar brddd">구분</th>
+						<td class="al">
+							<form>
+								<fieldset>
+									<legend>구분</legend>				                
+										<input type="radio" name="style" id="tax_receipt" checked><label for="tax_receipt"><span></span>근로소득 원천징수영수증</label>             
+								</fieldset>
+							</form>
+						</td>
+					</tr>					
+					
+					<tr>
+						<th class="ar brddd">형식</th>
+						<td class="al">
+							<form>
+								<fieldset>
+									<legend>형식</legend>				                
+										<input type="radio" name="style" id="tax_receipt2" checked><label for="tax_receipt2"><span></span>근로소득 원천징수영수증</label><br>
+										<input type="radio" name="style" id="tax_detail"><label for="tax_detail"><span></span>근로소득 지급명세서</label>                
+								</fieldset>
+							</form>
+						</td>
+					</tr>
+					<tr>
+						<th class="ar brddd">용도</th>
+						<td class="al">
+							<form>
+								<fieldset>
+									<legend>용도</legend>				                
+										<input type="radio" name="use" id="receiver_keep" checked><label for="receiver_keep"><span></span>소득자 보관용</label><br>
+										<input type="radio" name="use" id="giver_keep"><label for="giver_keep"><span></span>발행자 보관용</label><br>
+										<input type="radio" name="use" id="giver_report"><label for="giver_report"><span></span>발행자 보고용</label>
+								</fieldset>
+							</form>
+						</td>
+					</tr>
+					
+				</tbody>
+				
+				</table>
+				
+				<!--<div style="margin:7px 0; text-align:center;">
+						<button class="btn_common01_new" type="button">출력</button>
+					</div> 
+		    	
+		    	<div style="width:100%; margin:0 auto;display:block; text-align:center;">
+		    		<ul style="width:294px;float:left;height:auto;line-height:30px;">
+		    			<li style="float:left;margin-right:5px;"><input type="text" value="출력일자" style=""></li>
+		    			<li style="float:left;"><td class="al"><input name="searchEregDt" class="input_calen" onkeyup="gf_AutoDate(event, this)" onkeypress="gf_AutoDate(event, this)" type="text" style="width: 90px;text-align:left;" maxlength="10" value="2019-12-18"></td></li>
+		    			<li style="float:left;margin-right:5px;"><input type="text" value="직인출력여부"></li>
+		    			<li style="float:left;">
+		    				<select title="직인출력여부" style="min-width:100px">
+								<option value="noprint" selected>미출력</option>
+								<option value="print">출력</option>
+							</select>
+						</li>
+		    		</ul>
+		    		<div style="margin:7px 0; text-align:center;float:right;line-height:55px;">
+						<button class="btn_common01_new" type="button" style="width:100px; height:57px; line-height:57px;">출력</button>
+					</div>
+		    	</div>
+		    	
+		    	-->
+		    	
+		    	<div style="border:none;">
+		    		
+	    			<DIV class="search_box" style="width:100%; overflow:hidden; border:none;">
+						<TABLE style="width:100%;border:none;">
+							<TBODY>
+								
+								<TR>
+									<th style="position:relative; vertical-align:middle; border:none;padding-left:10px;">
+									    <div style="position:relative;display:inline-block;float:left;">
+											<label>출력일자</LABEL>
+											 <input name="searchEregDt" class="input_calen" onkeyup="gf_AutoDate(event, this)" onkeypress="gf_AutoDate(event, this)" type="text" style="width: 90px;" maxlength="10" value="2019-01-01">
+										</div>
+										<div style="position:relative;display:inline-block;float:left; padding-left:15px;">
+											<label>직인출력여부</LABEL>
+											<select title="직인출력여부" style="min-width:85px">
+												<option value="noprint" selected>미출력</option>
+												<option value="print">출력</option>
+											</select>
+										</div>
+									</th>
+								</TR>
+								
+								<tr>
+									<td style="border:none;">
+										<div style="margin:5px 0; text-align:center;">
+											<button class="btn_common01_new" type="button">출력</button>
+										</div>
+									</td>
+								</tr>
+								
+							</TBODY>
+						</TABLE>
+						
+					</DIV>
+	    		
+		    		
+		    	</div>
+			</div>
+
+	
+	
+</div>
+	
+	
+</BODY>
+</HTML>

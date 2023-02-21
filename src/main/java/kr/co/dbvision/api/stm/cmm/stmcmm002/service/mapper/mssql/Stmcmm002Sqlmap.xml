@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.stm.cmm.stmcmm002.service.mapper.Stmcmm002Mapper">
+
+	<select id="selectMenuSearchList" parameterType="egovMapForNull" resultType="egovMapForNull">
+	    /* kr.co.dbvision.api.stm.cmm.stmcmm002.service.impl.Stmcmm002Mapper.selectMenuSearchList */ 
+		SELECT A.MENU_ID       AS ID,
+		       A.UPPER_MENU_ID AS PARENT_ID,
+		       A.MENU_NM       AS TEXT,
+		       A.ENM		   AS TEXT_ENG,
+		       A.THIRD		   AS TEXT_THIRD,
+		       A.MENU_SE, 
+		       A.ORDR,
+		       A.UPPER_MENU_ID,
+		       A.MENU_USE_AT
+		      -- ,A.MAKE_AT      AS MAKE_AT
+		  FROM STM_MENU A
+		 WHERE A.MENU_USE_AT = '1'
+		   AND A.MENU_SE = 'P'
+		   
+		   <choose>
+		   <when test='locale.equals("kor")'>		   
+		   AND A.MENU_NM LIKE '%' || #{menuNm} || '%'
+		   </when>
+		   <when test='locale.equals("third")'>
+		   AND A.THIRD LIKE '%' || #{menuNm} || '%'
+		   </when>		   
+		   <otherwise>
+		   AND A.ENM LIKE '%' || #{menuNm} || '%'
+		   </otherwise>		   
+		   </choose>		   
+		   
+		   AND A.UPPER_MENU_ID != 'CHF000000'
+		   AND A.MENU_ID IN (SELECT MENU_ID
+		                       FROM STM_USERMENU
+		                      WHERE USER_ID = #{userId}
+		                        AND DELETE_AT = '0')
+	  ORDER BY A.ORDR
+	</select>
+
+	<select id="selectFavMenuList" parameterType="egovMapForNull" resultType="egovMapForNull">
+		/* kr.co.dbvision.api.stm.cmm.stmcmm002.service.impl.Stmcmm002Mapper.selectFavMenuList */ 
+		SELECT A.MENU_ID       AS ID,
+		       A.UPPER_MENU_ID AS PARENT_ID,
+		       A.MENU_NM       AS TEXT,
+		       A.ENM		   AS TEXT_ENG,
+		       A.THIRD		   AS TEXT_THIRD,
+		       A.MENU_DC, 
+		       A.MENU_SE,
+		       B.SORT_ORDR     ORDR
+		  FROM STM_MENU A, STM_FAVMENU B
+		 WHERE A.MENU_ID = B.MENU_ID
+		   AND B.USER_ID = #{userId}
+		   <if test="menuId != null and menuId !=''">
+		   AND B.MENU_ID = #{menuId}
+		   </if>
+		   AND A.MENU_SE = 'P'
+		   AND A.MENU_USE_AT = '1'		 
+		 ORDER BY B.SORT_ORDR
+	
+	</select>
+	
+	<select id="selectFirstProgramMenuId" parameterType="egovMapForNull" resultType="String">
+	    /* kr.co.dbvision.api.stm.cmm.stmcmm002.service.impl.Stmcmm002Mapper.selectFirstProgramMenuId */ 
+            WITH  MENU_MGR AS  
+            (
+            SELECT  
+                MENU_ID,
+                MENU_SE,
+                UPPER_MENU_ID,
+                MENU_NM,
+                ORDR,
+                1 LEVEL ,  
+                CONVERT(VARCHAR(255), REPLICATE('0',5-LEN(CONVERT(varchar(10), ORDR))) + CONVERT(varchar(10), ORDR)) AS MENU_LEVEL 
+            FROM STM_MENU AS MMGR
+            WHERE  UPPER_MENU_ID = #{upMenuId}
+            AND MENU_USE_AT = '1'
+            UNION ALL
+            SELECT
+                MM.MENU_ID,
+                MM.MENU_SE,
+                MM.UPPER_MENU_ID,
+                MM.MENU_NM,
+                MM.ORDR,
+                (MMGR.LEVEL + 1) AS LEVEL ,
+                CONVERT(varchar(255), (CONVERT(varchar(255) ,MMGR.MENU_LEVEL) +convert(varchar(255) ,LEVEL) + CONVERT(varchar(255), REPLICATE('0',5-LEN(CONVERT(varchar(10), MM.ORDR))) + CONVERT(varchar(10), MM.ORDR)) )) AS MENU_LEVEL
+            FROM STM_MENU AS MM
+            INNER JOIN MENU_MGR MMGR 
+            ON MM.UPPER_MENU_ID = MMGR.MENU_ID
+            AND MENU_USE_AT = '1'
+            )
+            SELECT TOP 1 MENU_ID 
+            FROM MENU_MGR 
+            WHERE MENU_SE = 'P'
+            ORDER BY MENU_LEVEL
+	</select>
+	
+	<select id="selectMenuPath" parameterType="egovMapForNull" resultType="egovMapForNull">
+		  /* kr.co.dbvision.api.stm.cmm.stmcmm002.service.impl.Stmcmm002Mapper.selectMenuPath */ 
+        WITH  MENU_MGR AS  
+        (
+            SELECT MENU_ID, UPPER_MENU_ID, MENU_NM, ISNULL(ENM,'') AS ENM, ISNULL(THIRD,'') AS THIRD,
+                CAST('> ' + UPPER_MENU_ID + ' > ' + MENU_ID AS VARCHAR(8000)) AS MNU_CODE,
+                CAST('> ' + MENU_NM AS VARCHAR(8000)) AS MNU_STR,
+                CAST('> ' + ISNULL(ENM,'') AS VARCHAR(8000)) AS MNU_ENM,
+                CAST('> ' + ISNULL(THIRD,'') AS VARCHAR(8000)) AS MNU_THIRD
+            FROM STM_MENU A
+            WHERE UPPER_MENU_ID = 'CHF000000'
+            AND MENU_USE_AT = '1'
+            UNION ALL
+            SELECT MM.MENU_ID, MM.UPPER_MENU_ID, MM.MENU_NM, ISNULL(MM.ENM,'') AS ENM, ISNULL(MM.THIRD,'') AS THIRD,
+                CAST(MMGR.MENU_ID + ' > ' + MM.MENU_ID AS VARCHAR(8000)) AS MNU_CODE,
+                CAST(MMGR.MENU_NM + ' > ' + MM.MENU_NM AS VARCHAR(8000)) AS MNU_STR,
+                CAST(MMGR.ENM + ' > ' + ISNULL(MM.ENM,'') AS VARCHAR(8000)) AS MNU_ENM,
+                CAST(MMGR.THIRD + ' > ' + ISNULL(MM.THIRD,'') AS VARCHAR(8000)) AS MNU_THIRD
+            FROM STM_MENU AS MM
+            INNER JOIN MENU_MGR MMGR
+            ON MM.UPPER_MENU_ID = MMGR.MENU_ID
+            AND MENU_USE_AT = '1'
+        ),
+        MENU_MGR2 AS
+        (
+            SELECT MENU_ID, UPPER_MENU_ID, MENU_NM, ISNULL(ENM,'') AS ENM, ISNULL(THIRD,'') AS THIRD,
+                CAST('> ' + UPPER_MENU_ID + ' > ' + MENU_ID AS VARCHAR(8000)) AS MNU_CODE,
+                CAST('> ' + MENU_NM AS VARCHAR(8000)) AS MNU_STR,
+                CAST('> ' + ISNULL(ENM,'') AS VARCHAR(8000)) AS MNU_ENM,
+                CAST('> ' + ISNULL(THIRD,'') AS VARCHAR(8000)) AS MNU_THIRD
+            FROM STM_MENU A
+            WHERE UPPER_MENU_ID = 'CHF000000'
+            AND MENU_USE_AT = '1'
+            UNION ALL
+            SELECT MM.MENU_ID, MM.UPPER_MENU_ID, MM.MENU_NM, ISNULL(MM.ENM,'') AS ENM, ISNULL(MM.THIRD,'') AS THIRD,
+                CAST(MMGR.MNU_CODE + '>' +MM.MENU_ID AS VARCHAR(8000)) AS MNU_CODE,
+                CAST(MMGR.MNU_STR + ' > ' + MM.MENU_NM AS VARCHAR(8000)) AS MNU_STR,
+                CAST(MMGR.MNU_ENM + ' > ' + MM.ENM AS VARCHAR(8000)) AS MNU_ENM,
+                CAST(MMGR.MNU_THIRD + ' > ' + MM.THIRD AS VARCHAR(8000)) AS MNU_THIRD
+            FROM MENU_MGR AS MM
+            INNER JOIN MENU_MGR2 MMGR
+            ON MM.UPPER_MENU_ID = MMGR.MENU_ID
+        ),
+        MENU_MGR3 AS
+        (
+            SELECT MENU_ID, UPPER_MENU_ID, MENU_NM, ISNULL(ENM,'') AS ENM, ISNULL(THIRD,'') AS THIRD,
+                CAST('> ' + UPPER_MENU_ID + ' > ' + MENU_ID AS VARCHAR(8000)) AS MNU_CODE,
+                CAST('> ' + MENU_NM AS VARCHAR(8000)) AS MNU_STR,
+                CAST('> ' + ISNULL(ENM,'') AS VARCHAR(8000)) AS MNU_ENM,
+                CAST('> ' + ISNULL(THIRD,'') AS VARCHAR(8000)) AS MNU_THIRD
+            FROM STM_MENU A
+            WHERE UPPER_MENU_ID = 'CHF000000'
+            AND MENU_USE_AT = '1'
+            UNION ALL
+            SELECT MM.MENU_ID, MM.UPPER_MENU_ID, MM.MENU_NM, ISNULL(MM.ENM,'') AS ENM, ISNULL(MM.THIRD,'') AS THIRD,
+                CAST(MMGR.MNU_CODE + ' > ' +MM.MENU_ID AS VARCHAR(8000)) AS MNU_CODE,
+                CAST(MMGR.MNU_STR + ' > ' + MM.MENU_NM AS VARCHAR(8000)) AS MNU_STR,
+                CAST(MMGR.MNU_ENM + ' > ' + MM.ENM AS VARCHAR(8000)) AS MNU_ENM,
+                CAST(MMGR.MNU_THIRD + ' > ' + MM.THIRD AS VARCHAR(8000)) AS MNU_THIRD
+            FROM MENU_MGR AS MM
+            INNER JOIN MENU_MGR3 MMGR
+            ON MM.UPPER_MENU_ID = MMGR.MENU_ID
+        ),
+        MENU_MGR4 AS
+        (
+            SELECT MENU_ID, UPPER_MENU_ID, MENU_NM, ISNULL(ENM,'') AS ENM, ISNULL(THIRD,'') AS THIRD,
+                CAST('> ' + UPPER_MENU_ID + ' > ' + MENU_ID AS VARCHAR(8000)) AS MNU_CODE,
+                CAST('> ' + MENU_NM AS VARCHAR(8000)) AS MNU_STR,
+                CAST('> ' + ISNULL(ENM,'') AS VARCHAR(8000)) AS MNU_ENM,
+                CAST('> ' + ISNULL(THIRD,'') AS VARCHAR(8000)) AS MNU_THIRD
+            FROM STM_MENU A
+            WHERE UPPER_MENU_ID = 'CHF000000'
+            AND MENU_USE_AT = '1'
+            UNION ALL
+            SELECT MM.MENU_ID, MM.UPPER_MENU_ID, MM.MENU_NM, ISNULL(MM.ENM,'') AS ENM, ISNULL(MM.THIRD,'') AS THIRD,
+                CAST(MMGR.MNU_CODE + ' > ' +MM.MENU_ID AS VARCHAR(8000)) AS MNU_CODE,
+                CAST(MMGR.MNU_STR + ' > ' + MM.MENU_NM AS VARCHAR(8000)) AS MNU_STR,
+                CAST(MMGR.MNU_ENM + ' > ' + MM.ENM AS VARCHAR(8000)) AS MNU_ENM,
+                CAST(MMGR.MNU_THIRD + ' > ' + MM.THIRD AS VARCHAR(8000)) AS MNU_THIRD
+            FROM MENU_MGR AS MM
+            INNER JOIN MENU_MGR4 MMGR
+            ON MM.UPPER_MENU_ID = MMGR.MENU_ID
+        )
+        SELECT MNU_CODE AS MENU_PATH, MNU_STR AS PATH, MNU_ENM AS PATH_ENG, MNU_THIRD AS PATH_THIRD
+        FROM MENU_MGR4
+        WHERE MENU_ID = #{menuId}
+	</select>
+	
+	<select id="selectConnectByPath" parameterType="egovMapForNull" resultType="String">
+		   /* kr.co.dbvision.api.stm.cmm.stmcmm002.service.impl.Stmcmm002Mapper.selectConnectByPath */ 
+		  WITH  MENU_MGR AS  
+	        (
+	            SELECT MENU_ID, UPPER_MENU_ID,
+	                CAST(UPPER_MENU_ID + '|' + MENU_ID AS VARCHAR(8000)) AS MNU_STR
+	            FROM STM_MENU A
+	            WHERE UPPER_MENU_ID = 'CHF000000'
+	            AND MENU_USE_AT = '1'
+	            UNION ALL
+	            SELECT MM.MENU_ID, MM.UPPER_MENU_ID,
+	                CAST(MMGR.MENU_ID + '|' +MM.MENU_ID AS VARCHAR(8000)) AS MNU_STR
+	            FROM STM_MENU AS MM
+	            INNER JOIN MENU_MGR MMGR
+	            ON MM.UPPER_MENU_ID = MMGR.MENU_ID
+	            AND MENU_USE_AT = '1'
+	        ),
+	        MENU_MGR2 AS
+	        (
+	            SELECT MENU_ID, UPPER_MENU_ID,
+	                CAST(UPPER_MENU_ID + '|' + MENU_ID AS VARCHAR(8000)) AS MNU_STR
+	            FROM STM_MENU A
+	            WHERE UPPER_MENU_ID = 'CHF000000'
+	            AND MENU_USE_AT = '1'
+	            UNION ALL
+	            SELECT MM.MENU_ID, MM.UPPER_MENU_ID,
+	                CAST(MMGR.MNU_STR + '|' +MM.MENU_ID AS VARCHAR(8000)) AS MNU_STR
+	            FROM MENU_MGR AS MM
+	            INNER JOIN MENU_MGR2 MMGR
+	            ON MM.UPPER_MENU_ID = MMGR.MENU_ID
+	        ),
+	        MENU_MGR3 AS
+	        (
+	            SELECT MENU_ID, UPPER_MENU_ID,
+	                CAST(UPPER_MENU_ID + '|' + MENU_ID AS VARCHAR(8000)) AS MNU_STR
+	            FROM STM_MENU A
+	            WHERE UPPER_MENU_ID = 'CHF000000'
+	            AND MENU_USE_AT = '1'
+	            UNION ALL
+	            SELECT MM.MENU_ID, MM.UPPER_MENU_ID,
+	                CAST(MMGR.MNU_STR + '|' +MM.MENU_ID AS VARCHAR(8000)) AS MNU_STR
+	            FROM MENU_MGR AS MM
+	            INNER JOIN MENU_MGR3 MMGR
+	            ON MM.UPPER_MENU_ID = MMGR.MENU_ID
+	        ),
+	        MENU_MGR4 AS
+	        (
+	            SELECT MENU_ID, UPPER_MENU_ID,
+	                CAST(UPPER_MENU_ID + '|' + MENU_ID AS VARCHAR(8000)) AS MNU_STR
+	            FROM STM_MENU A
+	            WHERE UPPER_MENU_ID = 'CHF000000'
+	            AND MENU_USE_AT = '1'
+	            UNION ALL
+	            SELECT MM.MENU_ID, MM.UPPER_MENU_ID,
+	                CAST(MMGR.MNU_STR + '|' +MM.MENU_ID AS VARCHAR(8000)) AS MNU_STR
+	            FROM MENU_MGR AS MM
+	            INNER JOIN MENU_MGR4 MMGR
+	            ON MM.UPPER_MENU_ID = MMGR.MENU_ID
+	        )
+	        SELECT MENU_ID, MNU_STR
+	        FROM MENU_MGR4
+	        WHERE MENU_ID = #{menuId}
+	</select>
+	
+	<select id="selectProgrmId" parameterType="egovMapForNull" resultType="String">
+		   /* kr.co.dbvision.api.stm.cmm.stmcmm002.service.impl.Stmcmm002Mapper.selectProgrmId */ 
+		  SELECT PROGRM_ID
+		    FROM STM_MENU
+		   WHERE MENU_ID = #{menuId}		  
+	</select>
+	
+
+	<insert id="insertFavMenu" parameterType="egovMapForNull">
+		/* kr.co.dbvision.api.stm.cmm.stmcmm002.service.impl.Stmcmm002Mapper.insertFavMenu */ 
+		INSERT INTO STM_FAVMENU
+		  (USER_ID, MENU_ID, SORT_ORDR, REG_DT, REG_ID)
+		VALUES
+		  (#{userId},
+		   #{menuId},
+		   (SELECT NVL(MAX(SORT_ORDR) + 1, 1) FROM STM_FAVMENU),
+		   GETDATE(),
+		   #{userId})	 
+	</insert>
+	
+	<delete id="deleteFavMenu" parameterType="egovMapForNull">
+		/* kr.co.dbvision.api.stm.cmm.stmcmm002.service.impl.Stmcmm002Mapper.deleteFavMenu */ 
+		DELETE FROM STM_FAVMENU
+		 WHERE MENU_ID = #{menuId}
+		   AND USER_ID = #{userId} 
+	</delete>
+</mapper>

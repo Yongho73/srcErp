@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.pjt.mta.pjtmta002.service.mapper.Pjtmta002Mapper">
+
+    <select id="selectPjtmta002List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.pjt.mta.pjtmta002.service.mapper.Pjtmta002Mapper.selectPjtmta002List */
+        SELECT PROJECT_SN, --프로젝트 순번
+		       BCNC_NM, --거래처 이름
+		       PROJECT_NM, --프로젝트 이름
+		       TO_CHAR(REQCNT) AS REQ_CNT, --요청 건수
+		       CLEARCNT AS CLEAR_CNT, --해결 건수
+		       REQCNT - CLEARCNT AS UNCLEAR_CNT, --미해결 건수
+		       COMPCNT AS COMP_CNT, --승인 건수
+		       TRUNC((CLEARCNT/REQCNT) * 100, 1) || '%' AS PRGS_RT, --진척율
+		       PERIODCNT_COMPT || ' (' || TRUNC((NVL(PERIODCNT_COMPT/DECODE(CLEARCNT, 0, NULL, CLEARCNT), 0)) * 100, 1) || '%)'  AS PAYPERIOD_RT_COMPT, --납기준수(완료일기준)
+		       PERIODCNT_CONFM || ' (' || TRUNC((NVL(PERIODCNT_CONFM/DECODE(CLEARCNT, 0, NULL, CLEARCNT), 0)) * 100, 1) || '%)'  AS PAYPERIOD_RT_CONFM, --납기준수(승인일기준) 
+		       DECODE(AVGCOMP, NULL, '-', AVGCOMP) AS AVG_COMP, --평균소요(완료일기준)
+		       DECODE(AVGCONFM, NULL, '-', AVGCONFM) AS AVG_CONFM  --평균소요(승인일기준)
+    FROM (
+            SELECT A.PROJECT_SN, b.PROJECT_NM, B.COMPT_AT
+                  ,BCNC_NM
+                  ,COUNT(*)         AS REQCNT     -- 요청건수
+                  ,NVL(COMPCNT,0)   AS COMPCNT    -- 승인건수
+                  ,NVL(CLEARCNT,0)  AS CLEARCNT   -- 해결건수
+                  ,NVL(PERIODCNT_COMPT,0) AS PERIODCNT_COMPT  -- 납기내건수(완료일기준)
+                  ,NVL(PERIODCNT_CONFM,0) AS PERIODCNT_CONFM  -- 납기내건수(완료일기준)
+                  ,AVGCOMP    -- 완료일기준 평균소요일수
+                  ,AVGCONFM   -- 승인일기준 평균소요일수
+            FROM  PJT_MNTNCE_REQUST A
+                 ,PJT_project B
+                 ,STM_CUSTOMER C  
+                 ,(SELECT PROJECT_SN, COUNT(*) AS COMPCNT FROM PJT_MNTNCE_REQUST
+                   WHERE COMPT_CONFM_AT = '1'
+                    <if test="sRegDt != null and sRegDt != ''">
+                    <![CDATA[
+                    AND REQUST_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+                    ]]>
+                </if>
+                <if test="eRegDt != null and eRegDt != ''">
+                    <![CDATA[
+                    AND REQUST_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+                    ]]>
+                </if>
+                   GROUP BY PROJECT_SN) D                                         -- 승인건수
+                   
+                 ,(SELECT X.PROJECT_SN, COUNT(*) AS CLEARCNT 
+                   FROM PJT_MNTNCE_REQUST X
+                    WHERE COMPT_DE IS NOT NULL
+                    <if test="sRegDt != null and sRegDt != ''">
+                    <![CDATA[
+                    AND REQUST_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+                    ]]>
+                </if>
+                <if test="eRegDt != null and eRegDt != ''">
+                    <![CDATA[
+                    AND REQUST_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+                    ]]>
+                </if>
+                    GROUP BY X.PROJECT_SN) E                                      -- 해결건수
+                    
+                 ,(SELECT X.PROJECT_SN, COUNT(*) AS PERIODCNT_COMPT
+                   FROM PJT_MNTNCE_REQUST X
+                    WHERE COMPT_DE IS NOT NULL
+                    AND X.COMPT_DE    <![CDATA[ <= ]]>  COMPT_REQUST_DT
+                        <if test="sRegDt != null and sRegDt != ''">
+                    <![CDATA[
+                    AND REQUST_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+                    ]]>
+                </if>
+                <if test="eRegDt != null and eRegDt != ''">
+                    <![CDATA[
+                    AND REQUST_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+                    ]]>
+                </if>
+                    GROUP BY X.PROJECT_SN) F                                      -- 납기내건수(완료일기준)
+                    
+                  ,(SELECT X.PROJECT_SN, COUNT(*) AS PERIODCNT_CONFM 
+                   FROM PJT_MNTNCE_REQUST X
+                    WHERE COMPT_CONFM_DT  <![CDATA[ <= ]]>  COMPT_REQUST_DT
+                    <if test="sRegDt != null and sRegDt != ''">
+                    <![CDATA[
+                    AND REQUST_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+                    ]]>
+                </if>
+                <if test="eRegDt != null and eRegDt != ''">
+                    <![CDATA[
+                    AND REQUST_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+                    ]]>
+                </if>
+                    GROUP BY X.PROJECT_SN) I                                     -- 납기내건수(승인일기준)
+                    
+                 ,(SELECT PROJECT_SN, ROUND(AVG(AVGCOMP),1) AS AVGCOMP
+                    FROM (SELECT A.PROJECT_SN, COMPT_DE - REQUST_DT AS AVGCOMP
+                          FROM PJT_MNTNCE_REQUST A
+                          <trim prefix="WHERE" prefixOverrides="AND|OR">
+	                      <if test="sRegDt != null and sRegDt != ''">
+			                    <![CDATA[
+			                    AND REQUST_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+			                    ]]>
+			                </if>
+			                <if test="eRegDt != null and eRegDt != ''">
+			                    <![CDATA[
+			                    AND REQUST_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+			                    ]]>
+			                </if> 
+                		</trim>
+                  )
+                    GROUP BY PROJECT_SN) G                                        -- 완료일기준 평균소요일수
+                    
+                ,(SELECT PROJECT_SN, ROUND(AVG(AVGCONFM),1) AS AVGCONFM
+                    FROM (SELECT PROJECT_SN, COMPT_CONFM_DT - REQUST_DT AS AVGCONFM
+                          FROM PJT_MNTNCE_REQUST
+                          WHERE 1=1
+                          AND COMPT_CONFM_AT IS NOT NULL
+                    <if test="sRegDt != null and sRegDt != ''">
+                    <![CDATA[
+                    AND REQUST_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+                    ]]>
+                </if>
+                <if test="eRegDt != null and eRegDt != ''">
+                    <![CDATA[
+                    AND REQUST_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+                    ]]>
+                </if>
+                  )
+                    GROUP BY PROJECT_SN) H
+            WHERE a.PROJECT_SN = b.PROJECT_SN
+              AND B.BCNC_CODE = C.BCNC_CODE
+              AND D.PROJECT_SN(+) = B.PROJECT_SN 
+              AND E.PROJECT_SN(+) = B.PROJECT_SN  
+              AND F.PROJECT_SN(+) = B.PROJECT_SN
+              AND G.PROJECT_SN(+) = B.PROJECT_SN
+              AND H.PROJECT_SN(+) = B.PROJECT_SN
+              AND I.PROJECT_SN(+) = B.PROJECT_SN
+                <if test="sRegDt != null and sRegDt != ''">
+                    <![CDATA[
+                    AND REQUST_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+                    ]]>
+                </if>
+                <if test="eRegDt != null and eRegDt != ''">
+                    <![CDATA[
+                    AND REQUST_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+                    ]]>
+                </if>
+                 
+            GROUP BY A.PROJECT_SN, b.PROJECT_NM, B.COMPT_AT, BCNC_NM, NVL(COMPCNT,0), NVL(CLEARCNT,0), NVL(PERIODCNT_COMPT,0), NVL(PERIODCNT_CONFM,0), AVGCOMP, AVGCONFM
+         ) AA
+         <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="bcncNm != null and bcncNm != ''">
+                AND BCNC_NM LIKE '%' || #{bcncNm} || '%'
+            </if>
+            <if test="comptAt != null and comptAt != ''">
+                AND COMPT_AT = #{comptAt} 
+            </if>
+        </trim>
+    </select>
+
+    <select id="selectPjtmta002" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.pjt.mta.pjtmta002.service.mapper.Pjtmta002Mapper.selectPjtmta002 */
+        SELECT
+               PROJECT_SN,
+               REQUST_SN,
+               REQUST_STEP,
+               REQUST_DT,
+               RQESTER_DEPT,
+               RQESTER_TELNO,
+               RQESTER_EMAIL,
+               COMPT_REQUST_DT,
+               REQUST_CN,
+               PRIOR_RANK,
+               REQUST_TY,
+               DRCTR_EMPNO,
+               DRCT_CN,
+               ATCHMNFL_SN,
+               OPERTOR_EMPNO,
+               OPERT_TY,
+               CONFMER_NM,
+               COMPT_CONFM_DT,
+               CONFM_OPN,
+               STSFDG_CODE,
+               COMPT_CONFM_AT,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               RQESTER,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM PJT_MNTNCE_REQUST A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="projectSn != null and projectSn != ''">
+                AND PROJECT_SN = #{projectSn}
+            </if>
+            <if test="requstSn != null and requstSn != ''">
+                AND REQUST_SN = #{requstSn}
+            </if>
+        </trim>
+    </select>
+
+    <update id="savePjtmta002" parameterType="kr.co.dbvision.api.pjt.mta.pjtmta002.entity.Pjtmta002">
+        /* kr.co.dbvision.api.pjt.mta.pjtmta002.service.mapper.Pjtmta002Mapper.savePjtmta002 */
+        MERGE INTO PJT_MNTNCE_REQUST A
+             USING (SELECT
+                    #{projectSn} PROJECT_SN,
+                    #{requstSn} REQUST_SN
+                    FROM DUAL) B
+                ON (
+                    A.PROJECT_SN = B.PROJECT_SN AND 
+                    A.REQUST_SN = B.REQUST_SN
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               REQUST_STEP= #{requstStep},
+               REQUST_DT= #{requstDt},
+               RQESTER_DEPT= REPLACE(#{rqesterDept},'-',''),
+               RQESTER_TELNO= #{rqesterTelno},
+               RQESTER_EMAIL= #{rqesterEmail},
+               COMPT_REQUST_DT= #{comptRequstDt},
+               REQUST_CN= #{requstCn},
+               PRIOR_RANK= #{priorRank},
+               REQUST_TY= #{requstTy},
+               DRCTR_EMPNO= #{drctrEmpno},
+               DRCT_CN= #{drctCn},
+               ATCHMNFL_SN= #{atchmnflSn},
+               OPERTOR_EMPNO= #{opertorEmpno},
+               OPERT_TY= #{opertTy},
+               CONFMER_NM= #{confmerNm},
+               COMPT_CONFM_DT= #{comptConfmDt},
+               CONFM_OPN= #{confmOpn},
+               STSFDG_CODE= #{stsfdgCode},
+               COMPT_CONFM_AT= #{comptConfmAt},
+               RQESTER= #{rqester},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               PROJECT_SN,
+               REQUST_SN,
+               REQUST_STEP,
+               REQUST_DT,
+               RQESTER_DEPT,
+               RQESTER_TELNO,
+               RQESTER_EMAIL,
+               COMPT_REQUST_DT,
+               REQUST_CN,
+               PRIOR_RANK,
+               REQUST_TY,
+               DRCTR_EMPNO,
+               DRCT_CN,
+               ATCHMNFL_SN,
+               OPERTOR_EMPNO,
+               OPERT_TY,
+               CONFMER_NM,
+               COMPT_CONFM_DT,
+               CONFM_OPN,
+               STSFDG_CODE,
+               COMPT_CONFM_AT,
+               RQESTER,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{projectSn},
+               #{requstSn},
+               #{requstStep},
+               #{requstDt},
+               REPLACE(#{rqesterDept},'-',''),
+               #{rqesterTelno},
+               #{rqesterEmail},
+               #{comptRequstDt},
+               #{requstCn},
+               #{priorRank},
+               #{requstTy},
+               #{drctrEmpno},
+               #{drctCn},
+               #{atchmnflSn},
+               #{opertorEmpno},
+               #{opertTy},
+               #{confmerNm},
+               #{comptConfmDt},
+               #{confmOpn},
+               #{stsfdgCode},
+               #{comptConfmAt},
+               #{rqester},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deletePjtmta002" parameterType="kr.co.dbvision.api.pjt.mta.pjtmta002.entity.Pjtmta002">
+        /* kr.co.dbvision.api.pjt.mta.pjtmta002.service.mapper.Pjtmta002Mapper.deletePjtmta002 */
+        DELETE FROM PJT_MNTNCE_REQUST
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND PROJECT_SN = #{projectSn}
+                AND REQUST_SN = #{requstSn}
+        </trim>
+    </delete>
+</mapper>

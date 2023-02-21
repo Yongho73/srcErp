@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE form-validation PUBLIC
+    "-//Apache Software Foundation//DTD Commons Validator Rules Configuration 1.1//EN"
+    "http://jakarta.apache.org/commons/dtds/validator_1_1.dtd">
+
+<form-validation>
+
+    <formset>
+        <form name="Stmbsc006">
+            <field property="relTblNm" depends="required">
+                <arg0 key="관련 테이블 명는"/>
+            </field>
+            <field property="relItemNm" depends="required">
+                <arg0 key="관련 항목 명는"/>
+            </field>
+            <field property="numberingFom" depends="required">
+                <arg0 key="채번형식은"/>
+            </field>
+            
+        </form>
+    </formset>
+
+</form-validation>

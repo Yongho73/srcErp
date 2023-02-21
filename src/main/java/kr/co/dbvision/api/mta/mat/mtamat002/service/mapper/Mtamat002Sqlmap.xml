@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mta.mat.mtamat002.service.mapper.Mtamat002Mapper">
+
+    <select id="selectMtaRequstList" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mta.mat.mtamat002.service.impl.Mtamat002Mapper.selectMtaRequstList */
+  SELECT ROWNUM AS RNUM, REQ.* FROM (
+	SELECT PROJECT_NO
+	     , COMP_NM
+	     , TO_CHAR(REQCNT) AS REQ_CNT
+	     , CLEARCNT AS CLEAR_CNT
+	     , REQCNT - CLEARCNT AS UNCLEAR_CNT
+	     , COMPCNT AS COMP_CNT
+	     , TRUNC((CLEARCNT/REQCNT) * 100, 1) || '%' AS PRGS_RT
+	     , PERIODCNT AS PERIOD_CNT
+	     , TRUNC((NVL(PERIODCNT/DECODE(CLEARCNT, 0, NULL, CLEARCNT), 0)) * 100, 1) || '%' AS PAYPERIOD_RT 
+	     , ROUND(AVGCOMP,1)  AS AVG_COMP
+	     , ROUND(AVGCONFM,1) AS AVG_CONFM
+	FROM (
+	        SELECT A.PROJECT_NO
+	              ,COMP_NM
+	              ,COUNT(*)         AS REQCNT     -- 요청건수
+	              ,NVL(COMPCNT,0)   AS COMPCNT    -- 승인건수
+	              ,NVL(CLEARCNT,0)  AS CLEARCNT   -- 해결건수
+	              ,NVL(PERIODCNT,0) AS PERIODCNT  -- 납기내건수
+	              ,NVL(AVGCOMP,0)   AS AVGCOMP    -- 완료일기준 평균소요일수
+	              ,NVL(AVGCONFM,0)  AS AVGCONFM   -- 승인일기준 평균소요일수
+	        FROM  mta_requst A
+	             ,DBVISION_INTRA.x_project B
+	             ,DBVISION_INTRA.x_company C 
+	             ,(SELECT PROJECT_NO, COUNT(*) AS COMPCNT FROM MTA_REQUST
+	               WHERE COMPT_CONFM_AT = 1
+	            <if test="sRegDt != null and sRegDt != ''">
+	                <![CDATA[
+	                AND REQUST_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+	                ]]>
+	            </if>
+	            <if test="eRegDt != null and eRegDt != ''">
+	                <![CDATA[
+	                AND REQUST_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+	                ]]>
+	            </if>
+	               GROUP BY PROJECT_NO) D                                         -- 승인건수
+	             ,(SELECT X.PROJECT_NO, COUNT(*) AS CLEARCNT 
+	               FROM MTA_REQUST X,
+	                    (SELECT MAX(OPERT_END_DT), PROJECT_NO, REQUST_NO FROM MTA_OPERT
+	                     GROUP BY PROJECT_NO, REQUST_NO) Y
+	                WHERE X.PROJECT_NO = Y.PROJECT_NO AND X.REQUST_NO = Y.REQUST_NO
+	            <if test="sRegDt != null and sRegDt != ''">
+	                <![CDATA[
+	                AND REQUST_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+	                ]]>
+	            </if>
+	            <if test="eRegDt != null and eRegDt != ''">
+	                <![CDATA[
+	                AND REQUST_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+	                ]]>
+	            </if>
+	                GROUP BY X.PROJECT_NO) E                                      -- 해결건수
+	             ,(SELECT X.PROJECT_NO, COUNT(*) AS PERIODCNT 
+	               FROM MTA_REQUST X,
+	                    (SELECT MAX(OPERT_END_DT) AS OPERT_END_DT, PROJECT_NO, REQUST_NO FROM MTA_OPERT
+	                     GROUP BY PROJECT_NO, REQUST_NO) Y
+	                WHERE X.PROJECT_NO = Y.PROJECT_NO AND X.REQUST_NO = Y.REQUST_NO
+	                AND Y.OPERT_END_DT <![CDATA[<=]]> COMPT_REQUST_DT
+	            <if test="sRegDt != null and sRegDt != ''">
+	                <![CDATA[
+	                AND REQUST_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+	                ]]>
+	            </if>
+	            <if test="eRegDt != null and eRegDt != ''">
+	                <![CDATA[
+	                AND REQUST_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+	                ]]>
+	             </if>
+	                GROUP BY X.PROJECT_NO) F                                      -- 납기내건수
+	             ,(SELECT PROJECT_NO, AVG(AVGCOMP) AS AVGCOMP
+	                FROM (SELECT A.PROJECT_NO, OPERT_END_DT - REQUST_DT AS AVGCOMP
+	                      FROM MTA_REQUST A,
+	                           (SELECT MAX(OPERT_END_DT) AS OPERT_END_DT, PROJECT_NO, REQUST_NO FROM MTA_OPERT
+	                            GROUP BY PROJECT_NO, REQUST_NO) B
+	                      WHERE A.PROJECT_NO = B.PROJECT_NO AND A.REQUST_NO = B.REQUST_NO
+	            <if test="sRegDt != null and sRegDt != ''">
+	                <![CDATA[
+	                AND REQUST_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+	                ]]>
+	            </if>
+	            <if test="eRegDt != null and eRegDt != ''">
+	                <![CDATA[
+	                AND REQUST_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+	                ]]>
+	             </if>)
+	                GROUP BY PROJECT_NO) G                                        -- 완료일기준 평균소요일수
+	            ,(SELECT PROJECT_NO, AVG(AVGCONFM) AS AVGCONFM
+	                FROM (SELECT PROJECT_NO, COMPT_CONFM_DT - REQUST_DT AS AVGCONFM
+	                      FROM MTA_REQUST
+	                      WHERE 1=1
+	                      AND COMPT_CONFM_AT IS NOT NULL
+	            <if test="sRegDt != null and sRegDt != ''">
+	                <![CDATA[
+	                AND REQUST_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+	                ]]>
+	            </if>
+	            <if test="eRegDt != null and eRegDt != ''">
+	                <![CDATA[
+	                AND REQUST_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+	                ]]>
+	             </if>)
+	                GROUP BY PROJECT_NO) H
+	        WHERE a.project_no(+) = b.proj_no  
+	          AND 'DBV'||B.COMPANY_CD = C.COMP_CD
+	          AND D.PROJECT_NO(+) = B.PROJ_NO 
+	          AND E.PROJECT_NO(+) = B.PROJ_NO  
+	          AND F.PROJECT_NO(+) = B.PROJ_NO
+	          AND G.PROJECT_NO(+) = B.PROJ_NO
+	          AND H.PROJECT_NO(+) = B.PROJ_NO
+	        <if test="compNm != null and compNm != ''">
+	                AND COMP_NM LIKE '%' || #{compNm} || '%'
+	        </if>
+	        <if test="sRegDt != null and sRegDt != ''">
+	                <![CDATA[
+	                AND REQUST_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+	                ]]>
+	        </if>
+	        <if test="eRegDt != null and eRegDt != ''">
+	                <![CDATA[
+	                AND REQUST_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+	                ]]>
+	        </if>
+	        GROUP BY A.PROJECT_NO, COMP_NM, NVL(COMPCNT,0), NVL(CLEARCNT,0), NVL(PERIODCNT,0), NVL(AVGCOMP,0), NVL(AVGCONFM,0)
+	     ) AA
+	   ) REQ
+    </select>
+
+    <select id="selectMtaRequst" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mta.mat.mtamat002.service.impl.Mtamat002Mapper.selectMtaRequst */
+        SELECT
+               PROJECT_NO,
+               REQUST_NO,
+               REQUST_STEP,
+               REQUST_DT,
+               FNC_DATESTR(REQUST_DEPT) AS REQUST_DEPT,
+               REQUST_TELNO,
+               REQUST_EMAIL,
+               COMPT_REQUST_DT,
+               REQUST_CN,
+               PRIOR_TY,
+               REQUST_TY,
+               DRCTR_EMPNO,
+               DRCT_CN,
+               ATCHMNFL,
+               OPERTOR_EMPNO,
+               OPERT_TY,
+               CONFMER_NM,
+               COMPT_CONFM_DT,
+               COMPT_CONFM_AT,
+               CONFM_OPN,
+               STSFDG_LEVEL,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MTA_REQUST A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="projectNo != null and projectNo != ''">
+                AND PROJECT_NO = #{projectNo}
+            </if>
+            <if test="requstNo != null and requstNo != ''">
+                AND REQUST_NO = #{requstNo}
+            </if>
+        </trim>
+    </select>
+
+    <insert id="insertMtaRequst" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mta.mat.mtamat002.service.impl.Mtamat002Mapper.insertMtaRequst */
+        INSERT INTO MTA_REQUST
+        (
+            PROJECT_NO,
+            REQUST_NO,
+            REQUST_STEP,
+            REQUST_DT,
+            REQUST_DEPT,
+            REQUST_TELNO,
+            REQUST_EMAIL,
+            COMPT_REQUST_DT,
+            REQUST_CN,
+            PRIOR_TY,
+            REQUST_TY,
+            DRCTR_EMPNO,
+            DRCT_CN,
+            ATCHMNFL,
+            OPERTOR_EMPNO,
+            OPERT_TY,
+            CONFMER_NM,
+            COMPT_CONFM_DT,
+            COMPT_CONFM_AT,
+            CONFM_OPN,
+            STSFDG_LEVEL,
+            REG_DT,
+            REG_ID
+        )
+        VALUES
+        (
+            #{projectNo},
+            #{requstNo},
+            #{requstStep},
+            #{requstDt},
+            #{requstDept},
+            #{requstTelno},
+            #{requstEmail},
+            #{comptRequstDt},
+            #{requstCn},
+            #{priorTy},
+            #{requstTy},
+            #{drctrEmpno},
+            #{drctCn},
+            #{atchmnfl},
+            #{opertorEmpno},
+            #{opertTy},
+            #{confmerNm},
+            #{comptConfmDt},
+            #{comptConfmAt},
+            #{confmOpn},
+            #{stsfdgLevel},
+            SYSDATE,
+            #{regId}
+        )
+    </insert>
+
+    <update id="updateMtaRequst" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mta.mat.mtamat002.service.impl.Mtamat002Mapper.updateMtaRequst */
+        UPDATE MTA_REQUST SET
+
+               REQUST_STEP= #{requstStep},
+               REQUST_DT= #{requstDt},
+               REQUST_DEPT= #{requstDept},
+               REQUST_TELNO= #{requstTelno},
+               REQUST_EMAIL= #{requstEmail},
+               COMPT_REQUST_DT= #{comptRequstDt},
+               REQUST_CN= #{requstCn},
+               PRIOR_TY= #{priorTy},
+               REQUST_TY= #{requstTy},
+               DRCTR_EMPNO= #{drctrEmpno},
+               DRCT_CN= #{drctCn},
+               ATCHMNFL= #{atchmnfl},
+               OPERTOR_EMPNO= #{opertorEmpno},
+               OPERT_TY= #{opertTy},
+               CONFMER_NM= #{confmerNm},
+               COMPT_CONFM_DT= #{comptConfmDt},
+               COMPT_CONFM_AT= #{comptConfmAt},
+               CONFM_OPN= #{confmOpn},
+               STSFDG_LEVEL= #{stsfdgLevel},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+               AND PROJECT_NO = #{projectNo}
+               AND REQUST_NO = #{requstNo}
+        </trim>
+    </update>
+
+    <delete id="deleteMtaRequst" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mta.mat.mtamat002.service.impl.Mtamat002Mapper.deleteMtaRequst */
+        DELETE FROM MTA_REQUST
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND PROJECT_NO = #{projectNo}
+                AND REQUST_NO = #{requstNo}
+        </trim>
+    </delete>
+</mapper>

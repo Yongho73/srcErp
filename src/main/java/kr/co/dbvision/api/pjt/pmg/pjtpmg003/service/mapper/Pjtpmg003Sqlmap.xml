@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.pjt.pmg.pjtpmg003.service.impl.Pjtpmg003Mapper">
+
+    <select id="selectPjtProjectList" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg003.service.impl.Pjtpmg003Mapper.selectPjtProjectList */
+        SELECT
+               PROJECT_SN,
+               PROJECT_NM,
+               PROJECT_CN,
+               PROJECT_SCOPE,
+               PROJECT_ENVRN,
+               PROJECT_AREA,
+               PROJECT_PM_EMPNO,
+               PROJECT_PM_NM,
+               BCNC_CODE,
+               BCNC_CHARGER_CODE,
+               FNC_DATESTR(PROJECT_BEGIN_DE) AS PROJECT_BEGIN_DE,
+               FNC_DATESTR(PROJECT_END_DE) AS PROJECT_END_DE,
+               FNC_DATESTR(REAL_BEGIN_DE) AS REAL_BEGIN_DE,
+               FNC_DATESTR(REAL_END_DE) AS REAL_END_DE,
+               CNTRCT_AMT,
+               VAT_INCLS_AT,
+               GRTS_MNTNCE_MCNT,
+               GRTS_MNTNCE_CN,
+               PROJECT_SE,
+               COMPT_AT,
+               FNC_DATESTR(COMPT_DE) AS COMPT_DE,
+               ENTRPS_ID,
+               ENTRPS_PASSWORD,
+               CNTRCT_TY,
+               REGIST_EMPNO,
+               TO_CHAR(REG_DT,'YYYY-MM-DD HH24:MI:SS') AS REG_DT,
+               REG_ID,
+               TO_CHAR(UPT_DT,'YYYY-MM-DD HH24:MI:SS') AS UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM PJT_PROJECT A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="projectSn != null and projectSn != ''">
+                AND PROJECT_SN = #{projectSn}
+            </if>
+ 
+            <if test="sRegDt != null and sRegDt != ''">
+                <![CDATA[
+                AND REG_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+                ]]>
+            </if>
+            <if test="eRegDt != null and eRegDt != ''">
+                <![CDATA[
+                AND REG_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+                ]]>
+             </if>
+        </trim>
+    </select>
+
+    <select id="selectPjtProject" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg003.service.impl.Pjtpmg003Mapper.selectPjtProject */
+        SELECT
+               PROJECT_SN,
+               PROJECT_NM,
+               PROJECT_CN,
+               PROJECT_SCOPE,
+               PROJECT_ENVRN,
+               PROJECT_AREA,
+               PROJECT_PM_EMPNO,
+               PROJECT_PM_NM,
+               BCNC_CODE,
+               BCNC_CHARGER_CODE,
+               FNC_DATESTR(PROJECT_BEGIN_DE) AS PROJECT_BEGIN_DE,
+               FNC_DATESTR(PROJECT_END_DE) AS PROJECT_END_DE,
+               FNC_DATESTR(REAL_BEGIN_DE) AS REAL_BEGIN_DE,
+               FNC_DATESTR(REAL_END_DE) AS REAL_END_DE,
+               CNTRCT_AMT,
+               VAT_INCLS_AT,
+               GRTS_MNTNCE_MCNT,
+               GRTS_MNTNCE_CN,
+               PROJECT_SE,
+               COMPT_AT,
+               FNC_DATESTR(COMPT_DE) AS COMPT_DE,
+               ENTRPS_ID,
+               ENTRPS_PASSWORD,
+               CNTRCT_TY,
+               REGIST_EMPNO,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM PJT_PROJECT A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="projectSn != null and projectSn != ''">
+                AND PROJECT_SN = #{projectSn}
+            </if>
+        </trim>
+    </select>
+
+    <insert id="insertPjtProject" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg003.service.impl.Pjtpmg003Mapper.insertPjtProject */
+        INSERT INTO PJT_PROJECT
+        (
+            PROJECT_SN,
+            PROJECT_NM,
+            PROJECT_CN,
+            PROJECT_SCOPE,
+            PROJECT_ENVRN,
+            PROJECT_AREA,
+            PROJECT_PM_EMPNO,
+            PROJECT_PM_NM,
+            BCNC_CODE,
+            BCNC_CHARGER_CODE,
+            PROJECT_BEGIN_DE,
+            PROJECT_END_DE,
+            REAL_BEGIN_DE,
+            REAL_END_DE,
+            CNTRCT_AMT,
+            VAT_INCLS_AT,
+            GRTS_MNTNCE_MCNT,
+            GRTS_MNTNCE_CN,
+            PROJECT_SE,
+            COMPT_AT,
+            COMPT_DE,
+            ENTRPS_ID,
+            ENTRPS_PASSWORD,
+            CNTRCT_TY,
+            REGIST_EMPNO,
+            REG_DT,
+            REG_ID
+        )
+        VALUES
+        (
+            #{projectSn},
+            #{projectNm},
+            #{projectCn},
+            #{projectScope},
+            #{projectEnvrn},
+            #{projectArea},
+            #{projectPmEmpno},
+            #{projectPmNm},
+            #{bcncCode},
+            #{bcncChargerCode},
+            #{projectBeginDe},
+            #{projectEndDe},
+            #{realBeginDe},
+            #{realEndDe},
+            #{cntrctAmt},
+            #{vatInclsAt},
+            #{grtsMntnceMcnt},
+            #{grtsMntnceCn},
+            #{projectSe},
+            #{comptAt},
+            #{comptDe},
+            #{entrpsId},
+            #{entrpsPassword},
+            #{cntrctTy},
+            #{registEmpno},
+            SYSDATE,
+            #{regId}
+        )
+    </insert>
+
+    <update id="updatePjtProject" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg003.service.impl.Pjtpmg003Mapper.updatePjtProject */
+        UPDATE PJT_PROJECT SET
+
+               PROJECT_NM= #{projectNm},
+               PROJECT_CN= #{projectCn},
+               PROJECT_SCOPE= #{projectScope},
+               PROJECT_ENVRN= #{projectEnvrn},
+               PROJECT_AREA= #{projectArea},
+               PROJECT_PM_EMPNO= #{projectPmEmpno},
+               PROJECT_PM_NM= #{projectPmNm},
+               BCNC_CODE= #{bcncCode},
+               BCNC_CHARGER_CODE= #{bcncChargerCode},
+               PROJECT_BEGIN_DE= #{projectBeginDe},
+               PROJECT_END_DE= #{projectEndDe},
+               REAL_BEGIN_DE= #{realBeginDe},
+               REAL_END_DE= #{realEndDe},
+               CNTRCT_AMT= #{cntrctAmt},
+               VAT_INCLS_AT= #{vatInclsAt},
+               GRTS_MNTNCE_MCNT= #{grtsMntnceMcnt},
+               GRTS_MNTNCE_CN= #{grtsMntnceCn},
+               PROJECT_SE= #{projectSe},
+               COMPT_AT= #{comptAt},
+               COMPT_DE= #{comptDe},
+               ENTRPS_ID= #{entrpsId},
+               ENTRPS_PASSWORD= #{entrpsPassword},
+               CNTRCT_TY= #{cntrctTy},
+               REGIST_EMPNO= #{registEmpno},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+               AND PROJECT_SN = #{projectSn}
+        </trim>
+    </update>
+
+    <delete id="deletePjtProject" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg003.service.impl.Pjtpmg003Mapper.deletePjtProject */
+        DELETE FROM PJT_PROJECT
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND PROJECT_SN = #{projectSn}
+        </trim>
+    </delete>
+</mapper>

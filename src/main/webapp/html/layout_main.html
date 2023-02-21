@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <title>X-ERP</title>
+    <meta name="keywords" content="디비비전">
+    <meta name="description" content="디비비전">
+    <meta name="keywords" content="디비비전">
+    <meta name="generator" content="Notepad++">
+
+    <!--<LINK href="../default.css" rel="stylesheet" type="text/css">-->
+    <link href="/xerp/glyphicons/css/bootstrap-glyphicons.css" rel="stylesheet" type="text/css">
+    <link href="/xerp/axicon/axicon.css" rel="stylesheet" type="text/css">
+    <link href="/xerp/css/default.css" rel="stylesheet" type="text/css">
+    <link href="/xerp/css/baseSub.css" rel="stylesheet" type="text/css">
+    <link href="/xerp/css/contents.css" rel="stylesheet" type="text/css">
+    <link href="/xerp/css/iframe.css" rel="stylesheet" type="text/css">
+    <link href="/xerp/css/table.css" rel="stylesheet" type="text/css">
+
+
+
+    <!-- jquery -->
+    <script src="/xerp/js/jquery-1.11.1.min.js"></script>
+    <script src="/xerp/js/jquery-ui-custom.min.js"></script>
+    <!-- bpopup -->
+    <script src="/xerp/js/jquery.bpopup.js"></script>
+    <script src="/xerp/js/jquery.blockUI.js"></script>
+    <!-- multi file upload -->
+    <script src="/xerp/js/jquery.fileupload.js"></script>
+    <!-- websocket -->
+    <script src="/xerp/js/sockjs-0.3.4.js"></script>
+    <!-- validation -->
+    <script src="/xerp/js/validation/jquery.validate.js"></script>
+    <script src="/xerp/js/validation/localization/messages_ko.js"></script>
+    <!-- number -->
+    <script src="/xerp/js/jquery.number.js"></script>
+    <!-- jquery.form.js -->
+    <script src="/xerp/js/jquery.form.js"></script>
+
+    <!-- CryptoJS v3.1.2 -->
+    <script src="/xerp/js/CryptoJSv3.1.2/rollups/aes.js"></script>
+    <script src="/xerp/js/CryptoJSv3.1.2/rollups/sha256.js"></script>
+
+    <!-- dhtmlxtree -->
+    <link rel="stylesheet" type="text/css" href="/xerp/css/dhtmlx/codebase/dhtmlxtree.css" />
+    <script src="/xerp/js/dhtmlx/codebase/dhtmlxtree.js"></script>
+    <!-- dhtmlxtreeview -->
+    <link rel="stylesheet" type="text/css" href="/xerp/css/dhtmlx/codebase/dhtmlxtreeview.css" />
+    <script src="/xerp/js/dhtmlx/codebase/dhtmlxtreeview.js"></script>
+    <!-- dhtmlx grid -->
+    <link rel="stylesheet" type="text/css" href="/xerp/css/dhtmlx/codebase/dhtmlxgrid.css" />
+    <script src="/xerp/js/dhtmlx/codebase/dhtmlxgrid.js"></script>
+    <!-- dhtmlxwindows -->
+    <link rel="stylesheet" type="text/css" href="/xerp/css/dhtmlx/codebase/dhtmlxwindows.css" />
+    <script src="/xerp/js/dhtmlx/codebase/dhtmlxwindows.js"></script>
+    <!-- dhtmlxcombo -->
+    <link rel="stylesheet" type="text/css" href="/xerp/css/dhtmlx/codebase/dhtmlxcombo.css" />
+    <script src="/xerp/js/dhtmlx/codebase/dhtmlxcombo.js"></script>
+    <!-- dhtmlxtreegrid -->
+    <script src="/xerp/js/dhtmlx/codebase/dhtmlxtreegrid.js"></script>
+    <!-- dhtmlxcalender -->
+    <link rel="stylesheet" type="text/css" href="/xerp/css/dhtmlx/codebase/dhtmlxcalendar.css" />
+    <script src="/xerp/js/dhtmlx/codebase/dhtmlxcalendar.js"></script>
+    <!-- dhtmlxchart -->
+    <link rel="stylesheet" type="text/css" href="/xerp/css/dhtmlx/codebase/dhtmlxchart.css" />
+    <script src="/xerp/js/dhtmlx/codebase/dhtmlxchart.js"></script>
+    <!-- dhtmlxchart -->
+    <link rel="stylesheet" type="text/css" href="/xerp/css/dhtmlx/codebase/dhtmlxtabbar.css" />
+    <script src="/xerp/js/dhtmlx/codebase/dhtmlxtabbar.js"></script>
+
+    <!-- core js -->
+    <script src="/xerp/js/core/comCore.js"></script>
+    <script src="/xerp/js/core/comConvention.js"></script>
+    <script src="/xerp/js/core/comTransaction.js"></script>
+    <script src="/xerp/js/core/comEnv.js"></script>
+    <script src="/xerp/js/core/comPopup.js"></script>
+    <script src="/xerp/js/core/comDhtmlx.js"></script>
+    <script src="/xerp/js/core/comEnvSetting.js"></script>
+
+<style>
+    .item3{background:#fff;border:1px solid #dedede;padding:6px;}
+</style>
+</head>
+
+<!-- 미세 여백설정(따라오는 div class에 추가하여 사용)
+/* 위쪽 여백 10px - 클래스 mt10 */
+/* 왼쪽 여백 7px - 클래스 ml7 */ 
+/* 오른쪽 여백 5px - 클래스 mr5 */
+-->
+
+<body style="background:#f5f5f7;">
+
+    <div class="wrapper_con">
+        <div class="main" style="width:100%;height:100%;">
+            <div class="flex" style="flex-wrap:wrap !important;">
+                <div class="item3">
+                    <div>
+                        <ul>
+                            <li><span>3</span><span>인사고충등록</span><i></i></li>
+                            <li><span>3</span><span>인사고충등록</span><i></i></li>
+                            <li><span>3</span><span>인사고충등록</span><i></i></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <ul>
+                            <li><span>인사대상자 선정</span><i></i></li>
+                            <li><span>승진자 현황</span><i></i></li>
+                            <li><span>인사배치 기준관리</span><i></i></li>
+                            <li><span>인사배치</span><i></i></li>
+                            <li><span>통계관리</span><i></i></li>
+                            <li><span>인사정보 관리</span><i></i></li>
+                        </ul>
+                    </div>
+                </div><!-- //오른쪽 영역 item end -->
+                <div class="item3">
+                    <div class="div_title"> <!-- 높이만 잡고 싶은 경우 빈 div_title만 남기고 안쪽은 지워준다 -->
+                        <!-- 타이틀영역(좌측) -->
+                        <div class="left">
+                            <span class="s_tit"><i class="axi axi-chevron-right"></i>인사 고충 게시판</span>
+                        </div>
+                        <!-- 타이틀영역(우측) -->
+                        <div class="right">
+                            <div class="right ml7">
+                                <button class="div_title_btn" type="button">더보기</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                                            엑셀dhtml 
+                    </div>
+                <!--// 타이틀영역 -->
+                </div><!-- //오른쪽 영역 item end -->
+                <div class="item3">
+                    <div class="div_title"> <!-- 높이만 잡고 싶은 경우 빈 div_title만 남기고 안쪽은 지워준다 -->
+                        <!-- 타이틀영역(좌측) -->
+                        <div class="left">
+                            <span class="s_tit"><i class="axi axi-chevron-right"></i>관서 정원 현황</span>
+                        </div>
+                        <!-- 타이틀영역(우측) -->
+                        <div class="right">
+                            <div class="right ml7">
+                                <button class="div_title_btn" type="button">더보기</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                                            엑셀dhtml 
+                    </div>
+                <!--// 타이틀영역 -->
+                </div><!-- //오른쪽 영역 item end -->
+            </div><!-- //flex end -->
+            
+            <div class="flex mt10" style="flex-wrap:wrap !important;">
+                <div class="item3">
+                    <div class="div_title"> <!-- 높이만 잡고 싶은 경우 빈 div_title만 남기고 안쪽은 지워준다 -->
+                        <!-- 타이틀영역(좌측) -->
+                        <div class="left">
+                            <span class="s_tit"><i class="axi axi-chevron-right"></i>인사배치 전출입 현황</span>
+                        </div>
+                        <!-- 타이틀영역(우측) -->
+                        <div class="right">
+                            <div class="right ml7">
+                                <button class="div_title_btn" type="button">더보기</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                                            엑셀dhtml 
+                    </div>
+                <!--// 타이틀영역 -->
+                </div><!-- //오른쪽 영역 item end -->
+                <div class="item3">
+                    <div class="div_title"> <!-- 높이만 잡고 싶은 경우 빈 div_title만 남기고 안쪽은 지워준다 -->
+                        <!-- 타이틀영역(좌측) -->
+                        <div class="left">
+                            <span class="s_tit"><i class="axi axi-chevron-right"></i>인사 고충 게시판</span>
+                        </div>
+                        <!-- 타이틀영역(우측) -->
+                        <div class="right">
+                            <div class="right ml7">
+                                <button class="div_title_btn" type="button">더보기</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                                            엑셀dhtml 
+                    </div>
+                <!--// 타이틀영역 -->
+                </div><!-- //오른쪽 영역 item end -->
+            </div><!-- //flex end -->
+         </div>
+         
+         
+    </div><!-- //wrapper_con end -->
+
+
+
+</body>
+
+</html>

@@ -1,0 +1,505 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mtx.evd.mtxevd001.service.mapper.Mtxevd001Mapper">
+
+    <select id="selectMtxevd001List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mtx.evd.mtxevd001.service.mapper.Mtxevd001Mapper.selectMtxevd001List */
+         SELECT * FROM ( SELECT ROWNUM RNUM, 
+                               A.*                 
+                          FROM (        
+        SELECT
+               TAXBILL_NO,
+               BPLC_CODE,
+               BSNS_SE_CODE,
+               PURSALE_SE_CODE,
+               STTEMNT_SE_CODE,
+               STTEMNT_TY_CODE,
+               EVID_SE_CODE,
+               ISU_SE_CODE,
+               TAX_DDC_AT,
+               DDC_SE_CODE,
+               FNC_DATESTR(EX_TAX_DED_CODE) AS EX_TAX_DED_CODE,
+               PURCHS_TY_CODE,
+               SALE_TY_CODE,
+               ELCTRNEVID_SE_CODE,
+               ELCTRN_TAXBILL_NO,
+               FNC_DATESTR(BILL_WRITE_DE) AS BILL_WRITE_DE,
+               FNC_DATESTR(BILL_ISU_DE) AS BILL_ISU_DE,
+               FNC_DATESTR(NTX_TRNSMIS_DE) AS NTX_TRNSMIS_DE,
+               BILL_ISU_AT,
+               CONFM_SE_CODE,
+               SPLPC_AMT,
+               VAT_AMT,
+               VATPA,
+               VATPA_MDAT_AMT,
+               AMT_SUPL_AMT,
+               ETC_AMT,
+               DSCNT_RT,
+               PRPDVS_RT,
+               BLANK_CO,
+               FNC_DATESTR(WRITE_DEPT_CODE) AS WRITE_DEPT_CODE,
+               WRITE_EMPNO,
+               BCNC_CODE,
+               BCNC_NM,
+               INDUTY,
+               BIZCND,
+               FNC_BIZRNO(BIZRNO)  AS BIZRNO,
+               IHIDNUM,
+               PYMNT_SE_CODE,
+               REPRSNT_NM,
+               CHARGER_NM,
+               CHARGER_EMAIL,
+               CHARGER_TELNO,
+               DELAYTRNSMIS_AT,
+               PRED_RPT_MISS_AT,
+               LIQUOR_AT,
+               INPUT_SE_CODE,
+               CHARGER_CONFIRM_AT,
+               ISU_STTUS_CODE,
+               ISU_RESULT_CN,
+               ISSU_INSTT_BIZRNO,
+               ANACT_NO,
+               ANACT_SN,
+               FNC_DATESTR(ANACT_DE) AS ANACT_DE,
+               ATCHMNFL_NO,
+               RM,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MFS_TAX_COMM A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="taxbillNo != null and taxbillNo != ''">
+                AND TAXBILL_NO = #{taxbillNo}
+            </if>
+            <if test="pursaleSeCode != null and pursaleSeCode != ''">
+                AND PURSALE_SE_CODE = #{pursaleSeCode}
+            </if>
+            <if test="evidSeCode != null and evidSeCode != ''">
+                AND EVID_SE_CODE = #{evidSeCode}
+            </if>
+            <if test="elctrnevidSeCode != null and elctrnevidSeCode != ''">
+                AND ELCTRNEVID_SE_CODE = #{elctrnevidSeCode}
+            </if>
+            <if test="bcncCode != null and bcncCode != ''">
+                AND BCNC_CODE = #{bcncCode}
+            </if>
+            <if test="bcncNm != null and bcncNm != ''">
+                AND BCNC_NM = #{bcncNm}
+            </if>
+            
+            <if test="stDate != null and stDate != ''">
+                <![CDATA[
+                AND BILL_WRITE_DE >= TO_DATE(#{stDate} || '000000','YYYY-MM-DDHH24MISS')
+                ]]>
+            </if>
+            <if test="edDate != null and edDate != ''">
+                <![CDATA[
+                AND BILL_WRITE_DE <= TO_DATE(#{edDate} || '235959','YYYY-MM-DDHH24MISS')
+                ]]>
+             </if>
+             <if test="sRegDt != null and sRegDt != ''">
+                <![CDATA[
+                AND REG_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+                ]]>
+            </if>
+            <if test="eRegDt != null and eRegDt != ''">
+                <![CDATA[
+                AND REG_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+                ]]>
+             </if>
+        </trim>
+         ORDER  BY TAXBILL_NO 
+                               ) A 
+                      ) B 
+                WHERE RNUM  <![CDATA[ >  ]]>  #{firstIndex}
+                  AND RNUM  <![CDATA[ <= ]]> #{lastIndex}  
+    </select>
+    
+    <select id="selectMtxevd001ListCnt" parameterType="egovMapForNull" resultType="java.lang.Integer">
+        /* kr.co.dbvision.api.mtx.evd.mtxevd001.service.mapper.Mtxevd001Mapper.selectMtxevd001ListCnt */
+        SELECT COUNT(*) AS totalRecordCount
+          FROM MFS_TAX_COMM
+    </select>
+    
+    <select id="selectMtxevdDetail001List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mtx.evd.mtxevd001.service.mapper.Mtxevd001Mapper.selectMtxevdDetail001List */
+        SELECT
+               TAXBILL_NO,
+               ITEM_SN,
+               PRDNM,
+               SPEC_NM,
+               QTY,
+               UNIT_SE_CODE,
+               UNIT_PRICE,
+               SPLPC_AMT,
+               VAT_AMT,
+               ETC_AMT,
+               VATPA,
+               VATPA_MDAT_AMT,
+               AMT_SUPL_AMT,
+               DSCNT_RT,
+               INCRS_AMT,
+               DCRS_AMT,
+               RM,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MFS_TAX_ITEM A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+        
+                AND TAXBILL_NO = #{taxbillNo}
+                
+            <if test="itemSn != null and itemSn != ''">
+                AND ITEM_SN = #{itemSn}
+            </if>
+            <if test="sRegDt != null and sRegDt != ''">
+                <![CDATA[
+                AND REG_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+                ]]>
+            </if>
+            <if test="eRegDt != null and eRegDt != ''">
+                <![CDATA[
+                AND REG_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+                ]]>
+             </if>
+        </trim>
+    </select>
+    
+    <select id="selectMtxevdDetail001" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mtx.evd.mtxevd001.service.mapper.Mtxevd001Mapper.selectMtxevdDetail001 */
+        SELECT
+               TAXBILL_NO,
+               ITEM_SN,
+               PRDNM,
+               SPEC_NM,
+               QTY,
+               UNIT_SE_CODE,
+               UNIT_PRICE,
+               SPLPC_AMT,
+               VAT_AMT,
+               ETC_AMT,
+               VATPA,
+               VATPA_MDAT_AMT,
+               AMT_SUPL_AMT,
+               DSCNT_RT,
+               INCRS_AMT,
+               DCRS_AMT,
+               RM,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MFS_TAX_ITEM A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND TAXBILL_NO = #{taxbillNo}
+        </trim>
+    </select>
+
+    <update id="saveMtxevd001" parameterType="kr.co.dbvision.api.mtx.evd.mtxevd001.entity.Mtxevd001">
+        /* kr.co.dbvision.api.mtx.evd.mtxevd001.service.mapper.Mtxevd001Mapper.saveMtxevd001 */
+        MERGE INTO MFS_TAX_COMM A
+             USING (SELECT
+                    #{taxbillNo} TAXBILL_NO
+                    FROM DUAL) B
+                ON (
+                    A.TAXBILL_NO = B.TAXBILL_NO
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               BPLC_CODE= #{bplcCode},
+               BSNS_SE_CODE= #{bsnsSeCode},
+               PURSALE_SE_CODE= #{pursaleSeCode},
+               STTEMNT_SE_CODE= #{sttemntSeCode},
+               STTEMNT_TY_CODE= #{sttemntTyCode},
+               EVID_SE_CODE= #{evidSeCode},
+               ISU_SE_CODE= #{isuSeCode},
+               TAX_DDC_AT= #{taxDdcAt},
+               DDC_SE_CODE= #{ddcSeCode},
+               EX_TAX_DED_CODE= #{exTaxDedCode},
+               PURCHS_TY_CODE= #{purchsTyCode},
+               SALE_TY_CODE= #{saleTyCode},
+               ELCTRNEVID_SE_CODE= #{elctrnevidSeCode},
+               ELCTRN_TAXBILL_NO= #{elctrnTaxbillNo},
+               BILL_WRITE_DE= REPLACE(#{billWriteDe},'-',''),
+               BILL_ISU_DE= REPLACE(#{billIsuDe},'-',''),
+               NTX_TRNSMIS_DE= #{ntxTrnsmisDe},
+               BILL_ISU_AT= #{billIsuAt},
+               CONFM_SE_CODE= #{confmSeCode},
+               SPLPC_AMT= #{splpcAmt},
+               VAT_AMT= #{vatAmt},
+               VATPA= #{vatpa},
+               VATPA_MDAT_AMT= #{vatpaMdatAmt},
+               AMT_SUPL_AMT= #{amtSuplAmt},
+               ETC_AMT= #{etcAmt},
+               DSCNT_RT= #{dscntRt},
+               PRPDVS_RT= #{prpdvsRt},
+               BLANK_CO= #{blankCo},
+               WRITE_DEPT_CODE= #{writeDeptCode},
+               WRITE_EMPNO= #{writeEmpno},
+               BCNC_CODE= #{bcncCode},
+               BCNC_NM= #{bcncNm},
+               INDUTY= #{induty},
+               BIZCND= #{bizcnd},
+               BIZRNO= #{bizrno},
+               IHIDNUM= #{ihidnum},
+               PYMNT_SE_CODE= #{pymntSeCode},
+               REPRSNT_NM= #{reprsntNm},
+               CHARGER_NM= #{chargerNm},
+               CHARGER_EMAIL= #{chargerEmail},
+               CHARGER_TELNO= #{chargerTelno},
+               DELAYTRNSMIS_AT= #{delaytrnsmisAt},
+               PRED_RPT_MISS_AT= #{predRptMissAt},
+               LIQUOR_AT= #{liquorAt},
+               INPUT_SE_CODE= #{inputSeCode},
+               CHARGER_CONFIRM_AT= #{chargerConfirmAt},
+               ISU_STTUS_CODE= #{isuSttusCode},
+               ISU_RESULT_CN= #{isuResultCn},
+               ISSU_INSTT_BIZRNO= #{issuInsttBizrno},
+               ANACT_NO= #{anactNo},
+               ANACT_SN= #{anactSn},
+               ANACT_DE= #{anactDe},
+               ATCHMNFL_NO= #{atchmnflNo},
+               RM= #{rm},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               TAXBILL_NO,
+               BPLC_CODE,
+               BSNS_SE_CODE,
+               PURSALE_SE_CODE,
+               STTEMNT_SE_CODE,
+               STTEMNT_TY_CODE,
+               EVID_SE_CODE,
+               ISU_SE_CODE,
+               TAX_DDC_AT,
+               DDC_SE_CODE,
+               EX_TAX_DED_CODE,
+               PURCHS_TY_CODE,
+               SALE_TY_CODE,
+               ELCTRNEVID_SE_CODE,
+               ELCTRN_TAXBILL_NO,
+               BILL_WRITE_DE,
+               BILL_ISU_DE,
+               NTX_TRNSMIS_DE,
+               BILL_ISU_AT,
+               CONFM_SE_CODE,
+               SPLPC_AMT,
+               VAT_AMT,
+               VATPA,
+               VATPA_MDAT_AMT,
+               AMT_SUPL_AMT,
+               ETC_AMT,
+               DSCNT_RT,
+               PRPDVS_RT,
+               BLANK_CO,
+               WRITE_DEPT_CODE,
+               WRITE_EMPNO,
+               BCNC_CODE,
+               BCNC_NM,
+               INDUTY,
+               BIZCND,
+               BIZRNO,
+               IHIDNUM,
+               PYMNT_SE_CODE,
+               REPRSNT_NM,
+               CHARGER_NM,
+               CHARGER_EMAIL,
+               CHARGER_TELNO,
+               DELAYTRNSMIS_AT,
+               PRED_RPT_MISS_AT,
+               LIQUOR_AT,
+               INPUT_SE_CODE,
+               CHARGER_CONFIRM_AT,
+               ISU_STTUS_CODE,
+               ISU_RESULT_CN,
+               ISSU_INSTT_BIZRNO,
+               ANACT_NO,
+               ANACT_SN,
+               ANACT_DE,
+               ATCHMNFL_NO,
+               RM,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{taxbillNo},
+               #{bplcCode},
+               #{bsnsSeCode},
+               #{pursaleSeCode},
+               #{sttemntSeCode},
+               #{sttemntTyCode},
+               #{evidSeCode},
+               #{isuSeCode},
+               #{taxDdcAt},
+               #{ddcSeCode},
+               #{exTaxDedCode},
+               #{purchsTyCode},
+               #{saleTyCode},
+               #{elctrnevidSeCode},
+               #{elctrnTaxbillNo},
+               REPLACE(#{billWriteDe},'-',''),
+               REPLACE(#{billIsuDe},'-',''),
+               #{ntxTrnsmisDe},
+               #{billIsuAt},
+               #{confmSeCode},
+               #{splpcAmt},
+               #{vatAmt},
+               #{vatpa},
+               #{vatpaMdatAmt},
+               #{amtSuplAmt},
+               #{etcAmt},
+               #{dscntRt},
+               #{prpdvsRt},
+               #{blankCo},
+               #{writeDeptCode},
+               #{writeEmpno},
+               #{bcncCode},
+               #{bcncNm},
+               #{induty},
+               #{bizcnd},
+               #{bizrno},
+               #{ihidnum},
+               #{pymntSeCode},
+               #{reprsntNm},
+               #{chargerNm},
+               #{chargerEmail},
+               #{chargerTelno},
+               #{delaytrnsmisAt},
+               #{predRptMissAt},
+               #{liquorAt},
+               #{inputSeCode},
+               #{chargerConfirmAt},
+               #{isuSttusCode},
+               #{isuResultCn},
+               #{issuInsttBizrno},
+               #{anactNo},
+               #{anactSn},
+               #{anactDe},
+               #{atchmnflNo},
+               #{rm},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+    
+    <update id="saveMtxevdDetail001" parameterType="kr.co.dbvision.api.mtx.evd.mtxevd001.entity.Mtxevd001">
+        /* kr.co.dbvision.api.mtx.evd.mtxevd001.service.mapper.Mtxevd001Mapper.saveMtxevdDetail001 */
+        MERGE INTO MFS_TAX_ITEM A
+             USING (SELECT
+                    #{taxbillNo} TAXBILL_NO,
+                    #{itemSn} ITEM_SN
+                    FROM DUAL) B
+                ON (
+                    A.TAXBILL_NO = B.TAXBILL_NO AND 
+                    A.ITEM_SN = B.ITEM_SN
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               PRDNM= #{prdnm},
+               SPEC_NM= #{specNm},
+               QTY= #{qty},
+               UNIT_SE_CODE= #{unitSeCode},
+               UNIT_PRICE= #{unitPrice},
+               SPLPC_AMT= #{splpcAmt},
+               VAT_AMT= #{vatAmt},
+               ETC_AMT= #{etcAmt},
+               VATPA= #{vatpa},
+               VATPA_MDAT_AMT= #{vatpaMdatAmt},
+               AMT_SUPL_AMT= #{amtSuplAmt},
+               DSCNT_RT= #{dscntRt},
+               INCRS_AMT= #{incrsAmt},
+               DCRS_AMT= #{dcrsAmt},
+               RM= #{rm},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               TAXBILL_NO,
+               ITEM_SN,
+               PRDNM,
+               SPEC_NM,
+               QTY,
+               UNIT_SE_CODE,
+               UNIT_PRICE,
+               SPLPC_AMT,
+               VAT_AMT,
+               ETC_AMT,
+               VATPA,
+               VATPA_MDAT_AMT,
+               AMT_SUPL_AMT,
+               DSCNT_RT,
+               INCRS_AMT,
+               DCRS_AMT,
+               RM,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{taxbillNo},
+               (SELECT NVL(MAX(TO_NUMBER(ITEM_SN)),0)+1 FROM MFS_TAX_ITEM),
+               #{prdnm},
+               #{specNm},
+               #{qty},
+               #{unitSeCode},
+               #{unitPrice},
+               #{splpcAmt},
+               #{vatAmt},
+               #{etcAmt},
+               #{vatpa},
+               #{vatpaMdatAmt},
+               #{amtSuplAmt},
+               #{dscntRt},
+               #{incrsAmt},
+               #{dcrsAmt},
+               #{rm},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deleteMtxevd001" parameterType="kr.co.dbvision.api.mtx.evd.mtxevd001.entity.Mtxevd001">
+        /* kr.co.dbvision.api.mtx.evd.mtxevd001.service.mapper.Mtxevd001Mapper.deleteMtxevd001 */
+        DELETE FROM MFS_TAX_COMM
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND TAXBILL_NO = #{taxbillNo}
+        </trim>
+    </delete>
+    
+    <delete id="deleteMtxevdDetail001" parameterType="kr.co.dbvision.api.mtx.evd.mtxevd001.entity.Mtxevd001">
+        /* kr.co.dbvision.api.mtx.evd.mtxevd001.service.mapper.Mtxevd001Mapper.deleteMtxevdDetail001 */
+        DELETE FROM MFS_TAX_ITEM
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND TAXBILL_NO = #{taxbillNo}
+                AND ITEM_SN = #{itemSn}
+        </trim>
+    </delete>
+</mapper>

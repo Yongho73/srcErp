@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.ynd.yta.yndyta009.service.mapper.Yndyta009Mapper">
+
+    <select id="selectYndyta009List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.ynd.yta.yndyta009.service.mapper.Yndyta009Mapper.selectYndyta009List */
+        SELECT
+               BELONG_YY,
+               SERIAL_NO,
+               LMT_RT,
+               TAXT_LWLT_AMT,
+               TAXT_UPLMT_AMT,
+               STDR_AMT,
+               LMT_AMT,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM YND_TAXT_STD A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="belongYy != null and belongYy != ''">
+                AND BELONG_YY = #{belongYy}
+            </if>
+            <if test="serialNo != null and serialNo != ''">
+                AND SERIAL_NO = #{serialNo}
+            </if>
+            <if test="sRegDt != null and sRegDt != ''">
+                <![CDATA[
+                AND REG_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+                ]]>
+            </if>
+            <if test="eRegDt != null and eRegDt != ''">
+                <![CDATA[
+                AND REG_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+                ]]>
+             </if>
+        </trim>
+    </select>
+
+    <select id="selectYndyta009" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.ynd.yta.yndyta009.service.mapper.Yndyta009Mapper.selectYndyta009 */
+        SELECT
+               BELONG_YY,
+               SERIAL_NO,
+               LMT_RT,
+               TAXT_LWLT_AMT,
+               TAXT_UPLMT_AMT,
+               STDR_AMT,
+               LMT_AMT,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM YND_TAXT_STD A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="belongYy != null and belongYy != ''">
+                AND BELONG_YY = #{belongYy}
+            </if>
+            <if test="serialNo != null and serialNo != ''">
+                AND SERIAL_NO = #{serialNo}
+            </if>
+        </trim>
+    </select>
+
+    <update id="saveYndyta009" parameterType="kr.co.dbvision.api.ynd.yta.yndyta009.entity.Yndyta009">
+        /* kr.co.dbvision.api.ynd.yta.yndyta009.service.mapper.Yndyta009Mapper.saveYndyta009 */
+        MERGE INTO YND_TAXT_STD A
+             USING (SELECT
+                    #{belongYy} BELONG_YY,
+                    #{serialNo} SERIAL_NO
+                    FROM DUAL) B
+                ON (
+                    A.BELONG_YY = B.BELONG_YY AND 
+                    A.SERIAL_NO = B.SERIAL_NO
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               LMT_RT= #{lmtRt},
+               TAXT_LWLT_AMT= #{taxtLwltAmt},
+               TAXT_UPLMT_AMT= #{taxtUplmtAmt},
+               STDR_AMT= #{stdrAmt},
+               LMT_AMT= #{lmtAmt},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               BELONG_YY,
+               SERIAL_NO,
+               LMT_RT,
+               TAXT_LWLT_AMT,
+               TAXT_UPLMT_AMT,
+               STDR_AMT,
+               LMT_AMT,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{belongYy},
+               #{serialNo},
+               #{lmtRt},
+               #{taxtLwltAmt},
+               #{taxtUplmtAmt},
+               #{stdrAmt},
+               #{lmtAmt},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deleteYndyta009" parameterType="kr.co.dbvision.api.ynd.yta.yndyta009.entity.Yndyta009">
+        /* kr.co.dbvision.api.ynd.yta.yndyta009.service.mapper.Yndyta009Mapper.deleteYndyta009 */
+        DELETE FROM YND_TAXT_STD
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="belongYy != null and belongYy != ''">
+                AND BELONG_YY = #{belongYy}
+            </if>
+            <if test="serialNo != null and serialNo != ''">
+                AND SERIAL_NO = #{serialNo}
+            </if>
+        </trim>
+    </delete>
+    
+    <select id="findSaveYndyta009" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.ynd.yta.yndyta009.service.mapper.Yndyta009Mapper.findSaveYndyta009 */
+        SELECT
+               BELONG_YY,
+               SERIAL_NO,
+               LMT_RT,
+               TAXT_LWLT_AMT,
+               TAXT_UPLMT_AMT,
+               STDR_AMT,
+               LMT_AMT,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM YND_TAXT_STD A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <![CDATA[
+            ROWNUM <= 1
+            ]]>
+            <if test="belongYy != null and belongYy != ''">
+                AND BELONG_YY = #{belongYy}
+            </if>
+        </trim>
+    </select>
+    
+    <update id="insertCopyYndyta009" parameterType="kr.co.dbvision.api.ynd.yta.yndyta008.entity.Yndyta008">
+     /* kr.co.dbvision.api.ynd.yta.yndyta009.service.mapper.Yndyta009Mapper.insertCopyYndyta009 */
+        INSERT INTO YND_TAXT_STD (
+           BELONG_YY,
+           SERIAL_NO, 
+           LMT_RT, 
+           TAXT_LWLT_AMT, 
+           TAXT_UPLMT_AMT, 
+           STDR_AMT, 
+           LMT_AMT,
+           REG_ID, 
+           REG_DT ) 
+       SELECT
+           #{belongYy}, 
+           SERIAL_NO, 
+           LMT_RT, 
+           TAXT_LWLT_AMT, 
+           TAXT_UPLMT_AMT, 
+           STDR_AMT, 
+           LMT_AMT,
+           #{regId}, 
+           SYSDATE AS REG_DT
+       FROM YND_TAXT_STD A
+       WHERE  BELONG_YY = TO_CHAR(TO_NUMBER(#{belongYy})-1)
+       ORDER BY SERIAL_NO
+    
+    </update>
+</mapper>

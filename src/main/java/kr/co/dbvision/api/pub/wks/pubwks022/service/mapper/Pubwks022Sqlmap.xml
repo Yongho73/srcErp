@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.pub.wks.pubwks022.service.mapper.Pubwks022Mapper">
+
+    <select id="selectElctsctSttusCodePubwks022" parameterType="egovMapForNull" resultType="egovMapForNull">
+        SELECT
+            EMPNO,
+            ELCTSCT_STTUS_CODE,
+            FNC_COMCODENM('C197',ELCTSCT_STTUS_CODE) AS ELCTSCT_STTUS_CODE_NM,
+            ELCTSCT_SE_SN
+        FROM
+            MHS_INDVDL_HVOF_MGRT
+        WHERE
+                EMPNO = #{empno}
+                AND
+                HVOF_YM = #{hvofYm}
+                AND
+                ELCTSCT_SE_SN = #{elctsctSeSn}
+                <if test="elctsctSttusCode != null and elctsctSttusCode != ''">
+                AND ELCTSCT_STTUS_CODE = #{elctsctSttusCode}
+                </if>
+                AND ROWNUM = 1
+    </select>
+
+    <select id="selectEmpnoElctsctSeSnPubwks022" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.pub.wks.pubwks022.service.mapper.Pubwks022Mapper.selectEmpnoSttusCodePubwks022 */
+        SELECT
+               EMPNO,
+               MAX(ELCTSCT_SE_SN) AS ELCTSCT_SE_SN,
+               MAX(HVOF_YM) AS HVOF_YM
+          FROM MHS_INDVDL_HVOF_MGRT A
+          WHERE
+               HVOF_YM = #{hvofYm}
+               <if test="empno != '' and empno != null">
+                AND EMPNO = #{empno}
+               </if>
+          GROUP BY EMPNO
+    </select>
+
+    <select id="selectEmpListPubwks022" parameterType="egovMapForNull" resultType="egovMapForNull">
+    /* kr.co.dbvision.api.pub.wks.pubwks022.service.mapper.Pubwks022Mapper.selectEmpListPubwks022 */
+        SELECT
+            A.EMPNO,
+            A.KOR_NM,
+            A.DEPT_CODE,
+            FNC_GETDEPTNM(A.DEPT_CODE) AS DEPT_CODE_NM
+        FROM
+            MHS_EMP A
+        WHERE
+            1=1
+            <choose>
+	            <when test="empnoArr.size != 0">            
+		            AND A.EMPNO IN 
+		            <foreach item="item" index="index" collection="empnoArr" open="(" separator="," close=")"> 
+		                   #{item} 
+		            </foreach>
+	            </when>	            
+                <otherwise>
+                    AND A.EMPNO = ''
+                </otherwise>            
+            </choose>
+            <if test="deptCode != null and deptCode != ''">
+                AND A.DEPT_CODE = #{deptCode}
+            </if>
+    </select>
+
+    <update id="updateBundleSttusPubwks022" parameterType="kr.co.dbvision.api.pub.wks.pubwks022.entity.Pubwks022">
+        UPDATE MHS_INDVDL_HVOF_MGRT
+        SET 
+            ELCTSCT_STTUS_CODE = #{elctsctSttusCode}
+            ,
+            RETURN_RESN = #{returnResn}
+            ,
+            UPT_DT = SYSDATE
+            ,
+            UPT_ID = #{regId}
+        WHERE
+            EMPNO = #{empno}
+            AND
+            HVOF_YM = #{hvofYm}
+            AND
+            ELCTSCT_SE_SN = #{elctsctSeSn}
+            <choose>
+                <when test="elctsctSttusCode == '001' and elctsctSttusCode != null and elctsctSttusCode != ''">
+                    AND ELCTSCT_STTUS_CODE IS NULL
+                </when>
+                <when test="elctsctSttusCode == '002' and elctsctSttusCode != null and elctsctSttusCode != ''">
+                    AND ELCTSCT_STTUS_CODE = '001'
+                </when>
+                <when test="elctsctSttusCode == '003' and elctsctSttusCode != null and elctsctSttusCode != ''">
+                    AND ELCTSCT_STTUS_CODE = '001'
+                </when>
+            </choose>
+    </update>
+    
+    <select id="copyBeforeElctsctSeSnCheck" parameterType="egovMapForNull" resultType="java.lang.Integer">
+    /* kr.co.dbvision.api.pub.wks.pubwks022.service.mapper.Pubwks022Mapper.copyBeforeElctsctSeSnCheck */
+        SELECT COUNT(*)
+        FROM MHS_INDVDL_HVOF_MGRT
+        WHERE 
+            EMPNO = #{empno}
+            AND
+            HVOF_YM = #{hvofYm}
+            AND
+            <![CDATA[
+                ELCTSCT_SE_SN > #{elctsctSeSn} 
+            ]]>
+        ORDER BY EMPNO ASC
+    </select>
+
+    <insert id="copyPubwks022" parameterType="egovMapForNull">
+        INSERT INTO MHS_INDVDL_HVOF_MGRT
+        (
+            HVOF_DE,
+            EMPNO,
+            ELCTSCT_SE_SN,
+            HVOF_YM,
+            WDAY_CODE,
+            REG_DT,
+            REG_ID            
+        )
+        (SELECT
+            HVOF_DE,
+            EMPNO,
+            #{elctsctSeSn} + 1,
+            HVOF_YM,
+            WDAY_CODE,
+            SYSDATE,
+            #{regId}
+         FROM MHS_INDVDL_HVOF_MGRT
+         WHERE 
+            EMPNO = #{empno}
+            AND
+            HVOF_YM = #{hvofYm}
+            AND
+            ELCTSCT_STTUS_CODE = '003'
+            AND
+            ELCTSCT_SE_SN = #{elctsctSeSn}
+        )
+        
+    </insert>
+
+    <select id="selectJobDeForBundleSave" parameterType="egovMapForNull" resultType="egovMapForNull">
+           /* kr.co.dbvision.api.pub.wks.pubwks022.service.mapper.Pubwks022Mapper.selectJobDeForBundleSave */
+        SELECT
+            A.JOB_DE,
+            A.DE_SE_CODE,
+            FNC_COMCODENM('C127' , A.DE_SE_CODE) AS DE_SE_CODE_NM,
+            A.HVOF_AT
+        FROM STM_JOB_DAY A
+        WHERE
+            A.JOB_DE LIKE #{hvofYm} || '%'
+            AND
+            A.DE_SE_CODE IN 
+            <foreach item="item" index="index" collection="deSeCodeArr" open="(" separator="," close=")"> 
+                #{item} 
+            </foreach>
+        ORDER BY A.JOB_DE
+    </select>
+
+    <select id="bundleSaveBeforeCheckSttusCode" parameterType="egovMapForNull" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM MHS_INDVDL_HVOF_MGRT
+        WHERE
+            EMPNO = #{empno}
+            AND
+            HVOF_DE = #{hvofDe}
+            AND
+            ELCTSCT_SE_SN = (SELECT MAX(ELCTSCT_SE_SN)
+                             FROM MHS_INDVDL_HVOF_MGRT
+                             WHERE
+                                EMPNO = #{empno}
+                                AND
+                                HVOF_DE = #{hvofDe})
+    </select>
+
+    <select id="saveBeforeCheckSttusCode" parameterType="kr.co.dbvision.api.pub.wks.pubwks022.entity.Pubwks022" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM MHS_INDVDL_HVOF_MGRT
+        WHERE
+            EMPNO = #{empno}
+            AND
+            HVOF_DE = #{hvofDe}
+            AND
+            ELCTSCT_SE_SN = (SELECT MAX(ELCTSCT_SE_SN)
+                             FROM MHS_INDVDL_HVOF_MGRT
+                             WHERE
+                                EMPNO = #{empno}
+                                AND
+                                HVOF_DE = #{hvofDe})
+            AND
+            (ELCTSCT_STTUS_CODE NOT IN ('20' , '40') OR ELCTSCT_STTUS_CODE IS NOT NULL)                               
+    </select>
+
+    <select id="selectCalendar" parameterType="kr.co.dbvision.api.pub.wks.pubwks022.entity.Pubwks022" resultType="egovMapForNull">
+    /* kr.co.dbvision.api.pub.wks.pubwks022.service.mapper.Pubwks022Mapper.selectCalendar */
+        SELECT
+            A.JOB_DE,
+            A.DE_SE_CODE,
+            FNC_COMCODENM('C127' , A.DE_SE_CODE) AS DE_SE_CODE_NM,
+            A.HVOF_AT
+        FROM STM_JOB_DAY A
+        WHERE
+            A.JOB_DE LIKE #{hvofDe} || '%'
+        ORDER BY A.JOB_DE
+    </select>
+
+    <select id="selectPubwks022List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.pub.wks.pubwks022.service.mapper.Pubwks022Mapper.selectPubwks022List */
+        SELECT
+               HVOF_DE,
+               EMPNO,
+               ELCTSCT_SE_SN,
+               HVOF_YM,
+               WDAY_CODE,
+               ELCTSCT_DOC_NO,
+               ELCTSCT_STTUS_CODE,
+               FNC_COMCODENM('C197' , A.ELCTSCT_STTUS_CODE) AS ELCTSCT_STTUS_CODE_NM,
+               ELCTSCT_EMPNO,
+               RETURN_RESN,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_INDVDL_HVOF_MGRT A
+          WHERE
+                1=1
+                <if test="hvofYm != '' and hvofYm != null">
+                AND HVOF_YM = #{hvofYm}
+                </if>
+                <if test="empno != '' and empno != null">
+                AND EMPNO = #{empno}
+                </if>
+                <if test="elctsctSeSn != null and elctsctSeSn != ''">
+                AND ELCTSCT_SE_SN = #{elctsctSeSn}
+                </if>
+                <if test="elctsctSttusCode != null and elctsctSttusCode != ''">
+                AND ELCTSCT_STTUS_CODE = #{elctsctSttusCode}
+                </if>
+          ORDER BY  EMPNO ASC
+    </select>
+
+    <select id="selectPubwks022" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.pub.wks.pubwks022.service.mapper.Pubwks022Mapper.selectPubwks022 */
+        SELECT
+               HVOF_DE,
+               EMPNO,
+               ELCTSCT_SE_SN,
+               HVOF_YM,
+               WDAY_CODE,
+               ELCTSCT_DOC_NO,
+               ELCTSCT_STTUS_CODE,
+               ELCTSCT_EMPNO,
+               RETURN_RESN,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_INDVDL_HVOF_MGRT A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="hvofDe != null and hvofDe != ''">
+                AND HVOF_DE = #{hvofDe}
+            </if>
+            <if test="empno != null and empno != ''">
+                AND EMPNO = #{empno}
+            </if>
+            <if test="elctsctSeSn != null and elctsctSeSn != ''">
+                AND ELCTSCT_SE_SN = #{elctsctSeSn}
+            </if>
+        </trim>
+    </select>
+
+    <update id="savePubwks022" parameterType="kr.co.dbvision.api.pub.wks.pubwks022.entity.Pubwks022">
+        /* kr.co.dbvision.api.pub.wks.pubwks022.service.mapper.Pubwks022Mapper.savePubwks022 */
+        INSERT INTO MHS_INDVDL_HVOF_MGRT(
+
+               HVOF_DE,
+               EMPNO,
+               ELCTSCT_SE_SN,
+               HVOF_YM,
+               WDAY_CODE,
+               ELCTSCT_DOC_NO,
+               ELCTSCT_STTUS_CODE,
+               ELCTSCT_EMPNO,
+               RETURN_RESN,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               REPLACE(#{hvofDe},'-',''),
+               #{empno},
+               (SELECT NVL(MAX(ELCTSCT_SE_SN),1)
+                FROM MHS_INDVDL_HVOF_MGRT
+                WHERE
+                    EMPNO = #{empno}
+                    AND
+                    HVOF_YM = #{hvofYm}),
+               #{hvofYm},
+               #{wdayCode},
+               #{elctsctDocNo},
+               #{elctsctSttusCode},
+               #{elctsctEmpno},
+               #{returnResn},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deletePubwks022" parameterType="kr.co.dbvision.api.pub.wks.pubwks022.entity.Pubwks022">
+        /* kr.co.dbvision.api.pub.wks.pubwks022.service.mapper.Pubwks022Mapper.deletePubwks022 */
+        DELETE FROM MHS_INDVDL_HVOF_MGRT
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND HVOF_DE = #{hvofDe}
+                AND EMPNO = #{empno}
+                AND ELCTSCT_SE_SN = #{elctsctSeSn}
+                AND ELCTSCT_STTUS_CODE IS NULL
+        </trim>
+    </delete>
+</mapper>

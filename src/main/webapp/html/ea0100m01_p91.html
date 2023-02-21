@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html class="no-js" lang="ko">
+<HEAD>
+<META content="IE=11.0000" http-equiv="X-UA-Compatible">
+<META charset="UTF-8">
+<META http-equiv="Content-Script-Type" content="text/javascript; charet=utf-8">
+<META http-equiv="Content-Style-Type" content="text/css; charet=utf-8">
+<META name="HandheldFriendly" content="True">
+<META http-equiv="cleartype" content="on">
+<META http-equiv="X-UA-Compatible" content="IE=edge">
+<META http-equiv="Expires" content="-1">
+<META http-equiv="Pragma" content="no-cache">
+<META http-equiv="Cache-Control" content="no-cache">
+<META content="DBVision-XERP" property="og:title">
+<META name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, minimum-scale=1.0, user-scalable=yes">
+<META name="keywords" content="DBVision-XERP">
+<META name="description" content="DBVision-XERP">
+
+<LINK href="../img/icon/dbv.ico" rel="shortcut icon" type="image/x-icon">
+
+<TITLE>XERP</TITLE>
+
+<LINK href="../css/dhtmlx/skin/dhtmlx.css" rel="stylesheet" type="text/css">
+<LINK href="../glyphicons/css/bootstrap-glyphicons.css" rel="stylesheet" type="text/css">
+
+<!-- jquery -->
+<SCRIPT src="../js/jquery-1.11.1.min.js"></SCRIPT>
+<SCRIPT src="../js/jquery-ui-custom.min.js"></SCRIPT>
+ 
+<!-- css -->
+<LINK href="../css/sub.css" rel="stylesheet" type="text/css">
+
+</HEAD>
+
+
+<body>
+	<!--컨텐츠-->
+		<div class="path_info" style="">
+             <ul id="menu_path" style=""><li><a class="home" href="#n"></a></li><li><a href="#"> 전자결재 </a></li><li><a href="#"> 기본설정 </a></li><li><a href="#">결재환경설정</a></li></ul>
+        </div>
+        
+        <DIV class="btn" style="float:right;text-align:right; vertical-align:middle;">
+				
+				<BUTTON class="btn_common02_new" id="btnSave" type="button">
+					<SPAN class="glyphicon glyphicon-ok"></SPAN> 저장
+				</BUTTON>
+				<BUTTON class="btn_common02_new" id="btn_help" type="button">
+					<SPAN class="glyphicon glyphicon-question-sign"></SPAN> 도움말
+				</BUTTON>
+				<BUTTON class="btn_common02_new" id="btnRemove" type="button">
+					<SPAN class="glyphicon glyphicon-remove"></SPAN> 닫기
+				</BUTTON>
+			</DIV>
+        
+	<!--//tabl_box-->
+	<DIV class="tabl_box">
+		<!-- //tabl-1 -->
+	
+			<DIV class="detail_type01"  style="margin-top:45px;">
+				<FORM id="saveFormStmBtn">
+					<TABLE>
+						<CAPTION>버튼</CAPTION>
+						<COLGROUP>
+							<COL width="20">
+							<COL width="130">
+							<COL width="">
+						</COLGROUP>
+						<TBODY>
+							<TR>
+								<TH colspan="2" class="al" style="min-width:180px">결재예정인 결재정보 사전 열람</TH>
+								<td>
+									<input type="radio" name="editer" value="web_modify" id="web_modify" checked> <label for="web_modify"><span></span>적용</label>&nbsp;&nbsp;&nbsp;<input type="radio" name="editer" value="hwp_modify" id="hwp_modify"/> <label for="hwp_modify"><span></span>미적용</label>
+									<p class="mt5">* 적   용 : (결재진행) 메뉴에 결재예정인 받을 결재문서를 포함하여 목록 제공</p>
+									<p>* 미적용 : (결재진행) 메뉴에 로그인 사용자가 결재처리한 경우에만 목록 제공</p>
+								</td>
+							</TR>
+							<TR>
+								<TH colspan="2" class="al">직인 이미지 등록</TH>
+								<TD>
+									<INPUT style="width: 40%;" title="File_Route" type="text" readonly>
+									<label>
+										<BUTTON class="btn_common02_new" id="btnNew" type="button" style="vertical-align:top">찾아보기</BUTTON>
+									</label>
+									<BUTTON class="btn_common02_new" id="btnNew" type="button" style="vertical-align:top">파일전송</BUTTON>
+									
+									<div style="border:1px solid #ddd;width:40%;margin:3px 0;text-align:center;height:10px;border-radius:10px;font-size:9px;line-height:9px;">
+										<span style="color:#aaa">0%</span>
+									</div>
+								</TD>
+							</TR>	
+							<TR>
+								<TH colspan="2" class="al">서명표기방식</TH>
+								<TD>
+									<div style="vertical-align:middle;line-height:20px;margin:3px;">
+										<input type="radio" name="sign_type" value="list" id="list" checked> <label for="list">결재자 표기 방식 (나열식)<br>
+										<img src="../img/sub/signseting_listtype.jpg" alt="결재자 표 형식 표기 예시">
+										</label><br>
+										<input type="radio" name="sign_type" value="table" id="table"/> <label for="table">결재자 표기 방식 (표 형식)<br>
+										<img src="../img/sub/signseting_tabletype.jpg" alt="결재자 표 형식 표기 예시"><br>
+										* 서명표기방식은 결재자가 서명(승인/반려)한 경우 웹기안기에 제공되는 서명란의 표기방식
+
+										</label>
+									</div>
+								</TD>
+							</TR>
+							
+						</TBODY>
+					</TABLE>
+				</FORM>
+			</DIV>
+			<!--//detail_type01-->
+
+		
+		
+</BODY>
+</HTML>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE form-validation PUBLIC
+    "-//Apache Software Foundation//DTD Commons Validator Rules Configuration 1.1//EN"
+    "http://jakarta.apache.org/commons/dtds/validator_1_1.dtd">
+
+<form-validation>
+
+    <formset>
+        <form name="Mfsbsc007">
+            <field property="mgrtItemSn" depends="required">
+                <arg0 key="관리항목순번는"/>
+            </field>
+            <field property="acntCode" depends="required">
+                <arg0 key="계정코드는"/>
+            </field>
+            <field property="drcrSeCode" depends="required">
+                <arg0 key="차변대변 구분 코드는"/>
+            </field>
+        </form>
+    </formset>
+
+</form-validation>

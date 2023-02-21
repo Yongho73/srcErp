@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.lib.taglib.system.setting.service.mapper.SystemSettingMapper">
+    <select id="selectSetting" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.lib.taglib.system.setting.service.impl.SystemSettingMapper.selectSetting */
+        SELECT BPLC_CODE,                      /* 사업장코드 */
+               PRDUCT_USE_ITEM,                /* 제품 사용 항목 */
+               MODULE_USE_ITEM,                /* 모듈 사용 항목 */
+               PGNG_UNIT,                      /* 페이징단위 (C133) */
+               MASK_MTH_CODE,                  /* 마스킹방법코드 */
+               EMPNO_ENT_MTH,                  /* 사원번호생성방법 (C129) */
+               LANG_SE_CODE,                   /* 언어구분코드 C131 */
+               SEARCH_PD_SETTING_CODE,         /* 검색기간설정코드 C132 */
+               MULTI_LOGIN_PERM_AT,            /* 다중로그인허용여부(0|1) */
+               SALARY_DCMLPOINT_PROCESS_MTH,   /* 급여소수점처리방법C032 */
+               DCMLPOINT_PROCESS_MTH,          /* 소수점 처리 방법 C032 */
+               PASSWORD_SETTING_MTH,           /* 비밀번호설정방법(C136) */
+               PASSWORD_CHANGE_CYCLE,          /* 비밀번호변경주기(C135) */
+               NEXT_CHANGE_AT,                 /* 비밀번호 다음변경 허용 여부(0|1) */
+               SELF_AUTH_MTH,                  /* 개인정보인증 방법(예를 들어 급여명세서 확인시 주민번호앞자리|뒷자리) */
+               SKN_SE_CODE,                    /* 화면 스킨 구분 코드 */
+               REG_DT,                         /* 등록일자 */
+               REG_ID,                         /* 등록자ID */
+               UPT_DT,                         /* 수정일자 */
+               UPT_ID                          /* 수정자ID */
+          FROM STM_ENV_SETTING
+    </select>
+</mapper>

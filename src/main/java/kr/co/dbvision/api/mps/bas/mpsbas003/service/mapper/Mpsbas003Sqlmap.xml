@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mps.bas.mpsbas003.service.mapper.Mpsbas003Mapper">
+
+    <select id="selectMpsSimplctyTaxtblList" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.bas.mpsbas003.service.impl.Mpsbas003Mapper.selectMpsSimplctyTaxtblList */
+        SELECT
+               APPLC_BEGIN_YM,
+               LWLT_AMT,
+               UPLMT_AMT,
+               APPLC_END_YM,
+               FAMILY1_TAX,
+               FAMILY2_TAX,
+               FAMILY3_TAX,
+               FAMILY4_TAX,
+               FAMILY5_TAX,
+               FAMILY6_TAX,
+               FAMILY7_TAX,
+               FAMILY8_TAX,
+               FAMILY9_TAX,
+               FAMILY10_TAX,
+               FAMILY11_TAX,
+               TO_CHAR(REG_DT,'YYYY-MM-DD HH24:MI:SS') AS REG_DT,
+               REG_ID,
+               TO_CHAR(UPT_DT,'YYYY-MM-DD HH24:MI:SS') AS UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+           FROM   MPS_SIMPLCTY_TAXTBL A
+          WHERE  APPLC_END_YM = (SELECT  MAX(APPLC_END_YM)
+                                   FROM  MPS_SIMPLCTY_TAXTBL  
+                                  WHERE  #{applcYm} BETWEEN APPLC_BEGIN_YM AND APPLC_END_YM OR  #{applcYm} <![CDATA[>=]]> APPLC_END_YM )		
+		 ORDER BY APPLC_BEGIN_YM, LWLT_AMT
+     
+    </select>
+
+    <select id="selectMpsSimplctyTaxtbl" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.bas.mpsbas003.service.impl.Mpsbas003Mapper.selectMpsSimplctyTaxtbl */
+        SELECT
+               APPLC_BEGIN_YM,
+               LWLT_AMT,
+               UPLMT_AMT,
+               APPLC_END_YM,
+               FAMILY1_TAX,
+               FAMILY2_TAX,
+               FAMILY3_TAX,
+               FAMILY4_TAX,
+               FAMILY5_TAX,
+               FAMILY6_TAX,
+               FAMILY7_TAX,
+               FAMILY8_TAX,
+               FAMILY9_TAX,
+               FAMILY10_TAX,
+               FAMILY11_TAX,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MPS_SIMPLCTY_TAXTBL A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="applcBeginYm != null and applcBeginYm != ''">
+                AND APPLC_BEGIN_YM = #{applcBeginYm}
+            </if>
+            <if test="lwltAmt != null and lwltAmt != ''">
+                AND LWLT_AMT = #{lwltAmt}
+            </if>
+            <if test="uplmtAmt != null and uplmtAmt != ''">
+                AND UPLMT_AMT = #{uplmtAmt}
+            </if>
+        </trim>
+    </select>
+
+    <insert id="insertMpsSimplctyTaxtbl" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mps.bas.mpsbas003.service.impl.Mpsbas003Mapper.insertMpsSimplctyTaxtbl */
+        INSERT INTO MPS_SIMPLCTY_TAXTBL
+        (
+            APPLC_BEGIN_YM,
+            LWLT_AMT,
+            UPLMT_AMT,
+            APPLC_END_YM,
+            FAMILY1_TAX,
+            FAMILY2_TAX,
+            FAMILY3_TAX,
+            FAMILY4_TAX,
+            FAMILY5_TAX,
+            FAMILY6_TAX,
+            FAMILY7_TAX,
+            FAMILY8_TAX,
+            FAMILY9_TAX,
+            FAMILY10_TAX,
+            FAMILY11_TAX,
+            REG_DT,
+            REG_ID
+        )
+        VALUES
+        (
+            #{applcBeginYm},
+            #{lwltAmt},
+            #{uplmtAmt},
+            #{applcEndYm},
+            #{family1Tax},
+            #{family2Tax},
+            #{family3Tax},
+            #{family4Tax},
+            #{family5Tax},
+            #{family6Tax},
+            #{family7Tax},
+            #{family8Tax},
+            #{family9Tax},
+            #{family10Tax},
+            #{family11Tax},
+            SYSDATE,
+            #{regId}
+        )
+    </insert>
+
+    <update id="updateMpsSimplctyTaxtbl" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mps.bas.mpsbas003.service.impl.Mpsbas003Mapper.updateMpsSimplctyTaxtbl */
+        UPDATE MPS_SIMPLCTY_TAXTBL SET
+
+               APPLC_END_YM= #{applcEndYm},
+               FAMILY1_TAX= #{family1Tax},
+               FAMILY2_TAX= #{family2Tax},
+               FAMILY3_TAX= #{family3Tax},
+               FAMILY4_TAX= #{family4Tax},
+               FAMILY5_TAX= #{family5Tax},
+               FAMILY6_TAX= #{family6Tax},
+               FAMILY7_TAX= #{family7Tax},
+               FAMILY8_TAX= #{family8Tax},
+               FAMILY9_TAX= #{family9Tax},
+               FAMILY10_TAX= #{family10Tax},
+               FAMILY11_TAX= #{family11Tax},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+               AND APPLC_BEGIN_YM = #{applcBeginYm}
+               AND LWLT_AMT = #{lwltAmt}
+               AND UPLMT_AMT = #{uplmtAmt}
+        </trim>
+    </update>
+
+    <delete id="deleteMpsSimplctyTaxtbl" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mps.bas.mpsbas003.service.impl.Mpsbas003Mapper.deleteMpsSimplctyTaxtbl */
+        DELETE FROM MPS_SIMPLCTY_TAXTBL
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND APPLC_BEGIN_YM = #{applcBeginYm}
+                AND LWLT_AMT = #{lwltAmt}
+                AND UPLMT_AMT = #{uplmtAmt}
+        </trim>
+    </delete>
+</mapper>

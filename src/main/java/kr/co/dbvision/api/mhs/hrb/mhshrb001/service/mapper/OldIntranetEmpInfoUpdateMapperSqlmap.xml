@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mhs.hrb.mhshrb001.service.mapper.OldIntranetEmpInfoUpdateMapper">
+
+    <insert id="insertOldIntraEmp" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrb.mhshrb001.service.impl.OldIntranetEmpInfoUpdateMapper.insertOldIntraEmp */
+		INSERT INTO DBVISION_INTRA.GW_STAFF (
+		    FACNO,
+		    STAFFNO,
+		    TEAMCD,
+		    SGRADE,
+		    SNM,
+			DELYN,
+			STEP1,
+			STEP2,
+			STEP3,
+			STEP4,
+			STEP5,
+			JPOS,
+			STEP6,
+			STEP7,
+			STEP8,
+			EMP_NO,
+			DEPT,
+			ATCH_FILE_ID
+		) VALUES (
+		    1,
+		    (SELECT NVL(MAX(STAFFNO),0)+ 1 FROM DBVISION_INTRA.GW_STAFF),
+		    DECODE(#{deptCode},'8100','1','8200','3','8300','4','8400','5','8500','0'),
+		    DECODE(#{rspofcCode},'100','4','200','3','300','2','400','1','500','5','1'),
+		    #{korNm},
+		    'N',
+		    0,
+		    0,
+		    0,
+		    0,
+		    0,
+		    (SELECT A.CLSF_NM FROM MHS_CLSF_CODE A WHERE A.USE_AT = '1' AND A.CLSF_CODE = #{clsfCode}),
+		    0,
+		    0,
+		    0,
+		    #{empno},
+		    (SELECT A.DEPT_KOR_NM FROM MHS_DEPT A WHERE A.USE_AT = '1' AND A.DEPT_CODE = #{deptCode}),
+		    #{photoAtchmnflNo}
+        )
+    </insert>
+
+    <update id="updateOldIntraEmp" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrb.mhshrb001.service.impl.OldIntranetEmpInfoUpdateMapper.updateOldIntraEmp */
+        UPDATE DBVISION_INTRA.GW_STAFF SET
+		    TEAMCD = DECODE(#{deptCode},'8100','1','8200','3','8300','4','8400','5','8500','0'),
+		    SGRADE = DECODE(#{rspofcCode},'100','4','200','3','300','2','400','1','500','5','1'),                                      
+		    SNM = #{korNm},
+			JPOS = (SELECT A.CLSF_NM FROM MHS_CLSF_CODE A WHERE A.USE_AT = '1' AND A.CLSF_CODE = #{clsfCode}),
+			DEPT =  (SELECT A.DEPT_KOR_NM FROM MHS_DEPT A WHERE A.USE_AT = '1' AND A.DEPT_CODE = #{deptCode}),
+			ATCH_FILE_ID = #{photoAtchmnflNo} 
+         WHERE EMP_NO = #{empno}
+    </update>
+    
+    <delete id="deleteOldIntraEmp" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrb.mhshrb001.service.impl.OldIntranetEmpInfoUpdateMapper.deleteOldIntraEmp */
+        UPDATE DBVISION_INTRA.GW_STAFF SET
+			DELYN = 'Y'
+         WHERE EMP_NO = #{empno}
+    </delete>
+   
+   
+   <update id="saveOldIntraId" parameterType="kr.co.dbvision.api.stm.mng.stmmng001.entity.Stmmng001">
+        /* kr.co.dbvision.api.mhs.hrb.mhshrb001.service.impl.OldIntranetEmpInfoUpdateMapper.updateOldIntraId */
+        MERGE INTO DBVISION_INTRA.GW_STAFF A
+        USING DUAL 
+		ON (
+			A.EMP_NO = #{empno}
+		)
+		WHEN MATCHED THEN 
+        UPDATE SET
+	        SID = #{userId},      
+	        SPWD = DBVISION_INTRA.CRYPTSTRING.encrypt(#{userPassword},'key'),                 
+		    SNM = #{userNm},
+			STAMPOS = #{userId}||'.png'
+         WHEN NOT MATCHED THEN 
+	     INSERT (
+	     	FACNO,
+		    STAFFNO,
+		    SID,
+		    TEAMCD,
+		    SPWD,
+		    SGRADE,
+		    SNM,
+			DELYN,
+			STEP1,
+			STAMPOS,
+			STEP2,
+			STEP3,
+			STEP4,
+			STEP5,
+			JPOS,
+			STEP6,
+			STEP7,
+			STEP8,
+			EMP_NO,
+			DEPT
+		) VALUES (
+		    1,
+		    (SELECT NVL(MAX(STAFFNO),0)+ 1 FROM DBVISION_INTRA.GW_STAFF),
+		    #{userId},
+		    DECODE((SELECT DEPT_CODE FROM MHS_EMP B WHERE B.EMPNO = #{empno}),'8100','5','8200','3','8300','4','8400','5','8500','0'),
+		    DBVISION_INTRA.CRYPTSTRING.encrypt(#{userPassword},'key'),
+		    DECODE((SELECT B.RSPOFC_CODE FROM MHS_EMP B WHERE B.EMPNO = #{empno}),'400','1','2'),
+		    #{userNm},
+		    'N',
+		    0,
+		    #{userId}||'.png',
+		    0,
+		    0,
+		    0,
+		    0,
+		    (SELECT FNC_GETCLSFNM(CLSF_CODE) FROM MHS_EMP B WHERE B.EMPNO = #{empno}),
+		    0,
+		    0,
+		    0,
+		    #{empno},
+		    (SELECT FNC_GETDEPTNM(DEPT_CODE) FROM MHS_EMP B WHERE B.EMPNO = #{empno})
+		    <!-- (SELECT A.DEPT_KOR_NM FROM MHS_DEPT A WHERE A.USE_AT = '1' AND A.EMP_NO = #{deptCode}) -->
+        )
+    </update>
+
+    <update id="updateNewIntraEmp" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrb.mhshrb001.service.impl.OldIntranetEmpInfoUpdateMapper.updateNewIntraEmp */
+        UPDATE DBVISION_INTRA.GW_STAFF SET
+			   EMAIL = #{email},
+			   CPHONE = #{mbtlnum},
+			   DPHONE = #{mbtlnum}
+         WHERE EMP_NO = #{empno}       
+    </update>
+  
+</mapper>

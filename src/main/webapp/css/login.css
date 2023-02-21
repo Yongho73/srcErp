@@ -1,0 +1,143 @@
+@charset "utf-8";
+
+@import url('base.css');
+
+body {
+	position: relative;
+	top: 0;
+	overflow: auto;
+	width: 100%;
+	height: 100%;
+	display: table;
+}
+
+.login_bg {
+	width: 100%;
+	height: 100%;
+	background: #bcbec4 url(../img/common/login_bg.png) no-repeat center
+}
+
+#login_wrap {
+	clear: both;
+	position: absolute;
+	top: 48%;
+	left: 50%;
+	width: 840px;
+	height: 380px;
+	margin: -220px 0 0 -420px;
+	border-radius: 4px;
+	background: #fff;
+	box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.05)
+}
+
+#login_wrap .login_left {
+	float: left;
+	position: relative;
+	width: 420px;
+	height: 380px;
+	background: #e7f2fa
+}
+
+#login_wrap .login_right {
+	float: right;
+	position: relative;
+	width: 420px;
+	height: 380px;
+	background: #fff
+}
+
+.login_left .login_logo {
+	position: relative;
+	top: 125px;
+	left: 135px;
+	width: 170px;
+	height: 108px;
+	background: url(../img/common/login_logo.png) no-repeat 0 0
+}
+
+.login_left .login_ci {
+	position: relative;
+	top: 155px;
+	left: 120px;
+	width: 168px;
+	height: 47px;
+	background: url(../img/common/login_ci.png) no-repeat 0 0
+}
+
+.login_right h3 {
+	margin-top: 50px;
+	font-family: arial, "맑은 고딕", Malgun Gothic;
+	font-size: 40px;
+	color: #454545;
+	text-align: center;
+	letter-spacing: -0.5px
+}
+
+.login_right .login_box {
+	width: 290px;
+	padding-top: 20px;
+	margin: 0 auto;
+	text-align: center
+}
+
+.login_right .login_box li {
+	padding-top: 10px
+}
+
+.login_right .login_box .input {
+	width: 290px;
+	height: 32px;
+	text-indent: 2px;
+	border: 1px solid #ccc;
+	border-color:#ccc;
+	padding: 1px 2px 1px 2px;
+	box-sizing: border-box;
+	font-size: 13px;
+	transition : border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.login_right .login_box .input:focus{
+    box-shadow: 0px 0px 0px 0.2rem rgba(0,123,255,0.25);border-color:#80bdff;outline:0;
+}
+
+
+
+.login_right .btn_login {
+	width: 290px;
+	height: 57px;
+	margin-top: 5px;
+	line-height: 50px;
+	border-radius: 2px;
+	background: #207cd2;
+	font-weight: bold;
+	font-size: 20px;
+	color: #fff;
+	transition : border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+
+.login_right .btn_login:focus {
+	box-shadow: 0px 0px 0px 0.2rem rgba(0,123,255,0.25);border-color:#80bdff;outline:0;
+}
+
+
+.login_right .id_search {
+	display: inline-block;
+	margin-top: 6px;
+	font-size: 12px;
+	font-weight: normal;
+	color: #606060;
+	letter-spacing: -.5px
+}
+
+.id_search a {
+	display: inline-block;
+	margin: 0 5px 0 0;
+	padding: 0 25px 3px 0;;
+	vertical-align: middle;
+	background: url(../img/common/icon_link.png) no-repeat right 1px
+}
+
+.login_right .line {
+	border-right: 1px solid #ddd
+}

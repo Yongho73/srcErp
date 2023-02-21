@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html class="no-js" lang="ko">
+<HEAD>
+<meta charset="utf-8">
+<LINK href="../img/icon/dbv.ico" rel="shortcut icon" type="image/x-icon">
+
+<TITLE>XERP</TITLE>
+
+<LINK href="../css/dhtmlx/skin/dhtmlx.css" rel="stylesheet" type="text/css">
+<LINK href="../glyphicons/css/bootstrap-glyphicons.css" rel="stylesheet" type="text/css">
+
+<!-- jquery -->
+<SCRIPT src="../js/jquery-1.11.1.min.js"></SCRIPT>
+<SCRIPT src="../js/jquery-ui-custom.min.js"></SCRIPT>
+ 
+<!-- css -->
+
+<LINK href="../css/default.css" rel="stylesheet" type="text/css">
+<LINK href="../css/contents.css" rel="stylesheet" type="text/css">
+<LINK href="../css/table.css" rel="stylesheet" type="text/css">
+
+</HEAD>
+
+
+<body>
+	<!--컨텐츠-->
+		<div class="path_info" style="">
+            <ul id="menu_path" style=""><li><a class="home" href="#n"></a></li><li><a href="#"> 프로젝트관리 </a></li><li><a href="#"> 프로젝트관리</a></li></ul>
+        </div>
+        
+        <DIV class="btn" style="float:right;text-align:right; vertical-align:middle;" title="저장">
+				<BUTTON class="btn_common02_new" id="btnDelete" type="button">
+					<SPAN class="glyphicon glyphicon-ok"></SPAN> 저장
+				</BUTTON>
+				<BUTTON class="btn_common02_new" id="btn_help" type="button" title="도움말">
+					<SPAN class="glyphicon glyphicon-question-sign"></SPAN>
+				</BUTTON>
+				<BUTTON class="btn_common02_new" id="btnRemove" type="button" title="닫기">
+					<SPAN class="glyphicon glyphicon-remove"></SPAN>
+				</BUTTON>
+			</DIV>
+      
+       
+    <div class="project_tit_div">
+    	<ul class="project_tit_ul">
+    		<li class="project_tit_li">2020년 서울시 급여관리시스템 통합 재개발</li>
+    		<li>홍길동<span class="ml5">대리</span><span class="ml5">02-1234-5678</span></li>
+    	</ul>    
+    </div>
+    
+    <div class="project_tab2_div mt10">
+		<ul class="project_tab2">
+			<a href=""><li class="">기본사항</li></a>
+			<a href=""><li class="">인력</li></a>
+			<a href=""><li class="">예산</li></a>
+			<a href=""><li class="">협력계약</li></a>
+			<a href=""><li class="active">이슈위험</li></a>
+			<a href=""><li class="">산출물</li></a>
+		</ul>
+	</div>
+	
+	
+	<DIV class="mt10">
+			
+		
+		<div class="" style="display:inline-block;width:37%; float:left;margin-right:10px;border:1px solid red;">
+			dhtml 영역
+		</div>
+		
+		<div class="detail_type022" style="width:60%; float:right;">
+			<table>
+				<caption>프로젝트 기본사항</caption>
+				
+				<colgroup>
+					<col style="width:100px;min-width:100px;" />
+					<col style="width:150px;min-width:150px;" />
+					<col style="width:100px;min-width:100px;" />
+					<col style="width:150px;min-width:150px;" />
+					<col style="width:100px;min-width:100px;" />
+					<col style="width:150px;min-width:150px;">
+				</colgroup>
+				<tbody>
+					<tr>
+						<th><label>이슈구분</label></th>
+						<td><select id="divide" title="구분" style="min-width:140px">
+								<option value="">선택</option>
+								<option value="" selected>범위(Scope)문제</option>
+							</select>
+						</td>
+						<th><label>이슈관리자</label></th>
+						<td><input type="text" title="이슈관리자" value="구현옥" style="width:90px"><button class="btn_common03" id="btnCodeSearch" type="button">
+                    		<span class="glyphicon  glyphicon glyphicon-search"> </span>
+                			</button></td>
+						<th><label>발생일자</label></th>
+						<td><input type="text" title="발생일자" style="width:90%"></td>
+					</tr>
+					<tr>
+						<th><label>이슈제목</label></th>
+						<td colspan="5"><input type="text" title="이슈제목" style="width:98%"></td>
+					</tr>
+					<tr>
+						<th><label>이슈내용</label></th>
+						<td colspan="5"><textarea title="내용" style="width:98%;height:160px;"></textarea></td>
+					</tr>
+					<tr>
+						<th><label>해결대안</label></th>
+						<td colspan="5"><textarea title="내용" style="width:98%;height:40px;"></textarea></td>
+					</tr>	
+					<tr>
+						<th>완결내용</th>
+						<td colspan="5"><input type="text" title="발생일자" style="width:98%"></td>						
+					</tr>
+					<tr>
+						<th>완결일자</th>
+						<td colspan="5"><input type="text" title="발생일자" class="mr10"><div class="checks etrans" style="display:inline-block;"><input type="checkbox" id="ex_chk10"><label for="ex_chk10"></label>완결여부</div>
+						</td>
+					</tr>
+					<tr>
+						<th>첨부파일</th>
+						<td colspan="5"><button class="btn_common03" id="btnCodeSearch" type="button">
+                    		<span class="glyphicon  glyphicon glyphicon-search"> </span>
+                			</button></td>
+					</tr>
+
+				</tbody>
+			</table>
+		</div><!--//baseForm-->
+	</div>
+	
+	
+	
+	
+</BODY>
+</HTML>

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<taglib xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee/
+        http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd"
+	version="2.0">
+
+	<description>locale transefer texts</description>
+	<tlib-version>2.1</tlib-version>
+	<short-name>locale</short-name>
+	<tag>
+		<!-- 태크이름 -->
+		<name>transText</name>
+		<!-- 태크 클래스 -->
+		<tag-class>kr.co.dbvision.lib.taglib.code.locale.web.GetLocaleWord</tag-class>
+		<body-content>tagdependent</body-content>
+		<!-- 입력 파라메터 -->
+		<attribute>
+			<name>progrmId</name>
+			<required>true</required>
+		</attribute>		 
+		<attribute>
+			<name>key</name>
+			<required>true</required>
+		</attribute>
+	</tag>
+	<tag>
+		<!-- 태크이름 -->
+		<name>settings</name>
+		<!-- 태크 클래스 -->
+		<tag-class>kr.co.dbvision.lib.taglib.system.setting.web.GetSystemSetting</tag-class>
+		<body-content>tagdependent</body-content>
+		<!-- 입력 파라메터 -->
+		<attribute>
+			<name>item</name>
+			<required>true</required>
+		</attribute>
+	</tag>
+    <tag>
+        <!-- 태크이름 -->
+        <name>comboCode</name>
+        <!-- 태크 클래스 -->
+        <tag-class>kr.co.dbvision.lib.taglib.code.combo.web.GetComboCode</tag-class>
+        <body-content>tagdependent</body-content>
+        <!-- 입력 파라메터 -->
+        <attribute>
+            <name>codekindCode</name>
+            <required>true</required>
+        </attribute>
+        <attribute>
+            <name>exceptCode</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>sortOrder</name>
+            <required>false</required>
+        </attribute>        
+        <attribute>
+            <name>selectName</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>selectId</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>selectClass</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>selectStyle</name>
+            <required>false</required>
+        </attribute>
+    </tag>
+</taglib>

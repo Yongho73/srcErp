@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.pjt.pmg.pjtpmg001.service.mapper.Pjtpmg001Mapper">
+
+	<select id="selectPjtProjectCcpyList" parameterType="egovMapForNull" resultType="egovMapForNull">
+		SELECT A.*, ROWNUM RNUM FROM (
+		    SELECT CCPY_SN,
+		           PROJECT_SN,
+		           A.BCNC_CODE,
+		           BCNC_NM,
+		           A.CHARGER_NM,
+		           A.CHARGER_OFCPS,
+		           A.CHARGER_TELNO,
+		           TO_CHAR(TO_DATE(CNTRCT_DE), 'YYYY-MM-DD') AS CNTRCT_DE,
+		           CNTRCT_AMT
+		    FROM PJT_CCPY A, STM_CUSTOMER B
+		    WHERE A.BCNC_CODE = B.BCNC_CODE
+		    AND PROJECT_SN = #{projectSn}
+		    ORDER BY CNTRCT_DE DESC
+		) A
+    </select>
+    
+    <select id="selectPjtCcpy" parameterType="egovMapForNull" resultType="egovMapForNull">
+		SELECT CCPY_SN,
+		       PROJECT_SN,
+		       A.BCNC_CODE,
+		       BCNC_NM,
+		       A.CHARGER_NM,
+               A.CHARGER_OFCPS,
+               A.CHARGER_MBTLNUM,
+               A.CHARGER_EMAIL,
+               A.CHARGER_TELNO,
+		       CNTRCT_CN,
+		       TO_CHAR(TO_DATE(CNTRCT_DE), 'YYYY-MM-DD') AS CNTRCT_DE,
+		       CNTRCT_AMT,
+		       VAT_INCLS_AT,
+		       TO_CHAR(TO_DATE(CNTRCT_BEGIN_DE), 'YYYY-MM-DD') AS CNTRCT_BEGIN_DE,
+		       TO_CHAR(TO_DATE(CNTRCT_END_DE), 'YYYY-MM-DD') AS CNTRCT_END_DE
+		FROM PJT_CCPY A, STM_CUSTOMER B
+		WHERE A.BCNC_CODE = B.BCNC_CODE
+		AND PROJECT_SN = #{projectSn}
+		AND CCPY_SN = #{ccpySn}
+	</select>
+	
+	<delete id="deletePjtCcpy" parameterType="EgovMapForNull">
+        DELETE FROM PJT_CCPY
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND PROJECT_SN = #{projectSn}
+                AND CCPY_SN = #{ccpySn}
+        </trim>
+    </delete>
+    
+     <update id="savePjtCcpy" parameterType="EgovMapForNull"> 
+        MERGE INTO PJT_CCPY A
+             USING (SELECT
+                    #{ccpySn} CCPY_SN,
+                    #{projectSn} PROJECT_SN
+                    FROM DUAL) B
+                ON (
+                    A.CCPY_SN = B.CCPY_SN AND 
+                    A.PROJECT_SN = B.PROJECT_SN
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               BCNC_CODE= #{bcncCode},
+               CNTRCT_DE= REPLACE(#{cntrctDe},'-',''),
+               CNTRCT_AMT= #{cntrctAmt},
+               CHARGER_NM= #{chargerNm},
+               CHARGER_OFCPS= #{chargerOfcps},
+               CHARGER_EMAIL= #{chargerEmail},
+               CHARGER_TELNO= #{chargerTelno},
+               CNTRCT_CN= #{cntrctCn},
+               CNTRCT_BEGIN_DE= REPLACE(#{cntrctBeginDe},'-',''),
+               CNTRCT_END_DE= REPLACE(#{cntrctEndDe},'-',''),
+               VAT_INCLS_AT= #{vatInclsAt},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               CCPY_SN,
+               PROJECT_SN,
+               BCNC_CODE,
+               CHARGER_NM,
+               CHARGER_OFCPS,
+               CNTRCT_CN,
+               CHARGER_EMAIL,
+               CHARGER_TELNO,
+               CNTRCT_DE,
+               CNTRCT_AMT,
+               VAT_INCLS_AT,
+               CNTRCT_BEGIN_DE,
+               CNTRCT_END_DE,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               (SELECT COUNT(1)+1 FROM PJT_CCPY WHERE PROJECT_SN = #{projectSn}),
+               #{projectSn},
+               #{bcncCode},
+               #{chargerNm},
+               #{chargerOfcps},
+               #{cntrctCn},
+               #{chargerEmail},
+               #{chargerTelno},
+               REPLACE(#{cntrctDe},'-',''),
+               #{cntrctAmt},
+               #{vatInclsAt},
+               REPLACE(#{cntrctBeginDe},'-',''),
+               REPLACE(#{cntrctEndDe},'-',''),
+               SYSDATE,
+               #{regId}
+        )
+    </update>
+   
+</mapper>

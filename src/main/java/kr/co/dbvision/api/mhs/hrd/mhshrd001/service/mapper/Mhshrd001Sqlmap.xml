@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mhs.hrd.mhshrd001.service.mapper.Mhshrd001Mapper">
+
+    <select id="selectMhshrd001List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrd.mhshrd001.service.mapper.Mhshrd001Mapper.selectMhshrd001List */
+         <![CDATA[
+        SELECT 
+        		DISTINCT
+          		''   AS APPLC_YY, 
+          		A.EMPNO   AS EMPNO,
+          		(SELECT SNM FROM dbvision_intra.GW_STAFF WHERE EMP_NO = B.EMPNO AND SNM IS NOT NULL)   AS EMPNM,
+          		CASE WHEN SUBSTR(FNC_DATESTR(B.ECNY_DE),1,4) = SUBSTR(WRYC_BEGIN_TIME,1,4)
+          			 THEN FNC_DATESTR(B.ECNY_DE)
+          		ELSE NVL(SUBSTR(WRYC_BEGIN_TIME,1,4),TO_CHAR(SYSDATE,'YYYY')) ||'-'|| '01' ||'-'|| '01' 
+          		END  AS APPLC_BEGIN_DE,
+          		NVL(SUBSTR(WRYC_END_TIME,1,4),TO_CHAR(SYSDATE,'YYYY')) ||'-'|| '12' ||'-'|| '31'   AS APPLC_END_DE,
+          		FNC_DATESTR(B.ECNY_DE)   AS ECNY_DE, --입사일자
+          		NVL(SUBSTR(WRYC_END_TIME,1,4)-1,TO_CHAR(SYSDATE,'YYYY')-1) ||'-'|| '12' ||'-'|| '31'   AS VALUE_DATE, --기산일자
+          		NVL(CASE WHEN SUBSTR(ECNY_DE,1,4) = TO_CHAR(SYSDATE,'YYYY') THEN TO_CHAR(SYSDATE,'MM') - SUBSTR(ECNY_DE,6,1) 
+                     WHEN SUBSTR(WRYC_BEGIN_TIME,1,4) = SUBSTR(ECNY_DE,1,4) THEN TO_NUMBER('12') - SUBSTR(ECNY_DE,6,1) 
+                     WHEN SUBSTR(ECNY_DE,1,4) + 1 = TO_CHAR(SYSDATE,'YYYY') AND TO_CHAR(SYSDATE,'YYYY') = SUBSTR(WRYC_BEGIN_TIME,1,4) THEN TO_NUMBER('15')
+                     WHEN TO_CHAR(SYSDATE,'YYYY') > SUBSTR(ECNY_DE,1,4) + 1  THEN TO_NUMBER('15') + TRUNC((SUBSTR(WRYC_BEGIN_TIME,1,4) - SUBSTR(ECNY_DE,1,4)-1)/2) 
+                END, 0) AS WRYC_DAYCNT, --연차일수
+              
+          		NVL((SELECT SUM(WRYC_REQST_DAYCNT) FROM  MHS_WRYC WHERE EMPNO = A.EMPNO AND SUBSTR(WRYC_BEGIN_TIME,1,4) = #{applcYy} AND WRYC_SE_CODE IN ('01','02')) 
+                - (select COUNT(c.job_de) from MHS_WRYC, STM_JOB_DAY c 
+				  where C.hvof_at = '1'  AND  EMPNO = A.EMPNO AND C.JOB_DE BETWEEN WRYC_BEGIN_TIME AND WRYC_END_TIME
+			      AND SUBSTR(C.JOB_DE,1,4) = #{applcYy} AND WRYC_SE_CODE IN ('01','02')
+ 				),0) AS USE_DAYCNT, --소요일
+          		
+          		NVL(CASE WHEN (CASE WHEN SUBSTR(ECNY_DE,1,4) = TO_CHAR(SYSDATE,'YYYY') THEN TO_CHAR(SYSDATE,'MM') - SUBSTR(ECNY_DE,6,1) 
+                     WHEN SUBSTR(WRYC_BEGIN_TIME,1,4) = SUBSTR(ECNY_DE,1,4) THEN TO_NUMBER('12') - SUBSTR(ECNY_DE,6,1) 
+                     WHEN SUBSTR(ECNY_DE,1,4) + 1 = TO_CHAR(SYSDATE,'YYYY') AND TO_CHAR(SYSDATE,'YYYY') = SUBSTR(WRYC_BEGIN_TIME,1,4) THEN TO_NUMBER('15')
+                     WHEN TO_CHAR(SYSDATE,'YYYY') > SUBSTR(ECNY_DE,1,4) + 1  THEN TO_NUMBER('15') + TRUNC((SUBSTR(WRYC_BEGIN_TIME,1,4) - SUBSTR(ECNY_DE,1,4)-1)/2) 
+                END) <= ((SELECT SUM(WRYC_REQST_DAYCNT) FROM  MHS_WRYC WHERE EMPNO = A.EMPNO AND SUBSTR(WRYC_BEGIN_TIME,1,4) = #{applcYy} AND WRYC_SE_CODE IN ('01','02')) 
+                - (select COUNT(c.job_de) from MHS_WRYC, STM_JOB_DAY c 
+				  where C.hvof_at = '1'  AND  EMPNO = A.EMPNO AND C.JOB_DE BETWEEN WRYC_BEGIN_TIME AND WRYC_END_TIME
+			      AND SUBSTR(C.JOB_DE,1,4) = #{applcYy} AND WRYC_SE_CODE IN ('01','02')
+ 				)) THEN 0 ELSE 
+          		
+          		(CASE WHEN SUBSTR(ECNY_DE,1,4) = TO_CHAR(SYSDATE,'YYYY') THEN TO_CHAR(SYSDATE,'MM') - SUBSTR(ECNY_DE,6,1) 
+                     WHEN SUBSTR(WRYC_BEGIN_TIME,1,4) = SUBSTR(ECNY_DE,1,4) THEN TO_NUMBER('12') - SUBSTR(ECNY_DE,6,1) 
+                     WHEN SUBSTR(ECNY_DE,1,4) + 1 = TO_CHAR(SYSDATE,'YYYY') AND TO_CHAR(SYSDATE,'YYYY') = SUBSTR(WRYC_BEGIN_TIME,1,4) THEN TO_NUMBER('15')
+                     WHEN TO_CHAR(SYSDATE,'YYYY') > SUBSTR(ECNY_DE,1,4) + 1  THEN TO_NUMBER('15') + TRUNC((SUBSTR(WRYC_BEGIN_TIME,1,4) - SUBSTR(ECNY_DE,1,4)-1)/2) 
+                END) - ((SELECT SUM(WRYC_REQST_DAYCNT) FROM  MHS_WRYC WHERE EMPNO = A.EMPNO AND SUBSTR(WRYC_BEGIN_TIME,1,4) = #{applcYy} AND WRYC_SE_CODE IN ('01','02')) 
+                - (select COUNT(c.job_de) from MHS_WRYC, STM_JOB_DAY c 
+				  where C.hvof_at = '1'  AND  EMPNO = A.EMPNO AND C.JOB_DE BETWEEN WRYC_BEGIN_TIME AND WRYC_END_TIME
+			      AND SUBSTR(C.JOB_DE,1,4) = #{applcYy} AND WRYC_SE_CODE IN ('01','02')
+ 				)) END, 0) AS REMAINDER_DAYCNT, --잔여일수
+          		(SELECT RECMND_DAYCNT FROM  MHS_WRYC_DAYCNT WHERE EMPNO = A.EMPNO ) AS RECMND_DAYCNT,
+          		TO_NUMBER('')   AS EXCCLC_DAYCNT,
+         		TO_NUMBER('')    AS NWMB_OCCRRNC_DAYCNT,
+         		TO_NUMBER('')    AS NWMB_USE_DAYCNT,
+         		TO_NUMBER('')    AS NWMB_REMAINDER_DAYCNT,
+         		TO_NUMBER('')    AS SNWMB_EXCCLC_DAYCNT,
+         		SYSDATE    AS REG_DT,
+         		''    AS REG_ID,
+         		SYSDATE    AS UPT_DT,
+         		''    AS UPT_ID,
+         		TO_NUMBER('')    AS ADSBTR_DAYCNT, --가감일수
+         		''    AS ADSBTR_RESN,
+         		CASE WHEN TO_CHAR(SYSDATE,'YYYY') = #{applcYy}
+         		THEN trunc(months_between(SYSDATE,ECNY_DE) /12) 
+         		ELSE trunc(months_between(TO_DATE(SUBSTR(WRYC_END_TIME,1,4) ||'-'|| '12' ||'-'|| '31'),ECNY_DE) /12) 
+         		END AS CNWK_YCNT, --근속년수
+         		CASE WHEN TO_CHAR(SYSDATE,'YYYY') = #{applcYy}
+         		THEN trunc(mod(months_between(sysdate,ECNY_DE) /12,1) *12)
+         		ELSE trunc(mod(months_between(TO_DATE(SUBSTR(WRYC_END_TIME,1,4) ||'-'|| '12' ||'-'|| '31'),ECNY_DE) /12,1) *12)
+         		END AS CNWK_MCNT, --근속월수
+         		CASE WHEN TO_CHAR(SYSDATE,'YYYY') = #{applcYy}
+        		THEN trunc(mod(mod(months_between(sysdate,ECNY_DE) /12,1) *12,1) *(365/12)) 
+        		ELSE trunc(mod(mod(months_between(TO_DATE(SUBSTR(WRYC_END_TIME,1,4) ||'-'|| '12' ||'-'|| '31'),ECNY_DE) /12,1) *12,1) *(365/12)) 
+        		END AS CNWK_DCNT, --근속일수
+        		(SELECT SUM(WRYC_REQST_DAYCNT) FROM  MHS_WRYC WHERE EMPNO = A.EMPNO AND SUBSTR(WRYC_BEGIN_TIME,1,4) = #{applcYy} - 1 AND WRYC_SE_CODE IN ('01','02')) 
+                - (select COUNT(c.job_de) from MHS_WRYC, STM_JOB_DAY c 
+				  where C.hvof_at = '1'  AND  EMPNO = A.EMPNO AND C.JOB_DE BETWEEN WRYC_BEGIN_TIME AND WRYC_END_TIME
+			      AND SUBSTR(C.JOB_DE,1,4) = #{applcYy}-1 AND WRYC_SE_CODE IN ('01','02')
+ 				) AS ONYRBF_WRYC_USE_DAYCNT, --1년전 연차 사용일수
+          		(SELECT SUM(WRYC_REQST_DAYCNT) FROM  MHS_WRYC WHERE EMPNO = A.EMPNO AND SUBSTR(WRYC_BEGIN_TIME,1,4) = #{applcYy} - 2 AND WRYC_SE_CODE IN ('01','02')) 
+                - (select COUNT(c.job_de) from MHS_WRYC, STM_JOB_DAY c 
+				  where C.hvof_at = '1'  AND  EMPNO = A.EMPNO AND C.JOB_DE BETWEEN WRYC_BEGIN_TIME AND WRYC_END_TIME
+			      AND SUBSTR(C.JOB_DE,1,4) = #{applcYy}-2 AND WRYC_SE_CODE IN ('01','02')
+ 				) AS TWYRBF_WRYC_USE_DAYCNT, --2년전 연차 사용일수
+          		''   AS REG_NM,
+          		''   AS UPT_NM
+          		]]>
+   		FROM MHS_WRYC  A , MHS_EMP B
+        WHERE 
+          	 B.EMPNO = A.EMPNO(+)   
+          	<if test="applcYy != null and applcYy != ''">
+                AND NVL(SUBSTR(WRYC_BEGIN_TIME,1,4),TO_CHAR(SYSDATE,'YYYY')) = #{applcYy}
+                AND NVL(SUBSTR(WRYC_END_TIME,1,4),TO_CHAR(SYSDATE,'YYYY')) = #{applcYy}
+            </if>
+            <if test="empno != null and empno != ''">
+                AND B.EMPNO = #{empno}
+            </if>
+            <if test="deptCode != null and deptCode != ''">
+                AND B.DEPT_CODE = #{deptCode}
+            </if>
+            <if test="hffsSe != null and hffsSe != ''">
+                AND B.HFFS_SE = #{hffsSe}
+            </if>
+            <if test="ecnySde != null and ecnySde != ''">
+                <![CDATA[
+                    AND B.ECNY_DE >= #{ecnySde}
+                ]]>
+            </if>
+            <if test="ecnyEde != null and ecnyEde != ''">
+                <![CDATA[
+                    AND B.ECNY_DE <= #{ecnyEde}
+                ]]>
+            </if>
+             ORDER BY ECNY_DE, EMPNO
+        <!-- union
+        SELECT
+               A.APPLC_YY,
+               A.EMPNO,
+               FNC_GETKORNM(A.EMPNO) AS EMPNM,
+               FNC_DATESTR(A.APPLC_BEGIN_DE) AS APPLC_BEGIN_DE,
+               FNC_DATESTR(A.APPLC_END_DE) AS APPLC_END_DE,
+               FNC_DATESTR(B.ECNY_DE) AS ECNY_DE,
+               TO_CHAR(TO_NUMBER(#{applcYy})-1) || '-12-31' AS VALUE_DATE,
+               A.WRYC_DAYCNT,
+               A.USE_DAYCNT,
+               A.REMAINDER_DAYCNT,
+               A.RECMND_DAYCNT,
+               A.EXCCLC_DAYCNT,
+               A.NWMB_OCCRRNC_DAYCNT,
+               A.NWMB_USE_DAYCNT,
+               A.NWMB_REMAINDER_DAYCNT,
+               A.NWMB_EXCCLC_DAYCNT,
+               A.REG_DT,
+               A.REG_ID,
+               A.UPT_DT,
+               A.UPT_ID,
+               A.ADSBTR_DAYCNT,
+               A.ADSBTR_RESN,
+               A.CNWK_YCNT,
+               A.CNWK_MCNT,
+               A.CNWK_DCNT,
+               A.ONYRBF_WRYC_USE_DAYCNT,
+               A.TWYRBF_WRYC_USE_DAYCNT,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_WRYC_DAYCNT A , MHS_EMP B
+          WHERE 
+            A.EMPNO = B.EMPNO(+)           
+            <if test="applcYy != null and applcYy != ''">
+                AND A.APPLC_YY = #{applcYy}
+            </if>
+            <if test="empno != null and empno != ''">
+                AND B.EMPNO = #{empno}
+            </if>
+            <if test="deptCode != null and deptCode != ''">
+                AND B.DEPT_CODE = #{deptCode}
+            </if>
+            <if test="hffsSe != null and hffsSe != ''">
+                AND B.HFFS_SE = #{hffsSe}
+            </if>
+            <if test="ecnySde != null and ecnySde != ''">
+                <![CDATA[
+                    AND B.ECNY_DE >= #{ecnySde}
+                ]]>
+            </if>
+            <if test="ecnyEde != null and ecnyEde != ''">
+                <![CDATA[
+                    AND B.ECNY_DE <= #{ecnyEde}
+                ]]>
+            </if> -->
+             
+    </select>
+
+    <select id="selectMhshrd001" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrd.mhshrd001.service.mapper.Mhshrd001Mapper.selectMhshrd001 */
+        SELECT
+               APPLC_YY,
+               EMPNO,
+               APPLC_BEGIN_DE,
+               APPLC_END_DE,
+               WRYC_DAYCNT,
+               USE_DAYCNT,
+               REMAINDER_DAYCNT,
+               RECMND_DAYCNT,
+               EXCCLC_DAYCNT,
+               NWMB_OCCRRNC_DAYCNT,
+               NWMB_USE_DAYCNT,
+               NWMB_REMAINDER_DAYCNT,
+               NWMB_EXCCLC_DAYCNT,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               ADSBTR_DAYCNT,
+               ADSBTR_RESN,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_WRYC_DAYCNT A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="applcYy != null and applcYy != ''">
+                AND APPLC_YY = #{applcYy}
+            </if>
+            <if test="empno != null and empno != ''">
+                AND EMPNO = #{empno}
+            </if>
+        </trim>
+    </select>
+
+    <update id="saveMhshrd001" parameterType="kr.co.dbvision.api.mhs.hrd.mhshrd001.entity.Mhshrd001">
+        /* kr.co.dbvision.api.mhs.hrd.mhshrd001.service.mapper.Mhshrd001Mapper.saveMhshrd001 */
+        MERGE INTO MHS_WRYC_DAYCNT A
+             USING (SELECT
+                    #{applcYy} APPLC_YY,
+                    #{empno} EMPNO
+                    FROM DUAL) B
+                ON (
+                    A.APPLC_YY = B.APPLC_YY AND 
+                    A.EMPNO = B.EMPNO
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               APPLC_BEGIN_DE= REPLACE(#{applcBeginDe},'-',''),
+               APPLC_END_DE= REPLACE(#{applcEndDe},'-',''),
+               WRYC_DAYCNT= #{wrycDaycnt},
+               USE_DAYCNT= #{useDaycnt},
+               REMAINDER_DAYCNT= #{remainderDaycnt},
+               RECMND_DAYCNT= #{recmndDaycnt},
+               EXCCLC_DAYCNT= #{excclcDaycnt},
+               NWMB_OCCRRNC_DAYCNT= #{nwmbOccrrncDaycnt},
+               NWMB_USE_DAYCNT= #{nwmbUseDaycnt},
+               NWMB_REMAINDER_DAYCNT= #{nwmbRemainderDaycnt},
+               NWMB_EXCCLC_DAYCNT= #{nwmbExcclcDaycnt},
+               ADSBTR_DAYCNT= #{adsbtrDaycnt},
+               ADSBTR_RESN= #{adsbtrResn},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               APPLC_YY,
+               EMPNO,
+               APPLC_BEGIN_DE,
+               APPLC_END_DE,
+               WRYC_DAYCNT,
+               USE_DAYCNT,
+               REMAINDER_DAYCNT,
+               RECMND_DAYCNT,
+               EXCCLC_DAYCNT,
+               NWMB_OCCRRNC_DAYCNT,
+               NWMB_USE_DAYCNT,
+               NWMB_REMAINDER_DAYCNT,
+               NWMB_EXCCLC_DAYCNT,
+               ADSBTR_DAYCNT,
+               ADSBTR_RESN,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{applcYy},
+               #{empno},
+               REPLACE(#{applcBeginDe},'-',''),
+               REPLACE(#{applcEndDe},'-',''),
+               #{wrycDaycnt},
+               #{useDaycnt},
+               #{remainderDaycnt},
+               #{recmndDaycnt},
+               #{excclcDaycnt},
+               #{nwmbOccrrncDaycnt},
+               #{nwmbUseDaycnt},
+               #{nwmbRemainderDaycnt},
+               #{nwmbExcclcDaycnt},
+               #{adsbtrDaycnt},
+               #{adsbtrResn},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deleteMhshrd001" parameterType="kr.co.dbvision.api.mhs.hrd.mhshrd001.entity.Mhshrd001">
+        /* kr.co.dbvision.api.mhs.hrd.mhshrd001.service.mapper.Mhshrd001Mapper.deleteMhshrd001 */
+        DELETE FROM MHS_WRYC_DAYCNT
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND APPLC_YY = #{applcYy}
+                AND EMPNO = #{empno}
+        </trim>
+    </delete>
+    <parameterMap id="dayCnt" type="hashMap">
+        <parameter property="nextYearFlag" javaType="String" jdbcType="VARCHAR" mode="IN" />
+        <parameter property="asReturnString" javaType="String" jdbcType="VARCHAR" mode="OUT" />
+    </parameterMap>
+    <select id="MHS_YEARCNT" parameterMap="dayCnt" resultType="egovMapForNull" statementType="CALLABLE">
+        <![CDATA[
+            {CALL SP_MHS_YEARCNT(?,?)}
+        ]]>
+    </select>
+</mapper>

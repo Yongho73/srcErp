@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html class="no-js" lang="ko">
+<HEAD>
+<meta charset="utf-8">
+<LINK href="../img/icon/dbv.ico" rel="shortcut icon" type="image/x-icon">
+
+<TITLE>XERP</TITLE>
+
+<LINK href="../css/dhtmlx/skin/dhtmlx.css" rel="stylesheet" type="text/css">
+<LINK href="../glyphicons/css/bootstrap-glyphicons.css" rel="stylesheet" type="text/css">
+
+<!-- jquery -->
+<SCRIPT src="../js/jquery-1.11.1.min.js"></SCRIPT>
+<SCRIPT src="../js/jquery-ui-custom.min.js"></SCRIPT>
+ 
+<!-- css -->
+<LINK href="../css/default.css" rel="stylesheet" type="text/css">
+<LINK href="../css/contents.css" rel="stylesheet" type="text/css">
+
+</HEAD>
+
+<body>
+	<!--컨텐츠-->
+		<div class="path_info" style="">
+            <ul id="menu_path" style=""><li><a class="home" href="#n"></a></li><li><a href="#"> 연말정산 </a></li><li><a href="#">연말정산명세</a></li></ul>
+        </div>
+        
+		<DIV class="btn" style="float:right;text-align:right; vertical-align:middle;">
+			<BUTTON class="btn_common02_new" type="button" title="소득세액공제신고">
+				<SPAN class="glyphicon glyphicon-tag mr5"></SPAN>소득세액공제신고
+			</BUTTON>
+			<BUTTON class="btn_common02_new" type="button" title="의료비명세">
+				<SPAN class="glyphicon glyphicon-tint mr5"></SPAN>의료비명세
+			</BUTTON>
+			<BUTTON class="btn_common02_new" id="btnRemove" type="button" title="닫기">
+				<SPAN class="glyphicon glyphicon-remove"></SPAN>
+			</BUTTON>
+		</DIV>
+		 
+      
+	<DIV class="search_box" style="width:100%; overflow:hidden;">
+		<TABLE style="width:100%;">
+			<TBODY>
+				<TR>
+					<td style="position:relative; vertical-align:middle;">
+					    
+						<div style="position:relative;display:inline-block;float:left;">
+							<label>귀속년도</LABEL>
+							 <input name="searchEregDt" class="input_calen" onkeyup="gf_AutoDate(event, this)" onkeypress="gf_AutoDate(event, this)" type="text" style="width: 40px;" maxlength="4" value="2019">
+						</div>
+						<div style="position:relative;display:inline-block;float:left;padding-left:50px;">
+							<label>귀속시작일</LABEL>
+							 <input name="searchEregDt" class="input_calen" onkeyup="gf_AutoDate(event, this)" onkeypress="gf_AutoDate(event, this)" type="text" style="width: 90px;" maxlength="10" value="2019-01-01">
+						</div>
+						<div style="position:relative;display:inline-block;float:left;padding-left:50px;">
+							<label>귀속종료일</LABEL>
+							 <input name="searchEregDt" class="input_calen" onkeyup="gf_AutoDate(event, this)" onkeypress="gf_AutoDate(event, this)" type="text" style="width:90px;" maxlength="10" value="2019-12-31">
+						</div>
+					<!-- 
+						<DIV class="btn2" style="position:relative;display:inline-block;float:right;">
+							<BUTTON id="btnSearch" type="button">
+								<SPAN class="glyphicon glyphicon-search f15"></SPAN>
+							</BUTTON>
+							<BUTTON id="btnClear" type="button">
+								<SPAN class="glyphicon glyphicon-refresh f15 mr5" style="color:#fff;margin-left:4px;"></SPAN>
+							</BUTTON>
+						</DIV>
+					-->
+					</td>
+				</TR>
+			</TBODY>
+		</TABLE>
+	</DIV>
+	<!--//search_box-->
+      
+       
+   	<div class="detail_type024_sub mb10 mt10 type_bd">
+			<table>
+				<caption>연말정산 명세</caption>
+				
+				<colgroup>
+					<col style="width:4%;min-width:60px" />
+					<col style="width:4%;min-width:60px" />
+					<col style="width:8%;min-width:100px" />
+					<col style="width:8%;min-width:100px" />
+					<col style="width:8%;min-width:100px" />
+					<col style="width:8%;min-width:100px" />
+					<col style="width:10%;min-width:160px" />
+					<col style="width:8%;min-width:100px" />
+					<col style="width:4%;min-width:60px" />
+					<col style="width:4%;min-width:60px" />
+					<col style="width:5%;min-width:100px" />
+					<col style="width:5%;min-width:100px" />
+					<col style="width:8%;min-width:100px" />
+					<col style="width:8%;min-width:100px" />
+					<col style="width:8%;min-width:100px" />
+				</colgroup>
+				
+				<tr>
+					<td colspan="7" class="al cellgray">(21)총 급여((16), 다만 외국인단일세를<br>적용시에는 연간 근로소득)</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+					<td colspan="6" class="al cellgray">(50)종합소득 과세표준</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+				</tr>
+				
+				<tr>
+					<td colspan="7" class="al cellgray">(22)근로소득공제</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+					<td colspan="6" rowspan="2" class="al cellgray">(51)산출세액</td>
+					<td rowspan="2" class="al"><input type="text" value="0" class="ar w100"></td>
+				</tr>
+				
+				<tr>
+					<td colspan="7" class="al cellgray">(23)근로소득금액</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+				</tr>
+				<tr>
+					<th rowspan="27" class="ac brddd">★<br>합<br>소<br>득<br>공<br>제</th>
+					<th rowspan="3" class="ac brddd">기<br>본<br>공<br>제</th>
+					<td colspan="5" class="al cellgray">(24)본인</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+					<th rowspan="9" class="ac brddd">세<br>액<br>감<br>면</th>
+					<td colspan="5" rowspan="2" class="al cellgray">(52)「소득세법」</td>
+					<td rowspan="2" class="al"><input type="text" value="0" class="ar w100"></td>
+				</tr>
+				<tr>
+					<td colspan="5" class="al cellgray">(25)배우자</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+				</tr>
+				<tr>
+					<td colspan="5" class="al cellgray">(26)부양가족(<input type="text" value="0" class="ar w20">명)</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+					<td colspan="5" rowspan="2" class="al cellgray">(53)「조세특례제한법」 ((54)제외)</td>
+					<td rowspan="2" class="al"><input type="text" value="0" class="ar w100"></td>
+				</tr>
+				<tr>
+					<th rowspan="4" class="ac brddd">추<br>가<br>공<br>제</th>
+					<td colspan="5" class="al cellgray">(27)경로우대(<input type="text" value="0" class="ar w20">명)</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+				</tr>
+				
+				<tr>
+					<td colspan="5" class="al cellgray">(28)장애인(<input type="text" value="0" class="ar w20">명)</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+					<td colspan="5" rowspan="2" class="al cellgray">(54)「조세특례제한법」제30조</td>
+					<td rowspan="2" class="al"><input type="text" value="0" class="ar w100"></td>
+				</tr>
+				
+				<tr>
+					<td colspan="5" class="al cellgray">(29)부녀자</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+				</tr>
+				
+				<tr>
+					<td colspan="5" class="al cellgray">(30)한부모 가족</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+					<td colspan="5" rowspan="2" class="al cellgray">(55)조세조약</td>
+					<td rowspan="2" class="al"><input type="text" value="0" class="ar w100"></td>
+				</tr>
+				<tr>
+					<th rowspan="5" class="ac brddd">연<br>금<br>보<br>험<br>료<br>공<br>제</th>
+					<td colspan="5" class="al cellgray">(31)국민연금보험료</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+				</tr>
+				<tr>
+					<td rowspan="4" class="al brddd cellgray">(32)<br>공적연금<br>보험료<br>공제</td>
+					<td colspan="4" class="al cellgray">(가)공무원연금</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+					<td colspan="5" class="al cellgray">(56)세액감면계</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+				</tr>
+				
+				<tr>
+					<td colspan="4" class="al cellgray">(나)군인연금</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+					<th rowspan="36" class="ac brddd">세<br>액<br>공<br>제</th>
+					<td colspan="5" class="al cellgray">(57)근로소득</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+				</tr>
+				
+				<tr>
+					<td colspan="4" class="al cellgray">(다)사립학교교직원연금</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+					<td colspan="3" rowspan="3" class="al brddd cellgray">(58)자녀</td>
+					<td colspan="2" class="al cellgray">공제대상자녀(<input type="text" value="0" class="ar w20">명)</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+				</tr>
+					
+				<tr>
+					<td colspan="4" class="al cellgray">(라)별정우체국연금</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+					<td colspan="2" class="al cellgray">6세이하(<input type="text" value="0" class="ar w20">명)</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+				</tr>
+				
+				<tr>
+					<th rowspan="15" class="ac brddd">특<br>별<br>소<br>득<br>공<br>제</th>
+					<td rowspan="2" class="al cellgray">(33)보험료</td>
+					<td colspan="4" class="al cellgray">(가)건강보험료(노인장기요양보험)</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+					<td colspan="2" class="al cellgray">출산·입양자(<input type="text" value="0" class="ar w20">명)</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+				</tr>
+				
+				<tr>
+					<td colspan="4" class="al cellgray">(나)고용보험료</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+					<th rowspan="6" class="ac brddd">연<br>금<br>계<br>좌</th>
+					<td rowspan="2" colspan="3" class="al cellgray">(59)과학기술인공제</td>
+					<td class="al cellgray">공제대상금액</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+				</tr>
+				
+				<tr>
+					<td rowspan="11" class="al cellgray">(34)주택자금</td>
+					<td rowspan="2" colspan="2" class="al cellgray">(가)주택임차<br>차입금 원리금 상환액</td>
+					<td colspan="2" class="al cellgray">대출기관</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+					<td class="al cellgray">세액공제</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+				</tr>
+				
+				<tr>
+					<td colspan="2" class="al cellgray">거주자</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+					<td rowspan="2" colspan="3" class="al cellgray">(60)「근로자퇴직급여 보장법」에 따른 퇴직연금</td>
+					<td class="al cellgray">공제대상금액</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+				</tr>
+				
+				<tr>
+					<td rowspan="9" class="al cellgray">(나)장기주택 저당<br>차입금<br>이자 상환액</td>
+					<td rowspan="3" class="al cellgray">2011년 이전<br>차업분</td>
+					<td colspan="2" class="al cellgray">15년 미만</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+					<td class="al cellgray">세액공제</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+				</tr>
+				
+				<tr>
+					<td colspan="2" class="al cellgray">15년 ~ 29년</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+					<td rowspan="2" colspan="3" class="al cellgray">(61)연금저축</td>
+					<td class="al cellgray">공제대상금액</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+				</tr>
+				<tr>
+					<td colspan="2" class="al cellgray">30년이상</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+					<td class="al cellgray">세액공제액</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+				</tr>
+				
+				<tr>
+					<td rowspan="2" class="al cellgray">2012년 이후<br>차업분(15년 이상)</td>
+					<td colspan="2" class="al cellgray">고정금리이면서 비거치상환대출</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+					<th rowspan="19" class="ac brddd">특<br>별<br>세<br>액<br>공<br>제</th>
+					<td rowspan="4" colspan="2" class="al cellgray">(62)보험료</td>
+					<td rowspan="2" class="al cellgray">보장성</td>		
+					<td class="al cellgray">공제대상금액</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+				</tr>
+				
+				<tr>
+					<td colspan="2" class="al cellgray">그밖의대출</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+					<td class="al cellgray">세액공제</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+				</tr>
+				
+				<tr>
+					<td rowspan="4" class="al cellgray">2015년 이후<br>차업분</td>
+					<td rowspan="3" class="al cellgray">15년 이상</td>
+					<td class="al cellgray">고정금리이면서<br>비거치상환대출</td>
+					<td class="al cellgray"><input type="text" value="0" class="ar w100"></td>
+					<td rowspan="2" class="al cellgray">장애인전용<br>보장성</td>		
+					<td class="al cellgray">공제대상금액</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+				</tr>
+				
+				<tr>
+					<td class="al cellgray">고정금리이거나<br>비거치상환대출</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>		
+					<td class="al cellgray">세액공제</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+				</tr>
+				
+				<tr>
+					<td class="al cellgray">그밖의대출</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+					<td rowspan="2" colspan="3" class="al cellgray">(63)의료비</td>
+					<td class="al cellgray">공제대상금액</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+				</tr>
+				
+				<tr>
+					<td class="al cellgray">10년~<br>15년</td>
+					<td class="al cellgray">고정금리이거나<br>비거치상환대출</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+					<td class="al cellgray">세액공제액</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+				</tr>
+				
+				<tr>
+					<td colspan="5" class="al cellgray">(35)기부금(이월분)</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+					<td rowspan="2" colspan="3" class="al cellgray">(64)교육비</td>
+					<td class="al cellgray">공제대상금액</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+				</tr>
+				
+				<tr>
+					<td colspan="5" class="al cellgray">(36)계</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+					<td class="al cellgray">세액공제액</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+				</tr>
+				
+				<tr>
+					<td colspan="7" class="al cellgray">(37)차감소득금액</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+					<td rowspan="10" class="al cellgray">(65)기부금</td>
+					<td rowspan="4" class="al cellgray">(가)정치자금<br>기부금</td>
+					<td rowspan="2" class="al cellgray">10만원<br>이하</td>
+					<td class="al cellgray">공제대상금액</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+				</tr>
+				
+				<tr>
+					<th rowspan="18" class="ac brddd">그<br><br>밖<br>의<br><br>소<br>득<br>공<br>제</th>
+					<td colspan="6" class="al cellgray">(38)개인연금저축</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+					<td class="al cellgray">세액공제액</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+				</tr>
+				
+				<tr>
+					<td colspan="6" class="al cellgray">(39)소기업·소상공인 공제부금</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+					<td rowspan="2" class="al cellgray">10만원<br>초과</td>
+					<td class="al cellgray">공제대상액</td>
+ 					<td class="al"><input type="text" value="0" class="ar w100"></td>
+				</tr>
+				
+				<tr>
+					<td rowspan="3" colspan="2" class="al cellgray">(40)주택마련저축<br>소득공제</td>
+					<td colspan="4" class="al cellgray">(가)청약저축</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+					<td class="al cellgray">세액공제액</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+				</tr>
+				
+				<tr>
+					<td colspan="4" class="al cellgray">(나)주택청약종합저축</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+					<td colspan="2" rowspan="2" class="al cellgray">(나)법정기부금</td>
+					<td class="al cellgray">공제대상금액</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+				</tr>
+				<tr>
+					<td colspan="4" class="al cellgray">(다)근로자주택마련저축</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+					<td class="al cellgray">세액공제액</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+				</tr>
+				
+				<tr>
+					<td colspan="6" class="al cellgray">(41)투자조합출자 등</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+					<td colspan="2" rowspan="2" class="al cellgray">(다)우리사주조합기부금(2015년 이후 기부금)</td>
+					<td class="al cellgray">공제대상금액</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+				</tr>
+				
+				<tr>
+					<td colspan="6" class="al cellgray">(42)신용카드등 사용액</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+					<td class="al cellgray">세액공제액</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+				</tr>
+				
+				<tr>
+					<td colspan="6" class="al cellgray">(43)우리사주조합 출연금</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+					<td colspan="2" rowspan="2" class="al cellgray">(라)지정기부금</td>
+					<td class="al cellgray">공제대상금액</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+				</tr>
+				<tr>
+					<td colspan="6" class="al cellgray">(44)우리사주조합 기부금(2014년 이전 기부금)</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+					<td class="al cellgray">세액공제액</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+				</tr>
+				<tr>
+					<td colspan="6" class="al cellgray">(45)고용유지 중소기업 근로자</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+					<td colspan="4" class="al cellgray">(66)특별세액 공제 계</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+				</tr>
+				<tr>
+					<td colspan="6" class="al cellgray">(46)목돈 안드는 전체 이자상환액</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+					<td colspan="5" class="al cellgray">(67)표준세액공제</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+				</tr>
+				
+				<tr>
+					<td colspan="6" rowspan="2" class="al cellgray">(47)장기집합투자증권저축★</td>
+					<td rowspan="2" class="al"><input type="text" value="0" class="ar w100"></td>
+					<td colspan="5" class="al cellgray">(68)납세조합공제</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+				</tr>
+				<tr>
+					<td colspan="5" class="al cellgray">(69)주택차입금</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+				</tr>
+				
+				
+				<tr>
+					<td colspan="6" class="al cellgray">(48)그 밖의 소득공제 계</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+					<td colspan="5" class="al cellgray">(70)외국납부</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+				</tr>
+				
+				<tr>
+					<td colspan="6" rowspan="4" class="al cellgray">(49)소득공제 종합한도 초과액</td>
+					<td rowspan="4" class="al"><input type="text" value="0" class="ar w100"></td>
+					<td colspan="4" rowspan="2" class="al cellgray">(71)월세액</td>
+					<td class="al cellgray">공제대상금액</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+				</tr>
+				<tr>
+					<td class="al cellgray">세액공제액</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+				</tr>
+				
+				<tr>
+					<td colspan="5" class="al cellgray">(72)세 액 공 제 계</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+				</tr>
+				<tr>
+					<td colspan="6" class="al cellgray">(73)결 정 세 액((54)-(56)-(72))</td>
+					<td class="al"><input type="text" value="0" class="ar w100"></td>
+				</tr>
+				
+				<tr>
+					<th colspan="2" class="ac brddd">구분</th>
+					<th colspan="3" class="ac brddd">소득세</th>
+					<th colspan="3" class="ac brddd">지방세</th>
+					<th colspan="4" class="ac brddd">농특세</th>
+					<th colspan="3" class="ac brddd">계</th>
+				</tr>
+				
+				<tr>
+					<th colspan="2" class="al">결정세액</th>
+					<td colspan="3" class="al"><input type="text" value="0" class="ar w100"></td>
+					<td colspan="3" class="al"><input type="text" value="0" class="ar w100"></td>
+					<td colspan="4" class="al"><input type="text" value="0" class="ar w100"></td>
+					<td colspan="3" class="al"><input type="text" value="0" class="ar w100"></td>
+				</tr>
+				<tr>
+					<th colspan="2" class="al">기납부세액</th>
+					<td colspan="3" class="al"><input type="text" value="0" class="ar w100"></td>
+					<td colspan="3" class="al"><input type="text" value="0" class="ar w100"></td>
+					<td colspan="4" class="al"><input type="text" value="0" class="ar w100"></td>
+					<td colspan="3" class="al"><input type="text" value="0" class="ar w100"></td>
+				</tr>
+				<tr>
+					<th colspan="2" class="al">차감징수액</th>
+					<td colspan="3" class="al"><input type="text" value="0" class="ar w100"></td>
+					<td colspan="3" class="al"><input type="text" value="0" class="ar w100"></td>
+					<td colspan="4" class="al"><input type="text" value="0" class="ar w100"></td>
+					<td colspan="3" class="al"><input type="text" value="0" class="ar w100"></td>
+				</tr>				
+			</table>
+			
+			 <div class="" style="position:relative;clear:both;border-top:1px solid #ddd;">
+		   		<div style="float:left;line-height:25px;margin:7px 0;font-size:12px;">
+		   			<span class="fb">※ 정산명세는 확정된 연말정산 결과가 아니며, 담당자 검토 확인 후 [근로소득원천징수영수증]에서 확인하시길 바랍니다.</span>
+		   		</div>
+		   	</div>
+  		
+
+</div>
+	
+</BODY>
+</HTML>

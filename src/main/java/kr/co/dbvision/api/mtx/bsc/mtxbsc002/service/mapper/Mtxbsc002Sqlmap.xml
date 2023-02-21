@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mtx.bsc.mtxbsc002.service.mapper.Mtxbsc002Mapper">
+    <sql id="searchCondition">
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="earnerNm != null and earnerNm != ''">
+                AND EARNER_NM = #{earnerNm}
+            </if>
+            <if test="earnerSeCodeSearch != null and earnerSeCodeSearch != ''">
+                AND EARNER_SE_CODE = #{earnerSeCodeSearch}
+            </if>
+            <if test="earnerNo != null and earnerNo != ''">
+                AND EARNER_NO = #{earnerNo}
+            </if>
+            <if test="sRegDt != null and sRegDt != ''">
+                <![CDATA[
+                AND REG_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+                ]]>
+            </if>
+            <if test="eRegDt != null and eRegDt != ''">
+                <![CDATA[
+                AND REG_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+                ]]>
+             </if>
+        </trim>
+        
+        <choose>
+        <when test="sortColumId != null and sortColumId != ''">
+            <if test="sortColumId == 'earnerNo'">
+            ORDER BY EARNER_NO <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+            <if test="sortColumId == 'bplcCode'">
+            ORDER BY BPLC_CODE <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+            <if test="sortColumId == 'earnerSeCode'">
+            ORDER BY EARNER_SE_CODE <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+            <if test="sortColumId == 'earnerTyCode'">
+            ORDER BY EARNER_TY_CODE <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+            <if test="sortColumId == 'earnerNm'">
+            ORDER BY EARNER_NM <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+            <if test="sortColumId == 'ihidnum'">
+            ORDER BY IHIDNUM <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+            <if test="sortColumId == 'bizrno'">
+            ORDER BY BIZRNO <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+            <if test="sortColumId == 'frgnrAt'">
+            ORDER BY FRGNR_AT <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+            <if test="sortColumId == 'nltyCode'">
+            ORDER BY NLTY_CODE <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+            <if test="sortColumId == 'liveSeCode'">
+            ORDER BY LIVE_SE_CODE <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+            <if test="sortColumId == 'postCode'">
+            ORDER BY POST_CODE <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+            <if test="sortColumId == 'bassAdres'">
+            ORDER BY BASS_ADRES <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+            <if test="sortColumId == 'detailAdres'">
+            ORDER BY DETAIL_ADRES <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+            <if test="sortColumId == 'acnutNo'">
+            ORDER BY ACNUT_NO <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+            <if test="sortColumId == 'bankCode'">
+            ORDER BY BANK_CODE <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+            <if test="sortColumId == 'dpstrNm'">
+            ORDER BY DPSTR_NM <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+            <if test="sortColumId == 'bcncNm'">
+            ORDER BY BCNC_NM <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+            <if test="sortColumId == 'ofcpsNm'">
+            ORDER BY OFCPS_NM <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+            <if test="sortColumId == 'jssfc'">
+            ORDER BY JSSFC <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+            <if test="sortColumId == 'cttpc'">
+            ORDER BY CTTPC <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+            <if test="sortColumId == 'mbtlnum'">
+            ORDER BY MBTLNUM <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+            <if test="sortColumId == 'rm'">
+            ORDER BY RM <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+            <if test="sortColumId == 'regDt'">
+            ORDER BY REG_DT <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+            <if test="sortColumId == 'regId'">
+            ORDER BY REG_ID <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+            <if test="sortColumId == 'uptDt'">
+            ORDER BY UPT_DT <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+            <if test="sortColumId == 'uptId'">
+            ORDER BY UPT_ID <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+            
+        </when>
+        <otherwise>
+            ORDER BY REG_DT DESC
+        </otherwise>
+        </choose>
+        
+    </sql>
+    
+    <select id="selectMtxbsc002List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mtx.bsc.mtxbsc002.service.mapper.Mtxbsc002Mapper.selectMtxbsc002List */
+        SELECT
+               EARNER_NO,
+               BPLC_CODE,
+               EARNER_SE_CODE
+               EARNER_TY_CODE,
+               EARNER_NM,
+               IHIDNUM,
+               BIZRNO,
+               FRGNR_AT,
+               NLTY_CODE,
+               LIVE_SE_CODE,
+               POST_CODE,
+               BASS_ADRES,
+               DETAIL_ADRES,
+               ACNUT_NO,
+               BANK_CODE,
+               DPSTR_NM,
+               BCNC_NM,
+               OFCPS_NM,
+               JSSFC,
+               CTTPC,
+               MBTLNUM,
+               RM,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MFS_INCOME_EARNER A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="earnerNo != null and earnerNo != ''">
+                AND EARNER_NO = #{earnerNo}
+            </if>
+            <if test="sRegDt != null and sRegDt != ''">
+                <![CDATA[
+                AND REG_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+                ]]>
+            </if>
+            <if test="eRegDt != null and eRegDt != ''">
+                <![CDATA[
+                AND REG_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+                ]]>
+             </if>
+        </trim>
+    </select>
+
+    <select id="selectMtxbsc002TotalRecordCount" parameterType="egovMapForNull" resultType="java.lang.Integer">
+        /* kr.co.dbvision.api.mtx.bsc.mtxbsc002.service.mapper.Mtxbsc002Mapper.selectMtxbsc002TotalRecordCount */
+        SELECT COUNT(*) AS totalRecordCount
+          FROM MFS_INCOME_EARNER
+
+        <include refid="searchCondition" />
+
+    </select>
+
+    <select id="selectMtxbsc002ListAllInPage" parameterType="egovMapForNull" resultType="java.lang.Integer">
+        /* kr.co.dbvision.api.mtx.bsc.mtxbsc002.service.mapper.Mtxbsc002Mapper.selectMtxbsc002ListAllInPage */
+        SELECT CEIL(RNUM/#{pageingCnt}) PAGE FROM (SELECT ROWNUM AS RNUM, MAJ_CUST_NO FROM (
+
+        SELECT EARNER_NO
+          FROM MFS_INCOME_EARNER
+      ORDER BY REG_DT DESC
+
+        ) A ) B WHERE EARNER_NO = #{earnerNo}
+
+    </select>
+    
+    <select id="selectMtxbsc002ListPaging" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mtx.bsc.mtxbsc002.service.mapper.Mtxbsc002Mapper.selectMtxbsc002ListPaging */
+        SELECT * FROM ( SELECT ROWNUM RNUM, A.* FROM (
+
+        SELECT
+               EARNER_NO,
+               BPLC_CODE,
+               EARNER_SE_CODE,
+               EARNER_TY_CODE,
+               EARNER_NM,
+               DECODE(A.IHIDNUM,NULL,'',SUBSTR(A.IHIDNUM,1,6)||'-*******') AS IHIDNUM,
+               BIZRNO,
+               FRGNR_AT,
+               NLTY_CODE,
+               LIVE_SE_CODE,
+               POST_CODE,
+               BASS_ADRES,
+               DETAIL_ADRES,
+               ACNUT_NO,
+               BANK_CODE,
+               DPSTR_NM,
+               BCNC_NM,
+               OFCPS_NM,
+               JSSFC,
+               CTTPC,
+               MBTLNUM,
+               RM,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+        FROM MFS_INCOME_EARNER A
+        <![CDATA[
+        ) A ) B WHERE RNUM > #{firstIndex} AND RNUM <= #{lastIndex}
+        ]]>
+            <if test="earnerSeCodeSearch != null and earnerSeCodeSearch != ''">
+                AND EARNER_SE_CODE = #{earnerSeCodeSearch}
+            </if>
+    </select>
+    
+    <select id="selectMtxbsc002" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mtx.bsc.mtxbsc002.service.mapper.Mtxbsc002Mapper.selectMtxbsc002 */
+        SELECT
+               EARNER_NO,
+               BPLC_CODE,
+               EARNER_SE_CODE, 
+               EARNER_TY_CODE,
+               EARNER_NM,
+               IHIDNUM,
+               BIZRNO,
+               FRGNR_AT,
+               NLTY_CODE,
+               LIVE_SE_CODE,
+               POST_CODE,
+               BASS_ADRES,
+               DETAIL_ADRES,
+               ACNUT_NO,
+               BANK_CODE,
+               DPSTR_NM,
+               BCNC_NM,
+               OFCPS_NM,
+               JSSFC,
+               CTTPC,
+               MBTLNUM,
+               RM,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MFS_INCOME_EARNER A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="earnerNo != null and earnerNo != ''">
+                AND EARNER_NO = #{earnerNo}
+            </if>
+        </trim>
+    </select>
+
+    <update id="saveMtxbsc002" parameterType="kr.co.dbvision.api.mtx.bsc.mtxbsc002.entity.Mtxbsc002">
+        /* kr.co.dbvision.api.mtx.bsc.mtxbsc002.service.mapper.Mtxbsc002Mapper.saveMtxbsc002 */
+        MERGE INTO MFS_INCOME_EARNER A
+             USING (SELECT
+                    #{earnerNo} EARNER_NO
+                    FROM DUAL) B
+                ON (
+                    A.EARNER_NO = B.EARNER_NO
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               BPLC_CODE= #{bplcCode},
+               EARNER_SE_CODE= #{earnerSeCode},
+               EARNER_TY_CODE= #{earnerTyCode},
+               EARNER_NM= #{earnerNm},
+               IHIDNUM= #{ihidnum},
+               BIZRNO= #{bizrno},
+               FRGNR_AT= #{frgnrAt},
+               NLTY_CODE= #{nltyCode},
+               LIVE_SE_CODE= #{liveSeCode},
+               POST_CODE= #{postCode},
+               BASS_ADRES= #{bassAdres},
+               DETAIL_ADRES= #{detailAdres},
+               ACNUT_NO= #{acnutNo},
+               BANK_CODE= #{bankCode},
+               DPSTR_NM= #{dpstrNm},
+               BCNC_NM= #{bcncNm},
+               OFCPS_NM= #{ofcpsNm},
+               JSSFC= #{jssfc},
+               CTTPC= #{cttpc},
+               MBTLNUM= #{mbtlnum},
+               RM= #{rm},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               EARNER_NO,
+               BPLC_CODE,
+               EARNER_SE_CODE,
+               EARNER_TY_CODE,
+               EARNER_NM,
+               IHIDNUM,
+               BIZRNO,
+               FRGNR_AT,
+               NLTY_CODE,
+               LIVE_SE_CODE,
+               POST_CODE,
+               BASS_ADRES,
+               DETAIL_ADRES,
+               ACNUT_NO,
+               BANK_CODE,
+               DPSTR_NM,
+               BCNC_NM,
+               OFCPS_NM,
+               JSSFC,
+               CTTPC,
+               MBTLNUM,
+               RM,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{earnerNo},
+               #{bplcCode},
+               #{earnerSeCode},
+               #{earnerTyCode},
+               #{earnerNm},
+               #{ihidnum},
+               #{bizrno},
+               #{frgnrAt},
+               #{nltyCode},
+               #{liveSeCode},
+               #{postCode},
+               #{bassAdres},
+               #{detailAdres},
+               #{acnutNo},
+               #{bankCode},
+               #{dpstrNm},
+               #{bcncNm},
+               #{ofcpsNm},
+               #{jssfc},
+               #{cttpc},
+               #{mbtlnum},
+               #{rm},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deleteMtxbsc002" parameterType="kr.co.dbvision.api.mtx.bsc.mtxbsc002.entity.Mtxbsc002">
+        /* kr.co.dbvision.api.mtx.bsc.mtxbsc002.service.mapper.Mtxbsc002Mapper.deleteMtxbsc002 */
+        DELETE FROM MFS_INCOME_EARNER
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND EARNER_NO = #{earnerNo}
+        </trim>
+    </delete>
+</mapper>

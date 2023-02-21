@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.stm.cmm.stmcmm001.service.mapper.Stmcmm001Mapper">
+
+	<select id="selectUser" parameterType="String" resultType="egovMapForNull">
+		/* kr.co.dbvision.api.stm.cmm.stmcmm001.service.impl.Stmcmm001Mapper.selectUser */
+		SELECT USER_ID,
+		       USER_NM,
+		       USER_IP,
+		       EMPNO,
+		       AUTHOR_SETTING,
+		       CONVERT(CHAR(10), PASSWORD_UPDT, 112) AS  PASSWORD_UPDT
+		  FROM STM_USERS
+		 WHERE USE_AT = '1'
+		   AND USER_ID = #{userId}
+	</select>
+ 
+	<select id="selectUserDetail" parameterType="String" resultType="egovMapForNull">
+		/* kr.co.dbvision.api.stm.cmm.stmcmm001.service.impl.Stmcmm001Mapper.selectUserDetail */
+		SELECT A.USER_ID,
+			   A.USER_PASSWORD,
+		       A.USER_NM,
+		       A.USER_IP,
+		       A.EMPNO,
+		       B.DEPT_CODE,
+		       DBO.FNC_GETCLSFNM(B.CLSF_CODE) AS CLSF_CODE,
+		       C.DEPT_KOR_NM AS DEPT_NM,		       
+               AUTHOR_SETTING,
+               B.BPLC_CODE,
+               D.CLSF_CODE,
+               D.CLSF_NM,
+               CONVERT(CHAR(10), A.PASSWORD_UPDT, 112) AS  PASSWORD_UPDT
+		  FROM MHS_EMP B LEFT OUTER JOIN MHS_CLSF_CODE D
+            ON ISNULL(B.CLSF_CODE,'') = D.CLSF_CODE
+            LEFT OUTER JOIN MHS_DEPT C
+            ON B.DEPT_CODE = C.DEPT_CODE AND B.BPLC_CODE = C.BPLC_CODE,
+            STM_USERS A
+         WHERE A.USE_AT = '1'
+           AND A.EMPNO = B.EMPNO
+		   AND A.USER_ID = #{userId}
+	</select>
+
+	<select id="selectMenuList" parameterType="egovMapForNull" resultType="egovMapForNull">	
+	    /* kr.co.dbvision.api.stm.cmm.stmcmm001.service.impl.Stmcmm001Mapper.selectMenuList */
+	    WITH  MENU_MGR AS  
+            (
+            SELECT  
+                MENU_ID AS ID,
+                UPPER_MENU_ID AS PARENT_ID,
+                MENU_NM AS TEXT,
+                MENU_SE AS MENU_SE,
+                ORDR AS ORDR,
+                ENM AS TEXT_ENG,
+                THIRD AS TEXT_THIRD,
+                1 as  LEVEL ,
+                ISNULL((SELECT INQIRE_AUTHOR_AT FROM STM_USERMENU WHERE MENU_ID = MMGR.MENU_ID AND USER_ID = #{userId}),'0') AS INQIRE_AUTHOR_AT,
+                ISNULL((SELECT REGIST_AUTHOR_AT FROM STM_USERMENU WHERE MENU_ID = MMGR.MENU_ID AND USER_ID = #{userId}),'0') AS REGIST_AUTHOR_AT,
+                ISNULL((SELECT UPDT_AUTHOR_AT   FROM STM_USERMENU WHERE MENU_ID = MMGR.MENU_ID AND USER_ID = #{userId}),'0') AS UPDT_AUTHOR_AT,
+                ISNULL((SELECT DELETE_AUTHOR_AT FROM STM_USERMENU WHERE MENU_ID = MMGR.MENU_ID AND USER_ID = #{userId}),'0') AS DELETE_AUTHOR_AT,
+                ISNULL((SELECT PRNTNG_AUTHOR_AT FROM STM_USERMENU WHERE MENU_ID = MMGR.MENU_ID AND USER_ID = #{userId}),'0') AS PRNTNG_AUTHOR_AT,
+                ISNULL((SELECT EXCEL_AUTHOR_AT  FROM STM_USERMENU WHERE MENU_ID = MMGR.MENU_ID AND USER_ID = #{userId}),'0') AS EXCEL_AUTHOR_AT,
+                ISNULL((SELECT DATA_AUTHOR_SE   FROM STM_USERMENU WHERE MENU_ID = MMGR.MENU_ID AND USER_ID = #{userId}),'0') AS DATA_AUTHOR_SE,                   
+                ISNULL((SELECT DELETE_AT        FROM STM_USERMENU WHERE MENU_ID = MMGR.MENU_ID AND USER_ID = #{userId}),'1') AS DELETE_AT,
+                CONVERT(VARCHAR(255), REPLICATE('0',5-LEN(CONVERT(varchar(10), ORDR))) + CONVERT(varchar(10), ORDR)) AS MENU_LEVEL 
+            FROM STM_MENU AS MMGR
+            WHERE  UPPER_MENU_ID = 'CHF000000' 
+            AND MENU_USE_AT = '1'
+            UNION ALL
+            SELECT
+                MM.MENU_ID AS ID,
+                MM.UPPER_MENU_ID AS PARENT_ID,
+                MM.MENU_NM AS TEXT,
+                MM.MENU_SE AS MENU_SE,
+                MM.ORDR AS ORDR,
+                MM.ENM AS TEXT_ENG,
+                MM.THIRD AS TEXT_THIRD,
+                (LEVEL + 1) AS LEVEL ,
+                ISNULL((SELECT INQIRE_AUTHOR_AT FROM STM_USERMENU WHERE MENU_ID = MM.MENU_ID AND USER_ID = #{userId}),'0') AS INQIRE_AUTHOR_AT,
+                ISNULL((SELECT REGIST_AUTHOR_AT FROM STM_USERMENU WHERE MENU_ID = MM.MENU_ID AND USER_ID = #{userId}),'0') AS REGIST_AUTHOR_AT,
+                ISNULL((SELECT UPDT_AUTHOR_AT   FROM STM_USERMENU WHERE MENU_ID = MM.MENU_ID AND USER_ID = #{userId}),'0') AS UPDT_AUTHOR_AT,
+                ISNULL((SELECT DELETE_AUTHOR_AT FROM STM_USERMENU WHERE MENU_ID = MM.MENU_ID AND USER_ID = #{userId}),'0') AS DELETE_AUTHOR_AT,
+                ISNULL((SELECT PRNTNG_AUTHOR_AT FROM STM_USERMENU WHERE MENU_ID = MM.MENU_ID AND USER_ID = #{userId}),'0') AS PRNTNG_AUTHOR_AT,
+                ISNULL((SELECT EXCEL_AUTHOR_AT  FROM STM_USERMENU WHERE MENU_ID = MM.MENU_ID AND USER_ID = #{userId}),'0') AS EXCEL_AUTHOR_AT,
+                ISNULL((SELECT DATA_AUTHOR_SE   FROM STM_USERMENU WHERE MENU_ID = MM.MENU_ID AND USER_ID = #{userId}),'0') AS DATA_AUTHOR_SE,                   
+                ISNULL((SELECT DELETE_AT        FROM STM_USERMENU WHERE MENU_ID = MM.MENU_ID AND USER_ID = #{userId}),'1') AS DELETE_AT,
+                CONVERT(varchar(255), (CONVERT(varchar(255) ,MMGR.MENU_LEVEL) +convert(varchar(255) ,LEVEL) + CONVERT(varchar(255), REPLICATE('0',5-LEN(CONVERT(varchar(10), MM.ORDR))) + CONVERT(varchar(10), MM.ORDR)) )) AS MENU_LEVEL
+            FROM STM_MENU AS MM
+            INNER JOIN MENU_MGR MMGR 
+            ON MM.UPPER_MENU_ID = MMGR.ID
+            AND MENU_USE_AT = '1'
+            )
+            SELECT *
+               FROM MENU_MGR
+               order by MENU_LEVEL
+	</select>
+	
+	<select id="selectRoleMenuList" parameterType="egovMapForNull" resultType="egovMapForNull">	
+	    /* kr.co.dbvision.api.stm.cmm.stmcmm001.service.impl.Stmcmm001Mapper.selectRoleMenuList */ 
+		WITH  MENU_MGR AS  
+            (
+            SELECT  
+                MENU_ID AS ID,
+                UPPER_MENU_ID AS PARENT_ID,
+                MENU_NM AS TEXT,
+                MENU_SE AS MENU_SE,
+                ORDR AS ORDR,
+                ENM AS TEXT_ENG,
+                THIRD AS TEXT_THIRD,
+                1 LEVEL ,
+                ISNULL((SELECT INQIRE_AUTHOR_AT FROM STM_USERMENU WHERE MENU_ID = MMGR.MENU_ID AND USER_ID = #{userId}),'0') AS INQIRE_AUTHOR_AT,
+                ISNULL((SELECT REGIST_AUTHOR_AT FROM STM_USERMENU WHERE MENU_ID = MMGR.MENU_ID AND USER_ID = #{userId}),'0') AS REGIST_AUTHOR_AT,
+                ISNULL((SELECT UPDT_AUTHOR_AT   FROM STM_USERMENU WHERE MENU_ID = MMGR.MENU_ID AND USER_ID = #{userId}),'0') AS UPDT_AUTHOR_AT,
+                ISNULL((SELECT DELETE_AUTHOR_AT FROM STM_USERMENU WHERE MENU_ID = MMGR.MENU_ID AND USER_ID = #{userId}),'0') AS DELETE_AUTHOR_AT,
+                ISNULL((SELECT PRNTNG_AUTHOR_AT FROM STM_USERMENU WHERE MENU_ID = MMGR.MENU_ID AND USER_ID = #{userId}),'0') AS PRNTNG_AUTHOR_AT,
+                ISNULL((SELECT EXCEL_AUTHOR_AT  FROM STM_USERMENU WHERE MENU_ID = MMGR.MENU_ID AND USER_ID = #{userId}),'0') AS EXCEL_AUTHOR_AT,
+                ISNULL((SELECT DATA_AUTHOR_SE   FROM STM_USERMENU WHERE MENU_ID = MMGR.MENU_ID AND USER_ID = #{userId}),'0') AS DATA_AUTHOR_SE,                   
+                ISNULL((SELECT DELETE_AT        FROM STM_USERMENU WHERE MENU_ID = MMGR.MENU_ID AND USER_ID = #{userId}),'1') AS DELETE_AT,      
+                '1' FINISH_CHK,
+                CONVERT(VARCHAR(255), REPLICATE('0',5-LEN(CONVERT(varchar(10), ORDR))) + CONVERT(varchar(10), ORDR)) AS MENU_LEVEL 
+            FROM STM_MENU AS MMGR
+            WHERE  UPPER_MENU_ID = 'CHF000000' 
+            AND MENU_USE_AT = '1'
+            UNION ALL
+            SELECT
+                MM.MENU_ID AS ID,
+                MM.UPPER_MENU_ID AS PARENT_ID,
+                MM.MENU_NM AS TEXT,
+                MM.MENU_SE AS MENU_SE,
+                MM.ORDR AS ORDR,
+                MM.ENM AS TEXT_ENG,
+                MM.THIRD AS TEXT_THIRD,
+                (LEVEL + 1) AS LEVEL ,
+                ISNULL((SELECT INQIRE_AUTHOR_AT FROM STM_USERMENU WHERE MENU_ID = MM.MENU_ID AND USER_ID = #{userId}),'0') AS INQIRE_AUTHOR_AT,
+                ISNULL((SELECT REGIST_AUTHOR_AT FROM STM_USERMENU WHERE MENU_ID = MM.MENU_ID AND USER_ID = #{userId}),'0') AS REGIST_AUTHOR_AT,
+                ISNULL((SELECT UPDT_AUTHOR_AT   FROM STM_USERMENU WHERE MENU_ID = MM.MENU_ID AND USER_ID = #{userId}),'0') AS UPDT_AUTHOR_AT,
+                ISNULL((SELECT DELETE_AUTHOR_AT FROM STM_USERMENU WHERE MENU_ID = MM.MENU_ID AND USER_ID = #{userId}),'0') AS DELETE_AUTHOR_AT,
+                ISNULL((SELECT PRNTNG_AUTHOR_AT FROM STM_USERMENU WHERE MENU_ID = MM.MENU_ID AND USER_ID = #{userId}),'0') AS PRNTNG_AUTHOR_AT,
+                ISNULL((SELECT EXCEL_AUTHOR_AT  FROM STM_USERMENU WHERE MENU_ID = MM.MENU_ID AND USER_ID = #{userId}),'0') AS EXCEL_AUTHOR_AT,
+                ISNULL((SELECT DATA_AUTHOR_SE   FROM STM_USERMENU WHERE MENU_ID = MM.MENU_ID AND USER_ID = #{userId}),'0') AS DATA_AUTHOR_SE,                   
+                ISNULL((SELECT DELETE_AT        FROM STM_USERMENU WHERE MENU_ID = MM.MENU_ID AND USER_ID = #{userId}),'1') AS DELETE_AT,
+                '1' FINISH_CHK,
+                CONVERT(varchar(255), (CONVERT(varchar(255) ,MMGR.MENU_LEVEL) +convert(varchar(255) ,LEVEL) + CONVERT(varchar(255), REPLICATE('0',5-LEN(CONVERT(varchar(10), MM.ORDR))) + CONVERT(varchar(10), MM.ORDR)) )) AS MENU_LEVEL
+            FROM STM_MENU AS MM
+            INNER JOIN MENU_MGR MMGR 
+            ON MM.UPPER_MENU_ID = MMGR.ID
+            AND MENU_USE_AT = '1'
+            )
+            SELECT * FROM MENU_MGR 
+             ORDER BY MENU_LEVEL
+	</select>		
+	
+	<select id="selectMenuPath" parameterType="String" resultType="egovMapForNull">	
+		/* kr.co.dbvision.api.stm.cmm.stmcmm001.service.impl.Stmcmm001Mapper.selectMenuPath */ 
+		WITH  MENU_MGR AS  
+		(
+		    SELECT MENU_ID AS ID, UPPER_MENU_ID, MENU_NM, ORDR, 1 as  LEVEL,
+		        CONVERT(VARCHAR(255), REPLICATE('0',5-LEN(CONVERT(varchar(10), ORDR))) + CONVERT(varchar(10), ORDR)) AS MENU_LEVEL,
+		        CAST(MENU_NM AS VARCHAR(8000)) AS AAA
+		    FROM STM_MENU A
+		    WHERE UPPER_MENU_ID = 'CHF000000'
+		    AND MENU_USE_AT = '1'
+		    UNION ALL
+		    SELECT MM.MENU_ID AS ID, MM.UPPER_MENU_ID, MM.MENU_NM, MM.ORDR, (MMGR.LEVEL + 1) AS LEVEL,
+		        CONVERT(varchar(255), (CONVERT(varchar(255) ,MMGR.MENU_LEVEL) +convert(varchar(255) ,MMGR.LEVEL) + CONVERT(varchar(255), REPLICATE('0',5-LEN(CONVERT(varchar(10), MM.ORDR))) + CONVERT(varchar(10), MM.ORDR)) )) AS MENU_LEVEL,
+		        CAST(MMGR.MENU_NM + '|\|' +MM.MENU_NM AS VARCHAR(8000)) AS AAA
+		    FROM STM_MENU AS MM
+		    INNER JOIN MENU_MGR MMGR
+		    ON MM.UPPER_MENU_ID = MMGR.ID
+		    AND MENU_USE_AT = '1'
+		),
+		MENU_MGR2 AS
+		(
+		    SELECT MENU_ID AS ID, UPPER_MENU_ID, MENU_NM, ORDR, 1 as  LEVEL,
+		        CONVERT(VARCHAR(255), REPLICATE('0',5-LEN(CONVERT(varchar(10), ORDR))) + CONVERT(varchar(10), ORDR)) AS MENU_LEVEL,
+		        CAST(MENU_NM AS VARCHAR(8000)) AS AAA
+		    FROM STM_MENU A
+		    WHERE UPPER_MENU_ID = 'CHF000000'
+		    AND MENU_USE_AT = '1'
+		    UNION ALL
+		    SELECT MM.ID AS ID, MM.UPPER_MENU_ID, MM.MENU_NM, MM.ORDR, (MMGR.LEVEL + 1) AS LEVEL,
+		        CONVERT(varchar(255), (CONVERT(varchar(255) ,MMGR.MENU_LEVEL) +convert(varchar(255) ,MMGR.LEVEL) + CONVERT(varchar(255), REPLICATE('0',5-LEN(CONVERT(varchar(10), MM.ORDR))) + CONVERT(varchar(10), MM.ORDR)) )) AS MENU_LEVEL,
+		        CAST(MMGR.AAA + '|\|' +MM.MENU_NM AS VARCHAR(8000)) AS AAA
+		    FROM MENU_MGR AS MM
+		    INNER JOIN MENU_MGR2 MMGR
+		    ON MM.UPPER_MENU_ID = MMGR.ID
+		),
+		MENU_MGR3 AS
+		(
+		    SELECT MENU_ID, UPPER_MENU_ID, MENU_NM, ORDR, 1 as  LEVEL,
+                CONVERT(VARCHAR(255), REPLICATE('0',5-LEN(CONVERT(varchar(10), ORDR))) + CONVERT(varchar(10), ORDR)) AS MENU_LEVEL,
+                CAST(MENU_NM AS VARCHAR(8000)) AS PATH_NM
+            FROM STM_MENU A
+            WHERE UPPER_MENU_ID = 'CHF000000'
+            AND MENU_USE_AT = '1'
+            UNION ALL
+            SELECT MM.ID AS MENU_ID, MM.UPPER_MENU_ID, MM.MENU_NM, MM.ORDR, (MMGR.LEVEL + 1) AS LEVEL,
+                CONVERT(varchar(255), (CONVERT(varchar(255) ,MMGR.MENU_LEVEL) +convert(varchar(255) ,MMGR.LEVEL) + CONVERT(varchar(255), REPLICATE('0',5-LEN(CONVERT(varchar(10), MM.ORDR))) + CONVERT(varchar(10), MM.ORDR)) )) AS MENU_LEVEL,
+                CAST(MMGR.PATH_NM + '|\|' +MM.MENU_NM AS VARCHAR(8000)) AS PATH_NM
+            FROM MENU_MGR AS MM
+            INNER JOIN MENU_MGR3 MMGR
+            ON MM.UPPER_MENU_ID = MMGR.MENU_ID
+		),
+        MENU_MGR4 AS
+        (
+            SELECT MENU_ID, UPPER_MENU_ID, MENU_NM, ORDR, 1 as  LEVEL,
+                CONVERT(VARCHAR(255), REPLICATE('0',5-LEN(CONVERT(varchar(10), ORDR))) + CONVERT(varchar(10), ORDR)) AS MENU_LEVEL,
+                CAST(MENU_NM AS VARCHAR(8000)) AS PATH_NM
+            FROM STM_MENU A
+            WHERE UPPER_MENU_ID = 'CHF000000'
+            AND MENU_USE_AT = '1'
+            UNION ALL
+            SELECT MM.ID AS MENU_ID, MM.UPPER_MENU_ID, MM.MENU_NM, MM.ORDR, (MMGR.LEVEL + 1) AS LEVEL,
+                CONVERT(varchar(255), (CONVERT(varchar(255) ,MMGR.MENU_LEVEL) +convert(varchar(255) ,MMGR.LEVEL) + CONVERT(varchar(255), REPLICATE('0',5-LEN(CONVERT(varchar(10), MM.ORDR))) + CONVERT(varchar(10), MM.ORDR)) )) AS MENU_LEVEL,
+                CAST(MMGR.PATH_NM + '|\|' +MM.MENU_NM AS VARCHAR(8000)) AS PATH_NM
+            FROM MENU_MGR AS MM
+            INNER JOIN MENU_MGR4 MMGR
+            ON MM.UPPER_MENU_ID = MMGR.MENU_ID
+        )
+		SELECT MENU_ID, PATH_NM
+		FROM MENU_MGR4
+		WHERE MENU_ID = #{menuId}
+	</select>
+
+    <insert id="insertStmUseHis" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.stm.cmm.stmcmm001.service.impl.Stmcmm001Mapper.insertStmUseHis */ 
+        INSERT INTO STM_USE_HIS (
+            USEHIST_SN
+           ,CONECT_IP
+           ,MENU_ID
+           ,HIST_SE
+           ,HIST_DC
+           ,REG_DT
+           ,REG_ID
+        ) VALUES (
+            STM_USE_HIS_SEQUENCE.NEXTVAL
+           ,#{conectIp}
+           ,#{menuId}
+           ,#{histSe}
+           ,#{histDc}
+           ,GETDATE()
+           ,#{regId}
+        )
+    </insert>
+
+</mapper>

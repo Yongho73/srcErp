@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mhs.hrm.mhshrm015.service.mapper.Mhshrm015Mapper">
+
+    <select id="selectMhshrm015List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm015.service.mapper.Mhshrm015Mapper.selectMhshrm015List */
+        SELECT
+               OFCPS_CODE,
+               OFCPS_NM,
+               FNC_DATESTR(USE_BEGIN_DE) AS USE_BEGIN_DE,
+               FNC_DATESTR(USE_END_DE) AS USE_END_DE,
+               USE_AT,
+               SORT_ORDR,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_OFCPS_CODE A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="ofcpsCode != null and ofcpsCode != ''">
+                AND OFCPS_CODE = #{ofcpsCode}
+            </if>
+            <if test="ofcpsNm != null and ofcpsNm != ''">
+                AND OFCPS_NM LIKE '%' || #{ofcpsNm} || '%'
+            </if>
+            <if test="useAt != null and useAt != ''">
+                AND USE_AT = #{useAt}
+            </if>
+            <if test="sRegDt != null and sRegDt != ''">
+                <![CDATA[
+                AND REG_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+                ]]>
+            </if>
+            <if test="eRegDt != null and eRegDt != ''">
+                <![CDATA[
+                AND REG_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+                ]]>
+             </if>
+        </trim>
+        ORDER BY SORT_ORDR
+    </select>
+    
+    <select id="searchMhshrm015ForExcel" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm015.service.mapper.Mhshrm015Mapper.selectMhshrm015ExcelList */
+        SELECT
+               OFCPS_CODE,
+               OFCPS_NM,
+               FNC_DATESTR(USE_BEGIN_DE) AS USE_BEGIN_DE,
+               FNC_DATESTR(USE_END_DE) AS USE_END_DE,
+               DECODE(USE_AT, '1', '사용', '0', '미사용', '미사용') AS USE_AT,
+               SORT_ORDR,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_OFCPS_CODE A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="ofcpsCode != null and ofcpsCode != ''">
+                AND OFCPS_CODE = #{ofcpsCode}
+            </if>
+            <if test="ofcpsNm != null and ofcpsNm != ''">
+                AND OFCPS_NM LIKE '%' || #{ofcpsNm} || '%'
+            </if>
+            <if test="useAt != null and useAt != ''">
+                AND USE_AT = #{useAt}
+            </if>
+            <if test="sRegDt != null and sRegDt != ''">
+                <![CDATA[
+                AND REG_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+                ]]>
+            </if>
+            <if test="eRegDt != null and eRegDt != ''">
+                <![CDATA[
+                AND REG_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+                ]]>
+             </if>
+        </trim>
+        ORDER BY SORT_ORDR
+    </select>
+
+    <select id="selectMhshrm015" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm015.service.mapper.Mhshrm015Mapper.selectMhshrm015 */
+        SELECT
+               OFCPS_CODE,
+               OFCPS_NM,
+               USE_BEGIN_DE,
+               USE_END_DE,
+               USE_AT,
+               SORT_ORDR,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_OFCPS_CODE A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="ofcpsCode != null and ofcpsCode != ''">
+                AND OFCPS_CODE = #{ofcpsCode}
+            </if>
+        </trim>
+    </select>
+
+    <update id="saveMhshrm015" parameterType="kr.co.dbvision.api.mhs.hrm.mhshrm015.entity.Mhshrm015">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm015.service.mapper.Mhshrm015Mapper.saveMhshrm015 */
+        MERGE INTO MHS_OFCPS_CODE A
+             USING (SELECT
+                    #{ofcpsCode} OFCPS_CODE
+                    FROM DUAL) B
+                ON (
+                    A.OFCPS_CODE = B.OFCPS_CODE
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               OFCPS_NM= #{ofcpsNm},
+               USE_BEGIN_DE= REPLACE(#{useBeginDe},'-',''),
+               USE_END_DE= REPLACE(#{useEndDe},'-',''),
+               USE_AT= #{useAt},
+               SORT_ORDR= #{sortOrdr},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               OFCPS_CODE,
+               OFCPS_NM,
+               USE_BEGIN_DE,
+               USE_END_DE,
+               USE_AT,
+               SORT_ORDR,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{ofcpsCode},
+               #{ofcpsNm},
+               REPLACE(#{useBeginDe},'-',''),
+               REPLACE(#{useEndDe},'-',''),
+               #{useAt},
+               #{sortOrdr},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deleteMhshrm015" parameterType="kr.co.dbvision.api.mhs.hrm.mhshrm015.entity.Mhshrm015">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm015.service.mapper.Mhshrm015Mapper.deleteMhshrm015 */
+        DELETE FROM MHS_OFCPS_CODE
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND OFCPS_CODE = #{ofcpsCode}
+        </trim>
+    </delete>
+    
+    <select id="selectMhshrm015OfcpsCodeCombo" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.pub.usr.pubusr001.service.mapper.Pubusr001Mapper.selectMhshrm015OfcpsCodeCombo */
+        SELECT
+               OFCPS_CODE,
+               OFCPS_NM,
+               USE_BEGIN_DE,
+               USE_END_DE,
+               USE_AT,
+               SORT_ORDR AS OUTPT_ORDR,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_OFCPS_CODE A
+         WHERE USE_AT = '1'
+         ORDER BY SORT_ORDR, OFCPS_CODE
+    </select>
+    
+    
+
+    <select id="checkDeleteMhshrm015" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm015.service.mapper.Mhshrm015Mapper.checkDeleteMhshrm015 */
+        SELECT
+               B.EMPNO AS USE_CHECK,
+               A.EMPNO AS USE_CHECK2
+
+          FROM MHS_GNFD A, MHS_EMP B
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            ROWNUM = 1
+            <if test="ofcpsCode != null and ofcpsCode != ''">
+                AND (A.BFCHG_OFCPS_CODE = #{ofcpsCode}
+                    OR A.AFCHG_OFCPS_CODE = #{ofcpsCode}
+                    OR B.OFCPS_CODE = #{ofcpsCode})
+            </if>
+        </trim>
+    </select>
+</mapper>

@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mps.bsc.mpsbsc009.service.mapper.Mpsbsc009Mapper">
+
+
+  <select id="selectMpsbsc009MasterList" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.bsc.mpsbsc007.service.mapper.Mpsbsc007Mapper.selectMpsbsc009MasterList */
+        SELECT 
+                  DISTINCT  A.EMPNO AS EMPNO
+                , B.KOR_NM AS KOR_NM
+                , FNC_GETDEPTNM(B.DEPT_CODE) AS DEPT_NM
+                , FNC_GETCLSFNM(B.CLSF_CODE) AS CLSF_NM
+                , B.CLSF_CODE
+            FROM  MPS_PAYMENT A, MHS_EMP B            
+            WHERE A.EMPNO = B.EMPNO             
+            <if test="empno != null and empno != ''">
+                AND  A.EMPNO = #{empno}
+            </if>
+            <if test="bplcCode != null and bplcCode != ''">
+                AND  B.BPLC_CODE = #{bplcCode}
+            </if>                        
+            <if test="korNm != null and korNm != ''">
+                AND  B.KOR_NM = #{korNm}
+            </if>            
+            <if test="applcYy1 != null and applcYy1 != ''">
+                    <if test="applcYy2 != null and applcYy2 != ''">
+                        AND  (SUBSTR(A.CNTRCT_DE,1,4) LIKE   #{applcYy1}  || '%'  
+                        OR    SUBSTR(A.CNTRCT_DE,1,4)  LIKE   #{applcYy2}  || '%' )
+                    </if>
+                    <if test="applcYy2 == null or applcYy2 == ''">
+                        AND  SUBSTR(A.CNTRCT_DE,1,4) LIKE   #{applcYy1}  || '%'  
+                    </if>
+            </if>
+            
+            <if test="sRegDt != null and sRegDt != ''">
+                <![CDATA[
+                AND A.REG_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+                ]]>
+            </if>
+            <if test="eRegDt != null and eRegDt != ''">
+                <![CDATA[
+                AND A.REG_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+                ]]>
+             </if>
+              <if test="hffsSe != null and hffsSe != ''">
+                AND B.HFFS_SE = #{hffsSe}
+             </if>        
+        ORDER BY B.CLSF_CODE 
+    </select>
+    <select id="selectMpsbsc009List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.bsc.mpsbsc009.service.mapper.Mpsbsc009Mapper.selectMpsbsc009List */
+        SELECT
+               A.CNTRCT_NO,
+               A.EMPNO,
+                FNC_GETKORNM(A.EMPNO) AS KOR_NM,
+               FNC_DATESTR(A.CNTRCT_DE) AS CNTRCT_DE,
+               FNC_DATESTR(A.CNTRCT_SDT) AS CNTRCT_SDT,
+               FNC_DATESTR(A.CNTRCT_EDT) AS CNTRCT_EDT,
+               A.CNTRCT_AT,
+               A.BASS_AMT,
+               A.DTY_AMT,
+               A.MTAMT_AMT,
+               A.ANSLRY_AMT,
+               A.REG_DT,
+               A.REG_ID,
+               A.UPT_DT,
+               A.UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MPS_PAYMENT A,
+               MHS_EMP B
+        WHERE    A.EMPNO = B.EMPNO
+            
+             <if test="applcYy1 != null and applcYy1 != ''">
+                    <if test="applcYy2 != null and applcYy2 != ''">
+                        AND  (SUBSTR(A.CNTRCT_DE,1,4) LIKE   #{applcYy1}  || '%'  
+                        OR    SUBSTR(A.CNTRCT_DE,1,4)  LIKE   #{applcYy2}  || '%' )
+                    </if>
+                    <if test="applcYy2 == null or applcYy2 == ''">
+                        AND  SUBSTR(A.CNTRCT_DE,1,4) LIKE   #{applcYy1}  || '%'  
+                    </if>
+            </if>
+            <if test="cntrctNo != null and cntrctNo != ''">
+                AND A.CNTRCT_NO = #{cntrctNo}
+            </if>
+            <if test="empno != null and empno != ''">
+                AND A.EMPNO = #{empno}
+            </if>
+            <if test="bplcCode != null and bplcCode != ''">
+                AND  B.BPLC_CODE = #{bplcCode}
+            </if>   
+            <if test="cntrctDe != null and cntrctDe != ''">
+                AND A.CNTRCT_DE = #{cntrctDe}
+            </if>
+            <if test="sRegDt != null and sRegDt != ''">
+                <![CDATA[
+                AND A.REG_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+                ]]>
+            </if>
+            <if test="eRegDt != null and eRegDt != ''">
+                <![CDATA[
+                AND A.REG_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+                ]]>
+             </if>
+             <if test="bplcCode != null and bplcCode != ''">
+		        AND B.BPLC_CODE = #{bplcCode}
+		     </if>
+			 <if test="hffsSe != null and hffsSe != ''">
+			    AND B.HFFS_SE = #{hffsSe}
+			 </if>
+        
+    </select>
+
+    <select id="selectMpsbsc009" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.bsc.mpsbsc009.service.mapper.Mpsbsc009Mapper.selectMpsbsc009 */
+        SELECT
+               CNTRCT_NO,
+               EMPNO,
+               FNC_GETKORNM(EMPNO) AS KOR_NM,
+               CNTRCT_DE,
+               CNTRCT_SDT,
+               CNTRCT_EDT,
+               CNTRCT_AT,
+               BASS_AMT,
+               DTY_AMT,
+               MTAMT_AMT,
+               ANSLRY_AMT,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MPS_PAYMENT A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="cntrctNo != null and cntrctNo != ''">
+                AND CNTRCT_NO = #{cntrctNo}
+            </if>
+            <if test="empno != null and empno != ''">
+                AND EMPNO = #{empno}
+            </if>
+            <if test="cntrctDe != null and cntrctDe != ''">
+                AND CNTRCT_DE = REPLACE(#{cntrctDe}, '-','')
+            </if>
+        </trim>
+    </select>
+
+    <update id="saveMpsbsc009" parameterType="kr.co.dbvision.api.mps.bsc.mpsbsc009.entity.Mpsbsc009">
+        /* kr.co.dbvision.api.mps.bsc.mpsbsc009.service.mapper.Mpsbsc009Mapper.saveMpsbsc009 */
+        MERGE INTO MPS_PAYMENT A
+             USING (SELECT
+                    'CONT' || SUBSTR(#{cntrctDe}, 1,4 ) || '-' || #{cntrctNo} CNTRCT_NO,
+                    #{empno} EMPNO,
+                    REPLACE(#{cntrctDe}, '-','')  CNTRCT_DE
+                    FROM DUAL) B
+                ON (
+                    A.CNTRCT_NO = B.CNTRCT_NO AND 
+                    A.EMPNO = B.EMPNO AND 
+                    A.CNTRCT_DE = B.CNTRCT_DE
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               CNTRCT_SDT= REPLACE(#{cntrctSdt}, '-',''),
+               CNTRCT_EDT= REPLACE(#{cntrctEdt}, '-',''),
+               CNTRCT_AT= #{cntrctAt},
+               BASS_AMT= #{bassAmt},
+               DTY_AMT= #{dtyAmt},
+               MTAMT_AMT= #{mtamtAmt},
+               ANSLRY_AMT= #{anslryAmt},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               CNTRCT_NO,
+               EMPNO,
+               CNTRCT_DE,
+               CNTRCT_SDT,
+               CNTRCT_EDT,
+               CNTRCT_AT,
+               BASS_AMT,
+               DTY_AMT,
+               MTAMT_AMT,
+               ANSLRY_AMT,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               'CONT' || SUBSTR(#{cntrctDe}, 1,4 )  || '-' ||  #{cntrctNo},
+               #{empno},
+               REPLACE(#{cntrctDe}, '-',''),
+               REPLACE(#{cntrctSdt}, '-',''),
+               REPLACE(#{cntrctEdt}, '-',''),
+               #{cntrctAt},
+               #{bassAmt},
+               #{dtyAmt},
+               #{mtamtAmt},
+               #{anslryAmt},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deleteMpsbsc009" parameterType="kr.co.dbvision.api.mps.bsc.mpsbsc009.entity.Mpsbsc009">
+        /* kr.co.dbvision.api.mps.bsc.mpsbsc009.service.mapper.Mpsbsc009Mapper.deleteMpsbsc009 */
+        DELETE FROM MPS_PAYMENT
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND CNTRCT_NO = #{cntrctNo}
+                AND EMPNO = #{empno}
+                AND CNTRCT_DE = REPLACE(#{cntrctDe}, '-','')
+        </trim>
+    </delete>
+</mapper>

@@ -1,0 +1,417 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.pub.wks.pubwks005.service.mapper.Pubwks005Mapper">
+
+    <select id="selectPubwks005List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.pub.wks.pubwks005.service.mapper.Pubwks005Mapper.selectPubwks005List */
+        SELECT
+               A.OVTIME_WORK_SN,
+               A.EMPNO,
+               FNC_GETKORNM(A.EMPNO) AS EMPNM,
+               A.OVTIME_SE_CODE,
+               FNC_COMCODENM('C159' , A.OVTIME_SE_CODE) AS OVTIME_SE_CODE_NM,
+               FNC_DATESTR(A.REQST_DE) AS REQST_DE,
+               SUBSTR(A.REQST_BEGIN_TIME,1,2) || ':' || SUBSTR(A.REQST_BEGIN_TIME,3,2) AS REQST_BEGIN_TIME,
+               SUBSTR(A.REQST_END_TIME,1,2) || ':' || SUBSTR(A.REQST_END_TIME,3,2) AS REQST_END_TIME,
+               FNC_DATESTR(A.REAL_WORK_DE) AS REAL_WORK_DE,
+               SUBSTR(A.REAL_BEGIN_TIME,1,2) || ':' || SUBSTR(A.REAL_BEGIN_TIME,3,2) AS REAL_BEGIN_TIME,
+               SUBSTR(A.REAL_END_TIME,1,2) || ':' || SUBSTR(A.REAL_END_TIME,3,2) AS REAL_END_TIME,
+               A.REAL_WORK_TIME,
+               A.MEAL_AT,
+               A.WORK_CN,
+               SUBSTR(A.DAY_RECOG_TIME,1,2)|| ':' || SUBSTR(A.DAY_RECOG_TIME,3,2)  AS DAY_RECOG_TIME,
+               SUBSTR(A.NIGHT_RECOG_TIME,1,2)|| ':' || SUBSTR(A.NIGHT_RECOG_TIME,3,2)  AS NIGHT_RECOG_TIME,
+               A.ALT_HVOF_USE_AT,
+               FNC_DATESTR(A.ALT_HVOF_DE) AS ALT_HVOF_DE,
+               A.ELCTSCT_STTUS_CODE,
+               FNC_COMCODENM('EA004' , A.ELCTSCT_STTUS_CODE) AS ELCTSCT_STTUS_CODE_NM,
+               A.ELCTSCT_DOC_NO,
+               A.ELCTSCT_EMPNO,
+               FNC_GETKORNM(A.ELCTSCT_EMPNO) AS ELCTSCT_EMPNM,
+               A.WTHDRAW_ELCTSCT_SE_SN,
+               A.WTHDRAW_AT,
+               A.REWARD_HVOF_USE_AT,
+               A.RM,
+               C.RM AS WTHDRAW_RM,
+               C.ELCTSCT_STTUS_CODE AS WTHDRAW_ELCTSCT_STTUS_CODE,
+               FNC_COMCODENM('EA004' , C.ELCTSCT_STTUS_CODE) AS WTHDRAW_ELCTSCT_STTUS_CODE_NM,
+               C.ELCTSCT_DOC_NO AS WTHDRAW_ELCTSCT_DOC_NO,
+               C.ELCTSCT_EMPNO AS WTHDRAW_ELCTSCT_EMPNO,
+               FNC_GETKORNM(C.ELCTSCT_EMPNO) AS WTHDRAW_ELCTSCT_EMPNM,
+               A.REG_DT,
+               A.REG_ID,
+               A.UPT_DT,
+               A.UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_OVTIME_WORK A LEFT OUTER JOIN MHS_OVTIME_WORK_WTHDRAW C 
+            ON A.OVTIME_WORK_SN = C.OVTIME_WORK_SN
+                AND
+               A.WTHDRAW_ELCTSCT_SE_SN = C.WTHDRAW_ELCTSCT_SE_SN
+            LEFT OUTER JOIN MHS_EMP B
+            ON A.EMPNO = B.EMPNO
+          WHERE 
+                1=1
+            <if test="deptCode != null and deptCode != ''">
+                <![CDATA[
+                AND B.DEPT_CODE = #{deptCode}
+                ]]>
+            </if>
+            <if test="empno != null and empno != ''">
+                <![CDATA[
+                AND A.EMPNO = #{empno}
+                ]]>
+            </if>
+            <if test="realWorkSdt != null and realWorkSdt != ''">
+                <![CDATA[
+                AND A.REAL_WORK_DE >= #{realWorkSdt}
+                ]]>
+            </if>
+            <if test="realWorkEdt != null and realWorkEdt != ''">
+                <![CDATA[
+                AND A.REAL_WORK_DE <= #{realWorkEdt}
+                ]]>
+            </if>  
+            <if test="rewardHvofUseAt != null and rewardHvofUseAt != ''">
+                <![CDATA[
+                AND A.REWARD_HVOF_USE_AT = #{rewardHvofUseAt}
+                ]]>
+            </if>                      
+            <if test="elctsctSttusCode != null and elctsctSttusCode != ''">
+                <![CDATA[
+                AND A.ELCTSCT_STTUS_CODE = #{elctsctSttusCode}
+                ]]>
+            </if>                   
+    </select>
+
+    <select id="selectPubwks005" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.pub.wks.pubwks005.service.mapper.Pubwks005Mapper.selectPubwks005 */
+        SELECT
+               OVTIME_WORK_SN,
+               EMPNO,
+               OVTIME_SE_CODE,
+               REQST_DE,
+               SUBSTR(REQST_BEGIN_TIME,1,2) || ':' || SUBSTR(REQST_BEGIN_TIME,3,2) AS REQST_BEGIN_TIME,
+               SUBSTR(REQST_END_TIME,1,2) || ':' || SUBSTR(REQST_END_TIME,3,2) AS REQST_END_TIME,
+               REAL_WORK_DE,
+               SUBSTR(REAL_BEGIN_TIME,1,2) || ':' || SUBSTR(REAL_BEGIN_TIME,3,2) AS REAL_BEGIN_TIME,
+               SUBSTR(REAL_END_TIME,1,2) || ':' || SUBSTR(REAL_END_TIME,3,2) AS REAL_END_TIME,
+               REAL_WORK_TIME,
+               MEAL_AT,
+               WORK_CN,
+               DAY_RECOG_TIME,
+               NIGHT_RECOG_TIME,
+               ALT_HVOF_USE_AT,
+               ALT_HVOF_DE,
+               ELCTSCT_STTUS_CODE,
+               ELCTSCT_DOC_NO,
+               ELCTSCT_EMPNO,
+               WTHDRAW_ELCTSCT_SE_SN,
+               WTHDRAW_AT,
+               REWARD_HVOF_USE_AT,
+               RM,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_OVTIME_WORK A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="ovtimeWorkSn != null and ovtimeWorkSn != ''">
+                AND OVTIME_WORK_SN = #{ovtimeWorkSn}
+            </if>
+        </trim>
+    </select>
+    
+    <select id="selectStanWorkTimeTmdiffPubwks005" parameterType="egovMapForNull" resultType="egovMapForNull">
+    /* kr.co.dbvision.api.pub.wks.pubwks005.service.mapper.Pubwks005Mapper.selectStanWorkTimeTmdiffPubwks005 */
+        SELECT
+            SUBSTR(WORK_BEGIN_TIME,1,2) || ':' || SUBSTR(WORK_BEGIN_TIME,3,2) AS WORK_BEGIN_TIME,
+            SUBSTR(WORK_END_TIME,1,2) || ':' || SUBSTR(WORK_END_TIME,3,2) AS WORK_END_TIME
+        FROM
+            MHS_TMDIFF_WORK 
+        WHERE
+            EMPNO = #{empno}
+            AND
+            WORK_DAY = #{reqstDe}
+            AND
+            CONFM_SE_SN = (SELECT MAX(CONFM_SE_SN)
+                           FROM MHS_TMDIFF_WORK
+                           WHERE 
+                            EMPNO = #{empno}
+                            AND
+                            WORK_DAY = #{reqstDe}
+                            AND
+                            CONFM_STTUS_CODE = '002')
+                            
+    </select>
+    
+    <select id="selectStanWorkTimeIndvdPubwks005" parameterType="egovMapForNull" resultType="egovMapForNull">
+    /* kr.co.dbvision.api.pub.wks.pubwks005.service.mapper.Pubwks005Mapper.selectStanWorkTimeIndvdPubwks005 */
+        SELECT
+            WORK_TY_CODE AS INDVD_WORK_TY_CODE,
+            USE_BEGIN_DE AS INDVD_USE_BEGIN_DE,
+            USE_END_DE AS INDVD_USE_END_DE,
+            SUBSTR(WORK_BEGIN_TIME,1,2) || ':' || SUBSTR(WORK_BEGIN_TIME,3,2) AS WORK_BEGIN_TIME,
+            SUBSTR(WORK_END_TIME,1,2) || ':' || SUBSTR(WORK_END_TIME,3,2) AS WORK_END_TIME
+        FROM
+            MHS_INDVDLWORKTYSEL
+        WHERE
+            EMPNO = #{empno}
+            AND
+            <![CDATA[
+            (USE_BEGIN_DE <= #{reqstDe} AND USE_END_DE >= #{reqstDe})
+            ]]>
+            AND
+            CONFM_STTUS_CODE = '002'
+    </select>
+
+    <select id="selectThreeMonthDataPubwks005" parameterType="kr.co.dbvision.api.pub.wks.pubwks005.entity.Pubwks005" resultType="egovMapForNull">
+    /* kr.co.dbvision.api.pub.wks.pubwks005.service.mapper.Pubwks005Mapper.selectThreeMonthDataPubwks005 */
+               SELECT 
+                    JOB_DE,
+                    DE_SE_CODE,
+                    HVOF_AT
+                FROM STM_JOB_DAY 
+                WHERE 
+                    JOB_DE BETWEEN #{beforeReqstMonth} AND #{afterReqstMonth}
+                ORDER BY JOB_DE ASC
+    </select>
+    
+    <select id="selectStanHvofDeIndvdHvofMgrtPubwks005" parameterType="egovMapForNull" resultType="egovMapForNull">
+    /* kr.co.dbvision.api.pub.wks.pubwks005.service.mapper.Pubwks005Mapper.selectStanHvofDeIndvdHvofMgrtPubwks005 */
+        SELECT
+            HVOF_DE,
+            WDAY_CODE,
+            ELCTSCT_STTUS_CODE
+        FROM MHS_INDVDL_HVOF_MGRT
+        WHERE 
+            EMPNO = #{empno}
+            AND
+            HVOF_DE = #{reqstDe}
+            AND
+            ELCTSCT_SE_SN = (SELECT MAX(ELCTSCT_SE_SN)
+                             FROM MHS_INDVDL_HVOF_MGRT
+                             WHERE 
+                                EMPNO = #{empno}
+                                AND
+                                HVOF_DE = #{reqstDe}
+                                AND
+                                ELCTSCT_STTUS_CODE = '002')
+    </select>
+    
+    <select id="selectStanHvofDeStmJobdePubwks005" parameterType="egovMapForNull" resultType="egovMapForNull">
+    /* kr.co.dbvision.api.pub.wks.pubwks005.service.mapper.Pubwks005Mapper.selectStanHvofDeStmJobdePubwks005 */
+               SELECT 
+                    JOB_DE,
+                    DE_SE_CODE,
+                    HVOF_AT
+                FROM STM_JOB_DAY 
+                WHERE 
+                    JOB_DE = #{reqstDe}
+    </select>
+
+    <select id="selectThreeMonthOvtimeDataPubwks005" parameterType="kr.co.dbvision.api.pub.wks.pubwks005.entity.Pubwks005" resultType="egovMapForNull">
+    /* kr.co.dbvision.api.pub.wks.pubwks005.service.mapper.Pubwks005Mapper.selectThreeMonthOvtimeDataPubwks005 */
+                SELECT 
+					REQST_DE,
+					REQST_BEGIN_TIME,
+					REQST_END_TIME,
+					DAY_RECOG_TIME,
+					NIGHT_RECOG_TIME,
+					REAL_WORK_DE,
+					REAL_BEGIN_TIME,
+					REAL_END_TIME,
+					REAL_WORK_TIME
+                FROM MHS_OVTIME_WORK A
+                WHERE 
+                    EMPNO = #{empno}
+                    AND
+                    (ELCTSCT_STTUS_CODE != '20' OR ELCTSCT_STTUS_CODE IS NULL)
+                    AND
+                <![CDATA[
+                    REQST_DE BETWEEN #{beforeReqstMonth} AND #{afterReqstMonth}
+                ]]>
+                <if test="ovtimeWorkSn != '' and ovtimeWorkSn != null">
+                    AND OVTIME_WORK_SN != #{ovtimeWorkSn}
+                </if>
+                ORDER BY REQST_DE ASC
+    </select>
+    
+    <select id="selectHolidayCnt" parameterType="EgovMapForNull" resultType="java.lang.Integer">
+        SELECT
+            COUNT(*)
+        FROM STM_JOB_DAY
+        WHERE
+            HVOF_AT = '1'
+            AND
+            DE_SE_CODE NOT IN ('0' , '6')
+            AND
+            <![CDATA[
+            (JOB_DE >= #{oneWeekStart} AND JOB_DE <= #{oneWeekEnd})
+            ]]>
+    </select>
+
+    <update id="savePubwks005" parameterType="kr.co.dbvision.api.pub.wks.pubwks005.entity.Pubwks005">
+        /* kr.co.dbvision.api.pub.wks.pubwks005.service.mapper.Pubwks005Mapper.savePubwks005 */
+        MERGE INTO MHS_OVTIME_WORK A
+             USING (SELECT
+                    #{ovtimeWorkSn} OVTIME_WORK_SN
+                    FROM DUAL) B
+                ON (
+                    A.OVTIME_WORK_SN = B.OVTIME_WORK_SN
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               EMPNO= #{empno},
+               OVTIME_SE_CODE= #{ovtimeSeCode},
+               REQST_DE= REPLACE(#{reqstDe},'-',''),
+               REQST_BEGIN_TIME= REPLACE(#{reqstBeginTime},':',''),
+               REQST_END_TIME= REPLACE(#{reqstEndTime},':',''),
+               REAL_WORK_DE= REPLACE(#{realWorkDe},'-',''),
+               REAL_BEGIN_TIME= REPLACE(#{realBeginTime},':',''),
+               REAL_END_TIME= REPLACE(#{realEndTime},':',''),
+               REAL_WORK_TIME= #{realWorkTime},
+               MEAL_AT= #{mealAt},
+               WORK_CN= #{workCn},
+               DAY_RECOG_TIME= REPLACE(#{dayRecogTime},':',''),
+               NIGHT_RECOG_TIME= REPLACE(#{nightRecogTime},':',''),
+               ALT_HVOF_USE_AT= NVL(#{altHvofUseAt},'0'),
+               ALT_HVOF_DE= REPLACE(#{altHvofDe},'-',''),
+               ELCTSCT_STTUS_CODE= #{elctsctSttusCode},
+               ELCTSCT_DOC_NO = #{elctsctDocNo},
+               ELCTSCT_EMPNO = #{elctsctEmpno},
+               WTHDRAW_ELCTSCT_SE_SN= #{wthdrawElctsctSeSn},
+               WTHDRAW_AT= #{wthdrawAt},
+               REWARD_HVOF_USE_AT= NVL(#{rewardHvofUseAt},'0'),
+               RM= #{rm},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               OVTIME_WORK_SN,
+               EMPNO,
+               OVTIME_SE_CODE,
+               REQST_DE,
+               REQST_BEGIN_TIME,
+               REQST_END_TIME,
+               REAL_WORK_DE,
+               REAL_BEGIN_TIME,
+               REAL_END_TIME,
+               REAL_WORK_TIME,
+               MEAL_AT,
+               WORK_CN,
+               DAY_RECOG_TIME,
+               NIGHT_RECOG_TIME,
+               ALT_HVOF_USE_AT,
+               ALT_HVOF_DE,
+               ELCTSCT_STTUS_CODE,
+               ELCTSCT_DOC_NO,
+               ELCTSCT_EMPNO,
+               WTHDRAW_ELCTSCT_SE_SN,
+               WTHDRAW_AT,
+               REWARD_HVOF_USE_AT,
+               RM,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{ovtimeWorkSn},
+               #{empno},
+               #{ovtimeSeCode},
+               REPLACE(#{reqstDe},'-',''),
+               REPLACE(#{reqstBeginTime},':',''),
+               REPLACE(#{reqstEndTime},':',''),
+               REPLACE(#{realWorkDe},'-',''),
+               REPLACE(#{realBeginTime},':',''),
+               REPLACE(#{realEndTime},':',''),
+               #{realWorkTime},
+               #{mealAt},
+               #{workCn},
+               REPLACE(#{dayRecogTime},':',''),
+               REPLACE(#{nightRecogTime},':',''),
+               NVL(#{altHvofUseAt},'0'),
+               REPLACE(#{altHvofDe},'-',''),
+               #{elctsctSttusCode},
+               #{elctsctDocNo},
+               #{elctsctEmpno},
+               #{wthdrawElctsctSeSn},
+               #{wthdrawAt},
+               NVL(#{rewardHvofUseAt},'0'),
+               #{rm},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+    
+    <insert id="copyPubwks005" parameterType="EgovMapForNull">
+        INSERT INTO 
+            MHS_OVTIME_WORK
+            (
+				OVTIME_WORK_SN,
+				EMPNO,
+				OVTIME_SE_CODE,
+				REQST_DE,
+				REQST_BEGIN_TIME,
+				REQST_END_TIME,
+				REAL_WORK_DE,
+				REAL_BEGIN_TIME,
+				REAL_END_TIME,
+				REAL_WORK_TIME,
+				MEAL_AT,
+				WORK_CN,
+				DAY_RECOG_TIME,
+				NIGHT_RECOG_TIME,
+				ALT_HVOF_USE_AT,
+				ALT_HVOF_DE,
+				REWARD_HVOF_USE_AT,
+				RM,
+				REG_DT,
+				REG_ID
+            )
+            SELECT
+                #{newOvtimeWorkSn},
+                EMPNO,
+                OVTIME_SE_CODE,
+                REQST_DE,
+                REQST_BEGIN_TIME,
+                REQST_END_TIME,
+                REAL_WORK_DE,
+                REAL_BEGIN_TIME,
+                REAL_END_TIME,
+                REAL_WORK_TIME,
+                MEAL_AT,
+                WORK_CN,
+                DAY_RECOG_TIME,
+                NIGHT_RECOG_TIME,
+                ALT_HVOF_USE_AT,
+                ALT_HVOF_DE,
+                REWARD_HVOF_USE_AT,
+                RM,
+                SYSDATE,
+                #{regId}                
+            FROM MHS_OVTIME_WORK
+            WHERE 
+                OVTIME_WORK_SN = #{ovtimeWorkSn}
+    </insert>
+    
+    <delete id="deletePubwks005" parameterType="kr.co.dbvision.api.pub.wks.pubwks005.entity.Pubwks005">
+        /* kr.co.dbvision.api.pub.wks.pubwks005.service.mapper.Pubwks005Mapper.deletePubwks005 */
+        DELETE FROM MHS_OVTIME_WORK
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND OVTIME_WORK_SN = #{ovtimeWorkSn}
+        </trim>
+    </delete>
+</mapper>

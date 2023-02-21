@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mps.cal.mpscal026.service.mapper.Mpscal026Mapper">
+
+    <select id="selectMpscal026List" parameterType="egovMapForNull" resultType="egovMapForNull">    
+			SELECT * 
+			FROM 
+			(
+			    SELECT  
+			                     APPLC_YM
+			                  ,  EMPNO
+			                  ,  FNC_GETKORNM(EMPNO) AS KORNM
+			                  ,  FNC_GET_EMP_DEPT_NM(EMPNO) AS DEPT_NM
+			                  ,  SALARYITEM_CODE
+			                  ,  AMT 
+			    FROM     MPS_MT_ODYSG
+			    WHERE  1=1
+			    <if test="applcYm != null and applcYm != ''">
+                    AND APPLC_YM = #{applcYm}
+                </if>
+                <if test="empno != null and empno != ''">
+                    AND EMPNO = #{empno}
+                </if>
+                <if test="deptCode != null and deptCode != ''">
+                    AND FNC_GET_EMP_DEPT_CD(EMPNO) = #{deptCode}
+                </if>
+                
+			)
+			PIVOT 
+			  ( 
+			    SUM(AMT) FOR SALARYITEM_CODE IN (   ${salaryitemCode} )  
+			   
+			  )
+    </select>
+    
+    
+     <select id="selectMpscal026TitleList" parameterType="egovMapForNull" resultType="egovMapForNull">
+         /* kr.co.dbvision.api.mps.cal.mpscal026.service.mapper.Mpscal026Mapper.selectMpscal026OdysgList  통상임금 코드*/
+        SELECT DISTINCT B.SALARYITEM_CODE
+								    , B.SALARYITEM_NM
+								    , B.OUTPT_ORDR 
+		FROM  MPS_MT_ODYSG A, MPS_SALARYITEM B
+		WHERE A.SALARYITEM_CODE(+) = B.SALARYITEM_CODE 
+      
+            <if test="applcYm != null and applcYm != ''">
+                AND A.APPLC_YM(+) = #{applcYm}
+            </if>            				
+		AND B.ODYSG_INCLS_AT =  '1'
+		AND B.PYMNTDDC_SE      =  '001'
+		AND B.USE_AT                    =  '1'
+		ORDER BY B.OUTPT_ORDR, B.SALARYITEM_CODE
+    </select>
+    
+    
+
+    <select id="selectMpscal026" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.cal.mpscal026.service.mapper.Mpscal026Mapper.selectMpscal026 */
+        SELECT
+               APPLC_YM,
+               EMPNO,
+               SALARYITEM_CODE,
+               AMT,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MPS_MT_ODYSG A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="applcYm != null and applcYm != ''">
+                AND APPLC_YM = #{applcYm}
+            </if>
+            <if test="empno != null and empno != ''">
+                AND EMPNO = #{empno}
+            </if>
+            <if test="salaryitemCode != null and salaryitemCode != ''">
+                AND SALARYITEM_CODE = #{salaryitemCode}
+            </if>
+        </trim>
+    </select>
+
+    <update id="saveMpscal026" parameterType="kr.co.dbvision.api.mps.cal.mpscal026.entity.Mpscal026">
+        /* kr.co.dbvision.api.mps.cal.mpscal026.service.mapper.Mpscal026Mapper.saveMpscal026 */
+        MERGE INTO MPS_MT_ODYSG A
+             USING (SELECT
+                    #{applcYm} APPLC_YM,
+                    #{empno} EMPNO,
+                    #{salaryitemCode} SALARYITEM_CODE
+                    FROM DUAL) B
+                ON (
+                    A.APPLC_YM = B.APPLC_YM AND 
+                    A.EMPNO = B.EMPNO AND 
+                    A.SALARYITEM_CODE = B.SALARYITEM_CODE
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               AMT= #{amt},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               APPLC_YM,
+               EMPNO,
+               SALARYITEM_CODE,
+               AMT,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{applcYm},
+               #{empno},
+               #{salaryitemCode},
+               #{amt},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deleteMpscal026" parameterType="kr.co.dbvision.api.mps.cal.mpscal026.entity.Mpscal026">
+        /* kr.co.dbvision.api.mps.cal.mpscal026.service.mapper.Mpscal026Mapper.deleteMpscal026 */
+        DELETE FROM MPS_MT_ODYSG
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND APPLC_YM = #{applcYm}
+                AND EMPNO = #{empno}
+                AND SALARYITEM_CODE = #{salaryitemCode}
+        </trim>
+    </delete>
+    
+    
+     <parameterMap id="spCalc" type="hashmap">
+        <parameter property="applcYm" javaType="String" jdbcType="VARCHAR" mode="IN"/>       
+        <parameter property="empno" javaType="String" jdbcType="VARCHAR" mode="IN"/>
+        <parameter property="regId" javaType="String" jdbcType="VARCHAR" mode="IN"/>        
+        <parameter property="asReturnString" javaType="String" jdbcType="VARCHAR" mode="OUT" />
+    </parameterMap>
+ 
+    <select id="selectMpscal026OdysgCalc" parameterMap="spCalc" resultType="egovMapForNull" statementType="CALLABLE">
+        <![CDATA[
+            { CALL SP_MPS_MT_ODYSG_CALC(?,?,?,?) }
+        ]]>
+    </select>
+    
+</mapper>

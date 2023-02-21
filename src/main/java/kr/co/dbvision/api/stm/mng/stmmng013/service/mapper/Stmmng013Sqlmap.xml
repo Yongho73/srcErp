@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.stm.mng.stmmng013.service.mapper.Stmmng013Mapper">
+
+    <select id="selectStmmng013List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.stm.mng.stmmng013.service.mapper.Stmmng013Mapper.selectStmmng013List */
+        SELECT
+               CUST_NO,
+               CUST_NM,
+               CLSF,
+               CMPNY_DEPT,
+               HOME_TELNO,
+               CMPNY_TELNO,
+               MBTLNUM,
+               EMAIL,
+               ZIP,
+               BASS_ADRES,
+               DETAIL_ADRES,
+               A.BCNC_CODE,
+               (SELECT BCNC_NM FROM STM_CUSTOMER B WHERE B.BCNC_CODE = A.BCNC_CODE) AS BCNC_CODE_NM,
+               BCNC_CHARGER_AT,
+               RM,
+               A.REG_DT,
+               A.REG_ID,
+               A.UPT_DT,
+               A.UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM STM_CUST A, STM_CUSTOMER B
+          WHERE 1=1 
+                AND  A.BCNC_CODE =B.BCNC_CODE(+)
+            <if test="custNo != null and custNo != ''">
+                AND CUST_NO = #{custNo}
+            </if>
+            <if test="custNm != null and custNm != ''">
+                AND CUST_NM like '%'|| #{custNm} || '%'
+            </if>
+            <if test="bcncCodeNm != null and bcncCodeNm != ''">
+                AND BCNC_NM like '%'|| #{bcncCodeNm} || '%'
+            </if>
+            <if test="bcncAt == 1">
+                AND A.BCNC_CODE IS NOT NULL
+            </if>
+            <if test="bcncAt == 2">
+                AND A.BCNC_CODE IS NULL
+            </if>
+            <if test="sRegDt != null and sRegDt != ''">
+                <![CDATA[
+                AND A.REG_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+                ]]>
+            </if>
+            <if test="eRegDt != null and eRegDt != ''">
+                <![CDATA[
+                AND A.REG_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+                ]]>
+             </if>
+        ORDER BY CUST_NM
+    </select>
+
+    <select id="selectStmmng013" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.stm.mng.stmmng013.service.mapper.Stmmng013Mapper.selectStmmng013 */
+        SELECT
+               CUST_NO,
+               CUST_NM,
+               CLSF,
+               CMPNY_DEPT,
+               HOME_TELNO,
+               CMPNY_TELNO,
+               MBTLNUM,
+               EMAIL,
+               ZIP,
+               BASS_ADRES,
+               DETAIL_ADRES,
+               BCNC_CODE,
+               BCNC_CHARGER_AT,
+               RM,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM STM_CUST A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="custNo != null and custNo != ''">
+                AND CUST_NO = #{custNo}
+            </if>
+        </trim>
+    </select>
+
+    <update id="saveStmmng013" parameterType="kr.co.dbvision.api.stm.mng.stmmng013.entity.Stmmng013">
+        /* kr.co.dbvision.api.stm.mng.stmmng013.service.mapper.Stmmng013Mapper.saveStmmng013 */
+        MERGE INTO STM_CUST A
+             USING (SELECT
+                    #{custNo} CUST_NO
+                    FROM DUAL) B
+                ON (
+                    A.CUST_NO = B.CUST_NO
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               CUST_NM= #{custNm},
+               CLSF= #{clsf},
+               CMPNY_DEPT= REPLACE(#{cmpnyDept},'-',''),
+               HOME_TELNO= #{homeTelno},
+               CMPNY_TELNO= #{cmpnyTelno},
+               MBTLNUM= #{mbtlnum},
+               EMAIL= #{email},
+               ZIP= #{zip},
+               BASS_ADRES= #{bassAdres},
+               DETAIL_ADRES= #{detailAdres},
+               BCNC_CODE= #{bcncCode},
+               BCNC_CHARGER_AT= #{bcncChargerAt},
+               RM= #{rm},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               CUST_NO,
+               CUST_NM,
+               CLSF,
+               CMPNY_DEPT,
+               HOME_TELNO,
+               CMPNY_TELNO,
+               MBTLNUM,
+               EMAIL,
+               ZIP,
+               BASS_ADRES,
+               DETAIL_ADRES,
+               BCNC_CODE,
+               BCNC_CHARGER_AT,
+               RM,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{custNo},
+               #{custNm},
+               #{clsf},
+               REPLACE(#{cmpnyDept},'-',''),
+               #{homeTelno},
+               #{cmpnyTelno},
+               #{mbtlnum},
+               #{email},
+               #{zip},
+               #{bassAdres},
+               #{detailAdres},
+               #{bcncCode},
+               #{bcncChargerAt},
+               #{rm},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deleteStmmng013" parameterType="kr.co.dbvision.api.stm.mng.stmmng013.entity.Stmmng013">
+        /* kr.co.dbvision.api.stm.mng.stmmng013.service.mapper.Stmmng013Mapper.deleteStmmng013 */
+        DELETE FROM STM_CUST
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND CUST_NO = #{custNo}
+        </trim>
+    </delete>
+    
+    <update id="updateChargeClearStmmng013" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.stm.mng.stmmng013.service.mapper.Stmmng013Mapper.updateChargeClearStmmng013 */
+        UPDATE STM_CUST  SET BCNC_CHARGER_AT  ='0' WHERE BCNC_CODE = #{bcncCode}        
+    </update>
+          <update id="updateChargeSetStmmng013" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.stm.mng.stmmng013.service.mapper.Stmmng013Mapper.updateChargeSetStmmng013 */
+        UPDATE STM_CUST  SET BCNC_CHARGER_AT  ='1' WHERE CUST_NO = #{custNo} 
+    </update>
+    
+     <update id="updateChargeMfsbsc002" parameterType="EgovMapForNull">
+      /* kr.co.dbvision.api.stm.mng.stmmng013.service.mapper.Stmmng013Mapper.updateChargeMfsbsc002 */
+
+        UPDATE STM_CUSTOMER 
+        SET
+            CHARGER_NM  =#{custNm},
+            CHARGER_EMAIL =#{email},
+            CHARGER_TELNO =#{cmpnyTelno} ,
+            CHARGER_DEPT =#{cmpnyDept},
+            CHARGER_OFCPS =#{clsf}
+        WHERE 
+        BCNC_CODE =#{bcncCode}
+        
+      </update>
+</mapper>

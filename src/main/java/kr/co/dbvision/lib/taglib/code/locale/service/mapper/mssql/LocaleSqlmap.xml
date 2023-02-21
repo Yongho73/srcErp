@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.lib.taglib.code.locale.service.mapper.LocaleMapper">
+    <select id="selectLocale" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.lib.taglib.code.locale.service.impl.LocaleMpper.selectLocaleCode */
+        SELECT DICARY_ID KY,
+               PROGRM_ID,
+               ENG,
+               KOR,
+               THIRD,
+               LABL
+          FROM STM_DICARY
+    </select>
+</mapper>

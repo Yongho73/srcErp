@@ -1,0 +1,377 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.ynd.yta.yndyta001.service.mapper.Yndyta001Mapper">
+
+
+    <select id="selectBelongYearList" parameterType="egovMapForNull" resultType="egovMapForNull">
+         /* kr.co.dbvision.api.ynd.yta.yndyta001.service.mapper.Yndyta001Mapper.selectBelongYearList */
+		SELECT 
+		BELONG_YY AS KEY, 
+		BELONG_YY AS VALUE 
+		FROM
+		(
+                SELECT TO_CHAR(SYSDATE,'YYYY') AS BELONG_YY FROM DUAL
+                UNION			
+		        SELECT
+		               BELONG_YY
+		          FROM YND_PAY_BASIC A
+		          GROUP  BY BELONG_YY
+		) ORDER BY 1 DESC
+		
+    </select>
+
+    <select id="selectCalcYmList" parameterType="egovMapForNull" resultType="egovMapForNull">
+         /* kr.co.dbvision.api.ynd.yta.yndyta001.service.mapper.Yndyta001Mapper.selectCalcYmList */
+        SELECT 
+        CALC_YM AS KEY, 
+        CALC_YM AS VALUE 
+        FROM
+        (
+                SELECT TO_CHAR(SYSDATE,'YYYY')||'13' AS CALC_YM FROM DUAL
+                UNION            
+                SELECT
+                       CALC_YM
+                  FROM YND_PAY_BASIC A
+                  GROUP  BY BELONG_YY,CALC_YM
+        ) ORDER BY 1 DESC
+        
+		
+    </select>
+
+
+    <select id="selectYndyta001List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.ynd.yta.yndyta001.service.mapper.Yndyta001Mapper.selectYndyta001List */
+        SELECT
+               EMPNO,
+               BELONG_YY,
+               CALC_YM,
+               KOR_NM,
+               IHIDNUM,
+               WORK_SDT,
+               WORK_EDT,
+               HUMANDDC_CHANGE_AT,
+               BPLC_CODE,
+               RDCXPT_BGNDE,
+               RDCXPT_ENDDE,
+               PUBPENSION_AMT,
+               SOPENSION_AMT,
+               PSPENSION_AMT,
+               POPENSION_AMT,
+               BASS_SALARY_AMT,
+               BNS_AMT,
+               CONST_BNS_AMT,
+               NPN_AMT,
+               EMPLYMINSRNC_AMT,
+               HLTHINS_AMT,
+               INCMTAX,
+               LCLTYINCMTAX,
+               AGSPTAX,
+               OUTNATN_LABOR_ALLWNC,
+               NIGHT_LABOR_ALLWNC,
+               CHLDBRTH_ALLWNC,
+               RESEARCH_CT,
+               TAXXMPT_SCHXPN_AMT,
+               SBJSLCT_ALLWNC,
+               BSECLUDED_ALLWNC,
+               MOVING_ALLWNC,
+               CGFFD_AMT,
+               CMIT_ALLWNC,
+               DAYNHTC_CT,
+               PVTCARSBSIDY,
+               ESWRS_DRT_AMT,
+               EXCTV_RETIRE_INCOME_LMT,
+               ETC_ALLWNC_AMT,
+               STOCK_OPTION_PRFT,
+               INTH_RWMNY,
+               BABYLAYOFF_ALLWNC,
+               TRET_IMPRVMCT,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM YND_PAY_BASIC A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="empno != null and empno != ''">
+                AND EMPNO = #{empno}
+            </if>
+            <if test="belongYy != null and belongYy != ''">
+                AND BELONG_YY = #{belongYy}
+            </if>
+            <if test="calcYm != null and calcYm != ''">
+                AND CALC_YM = #{calcYm}
+            </if>
+            <if test="sRegDt != null and sRegDt != ''">
+                <![CDATA[
+                AND REG_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+                ]]>
+            </if>
+            <if test="eRegDt != null and eRegDt != ''">
+                <![CDATA[
+                AND REG_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+                ]]>
+             </if>
+        </trim>
+    </select>
+
+    <select id="selectYndyta001" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.ynd.yta.yndyta001.service.mapper.Yndyta001Mapper.selectYndyta001 */
+        SELECT
+               EMPNO,
+               BELONG_YY,
+               CALC_YM,
+               KOR_NM,
+               IHIDNUM,
+               WORK_SDT,
+               WORK_EDT,
+               HUMANDDC_CHANGE_AT,
+               BPLC_CODE,
+               RDCXPT_BGNDE,
+               RDCXPT_ENDDE,
+               PUBPENSION_AMT,
+               SOPENSION_AMT,
+               PSPENSION_AMT,
+               POPENSION_AMT,
+               BASS_SALARY_AMT,
+               BNS_AMT,
+               CONST_BNS_AMT,
+               NPN_AMT,
+               EMPLYMINSRNC_AMT,
+               HLTHINS_AMT,
+               INCMTAX,
+               LCLTYINCMTAX,
+               AGSPTAX,
+               OUTNATN_LABOR_ALLWNC,
+               NIGHT_LABOR_ALLWNC,
+               CHLDBRTH_ALLWNC,
+               RESEARCH_CT,
+               TAXXMPT_SCHXPN_AMT,
+               SBJSLCT_ALLWNC,
+               BSECLUDED_ALLWNC,
+               MOVING_ALLWNC,
+               CGFFD_AMT,
+               CMIT_ALLWNC,
+               DAYNHTC_CT,
+               PVTCARSBSIDY,
+               ESWRS_DRT_AMT,
+               EXCTV_RETIRE_INCOME_LMT,
+               ETC_ALLWNC_AMT,
+               STOCK_OPTION_PRFT,
+               INTH_RWMNY,
+               BABYLAYOFF_ALLWNC,
+               TRET_IMPRVMCT,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM YND_PAY_BASIC A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="empno != null and empno != ''">
+                AND EMPNO = #{empno}
+            </if>
+            <if test="belongYy != null and belongYy != ''">
+                AND BELONG_YY = #{belongYy}
+            </if>
+            <if test="calcYm != null and calcYm != ''">
+                AND CALC_YM = #{calcYm}
+            </if>
+        </trim>
+    </select>
+
+    <update id="saveYndyta001" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.ynd.yta.yndyta001.service.mapper.Yndyta001Mapper.saveYndyta001 */
+        MERGE INTO YND_PAY_BASIC A
+             USING (SELECT
+                    #{empno} EMPNO,
+                    #{belongYy} BELONG_YY,
+                    #{calcYm} CALC_YM
+                    FROM DUAL) B
+                ON (
+                    A.EMPNO = B.EMPNO AND 
+                    A.BELONG_YY = B.BELONG_YY AND 
+                    A.CALC_YM = B.CALC_YM
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               KOR_NM= #{korNm},
+               IHIDNUM= #{ihidnum},
+               WORK_SDT= #{workSdt},
+               WORK_EDT= #{workEdt},
+               HUMANDDC_CHANGE_AT= #{humanddcChangeAt},
+               BPLC_CODE= #{bplcCode},
+               RDCXPT_BGNDE= #{rdcxptBgnde},
+               RDCXPT_ENDDE= #{rdcxptEndde},
+               PUBPENSION_AMT= #{pubpensionAmt},
+               SOPENSION_AMT= #{sopensionAmt},
+               PSPENSION_AMT= #{pspensionAmt},
+               POPENSION_AMT= #{popensionAmt},
+               BASS_SALARY_AMT= #{bassSalaryAmt},
+               BNS_AMT= #{bnsAmt},
+               CONST_BNS_AMT= #{constBnsAmt},
+               NPN_AMT= #{npnAmt},
+               EMPLYMINSRNC_AMT= #{emplyminsrncAmt},
+               HLTHINS_AMT= #{hlthinsAmt},
+               INCMTAX= #{incmtax},
+               LCLTYINCMTAX= #{lcltyincmtax},
+               AGSPTAX= #{agsptax},
+               OUTNATN_LABOR_ALLWNC= #{outnatnLaborAllwnc},
+               NIGHT_LABOR_ALLWNC= #{nightLaborAllwnc},
+               CHLDBRTH_ALLWNC= #{chldbrthAllwnc},
+               RESEARCH_CT= #{researchCt},
+               TAXXMPT_SCHXPN_AMT= #{taxxmptSchxpnAmt},
+               SBJSLCT_ALLWNC= #{sbjslctAllwnc},
+               BSECLUDED_ALLWNC= #{bsecludedAllwnc},
+               MOVING_ALLWNC= #{movingAllwnc},
+               CGFFD_AMT= #{cgffdAmt},
+               CMIT_ALLWNC= #{cmitAllwnc},
+               DAYNHTC_CT= #{daynhtcCt},
+               PVTCARSBSIDY= #{pvtcarsbsidy},
+               ESWRS_DRT_AMT= #{eswrsDrtAmt},
+               EXCTV_RETIRE_INCOME_LMT= #{exctvRetireIncomeLmt},
+               ETC_ALLWNC_AMT= #{etcAllwncAmt},
+               STOCK_OPTION_PRFT= #{stockOptionPrft},
+               INTH_RWMNY= #{inthRwmny},
+               BABYLAYOFF_ALLWNC= #{babylayoffAllwnc},
+               TRET_IMPRVMCT= #{tretImprvmct},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               EMPNO,
+               BELONG_YY,
+               CALC_YM,
+               KOR_NM,
+               IHIDNUM,
+               WORK_SDT,
+               WORK_EDT,
+               HUMANDDC_CHANGE_AT,
+               BPLC_CODE,
+               RDCXPT_BGNDE,
+               RDCXPT_ENDDE,
+               PUBPENSION_AMT,
+               SOPENSION_AMT,
+               PSPENSION_AMT,
+               POPENSION_AMT,
+               BASS_SALARY_AMT,
+               BNS_AMT,
+               CONST_BNS_AMT,
+               NPN_AMT,
+               EMPLYMINSRNC_AMT,
+               HLTHINS_AMT,
+               INCMTAX,
+               LCLTYINCMTAX,
+               AGSPTAX,
+               OUTNATN_LABOR_ALLWNC,
+               NIGHT_LABOR_ALLWNC,
+               CHLDBRTH_ALLWNC,
+               RESEARCH_CT,
+               TAXXMPT_SCHXPN_AMT,
+               SBJSLCT_ALLWNC,
+               BSECLUDED_ALLWNC,
+               MOVING_ALLWNC,
+               CGFFD_AMT,
+               CMIT_ALLWNC,
+               DAYNHTC_CT,
+               PVTCARSBSIDY,
+               ESWRS_DRT_AMT,
+               EXCTV_RETIRE_INCOME_LMT,
+               ETC_ALLWNC_AMT,
+               STOCK_OPTION_PRFT,
+               INTH_RWMNY,
+               BABYLAYOFF_ALLWNC,
+               TRET_IMPRVMCT,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{empno},
+               #{belongYy},
+               #{calcYm},
+               #{korNm},
+               #{ihidnum},
+               #{workSdt},
+               #{workEdt},
+               #{humanddcChangeAt},
+               #{bplcCode},
+               #{rdcxptBgnde},
+               #{rdcxptEndde},
+               #{pubpensionAmt},
+               #{sopensionAmt},
+               #{pspensionAmt},
+               #{popensionAmt},
+               #{bassSalaryAmt},
+               #{bnsAmt},
+               #{constBnsAmt},
+               #{npnAmt},
+               #{emplyminsrncAmt},
+               #{hlthinsAmt},
+               #{incmtax},
+               #{lcltyincmtax},
+               #{agsptax},
+               #{outnatnLaborAllwnc},
+               #{nightLaborAllwnc},
+               #{chldbrthAllwnc},
+               #{researchCt},
+               #{taxxmptSchxpnAmt},
+               #{sbjslctAllwnc},
+               #{bsecludedAllwnc},
+               #{movingAllwnc},
+               #{cgffdAmt},
+               #{cmitAllwnc},
+               #{daynhtcCt},
+               #{pvtcarsbsidy},
+               #{eswrsDrtAmt},
+               #{exctvRetireIncomeLmt},
+               #{etcAllwncAmt},
+               #{stockOptionPrft},
+               #{inthRwmny},
+               #{babylayoffAllwnc},
+               #{tretImprvmct},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deleteYndyta001" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.ynd.yta.yndyta001.service.mapper.Yndyta001Mapper.deleteYndyta001 */
+        DELETE FROM YND_PAY_BASIC
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND EMPNO = #{empno}
+                AND BELONG_YY = #{belongYy}
+                AND CALC_YM = #{calcYm}
+        </trim>
+    </delete>
+
+    <delete id="deleteAllYndyta001" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.ynd.yta.yndyta001.service.mapper.Yndyta001Mapper.deleteAllYndyta001 */
+        DELETE FROM YND_PAY_BASIC 
+        WHERE BELONG_YY = #{belongYy}
+              AND CALC_YM = #{calcYm}
+    </delete>
+    
+    <select id="selectCntYndyta001" parameterType="egovMapForNull" resultType="java.lang.Integer">
+        /* kr.co.dbvision.api.ynd.yta.yndyta001.service.mapper.Yndyta001Mapper.selectCntYndyta001 */
+        SELECT
+          COUNT(*) AS CNT 
+          FROM YND_END A
+          WHERE BELONG_YY = #{belongYy}
+                AND CALC_YM = #{calcYm}
+    </select>    
+    
+    
+</mapper>

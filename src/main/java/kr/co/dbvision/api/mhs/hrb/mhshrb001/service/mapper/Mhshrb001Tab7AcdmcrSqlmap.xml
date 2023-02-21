@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mhs.hrb.mhshrb001.service.mapper.Mhshrb001MapperTab7Acdmcr">
+
+	<!-- 학력 Tab 7 -->
+	<select id="selectMhsEmpTab7Acdmcr" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrb.mhshrb001.service.mapper.Mhshrb001MapperTab7Acdmcr.selectMhsEmpTab7Acdmcr */
+        SELECT
+               EMPNO,
+               ACDMCR_SN,
+               SCHUL_NM,
+               FNC_DATESTR(ENTSCH_DE) AS ENTSCH_DE,
+               FNC_DATESTR(GRDTN_DE) AS GRDTN_DE,
+               MAJOR_NM,
+               MINOR_NM,
+               DGRI_CODE,
+               AREA_CODE,
+               GRDTN_SE_CODE,
+               ACDMCR_SE_CODE,
+               LAST_ACDMCR_AT,
+               DGHT_SE_AT,
+               GRDTN_FILENO AS GRDTN_FILENO_EDIT,
+               GRDTN_FILENO,
+               RM,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_ACDMCR A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="empno != null and empno != ''">
+                AND EMPNO = #{empno}
+            </if>
+            <if test="acdmcrSn != null and acdmcrSn != ''">
+                AND ACDMCR_SN = #{acdmcrSn}
+            </if>
+            <if test="sRegDt != null and sRegDt != ''">
+                <![CDATA[
+                AND REG_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+                ]]>
+            </if>
+            <if test="eRegDt != null and eRegDt != ''">
+                <![CDATA[
+                AND REG_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+                ]]>
+             </if>
+        </trim>
+        ORDER BY ACDMCR_SN
+    </select>
+    
+    <select id="insertMhsEmpTab7AcdmcrUseChk" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrb.mhshrb001.service.mapper.Mhshrb001MapperTab7Acdmcr.insertMhsEmpTab7AcdmcrUseChk */
+        SELECT COUNT(*) AS CNT
+          FROM MHS_ACDMCR
+         WHERE  EMPNO = #{empno}
+           AND  SCHUL_NM = TRIM(#{schulNm})
+     </select>
+        
+
+    <update id="saveMhsEmpTab7Acdmcr" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrb.mhshrb001.service.mapper.Mhshrb001MapperTab7Acdmcr.saveMhsEmpTab7Acdmcr */
+        <selectKey resultType="int" keyProperty="acdmcrSnNew" order="BEFORE">
+  			SELECT NVL(MAX(ACDMCR_SN),0) + 1 AS acdmcrSnNew
+  			FROM MHS_ACDMCR
+  			WHERE EMPNO = #{empno}
+  		</selectKey>
+  		
+        MERGE INTO MHS_ACDMCR A
+             USING (SELECT
+                    #{empno} EMPNO,
+                    #{acdmcrSn} ACDMCR_SN
+                    FROM DUAL) B
+                ON (
+                    A.EMPNO = B.EMPNO AND 
+                    A.ACDMCR_SN = B.ACDMCR_SN
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               SCHUL_NM= #{schulNm},
+               ENTSCH_DE= REPLACE(#{entschDe},'-',''),
+               GRDTN_DE= REPLACE(#{grdtnDe},'-',''),
+               MAJOR_NM= #{majorNm},
+               MINOR_NM= #{minorNm},
+               DGRI_CODE= #{dgriCode},
+               AREA_CODE= #{areaCode},
+               GRDTN_SE_CODE= #{grdtnSeCode},
+               ACDMCR_SE_CODE= #{acdmcrSeCode},
+               LAST_ACDMCR_AT= #{lastAcdmcrAt},
+               DGHT_SE_AT= #{dghtSeAt},
+               GRDTN_FILENO= #{grdtnFileno},
+               RM= #{rm},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               EMPNO,
+               ACDMCR_SN,
+               SCHUL_NM,
+               ENTSCH_DE,
+               GRDTN_DE,
+               MAJOR_NM,
+               MINOR_NM,
+               DGRI_CODE,
+               AREA_CODE,
+               GRDTN_SE_CODE,
+               ACDMCR_SE_CODE,
+               LAST_ACDMCR_AT,
+               DGHT_SE_AT,
+               GRDTN_FILENO,
+               RM,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{empno},
+               NVL(#{acdmcrSnNew},1),
+               #{schulNm},
+               REPLACE(#{entschDe},'-',''),
+               REPLACE(#{grdtnDe},'-',''),
+               #{majorNm},
+               #{minorNm},
+               #{dgriCode},
+               #{areaCode},
+               #{grdtnSeCode},
+               #{acdmcrSeCode},
+               #{lastAcdmcrAt},
+               #{dghtSeAt},
+               #{grdtnFileno},
+               #{rm},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deleteMhsEmpTab7Acdmcr" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrb.mhshrb001.service.mapper.Mhshrb001MapperTab7Acdmcr.deleteMhsEmpTab7Acdmcr */
+        DELETE FROM MHS_ACDMCR
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND EMPNO = #{empno}
+                AND ACDMCR_SN = #{acdmcrSn}
+        </trim>
+    </delete>
+ 
+</mapper>

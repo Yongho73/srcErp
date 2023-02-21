@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html class="no-js" lang="ko">
+<HEAD>
+<meta charset="utf-8">
+<LINK href="../img/icon/dbv.ico" rel="shortcut icon" type="image/x-icon">
+
+<TITLE>XERP</TITLE>
+
+<LINK href="../css/dhtmlx/skin/dhtmlx.css" rel="stylesheet" type="text/css">
+<LINK href="../glyphicons/css/bootstrap-glyphicons.css" rel="stylesheet" type="text/css">
+
+<!-- jquery -->
+<SCRIPT src="../js/jquery-1.11.1.min.js"></SCRIPT>
+<SCRIPT src="../js/jquery-ui-custom.min.js"></SCRIPT>
+ 
+<!-- css -->
+
+<LINK href="../css/default.css" rel="stylesheet" type="text/css">
+<LINK href="../css/contents.css" rel="stylesheet" type="text/css">
+<LINK href="../css/table.css" rel="stylesheet" type="text/css">
+
+<style>
+	
+</style>
+</HEAD>
+
+
+<body>
+	<!--컨텐츠-->
+		<div class="path_info" style="">
+            <ul id="menu_path" style=""><li><a class="home" href="#n"></a></li><li><a href="#"> 프로젝트관리 </a></li><li><a href="#"> 프로젝트등록</a></li></ul>
+        </div>
+        
+        <DIV class="btn" style="float:right;text-align:right; vertical-align:middle;" title="저장">
+				<BUTTON class="btn_common02_new" id="btnDelete" type="button">
+					<SPAN class="glyphicon glyphicon-ok"></SPAN> 저장
+				</BUTTON>
+				<BUTTON class="btn_common02_new" id="btn_help" type="button" title="도움말">
+					<SPAN class="glyphicon glyphicon-question-sign"></SPAN>
+				</BUTTON>
+				<BUTTON class="btn_common02_new" id="btnRemove" type="button" title="닫기">
+					<SPAN class="glyphicon glyphicon-remove"></SPAN>
+				</BUTTON>
+			</DIV>
+      
+       
+    <div class="project_tit_div mb10">
+    	<ul class="project_tit_ul">
+    		<li class="project_tit_li">2020년 서울시 급여관리시스템 통합 재개발</li>
+    		<li>홍길동<span class="ml5">대리</span><span class="ml5">02-1234-5678</span></li>
+    	</ul>    
+    </div>
+    
+    <div class="project_tab2_div">
+		<ul class="project_tab2">
+			<a href=""><li class="active">기본사항</li></a>
+			<a href=""><li class="">인력</li></a>
+			<a href=""><li class="">예산</li></a>
+			<a href=""><li class="">협력계약</li></a>
+			<a href=""><li class="">이슈위험</li></a>
+			<a href=""><li class="">산출물</li></a>
+		</ul>
+	</div>
+	
+	
+	<DIV class="tabl_box" style="margin-top:-1px;">
+		<!-- //tabl-1 -->
+		<!-- <DIV class="tdl-1">list_type01 -->
+		<div class="detail_type02">
+			<table>
+				<caption>프로젝트 기본사항</caption>
+				
+				<colgroup>
+					<col style="width:100px;min-width:100px;" />
+					<col style="width:auto;min-width:300px;" />
+					<col style="width:100px;min-width:100px;" />
+					<col style="width:400px" />
+					<col style="width:100px;min-width:100px;" />
+					<col style="width:300px" />
+					<col style="width:270px" />
+				</colgroup>
+				<tbody>
+				<tr>
+						<th><label for="divide">구분</label></th>
+						<td>
+							<select id="divide" title="구분" style="min-width:80px">
+								<option value="" selected>선택</option>
+								<option value="">개발</option>
+								<option value="">유지보수</option>
+							</select>
+							&nbsp;
+							<select id="divide" title="구분" style="min-width:140px">
+								<option value="" selected>선택</option>
+								<option value="">유상월정액계약</option>
+								<option value="">유지보수</option>
+							</select>
+						</td>
+						<th><label for="area">지역</label></th>
+						<td>
+							<select id="area" title="지역" style="min-width:130px">
+								<option value="" selected>선택</option>
+								<option value="">서울특별시</option>
+							</select>
+						</td>
+						<th><label for="writer">등록자</label></th>
+						<td colspan="2">
+							<input type="text" id="writer" title="등록자" style="width:80px" value="김수연" readonly disabled="disabled" class="readonly">&nbsp;<input type="text" id="writer" title="거래처" style="width:25%" value="2020.02.15" readonly disabled="disabled" class="readonly">
+						</td>
+					</tr>
+					<tr>
+						<th><label for="ordering">발주처</label></th>
+						<td><input type="text" id="ordering" title="발주처" style="width:80%"><button class="btn_common03" id="btnCodeSearch" type="button">
+                    		<span class="glyphicon  glyphicon glyphicon-search"> </span>
+                			</button>
+                		</td>
+						<th><label for="pm">담당자</label></th>
+						<td><input type="text" id="writer" title="등록자" style="width:77px" value="이수진 대리" readonly>&nbsp;<input type="text" id="writer" title="거래처"  style="width:100px" value="010-2222-1578" readonly></td>
+						<th><label for="tpm">총괄PM</label></th>
+						<td colspan="2"><input type="text" id="tpm" title="총괄PM" style="width:80px"><button class="btn_common03" id="btnCodeSearch" type="button">
+                    		<span class="glyphicon  glyphicon glyphicon-search"> </span>
+                			</button></td>
+					</tr>
+					<tr>
+						<th class="essential_icon"><label for="proNm">프로젝트명</label></th>
+						<td colspan="3"><input type="text" id="proNm" title="프로젝트명" style="width:80%"></td>
+						<th><label for="proNm">ID/패스워드</label></th>
+						<td colspan="2">
+							<input type="text" id="" title="ID" style="width:80px" maxlength="8">
+							&nbsp;/&nbsp;
+							<input type="text" id="" title="패스워드" style="width:80px" maxlength="8">
+						</td>
+					</tr>
+					<tr>
+						<th><label for="start">계약기간</label></th>
+						<td colspan="3">
+							<input type="text" id="" title="시작기간" style="width:80px"  maxlength="8">
+							&nbsp;~&nbsp;
+							<input type="text" id="" title="마무리기간" style="width:80px"  maxlength="8">
+						</td>
+						<th><label for="realS">실투입기간</label></th>
+						<td colspan="2">
+							<input type="text" id="" title="시작기간" style="width:80px"  maxlength="8">
+							&nbsp;~&nbsp;
+							<input type="text" id="" title="마무리기간" style="width:80px"  maxlength="8">
+						</td>
+					</tr>
+					<tr>
+						<th><label for="keepMonth">무상유지보수</label></th>
+						<td><input type="text" id="keepMonth" title="keepMonth" style="width:30px"> 개월</td>
+						<th><label for="finish">완료여부</label></th>
+						<td>
+							<select id="finish" title="완료여부" style="min-width:100px">
+								<option value="">선택</option>
+								<option value="">진행중</option>
+								<option value="">완료</option>
+							</select>
+						</td>
+							<th><label for="contract">계약금액</label></th>
+						<td colspan="2"><input type="text" id="contract" title="계약금액" style="width:100px"> 원 &nbsp;<!-- <input type="checkbox" id="surtax" title="부가세포함">&nbsp; --><label class="surtax">(부가세 포함)</label></td>
+					</tr>
+					<tr>
+						<th colspan="3" class="ac brddd bbnone"><label for="txtBox">개요</label></th>
+						<th class="ac brddd bbnone"><label for="txtBox">범위</label></th>
+						<th colspan="2" class="ac brddd bbnone"><label for="txtBox">개발환경</label></th>
+						<th class="ac brddd bbnone"><label for="txtBox">무상유지보수</label></th>						
+					</tr>
+					<tr>					
+						<td colspan="3" class="ac brddd"><textarea id="txtBox" title="내용" style="width:98%;height:60px;"></textarea></td>
+						<td class="ac brddd"><textarea id="txtBox" title="내용" style="width:98%;height:60px;"></textarea></td>
+						<td colspan="2" class="ac brddd"><textarea id="txtBox" title="내용" style="width:98%;height:60px;"></textarea></td>
+						<td class="ac brddd"><textarea id="txtBox" title="내용" style="width:98%;height:60px;"></textarea></td>
+					</tr>
+
+				</tbody>
+			</table>
+		</div><!--//baseForm-->
+	</div>
+	
+	<div style="width:100%;" class="mt5">
+		<div style="float: right;" class="mb5">
+			<button class="btn_common01_new" type="button">담당자추가</button>
+		</div>	
+		<div class="detail_type022">
+			<table>
+				<caption>프로젝트 기본사항</caption>
+				
+				<colgroup>
+					<col style="width:40px;min-width:40px;" />
+					<col style="width:10%" />
+					<col style="width:10%" />
+					<col style="width:10%" />
+					<col style="width:10%" />
+					<col style="width:15%" />
+					<col style="width:15%" />
+					<col style="width:5%;min-width:75px;" />
+					<col style="width:auto;min-width:100px;" />
+				</colgroup>
+				<thead>
+					<tr>
+						<th class="ac brddd">No</th>
+						<th class="ac brddd"><label>담당자</label></th>
+						<th class="ac brddd"><label>부서</label></th>
+						<th class="ac brddd"><label>직위</label></th>
+						<th class="ac brddd"><label>연락처</label></th>
+						<th class="ac brddd"><label>휴대폰</label></th>
+						<th class="ac brddd"><label>이메일</label></th>
+						<th class="ac brddd"><label>담당여부</label></th>
+						<th class="ac brddd">처리</th>
+					</tr>
+				</thead>
+				
+				<tbody>
+					<tr>
+						<td class="ac">01</td>
+						<td class="ac"><input type="text" id="writer" title="담당자" value="강산"></td>
+						<td class="ac"><input type="text" id="writer" title="부서" value="인재개발부"></td>
+						<td class="ac"><input type="text" id="writer" title="직위" value="부장"></td>
+						<td class="ac"><input type="text" id="writer" title="연락처" value="044-550-5540"></td>
+						<td class="ac"><input type="text" id="writer" title="휴대폰" value="010-1234-5678"></td>
+						<td class="ac"><input type="text" id="writer" title="이메일" value="kkyhass@ihca.or.kr"></td>
+						<td class="ac">
+							<div class="checks etrans" title="담당여부">
+							  <input type="checkbox" id="ex_chk1"> 
+							  <label for="ex_chk1"></label> 
+							</div>
+						</td>
+						<td class="ac"><button type="submit" class="btn_common02_new">변경</button>&nbsp;<button type="submit" class="btn_common02_new">삭제</button></td>
+					</tr>
+					<tr>
+						<td class="ac">02</td>
+						<td class="ac"><input type="text" id="writer" title="담당자" value="박주훈"></td>
+						<td class="ac"><input type="text" id="writer" title="부서" value="방역총괄부"></td>
+						<td class="ac"><input type="text" id="writer" title="직위" value="과장"></td>
+						<td class="ac"><input type="text" id="writer" title="연락처" value="044-550-5561"></td>
+						<td class="ac"><input type="text" id="writer" title="휴대폰" value="010-1234-5678"></td>
+						<td class="ac"><input type="text" id="writer" title="이메일" value="abs@ihca.or.kr"></td>
+						<td class="ac">
+							<div class="checks etrans" title="담당여부">
+							  <input type="checkbox" id="ex_chk2"> 
+							  <label for="ex_chk2"></label> 
+							</div>
+						</td>
+						<td class="ac"><button type="submit" class="btn_common02_new">변경</button>&nbsp;<button type="submit" class="btn_common02_new">삭제</button></td>
+					</tr>
+					<tr>
+						<td class="ac">03</td>
+						<td class="ac"><input type="text" id="writer" title="담당자" value="정찬호"></td>
+						<td class="ac"><input type="text" id="writer" title="부서" value="인재개발부"></td>
+						<td class="ac"><input type="text" id="writer" title="직위" value="대리"></td>
+						<td class="ac"><input type="text" id="writer" title="연락처" value="044-550-5522"></td>
+						<td class="ac"><input type="text" id="writer" title="휴대폰" value="010-1234-5678"></td>
+						<td class="ac"><input type="text" id="writer" title="이메일" value="skycock@ihca.or.kr"></td>
+						<td class="ac">
+							<div class="checks etrans" title="담당여부">
+							  <input type="checkbox" id="ex_chk3"> 
+							  <label for="ex_chk3"></label> 
+							</div>
+						</td>
+						<td class="ac"><button type="submit" class="btn_common02_new">변경</button>&nbsp;<button type="submit" class="btn_common02_new">삭제</button></td>
+					</tr>
+
+				</tbody>
+			</table>
+		</div><!--//baseForm-->
+
+	</div>
+</BODY>
+</HTML>

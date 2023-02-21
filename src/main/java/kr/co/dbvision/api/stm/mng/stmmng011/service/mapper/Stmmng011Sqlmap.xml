@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.stm.mng.stmmng011.service.mapper.Stmmng011Mapper">
+
+    <select id="selectStmmng011List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.stm.mng.stmmng011.service.mapper.Stmmng011Mapper.selectStmmng011List */
+        SELECT
+            IMPRVMREQUST_SN,
+            FNC_COMCODENM('C001',JOB_CLS_CODE) AS JOB_CLS_CODE,
+            PROGRM_ID,
+            PROGRM_NM,
+            FNC_COMCODENM ('C100',REQUST_SE_CODE ) AS REQUST_SE_CODE,
+            FNC_COMCODENM ('C923',PRIOR_RANK ) AS PRIOR_RANK,
+            FNC_COMCODENM ('C099',PROGRS_STTUS_CODE ) AS PROGRS_STTUS_CODE,
+            RQESTER,
+            FNC_DATESTR(REQUST_DE) AS REQUST_DE,
+            FNC_DATESTR(PROCESS_PDT) AS PROCESS_PDT,
+            FNC_DATESTR(CONFIRM_DE) AS CONFIRM_DE,
+            FNC_DATESTR(RCEPT_DE) AS RCEPT_DE,
+            FNC_DATESTR(COMPT_DE) AS COMPT_DE,
+            CHARGER,
+            REQUST_DESC,
+            ATCHMNFL_NO,
+            PROCESS_CN,
+            FNC_COMCODENM ('C194',DSMSSL_RESN_CODE) AS DSMSSL_RESN_CODE
+        FROM STM_PRG_REQUST A 
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">       
+            <if test="requestPersonName != null and requestPersonName != ''">
+                <![CDATA[AND RQESTER LIKE '%' || #{requestPersonName} || '%']]>
+            </if>
+            <if test="requestMenuName != null and requestMenuName != ''">
+                <![CDATA[AND PROGRM_NM LIKE '%' || #{requestMenuName} || '%']]>
+            </if>
+            <if test="requestMenuId != null and requestMenuId != ''">
+                <![CDATA[AND PROGRM_ID = #{requestMenuId}]]>
+            </if>
+            <if test="sReqstDe != null and sReqstDe != ''">
+                <![CDATA[AND REQUST_DE >= #{sReqstDe}]]>
+            </if>
+            <if test="eReqstDe != null and eReqstDe != ''">
+                <![CDATA[AND REQUST_DE <= #{eReqstDe}]]>
+            </if>
+            <if test="comboSysSe != null and comboSysSe != ''">
+                <![CDATA[AND JOB_CLS_CODE = #{comboSysSe}]]>
+            </if>
+            <if test="comboReqSe != null and comboReqSe != ''">
+                <![CDATA[AND REQUST_SE_CODE = #{comboReqSe}]]>
+            </if>
+            <if test="comboSttusSe != null and comboSttusSe != ''">
+                <![CDATA[AND PROGRS_STTUS_CODE = #{comboSttusSe}]]>
+            </if>
+        </trim>
+        order by IMPRVMREQUST_SN desc 
+    </select>
+
+    <select id="selectStmmng011" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.stm.mng.stmmng011.service.mapper.Stmmng011Mapper.selectStmmng011 */
+        SELECT
+            IMPRVMREQUST_SN,
+            JOB_CLS_CODE,
+            PROGRM_ID,
+            PROGRM_NM,
+            REQUST_SE_CODE,
+            PRIOR_RANK,
+            PROGRS_STTUS_CODE,
+            RQESTER,
+            FNC_DATESTR(REQUST_DE) AS REQUST_DE,
+            FNC_DATESTR(PROCESS_PDT) AS PROCESS_PDT,
+            FNC_DATESTR(CONFIRM_DE) AS CONFIRM_DE,
+            FNC_DATESTR(RCEPT_DE) AS RCEPT_DE,
+            FNC_DATESTR(COMPT_DE) AS COMPT_DE,
+            CHARGER,
+            REQUST_DESC,
+            ATCHMNFL_NO,
+            PROCESS_CN,
+            REG_DT,
+            REG_ID,
+            UPT_DT,
+            UPT_ID,
+            (SELECT USER_NM FROM STM_USERS 
+             WHERE USER_ID = A.REG_ID) AS REG_NM,
+            (SELECT USER_NM FROM STM_USERS
+             WHERE USER_ID = A.UPT_ID) AS UPT_NM,
+            DSMSSL_RESN_CODE
+         FROM STM_PRG_REQUST A 
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="imprvmrequstSn != null and imprvmrequstSn != ''">
+                AND IMPRVMREQUST_SN = #{imprvmrequstSn}
+            </if>
+        </trim>
+    </select>
+
+    <update id="saveStmmng011" parameterType="kr.co.dbvision.api.stm.mng.stmmng011.entity.Stmmng011">
+        /* kr.co.dbvision.api.stm.mng.stmmng011.service.mapper.Stmmng011Mapper.saveStmmng011 */
+        MERGE INTO STM_PRG_REQUST A
+             USING (SELECT
+                    #{imprvmrequstSn} IMPRVMREQUST_SN
+                    FROM DUAL) B
+                ON (
+                    A.IMPRVMREQUST_SN = B.IMPRVMREQUST_SN
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               JOB_CLS_CODE= #{jobClsCode},
+               REQUST_SE_CODE= #{requstSeCode},
+               PROGRS_STTUS_CODE= #{progrsSttusCode},
+               PRIOR_RANK= #{priorRank},
+               PROGRM_ID= #{progrmId},
+               PROGRM_NM= #{progrmNm},
+               RQESTER= #{rqester},
+               REQUST_DE= REPLACE(#{requstDe},'-',''),
+               PROCESS_PDT= #{processPdt},
+               CONFIRM_DE= REPLACE(#{confirmDe},'-',''),
+               RCEPT_DE= REPLACE(#{rceptDe},'-',''),
+               COMPT_DE= REPLACE(#{comptDe},'-',''),
+               CHARGER= #{charger},
+               ATCHMNFL_NO= #{atchmnflNo},
+               REQUST_DESC= REPLACE(#{requstDesc},'-',''),
+               PROCESS_CN= #{processCn},
+               DSMSSL_RESN_CODE= #{dsmsslResnCode},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               IMPRVMREQUST_SN,
+               JOB_CLS_CODE,
+               REQUST_SE_CODE,
+               PROGRS_STTUS_CODE,
+               PRIOR_RANK,
+               PROGRM_ID,
+               PROGRM_NM,
+               RQESTER,
+               REQUST_DE,
+               PROCESS_PDT,
+               CONFIRM_DE,
+               RCEPT_DE,
+               COMPT_DE,
+               CHARGER,
+               ATCHMNFL_NO,
+               REQUST_DESC,
+               PROCESS_CN,
+               DSMSSL_RESN_CODE,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{imprvmrequstSn},
+               #{jobClsCode},
+               #{requstSeCode},
+               #{progrsSttusCode},
+               #{priorRank},
+               #{progrmId},
+               #{progrmNm},
+               #{rqester},
+               REPLACE(#{requstDe},'-',''),
+               #{processPdt},
+               REPLACE(#{confirmDe},'-',''),
+               REPLACE(#{rceptDe},'-',''),
+               REPLACE(#{comptDe},'-',''),
+               #{charger},
+               #{atchmnflNo},
+               REPLACE(#{requstDesc},'-',''),
+               #{processCn},
+               #{dsmsslResnCode},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deleteStmmng011" parameterType="kr.co.dbvision.api.stm.mng.stmmng011.entity.Stmmng011">
+        /* kr.co.dbvision.api.stm.mng.stmmng011.service.mapper.Stmmng011Mapper.deleteStmmng011 */
+        DELETE FROM STM_PRG_REQUST
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND IMPRVMREQUST_SN = #{imprvmrequstSn}
+        </trim>
+    </delete>
+    
+    <insert parameterType="EgovMapForNull" id="insertStmPrgRequst">
+	    /* kr.co.dbvision.api.stm.mng.stmmng011.service.impl.Stmmng011Mapper.insertStmPrgRequst */
+	    INSERT INTO STM_PRG_REQUST(
+	        IMPRVMREQUST_SN,
+	        JOB_CLS_CODE,
+	        PROGRM_ID,
+	        PROGRM_NM,
+	        REQUST_SE_CODE,
+	        PRIOR_RANK,
+	        PROGRS_STTUS_CODE,
+	        RQESTER,REQUST_DE,
+	        PROCESS_PDT,
+	        CONFIRM_DE,
+	        RCEPT_DE,
+	        COMPT_DE,
+	        CHARGER,
+	        REQUST_DESC,
+	        ATCHMNFL_NO,
+	        PROCESS_CN,
+	        REG_DT,
+	        REG_ID
+	    ) VALUES(
+	        (SELECT LPAD(NVL(MAX(IMPRVMREQUST_SN),0) + 1,7,'0') FROM STM_PRG_REQUST),
+	        #{jobClsCode},
+	        #{progrmId},
+	        #{progrmNm},
+	        #{requstSeCode},
+	        #{priorRank},
+	        #{progrsSttusCode},
+	        #{rqester},
+	        REPLACE(#{requstDe}, '-',''),
+	        REPLACE(#{processPdt}, '-',''), 
+	        REPLACE(#{confirmDe}, '-',''), 
+	        REPLACE(#{rceptDe}, '-',''), 
+	        REPLACE(#{comptDe}, '-',''),
+	        (SELECT
+	            (SELECT USER_NM FROM STM_USERS WHERE EMPNO = B.CHARGER_EMPNO) AS CHARGER_NM
+	         FROM STM_PROGRM_DEV_STAT B
+	         WHERE B.PROGRM_ID = #{progrmId}
+	        ),
+	        #{requstDesc},
+	        #{atchmnflNo},
+	        #{processCn},
+	        SYSDATE,
+	        #{regId}
+	    ) 
+    </insert>
+
+    <update parameterType="EgovMapForNull" id="updateStmPrgRequst">
+           /* kr.co.dbvision.api.stm.mng.stmmng011.service.impl.Stmmng011Mapper.updateStmPrgRequst */
+           UPDATE STM_PRG_REQUST SET
+               JOB_CLS_CODE= #{jobClsCode},
+               PROGRM_ID= #{progrmId},
+               PROGRM_NM= #{progrmNm},
+               REQUST_SE_CODE= #{requstSeCode},
+               PRIOR_RANK= #{priorRank},
+               PROGRS_STTUS_CODE= #{progrsSttusCode},
+               RQESTER= #{rqester},
+               REQUST_DE= #{requstDe},
+               PROCESS_PDT= #{processPdt},
+               CONFIRM_DE= #{confirmDe},
+               RCEPT_DE= #{rceptDe},
+               COMPT_DE= #{comptDe},
+               CHARGER= #{charger},
+               REQUST_DESC= #{requstDesc},
+               ATCHMNFL_NO= #{atchmnflNo},
+               PROCESS_CN= #{processCn},
+               DSMSSL_RESN_CODE = #{dsmsslResnCode},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+           WHERE 1=1
+           AND IMPRVMREQUST_SN = #{imprvmrequstSn} 
+    </update>
+
+    <delete parameterType="EgovMapForNull" id="deleteStmPrgRequst">
+	    /* kr.co.dbvision.api.stm.mng.stmmng011.service.impl.Stmmng011Mapper.deleteStmPrgRequst */
+	    DELETE FROM STM_PRG_REQUST WHERE IMPRVMREQUST_SN = #{imprvmrequstSn} 
+    </delete>
+    
+    <select id="selectMenuList" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.stm.mng.stmmng002.service.impl.Stmmng002Mapper.selectStmMenuList */
+        SELECT * FROM (
+        SELECT NVL(UPPER_MENU_ID,'ROOT') UPPER_MENU_ID,
+               MENU_ID, 
+               MENU_NM, 
+               MENU_SE, 
+               ORDR, 
+               (SELECT PCKAGE_NM FROM STM_PROGRM WHERE PROGRM_ID = A.MENU_ID) AS PCKAGE_NM,
+               (SELECT SUB_PCKAGE_ID FROM STM_PROGRM WHERE PROGRM_ID = A.MENU_ID) AS SUB_PCKAGE_ID,
+               PROGRM_ID,
+               MENU_USE_AT,
+               DECODE(A.MENU_USE_AT,'1','사용','미사용') AS MENU_USE_AT_NM,
+               REG_DT, 
+               REG_ID, 
+               UPT_DT, 
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) UPT_NM
+          FROM STM_MENU A  
+ 
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="menuNm != null and menuNm != ''">
+                AND MENU_NM like  #{menuNm} ||'%'
+            </if>
+            <if test="menuId != null and menuId != ''">
+                AND MENU_ID like  #{menuId} ||'%'
+            </if>
+        </trim>                
+                
+    START WITH MENU_ID = 'CHF000000'
+    CONNECT BY PRIOR MENU_ID = UPPER_MENU_ID ORDER SIBLINGS BY ORDR) A WHERE MENU_ID != 'CHF000000'
+    </select>
+</mapper>

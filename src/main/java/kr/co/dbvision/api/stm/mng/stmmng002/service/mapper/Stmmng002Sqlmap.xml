@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.stm.mng.stmmng002.service.mapper.Stmmng002Mapper">
+
+    <select id="selectCount" parameterType="egovMapForNull" resultType="java.lang.Integer">
+    	/* kr.co.dbvision.api.stm.mng.stmmng002.service.impl.Stmmng002Mapper.selectCount */
+		SELECT COUNT(1)
+          FROM STM_MENU 
+          <trim prefix="WHERE" prefixOverrides="AND|OR">       
+		    <if test="menuId != null and menuId != ''">
+		       AND MENU_ID = #{menuId}
+		    </if>
+		    <if test="menuUseAt == '1'">
+                AND MENU_USE_AT = #{menuUseAt}
+            </if>
+            <if test="menuUseAt == '0'">
+                AND (MENU_SE='M' OR MENU_USE_AT = #{menuUseAt})
+            </if>
+		  </trim>
+	</select>
+	
+	<select id="selectProgmList" resultType="egovMapForNull">
+		/* kr.co.dbvision.api.stm.mng.stmmng002.service.impl.Stmmng002Mapper.selectProgmList */
+		SELECT PROGRM_ID PROG_KEY, PROGRM_NM VALUE FROM STM_PROGRM ORDER BY PROGRM_NM
+	</select>
+	
+    <select id="selectStmMenuList" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.stm.mng.stmmng002.service.impl.Stmmng002Mapper.selectStmMenuList */
+        SELECT * FROM (
+	    SELECT NVL(UPPER_MENU_ID,'ROOT') UPPER_MENU_ID,
+               MENU_ID, 
+               MENU_NM, 
+               MENU_SE, 
+               ORDR, 
+               (SELECT PCKAGE_NM FROM STM_PROGRM WHERE PROGRM_ID = A.MENU_ID) AS PCKAGE_NM,
+               (SELECT SUB_PCKAGE_ID FROM STM_PROGRM WHERE PROGRM_ID = A.MENU_ID) AS SUB_PCKAGE_ID,
+               PROGRM_ID,
+               MENU_USE_AT,
+               DECODE(A.MENU_USE_AT,'1','사용','미사용') AS MENU_USE_AT_NM,
+               REG_DT, 
+			   REG_ID, 
+			   UPT_DT, 
+			   UPT_ID,
+			   (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) REG_NM,
+		       (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) UPT_NM
+          FROM STM_MENU A  
+ 
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="menuNm != null and menuNm != ''">
+                AND MENU_NM like  #{menuNm} ||'%'
+            </if>
+            <if test="menuUseAt == 1 or menuUseAt == '1'">
+                AND MENU_USE_AT = #{menuUseAt}
+            </if>
+            <if test="menuUseAt != null and menuUseAt != '' and (menuUseAt == 0 or menuUseAt == '0')">
+                AND (MENU_SE='M' OR MENU_USE_AT = #{menuUseAt})
+            </if>
+             <if test="jobClsCode != null and jobClsCode != ''">
+                AND (SELECT PCKAGE_NM FROM STM_PROGRM WHERE PROGRM_ID = A.MENU_ID) = #{jobClsCode}
+            </if>
+        </trim>                
+                
+    START WITH MENU_ID = 'CHF000000'
+    CONNECT BY PRIOR MENU_ID = UPPER_MENU_ID ORDER SIBLINGS BY ORDR) A WHERE MENU_ID != 'CHF000000'	
+    </select>
+
+    <select id="selectStmMenu" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.stm.mng.stmmng002.service.impl.Stmmng002Mapper.selectStmMenu */
+        SELECT
+               MENU_ID,
+               UPPER_MENU_ID,
+               MENU_NM,
+               ORDR,
+               MENU_SE,
+               MENU_DC,
+               MENU_USE_AT,
+               DECODE(A.MENU_USE_AT,'1','사용','미사용') AS MENU_USE_AT_NM,
+               (SELECT PCKAGE_NM FROM STM_PROGRM WHERE PROGRM_ID = A.MENU_ID) AS PCKAGE_NM,
+               (SELECT SUB_PCKAGE_ID FROM STM_PROGRM WHERE PROGRM_ID = A.MENU_ID) AS SUB_PCKAGE_ID,
+               PROGRM_ID,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               REL_TBL_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM STM_MENU A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="menuId != null and menuId != ''">
+                AND MENU_ID = #{menuId}
+            </if>
+            <if test="menuUseAt == '1'">
+                AND MENU_USE_AT = #{menuUseAt}
+            </if>
+            <if test="menuUseAt == '0'">
+                AND (MENU_SE='M' OR MENU_USE_AT = #{menuUseAt})
+            </if>
+        </trim>
+    </select>
+
+    <insert id="insertStmMenu" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.stm.mng.stmmng002.service.impl.Stmmng002Mapper.insertStmMenu */
+        INSERT INTO STM_MENU
+        (
+            MENU_ID,
+            UPPER_MENU_ID,
+            MENU_NM,
+            ORDR,
+            MENU_SE,
+            MENU_DC,
+            MENU_USE_AT,
+            PCKAGE_NM,
+            SUB_PCKAGE_ID,
+            PROGRM_ID,
+            REL_TBL_NM,
+            REG_DT,
+            REG_ID
+        )
+        VALUES
+        (
+            #{menuId},
+            #{upperMenuId},
+            #{menuNm},
+            #{ordr},
+            #{menuSe},
+            #{menuDc},
+            #{menuUseAt},
+            #{pckageNm},
+            #{subPackageId},
+            #{progrmId},
+            #{relTableName},
+            SYSDATE,
+            #{regId}
+        )
+    </insert>
+
+    <update id="updateStmMenu" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.stm.mng.stmmng002.service.impl.Stmmng002Mapper.updateStmMenu */
+        UPDATE STM_MENU SET
+
+               MENU_NM = #{menuNm},
+               MENU_SE = #{menuSe},
+               MENU_DC = #{menuDc},
+               MENU_USE_AT = #{menuUseAt},
+               PCKAGE_NM = #{pckageNm},
+               SUB_PCKAGE_ID = #{subPackageId},
+               PROGRM_ID = #{progrmId},
+               REL_TBL_NM = #{relTableName},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+               AND MENU_ID = #{menuId}
+        </trim>
+    </update>
+
+    <delete id="deleteStmMenu" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.stm.mng.stmmng002.service.impl.Stmmng002Mapper.deleteStmMenu */
+        DELETE FROM STM_MENU
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND MENU_ID = #{menuId}
+        </trim>
+    </delete>
+    
+    <update id="updateOrder" parameterType="EgovMapForNull">
+        UPDATE STM_MENU SET
+	           ORDR = #{ordr}
+	          ,UPT_DT = SYSDATE
+	          ,UPT_ID = #{uptId}
+         WHERE MENU_ID = #{menuId}
+    </update>
+
+    <update id="updateMenuTarget" parameterType="EgovMapForNull">
+        UPDATE STM_MENU SET
+	           UPPER_MENU_ID = #{upperMenuId}
+	          ,UPT_DT = SYSDATE
+	          ,UPT_ID = #{uptId}
+         WHERE MENU_ID = #{movedMenuId}
+    </update>
+    
+    <select id="selectUpperMenuIdMenuSeCount" parameterType="egovMapForNull" resultType="java.lang.Integer">
+        /* kr.co.dbvision.api.stm.mng.stmmng002.service.impl.Stmmng002Mapper.selectUpperMenuIdMenuSeCount */
+        SELECT COUNT(1)
+          FROM STM_MENU 
+         WHERE MENU_ID = #{upperMenuId}
+           AND MENU_SE='P'
+    </select>
+    
+    <update id="updateStmMenuMenuUseAtOff" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.stm.mng.stmmng002.service.impl.Stmmng002Mapper.updateStmMenuMenuUseAtOff */
+         UPDATE STM_MENU SET
+			     MENU_USE_AT = '0', 
+                UPT_DT = SYSDATE,
+                UPT_ID = #{uptId}
+			WHERE MENU_ID in (
+				select MENU_ID from STM_MENU where MENU_ID = #{menuId}
+				union
+				select MENU_ID from STM_MENU where UPPER_MENU_ID = #{menuId}
+				union
+				select MENU_ID from STM_MENU where UPPER_MENU_ID IN (select MENU_ID from STM_MENU where UPPER_MENU_ID = #{menuId})
+				union
+				select MENU_ID from STM_MENU where UPPER_MENU_ID IN (select MENU_ID from STM_MENU where UPPER_MENU_ID IN (select MENU_ID from STM_MENU where UPPER_MENU_ID = #{menuId}))
+				union
+				select MENU_ID from STM_MENU where UPPER_MENU_ID IN (select MENU_ID from STM_MENU where UPPER_MENU_ID IN (select MENU_ID from STM_MENU where UPPER_MENU_ID IN (select MENU_ID from STM_MENU where UPPER_MENU_ID = #{menuId})))
+			)
+			AND MENU_USE_AT = '1'
+    </update>
+    
+
+    <update id="updateStmMenuMenuUseAtOn" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.stm.mng.stmmng002.service.impl.Stmmng002Mapper.updateStmMenuMenuUseAtOn */
+         UPDATE STM_MENU SET
+                 MENU_USE_AT = '1', 
+                UPT_DT = SYSDATE,
+                UPT_ID = #{uptId}
+            WHERE MENU_ID in (
+                select UPPER_MENU_ID from STM_MENU where MENU_ID = #{menuId}
+                union
+                select UPPER_MENU_ID from STM_MENU where MENU_ID IN (select UPPER_MENU_ID from STM_MENU where MENU_ID = #{menuId})
+                union
+                select UPPER_MENU_ID from STM_MENU where MENU_ID IN (select UPPER_MENU_ID from STM_MENU where MENU_ID IN (select UPPER_MENU_ID from STM_MENU where MENU_ID = #{menuId}))
+                union
+                select UPPER_MENU_ID from STM_MENU where MENU_ID IN (select UPPER_MENU_ID from STM_MENU where MENU_ID IN (select UPPER_MENU_ID from STM_MENU where MENU_ID IN (select UPPER_MENU_ID from STM_MENU where MENU_ID = #{menuId})))
+            )
+            AND MENU_USE_AT = '0'
+    </update>
+</mapper>

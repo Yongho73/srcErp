@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.pjt.pmg.pjtpmg001.service.mapper.Pjtpmg001PjtIssueMapper">
+
+    <select id="selectPjtIssueListAllCnt" parameterType="egovMapForNull" resultType="java.lang.Integer">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg001.service.mapper.Pjtpmg001PjtIssueMapper.selectPjtIssueListAllCnt */
+        SELECT COUNT(*) AS totalRecordCount
+          FROM PJT_ISSUE        
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="projectSn != null and projectSn != ''">
+                AND PROJECT_SN = #{projectSn}
+            </if>
+            <if test="issueNm != null and issueNm != ''">
+                AND ISSUE_NM = '%' || #{issueNm} || '%'
+            </if>
+        </trim>
+    </select>
+    
+    <select id="selectPjtIssueList" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg001.service.mapper.Pjtpmg001PjtIssueMapper.selectPjtIssueList */
+        SELECT * FROM ( SELECT ROWNUM RNUM, 
+                               A.*                 
+                          FROM ( SELECT ISSUE_SN, 
+										PROJECT_SN, 
+										ISSUE_SE, 
+										OCCRRNC_DE, 
+										ISSUE_NM, 										 
+										COMPT_DE, 
+										ISSUE_MNGR,
+										FNC_GETKORNM(ISSUE_MNGR) AS ISSUE_MNGR_NM,        			
+										COMPT_AT, 
+										REG_DT, 
+										REG_ID, 
+										UPT_DT, 
+										UPT_ID, 
+										ATCHMNFL
+                                   
+                                   FROM PJT_ISSUE PI
+
+                                   <trim prefix="WHERE" prefixOverrides="AND|OR">
+                                       <if test="projectSn != null and projectSn != ''">
+							               AND PROJECT_SN = #{projectSn}
+							           </if>
+							           <if test="issueNm != null and issueNm != ''">
+							               AND ISSUE_NM = '%' || #{issueNm} || '%'
+							           </if>       
+                                   </trim>
+                                   <choose>
+                                   <when test="sortColumId != null and sortColumId != ''">
+                                       <if test="sortColumId == 'occrrncDe'">
+                                       ORDER BY OCCRRNC_DE <choose><when test="sortDirection == 'desc'">DESC</when><otherwise>ASC</otherwise></choose>
+                                       </if>
+                                       <if test="sortColumId == 'issueMngrNm'">
+                                       ORDER BY ISSUE_MNGR <choose><when test="sortDirection == 'desc'">DESC</when><otherwise>ASC</otherwise></choose>
+                                       </if>
+                                       <if test="sortColumId == 'issueNm'">
+                                       ORDER BY ISSUE_NM <choose><when test="sortDirection == 'desc'">DESC</when><otherwise>ASC</otherwise></choose>
+                                       </if>
+                                       <if test="sortColumId == 'comptDe'">
+                                       ORDER BY COMPT_DE <choose><when test="sortDirection == 'desc'">DESC</when><otherwise>ASC</otherwise></choose>
+                                       </if>
+                                   </when>
+                                   <otherwise>
+                                       ORDER BY ISSUE_SN DESC
+                                   </otherwise>
+                                   </choose>
+
+                               ) A 
+                      ) B 
+    </select>
+    
+    <select id="selectPjtIssue" parameterType="egovMapForNull" resultType="egovMapForNull">
+         /* kr.co.dbvision.api.pjt.pmg.pjtpmg001.service.mapper.Pjtpmg001PjtIssueMapper.selectPjtIssue */
+         SELECT
+				ISSUE_SN, 
+				PROJECT_SN, 
+				ISSUE_SE, 
+				OCCRRNC_DE, 
+				ISSUE_NM, 
+				ISSUE_CN, 
+				SOLUT_ALTRV, 
+				COMPT_CN, 
+				COMPT_DE, 
+				ISSUE_MNGR,
+				FNC_GETKORNM(ISSUE_MNGR) AS ISSUE_MNGR_NM,
+				ATCHMNFL_SN, 
+				COMPT_AT, 
+				REG_DT, 
+				REG_ID, 
+				UPT_DT, 
+				UPT_ID, 
+				ATCHMNFL,
+                (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+                (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+           FROM PJT_ISSUE A
+        
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="projectSn != null and projectSn != ''">
+                AND PROJECT_SN = #{projectSn}
+            </if>
+            <if test="issueSn != null and issueSn != ''">
+                AND ISSUE_SN = #{issueSn}
+            </if>
+        </trim>
+
+    </select>
+    
+    <select id="selectPjtIssueactList" parameterType="egovMapForNull" resultType="egovMapForNull">
+         /* kr.co.dbvision.api.pjt.pmg.pjtpmg001.service.mapper.Pjtpmg001PjtIssueMapper.selectPjtIssueactList */
+         SELECT 
+				PROJECT_SN, 
+				ISSUE_SN, 
+				ACT_SN, 
+				TO_CHAR(ACT_DE,'YYYY-MM-DD') ACT_DE, 
+				ACT_CN, 
+				ACTOR,
+				FNC_GETKORNM(ACTOR) AS ACTOR_NM,
+				REG_DT, 
+				REG_ID, 
+				UPT_DT, 
+				UPT_ID,
+                (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+                (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+ 
+           FROM PJT_ISSUEACT A
+              
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="projectSn != null and projectSn != ''">
+                AND PROJECT_SN = #{projectSn}
+            </if>
+            <if test="issueSn != null and issueSn != ''">
+                AND ISSUE_SN = #{issueSn}
+            </if>
+        </trim>
+                    
+       ORDER BY ACT_SN DESC
+    </select>
+
+    <update id="savePjtIssue" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg001.service.mapper.Pjtpmg001PjtIssueMapper.savePjtIssue */
+        MERGE INTO PJT_ISSUE A
+             USING (SELECT
+                    #{issueSn} ISSUE_SN,
+                    #{projectSn} PROJECT_SN
+                    FROM DUAL) B
+                ON (
+                    A.ISSUE_SN = B.ISSUE_SN AND 
+                    A.PROJECT_SN = B.PROJECT_SN
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               ISSUE_SE= #{issueSe},
+               OCCRRNC_DE= REPLACE(#{occrrncDe},'-',''),
+               ISSUE_NM= #{issueNm},
+               ISSUE_CN= #{issueCn},
+               SOLUT_ALTRV= #{solutAltrv},
+               COMPT_CN= #{comptCn},
+               COMPT_DE= REPLACE(#{comptDe},'-',''),
+               ISSUE_MNGR= #{issueMngrNo},
+               ATCHMNFL_SN= 1,
+               COMPT_AT= #{comptAt},
+               ATCHMNFL= #{atchmnfl},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               ISSUE_SN,
+               PROJECT_SN,
+               ISSUE_SE,
+               OCCRRNC_DE,
+               ISSUE_NM,
+               ISSUE_CN,
+               SOLUT_ALTRV,
+               COMPT_CN,
+               COMPT_DE,
+               ISSUE_MNGR,
+               ATCHMNFL_SN,
+               COMPT_AT,
+               ATCHMNFL,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               (SELECT COUNT(1)+1 FROM PJT_ISSUE WHERE PROJECT_SN = #{projectSn}),
+               #{projectSn},
+               #{issueSe},
+               REPLACE(#{occrrncDe},'-',''),
+               #{issueNm},
+               #{issueCn},
+               #{solutAltrv},
+               #{comptCn},
+               REPLACE(#{comptDe},'-',''),
+               #{issueMngrNo},
+               1,
+               #{comptAt},
+               #{atchmnfl},
+               SYSDATE,
+               #{regId}
+        )
+    </update>
+
+    <delete id="deletePjtIssue" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg001.service.mapper.Pjtpmg001PjtIssueMapper.deletePjtIssue */
+        DELETE FROM PJT_ISSUE
+         WHERE ISSUE_SN = #{issueSn}
+           AND PROJECT_SN = #{projectSn}
+    </delete>
+
+    <update id="savePjtIssueAct" parameterType="kr.co.dbvision.api.pjt.pmg.pjtpmg001.entity.PjtIssueact001">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg001.service.mapper.Pjtpmg001PjtIssueMapper.savePjtIssueact */
+        MERGE INTO PJT_ISSUEACT A
+             USING (SELECT
+                    #{projectSn} PROJECT_SN,
+                    #{issueSn} ISSUE_SN,
+                    #{actSn} ACT_SN
+                    FROM DUAL) B
+                ON (
+                    A.PROJECT_SN = B.PROJECT_SN AND 
+                    A.ISSUE_SN = B.ISSUE_SN AND 
+                    A.ACT_SN = B.ACT_SN
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               ACT_DE= #{actDe},
+               ACT_CN= #{actCn},
+               ACTOR= #{actor},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               PROJECT_SN,
+               ISSUE_SN,
+               ACT_SN,
+               ACT_DE,
+               ACT_CN,
+               ACTOR,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{projectSn},
+               #{issueSn},
+               (SELECT COUNT(1)+1 FROM PJT_ISSUEACT WHERE PROJECT_SN = #{projectSn} AND ISSUE_SN = #{issueSn}),
+               #{actDe},
+               #{actCn},
+               #{actor},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deletePjtIssueact" parameterType="kr.co.dbvision.api.pjt.pmg.pjtpmg001.entity.PjtIssueact001">        
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg001.service.mapper.Pjtpmg001PjtIssueMapper.deletePjtIssueact */
+        DELETE FROM PJT_ISSUEACT
+         WHERE PROJECT_SN = #{projectSn}
+           AND ISSUE_SN = #{issueSn}
+           AND ACT_SN = #{actSn} 
+    </delete>
+
+    <delete id="deletePjtIssueactEgovMap" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg001.service.mapper.Pjtpmg001PjtIssueMapper.deletePjtIssueactEgovMap */
+        DELETE FROM PJT_ISSUEACT
+         WHERE PROJECT_SN = #{projectSn}
+           AND ISSUE_SN = #{issueSn}
+           <if test="actSn != null and actSn != ''">
+           AND ACT_SN = #{actSn} 
+           </if>
+    </delete>
+    
+    <select id="selectPjtIssueAct" parameterType="egovMapForNull" resultType="egovMapForNull">
+         /* kr.co.dbvision.api.pjt.pmg.pjtpmg001.service.mapper.Pjtpmg001PjtIssueMapper.selectPjtIssueAct */
+         SELECT
+               PROJECT_SN,
+                ISSUE_SN,
+                ACT_SN,
+                TO_CHAR(ACT_DE,'YYYY-MM-DD') ACT_DE,
+                ACT_CN,
+                ACTOR,
+                FNC_GETKORNM(ACTOR) AS ACTOR_NM
+
+           FROM PJT_ISSUEACT A
+        
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="projectSn != null and projectSn != ''">
+                AND PROJECT_SN = #{projectSn}
+            </if>
+            <if test="issueSn != null and issueSn != ''">
+                AND ISSUE_SN = #{issueSn}
+            </if>
+             <if test="actSn != null and actSn != ''">
+                AND ACT_SN = #{actSn}
+            </if>
+        </trim>
+
+    </select>
+    
+    <delete id="deletePjtIssueAct" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg001.service.mapper.Pjtpmg001PjtIssueMapper.deletePjtIssueAct */
+        DELETE FROM PJT_ISSUEACT
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+           AND ISSUE_SN = #{issueSn}
+           AND ACT_SN = #{actSn}
+           AND PROJECT_SN = #{projectSn}
+        </trim>
+    </delete>
+    
+</mapper>

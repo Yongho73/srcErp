@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mhs.hrb.mhshrb000.service.mapper.Mhshrb000Mapper">
+
+    <select id="selectMhshrb000List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrb.mhshrb000.service.mapper.Mhshrb000Mapper.selectMhshrb000List */
+        SELECT
+               BCNC_CODE,
+               BIZRNO,
+               BPLC_CODE,
+               BCNC_NM,
+               REPRSNT_NM,
+               INDUTY,
+               BIZCND,
+               BCNC_SE,
+               CPR_SE,
+               NLTY_CODE,
+               BCNCSCALE_SE,
+               TAXT_SE,
+               CRNCY_CODE,
+               BANK_CODE,
+               AREA_CODE,
+               AREA_NM,
+               POST_CODE,
+               ADRES,
+               ADDR2,
+               TELNO,
+               FAX_NO,
+               ACNUT_NO,
+               DPSTR_NM,
+               HOMEPAGE,
+               PURCHS_AT,
+               SALEOFFIC_AT,
+               BCNC_CN,
+               FNC_DATESTR(FOND_DE) AS FOND_DE,
+               CAPITAL_AMT,
+               YY_SALE_AMT,
+               EMPL_CO,
+               TRADE_NO,
+               USE_AT,
+               ATCHMNFL_NO,
+               CHARGER_NM,
+               CHARGER_EMAIL,
+               CHARGER_TELNO,
+               FNC_DATESTR(CHARGER_DEPT) AS CHARGER_DEPT,
+               CHARGER_OFCPS,
+               PRIOR_PURCHS_AT,
+               DSRPR_AT,
+               WOMAN_AT,
+               FOREIGN_AT,
+               SERHANDICAP_AT,
+               SOCIALENTRPRS_AT,
+               DSPSN_STD_AT,
+               GREEN_AT,
+               TECHNOLOGY_AT,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM STM_CUSTOMER A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="bcncCode != null and bcncCode != ''">
+                AND BCNC_CODE = #{bcncCode}
+            </if>
+            <if test="sRegDt != null and sRegDt != ''">
+                <![CDATA[
+                AND REG_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+                ]]>
+            </if>
+            <if test="eRegDt != null and eRegDt != ''">
+                <![CDATA[
+                AND REG_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+                ]]>
+             </if>
+        </trim>
+    </select>
+
+    <select id="selectMhshrb000" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrb.mhshrb000.service.mapper.Mhshrb000Mapper.selectMhshrb000 */
+        SELECT
+               BCNC_CODE,
+               BIZRNO,
+               BPLC_CODE,
+               BCNC_NM,
+               REPRSNT_NM,
+               INDUTY,
+               BIZCND,
+               BCNC_SE,
+               CPR_SE,
+               NLTY_CODE,
+               BCNCSCALE_SE,
+               TAXT_SE,
+               CRNCY_CODE,
+               BANK_CODE,
+               AREA_CODE,
+               AREA_NM,
+               POST_CODE,
+               ADRES,
+               ADDR2,
+               TELNO,
+               FAX_NO,
+               ACNUT_NO,
+               DPSTR_NM,
+               HOMEPAGE,
+               PURCHS_AT,
+               SALEOFFIC_AT,
+               BCNC_CN,
+               FOND_DE,
+               CAPITAL_AMT,
+               YY_SALE_AMT,
+               EMPL_CO,
+               TRADE_NO,
+               USE_AT,
+               ATCHMNFL_NO,
+               CHARGER_NM,
+               CHARGER_EMAIL,
+               CHARGER_TELNO,
+               CHARGER_DEPT,
+               CHARGER_OFCPS,
+               PRIOR_PURCHS_AT,
+               DSRPR_AT,
+               WOMAN_AT,
+               FOREIGN_AT,
+               SERHANDICAP_AT,
+               SOCIALENTRPRS_AT,
+               DSPSN_STD_AT,
+               GREEN_AT,
+               TECHNOLOGY_AT,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM STM_CUSTOMER A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="bcncCode != null and bcncCode != ''">
+                AND BCNC_CODE = #{bcncCode}
+            </if>
+        </trim>
+    </select>
+
+    <update id="saveMhshrb000" parameterType="kr.co.dbvision.api.mhs.hrb.mhshrb000.entity.Mhshrb000">
+        /* kr.co.dbvision.api.mhs.hrb.mhshrb000.service.mapper.Mhshrb000Mapper.saveMhshrb000 */
+        MERGE INTO STM_CUSTOMER A
+             USING (SELECT
+                    #{bcncCode} BCNC_CODE
+                    FROM DUAL) B
+                ON (
+                    A.BCNC_CODE = B.BCNC_CODE
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               BIZRNO= #{bizrno},
+               BPLC_CODE= #{bplcCode},
+               BCNC_NM= #{bcncNm},
+               REPRSNT_NM= #{reprsntNm},
+               INDUTY= #{induty},
+               BIZCND= #{bizcnd},
+               BCNC_SE= #{bcncSe},
+               CPR_SE= #{cprSe},
+               NLTY_CODE= #{nltyCode},
+               BCNCSCALE_SE= #{bcncscaleSe},
+               TAXT_SE= #{taxtSe},
+               CRNCY_CODE= #{crncyCode},
+               BANK_CODE= #{bankCode},
+               AREA_CODE= #{areaCode},
+               AREA_NM= #{areaNm},
+               POST_CODE= #{postCode},
+               ADRES= #{adres},
+               ADDR2= #{addr2},
+               TELNO= #{telno},
+               FAX_NO= #{faxNo},
+               ACNUT_NO= #{acnutNo},
+               DPSTR_NM= #{dpstrNm},
+               HOMEPAGE= #{homepage},
+               PURCHS_AT= #{purchsAt},
+               SALEOFFIC_AT= #{saleofficAt},
+               BCNC_CN= #{bcncCn},
+               FOND_DE= #{fondDe},
+               CAPITAL_AMT= #{capitalAmt},
+               YY_SALE_AMT= #{yySaleAmt},
+               EMPL_CO= #{emplCo},
+               TRADE_NO= #{tradeNo},
+               USE_AT= #{useAt},
+               ATCHMNFL_NO= #{atchmnflNo},
+               CHARGER_NM= #{chargerNm},
+               CHARGER_EMAIL= #{chargerEmail},
+               CHARGER_TELNO= #{chargerTelno},
+               CHARGER_DEPT= #{chargerDept},
+               CHARGER_OFCPS= #{chargerOfcps},
+               PRIOR_PURCHS_AT= #{priorPurchsAt},
+               DSRPR_AT= #{dsrprAt},
+               WOMAN_AT= #{womanAt},
+               FOREIGN_AT= #{foreignAt},
+               SERHANDICAP_AT= #{serhandicapAt},
+               SOCIALENTRPRS_AT= #{socialentrprsAt},
+               DSPSN_STD_AT= #{dspsnStdAt},
+               GREEN_AT= #{greenAt},
+               TECHNOLOGY_AT= #{technologyAt},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               BCNC_CODE,
+               BIZRNO,
+               BPLC_CODE,
+               BCNC_NM,
+               REPRSNT_NM,
+               INDUTY,
+               BIZCND,
+               BCNC_SE,
+               CPR_SE,
+               NLTY_CODE,
+               BCNCSCALE_SE,
+               TAXT_SE,
+               CRNCY_CODE,
+               BANK_CODE,
+               AREA_CODE,
+               AREA_NM,
+               POST_CODE,
+               ADRES,
+               ADDR2,
+               TELNO,
+               FAX_NO,
+               ACNUT_NO,
+               DPSTR_NM,
+               HOMEPAGE,
+               PURCHS_AT,
+               SALEOFFIC_AT,
+               BCNC_CN,
+               FOND_DE,
+               CAPITAL_AMT,
+               YY_SALE_AMT,
+               EMPL_CO,
+               TRADE_NO,
+               USE_AT,
+               ATCHMNFL_NO,
+               CHARGER_NM,
+               CHARGER_EMAIL,
+               CHARGER_TELNO,
+               CHARGER_DEPT,
+               CHARGER_OFCPS,
+               PRIOR_PURCHS_AT,
+               DSRPR_AT,
+               WOMAN_AT,
+               FOREIGN_AT,
+               SERHANDICAP_AT,
+               SOCIALENTRPRS_AT,
+               DSPSN_STD_AT,
+               GREEN_AT,
+               TECHNOLOGY_AT,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{bcncCode},
+               #{bizrno},
+               #{bplcCode},
+               #{bcncNm},
+               #{reprsntNm},
+               #{induty},
+               #{bizcnd},
+               #{bcncSe},
+               #{cprSe},
+               #{nltyCode},
+               #{bcncscaleSe},
+               #{taxtSe},
+               #{crncyCode},
+               #{bankCode},
+               #{areaCode},
+               #{areaNm},
+               #{postCode},
+               #{adres},
+               #{addr2},
+               #{telno},
+               #{faxNo},
+               #{acnutNo},
+               #{dpstrNm},
+               #{homepage},
+               #{purchsAt},
+               #{saleofficAt},
+               #{bcncCn},
+               #{fondDe},
+               #{capitalAmt},
+               #{yySaleAmt},
+               #{emplCo},
+               #{tradeNo},
+               #{useAt},
+               #{atchmnflNo},
+               #{chargerNm},
+               #{chargerEmail},
+               #{chargerTelno},
+               #{chargerDept},
+               #{chargerOfcps},
+               #{priorPurchsAt},
+               #{dsrprAt},
+               #{womanAt},
+               #{foreignAt},
+               #{serhandicapAt},
+               #{socialentrprsAt},
+               #{dspsnStdAt},
+               #{greenAt},
+               #{technologyAt},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deleteMhshrb000" parameterType="kr.co.dbvision.api.mhs.hrb.mhshrb000.entity.Mhshrb000">
+        /* kr.co.dbvision.api.mhs.hrb.mhshrb000.service.mapper.Mhshrb000Mapper.deleteMhshrb000 */
+        DELETE FROM STM_CUSTOMER
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND BCNC_CODE = #{bcncCode}
+        </trim>
+    </delete>
+</mapper>

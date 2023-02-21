@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mhs.hrm.mhshrm007.service.mapper.Mhshrm007Mapper">
+
+    <select id="selectMhsSchulCodeList" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm007.service.impl.Mhshrm007Mapper.selectMhsSchulCodeList */
+        SELECT
+               SCHUL_CODE,
+               SCHUL_NM,
+               FNC_COMCODENM('C079', AREA_CODE)  AS AREA_CODE_NM,
+               FNC_COMCODENM('C080', SCHUL_SE)  AS SCHUL_SE_NM,
+               ZIP,
+               ADRES,
+               TELNO,
+               FAX_TELNO,
+               TO_CHAR(REG_DT,'YYYY-MM-DD HH24:MI:SS') AS REG_DT,
+               REG_ID,
+               TO_CHAR(UPT_DT,'YYYY-MM-DD HH24:MI:SS') AS UPT_DT,
+               UPT_ID
+          FROM MHS_SCHUL_CODE A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="schulCode != null and schulCode != ''">
+                AND SCHUL_CODE = #{schulCode}
+            </if>
+            <if test="schulNm != null and schulNm != ''">
+                AND SCHUL_NM  LIKE '%' || #{schulNm} || '%' 
+            </if>
+            <if test="areaCode != null and areaCode != ''">
+                AND AREA_CODE = #{areaCode} 
+            </if>
+            <if test="schulSe != null and schulSe != ''">
+                AND SCHUL_SE = #{schulSe} 
+            </if> 
+        </trim>
+        ORDER BY SCHUL_CODE
+    </select>
+
+    <select id="selectMhsSchulCode" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm007.service.impl.Mhshrm007Mapper.selectMhsSchulCode */
+        SELECT
+               SCHUL_CODE,
+               SCHUL_NM,
+               FNC_COMCODENM('C079', AREA_CODE)  AS AREA_CODE_NM,
+               FNC_COMCODENM('C080', SCHUL_SE)  AS SCHUL_SE_NM,
+               ZIP,
+               ADRES,
+               TELNO,
+               FAX_TELNO,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               AREA_CODE,
+               SCHUL_SE
+          FROM MHS_SCHUL_CODE A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="schulCode != null and schulCode != ''">
+                AND SCHUL_CODE = #{schulCode}
+            </if>
+        </trim>
+    </select>
+
+    <insert id="insertMhsSchulCode" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm007.service.impl.Mhshrm007Mapper.insertMhsSchulCode */
+        INSERT INTO MHS_SCHUL_CODE
+        (
+            SCHUL_CODE,
+            SCHUL_NM,
+            AREA_CODE,
+            SCHUL_SE,
+            ZIP,
+            ADRES,
+            TELNO,
+            FAX_TELNO,
+            REG_DT,
+            REG_ID
+        )
+        VALUES
+        (
+            #{schulCode},
+            #{schulNm},
+            #{areaCode},
+            #{schulSe},
+            #{zip},
+            #{adres},
+            #{telno},
+            #{faxTelno},
+            SYSDATE,
+            #{regId}
+        )
+    </insert>
+
+    <update id="updateMhsSchulCode" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm007.service.impl.Mhshrm007Mapper.updateMhsSchulCode */
+        UPDATE MHS_SCHUL_CODE SET
+               SCHUL_NM= #{schulNm},
+               AREA_CODE= #{areaCode},
+               SCHUL_SE= #{schulSe},
+               ZIP= #{zip},
+               ADRES= #{adres},
+               TELNO= #{telno},
+               FAX_TELNO= #{faxTelno},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+               AND SCHUL_CODE = #{schulCode}
+        </trim>
+    </update>
+
+    <delete id="deleteMhsSchulCode" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm007.service.impl.Mhshrm007Mapper.deleteMhsSchulCode */
+        DELETE FROM MHS_SCHUL_CODE
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND SCHUL_CODE = #{schulCode}
+        </trim>
+    </delete>
+</mapper>

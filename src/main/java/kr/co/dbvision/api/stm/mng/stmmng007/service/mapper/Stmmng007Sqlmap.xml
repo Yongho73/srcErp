@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.stm.mng.stmmng007.service.mapper.Stmmng007Mapper">
+    
+    <sql id="searchCondition">
+    
+
+            <if test="progrmId != null and progrmId != ''">
+                AND PROGRM_ID LIKE '%' || #{progrmId} || '%'
+            </if>
+            <if test="progrmNm != null and progrmNm != ''">
+                AND PROGRM_NM LIKE '%' || #{progrmNm} || '%'
+            </if>
+            <if test="subjectNm != null and subjectNm != ''">
+                AND PCKAGE_NM = #{subjectNm}
+            </if>            
+            <if test="sRegDt != null and sRegDt != ''">
+                <![CDATA[
+                AND REG_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+                ]]>
+            </if>
+            <if test="eRegDt != null and eRegDt != ''">
+                <![CDATA[
+                AND REG_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+                ]]>
+             </if>
+             <if test="useAt != null and useAt != ''">
+                AND USE_AT = #{useAt}
+            </if>   
+
+        <choose>
+        <when test="sortColumId != null and sortColumId != ''">
+            <if test="sortColumId == 'progrmId'">
+            ORDER BY PROGRM_ID <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+            <if test="sortColumId == 'progrmNm'">
+            ORDER BY PROGRM_NM <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+            <if test="sortColumId == 'url'">
+            ORDER BY URL <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+            <if test="sortColumId == 'pckageNm'">
+            ORDER BY PCKAGE_NM <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+            <if test="sortColumId == 'subPckageId'">
+            ORDER BY SUB_PCKAGE_ID <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+            <if test="sortColumId == 'relTblNm'">
+            ORDER BY REL_TBL_NM <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+        </when>
+        <otherwise>
+            ORDER BY PROGRM_NM
+        </otherwise>
+        </choose>
+    
+    </sql>
+    
+    <select id="selectStmProgrmListAllCnt" parameterType="egovMapForNull" resultType="java.lang.Integer">
+        /* kr.co.dbvision.api.stm.mng.stmmng007.service.mapper.Stmmng007Mapper.selectStmProgrmListAllCnt */
+        SELECT COUNT(*) AS totalRecordCount
+          FROM STM_PROGRM
+        WHERE 1=1
+        <include refid="searchCondition" />
+
+    </select>
+    
+    <select id="selectStmProgrmListAllInPage" parameterType="egovMapForNull" resultType="java.lang.Integer">
+        /* kr.co.dbvision.api.stm.mng.stmmng007.service.mapper.Stmmng007Mapper.selectStmProgrmListAllInPage */
+        SELECT CEIL(RNUM/#{pageingCnt}) PAGE FROM (SELECT ROWNUM AS RNUM, PROGRM_ID FROM (
+          
+        SELECT PROGRM_ID
+          FROM STM_PROGRM
+      ORDER BY PROGRM_NM
+        
+        ) A ) B WHERE PROGRM_ID = #{progrmId}
+
+    </select>
+    
+    <select id="selectStmProgrmListPaging" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.stm.mng.stmmng007.service.mapper.Stmmng007Mapper.selectStmProgrmListPaging */
+        SELECT * FROM ( SELECT ROWNUM RNUM, A.* FROM (
+
+        SELECT
+               PROGRM_ID,
+               PROGRM_NM,
+               PROGRM_DC,
+               PROGRM_ID AS MENU_ID,
+               URL,
+               FILE_NM,
+               PCKAGE_NM,
+               SUB_PCKAGE_ID,
+               REL_TBL_NM,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID
+               ,CODE_KOR_NM AS SUBJECT_NM
+               ,A.USE_AT
+             FROM STM_PROGRM A, ( SELECT CODE,CODE_KOR_NM  FROM STM_CODE WHERE CODEKIND_CODE ='C001')  X 
+             WHERE A.PCKAGE_NM = X.CODE(+)
+
+         <include refid="searchCondition" />
+
+        ) A  ) B WHERE RNUM &gt; #{firstIndex} AND RNUM &lt;= #{lastIndex}        
+    </select>
+    
+    <select id="selectStmProgrmList" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.stm.mng.stmmng007.service.mapper.Stmmng007Mapper.selectStmProgrmList */
+        SELECT
+               PROGRM_ID,
+               PROGRM_NM,
+               PROGRM_DC,
+               PROGRM_ID AS MENU_ID,
+               URL,
+               FILE_NM,
+               PCKAGE_NM,
+               SUB_PCKAGE_ID,
+               REL_TBL_NM,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               USE_AT,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM STM_PROGRM A
+
+         <include refid="searchCondition" />
+        
+    </select>
+
+    <select id="selectStmProgrm" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.stm.mng.stmmng007.service.mapper.Stmmng007Mapper.selectStmProgrm */
+        SELECT
+               PROGRM_ID,
+               PROGRM_NM,
+               PROGRM_DC,
+               PROGRM_ID AS MENU_ID,
+               URL,
+               FILE_NM,
+               PCKAGE_NM,
+               SUB_PCKAGE_ID,
+               REL_TBL_NM,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               USE_AT,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM STM_PROGRM A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="progrmId != null and progrmId != ''">
+                AND PROGRM_ID = #{progrmId}
+            </if>
+        </trim>
+    </select>
+
+    <update id="saveStmProgrm" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.stm.mng.stmmng007.service.mapper.Stmmng007Mapper.saveStmProgrm */
+        MERGE INTO STM_PROGRM A
+             USING (SELECT
+                    #{progrmId} PROGRM_ID
+                    FROM DUAL) B
+                ON (
+                    A.PROGRM_ID = B.PROGRM_ID
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               PROGRM_NM= #{progrmNm},
+               PROGRM_DC= #{progrmDc},
+               URL= #{url},
+               FILE_NM= #{fileNm},
+               PCKAGE_NM= #{pckageNm},
+               SUB_PCKAGE_ID= #{subPckageId},
+               REL_TBL_NM= #{relTblNm},
+               USE_AT= #{useAt},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               PROGRM_ID,
+               PROGRM_NM,
+               PROGRM_DC,
+               URL,
+               FILE_NM,
+               PCKAGE_NM,
+               SUB_PCKAGE_ID,
+               REL_TBL_NM,
+               USE_AT,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{progrmId},
+               #{progrmNm},
+               #{progrmDc},
+               #{url},
+               #{fileNm},
+               #{pckageNm},
+               #{subPckageId},
+               #{relTblNm},
+               #{useAt},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deleteStmProgrm" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.stm.mng.stmmng007.service.mapper.Stmmng007Mapper.deleteStmProgrm */
+        DELETE FROM STM_PROGRM
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND PROGRM_ID = #{progrmId}
+        </trim>
+    </delete>
+    
+    
+
+    <update id="saveStmProgrmNew" parameterType="kr.co.dbvision.api.stm.mng.stmmng007.entity.Stmmng007">
+        /* kr.co.dbvision.api.stm.mng.stmmng007.service.mapper.Stmmng007Mapper.saveStmProgrmNew */
+        MERGE INTO STM_PROGRM A
+             USING (SELECT
+                    #{progrmId} PROGRM_ID
+                    FROM DUAL) B
+                ON (
+                    A.PROGRM_ID = B.PROGRM_ID
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               PROGRM_NM= #{progrmNm},
+               PROGRM_DC= #{progrmDc},
+               URL= #{url},
+               FILE_NM= #{fileNm},
+               PCKAGE_NM= #{pckageNm},
+               SUB_PCKAGE_ID= #{subPckageId},
+               REL_TBL_NM= #{relTblNm},
+               USE_AT= #{useAt},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               PROGRM_ID,
+               PROGRM_NM,
+               PROGRM_DC,
+               URL,
+               FILE_NM,
+               PCKAGE_NM,
+               SUB_PCKAGE_ID,
+               REL_TBL_NM,
+               USE_AT,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{progrmId},
+               #{progrmNm},
+               #{progrmDc},
+               #{url},
+               #{fileNm},
+               #{pckageNm},
+               #{subPckageId},
+               #{relTblNm},
+               #{useAt},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deleteStmProgrmNew" parameterType="kr.co.dbvision.api.stm.mng.stmmng007.entity.Stmmng007">
+        /* kr.co.dbvision.api.stm.mng.stmmng007.service.mapper.Stmmng007Mapper.deleteStmProgrmNew */
+        DELETE FROM STM_PROGRM
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND PROGRM_ID = #{progrmId}
+        </trim>
+    </delete>
+    
+    <select id="selectProgrmIdUseChk" parameterType="kr.co.dbvision.api.stm.mng.stmmng007.entity.Stmmng007" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.stm.mng.stmmng007.service.mapper.Stmmng007Mapper.selectProgrmIdUseChk */
+        SELECT NVL(SUM(X.CNT),0) AS CNT, MAX(X.TBL) AS TBL
+        FROM (
+            SELECT COUNT(*) AS CNT , '메뉴관리' AS TBL
+              FROM STM_MENU
+             WHERE  PROGRM_ID = #{progrmId}
+             UNION ALL
+            SELECT COUNT(*) AS CNT , '매뉴얼 및 도움말' AS TBL
+              FROM STM_HELP
+             WHERE MENU_ID = #{progrmId}
+             UNION ALL
+            SELECT COUNT(*) AS CNT , '개발현황' AS TBL
+              FROM STM_PROGRM_DEV_STAT
+             WHERE  PROGRM_ID = #{progrmId}
+        ) X
+        WHERE X.CNT > 0
+     </select>
+</mapper>

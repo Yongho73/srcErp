@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html class="no-js" lang="ko">
+<HEAD>
+<meta charset="utf-8">
+<LINK href="../img/icon/dbv.ico" rel="shortcut icon" type="image/x-icon">
+
+<TITLE>XERP</TITLE>
+
+<LINK href="../css/dhtmlx/skin/dhtmlx.css" rel="stylesheet" type="text/css">
+<LINK href="../glyphicons/css/bootstrap-glyphicons.css" rel="stylesheet" type="text/css">
+
+<!-- jquery -->
+<SCRIPT src="../js/jquery-1.11.1.min.js"></SCRIPT>
+<SCRIPT src="../js/jquery-ui-custom.min.js"></SCRIPT>
+ 
+<!-- css -->
+<LINK href="../css/default.css" rel="stylesheet" type="text/css">
+<LINK href="../css/contents.css" rel="stylesheet" type="text/css">
+
+</HEAD>
+
+
+<body>
+	<!--컨텐츠-->
+		<div class="path_info" style="">
+            <ul id="menu_path" style=""><li><a class="home" href="#n"></a></li><li><a href="#"> 연말정산 </a></li><li><a href="#"> 인적공제</a></li></ul>
+        </div>
+        
+		<DIV class="btn" style="float:right;text-align:right; vertical-align:middle;" title="저장">
+			<BUTTON class="btn_common02_new_red" id="btn_help" type="button" title="공제액계산">
+				<SPAN class="glyphicon glyphicon-hourglass mr5"></SPAN>공제액계산
+			</BUTTON>
+			<BUTTON class="btn_common02_new" id="btnRemove" type="button" title="닫기">
+				<SPAN class="glyphicon glyphicon-remove"></SPAN>
+			</BUTTON>
+		</DIV>
+		 
+      
+	<DIV class="search_box" style="width:100%; overflow:hidden;">
+		<TABLE style="width:100%;">
+			<TBODY>
+				<TR>
+					<td style="position:relative; vertical-align:middle;">
+					    
+						<div style="position:relative;display:inline-block;float:left;">
+							<label>귀속년도</LABEL>
+							 <input name="searchEregDt" class="input_calen" onkeyup="gf_AutoDate(event, this)" onkeypress="gf_AutoDate(event, this)" type="text" style="width: 40px;" maxlength="4" value="2019">
+						</div>
+						<div style="position:relative;display:inline-block;float:left;padding-left:50px;">
+							<label>귀속시작일</LABEL>
+							 <input name="searchEregDt" class="input_calen" onkeyup="gf_AutoDate(event, this)" onkeypress="gf_AutoDate(event, this)" type="text" style="width: 90px;" maxlength="10" value="2019-01-01">
+						</div>
+						<div style="position:relative;display:inline-block;float:left;padding-left:50px;">
+							<label>귀속종료일</LABEL>
+							 <input name="searchEregDt" class="input_calen" onkeyup="gf_AutoDate(event, this)" onkeypress="gf_AutoDate(event, this)" type="text" style="width:90px;" maxlength="10" value="2019-12-31">
+						</div>
+					<!-- 
+						<DIV class="btn2" style="position:relative;display:inline-block;float:right;">
+							<BUTTON id="btnSearch" type="button">
+								<SPAN class="glyphicon glyphicon-search f15"></SPAN>
+							</BUTTON>
+							<BUTTON id="btnClear" type="button">
+								<SPAN class="glyphicon glyphicon-refresh f15 mr5" style="color:#fff;margin-left:4px;"></SPAN>
+							</BUTTON>
+						</DIV>
+					-->
+					</td>
+				</TR>
+			</TBODY>
+		</TABLE>
+	</DIV>
+	<!--//search_box-->
+      
+       
+   
+    <div class="basic_div" style="padding:10px;">
+    	<ul class="tax_people_ul">
+    		<li class="active"><a href=""><span class="a"></span>인적공제</a></li>
+			<li><a href=""><span class="b"></span>신용,직불,교육</a></li>
+			<li><a href=""><span class="c"></span>전근무지공제(상세)</a></li>
+			<li><a href=""><span class="d"></span>기부금등록</a></li>
+			<li><a href=""><span class="e"></span>의료비명세서</a></li>
+			<li><a href=""><span class="f"></span>연금·저축</a></li>
+			<li><a href=""><span class="g"></span>월세액</a></li>
+			<li><a href=""><span class="h"></span>연금보험료공제</a></li>
+			<li><a href=""><span class="i"></span>특별소득공제</a></li>
+			<li><a href=""><span class="j"></span>그밖의소득공제</a></li>
+			<li><a href=""><span class="k"></span>세액감면및공제</a></li>
+			<li><a href=""><span class="l"></span>추가제출서류</a></li>
+    	</ul>
+    	
+    	<div class="" style="position:relative;">
+    		<div style="float:left;line-height:30px;margin-bottom:10px;">
+    			<span>본인 세대주 여부 <img onclick="new eXcell_ch(this.parentNode).changeState(true); (arguments[0]||event).cancelBubble=true; " src="/xerp/css/dhtmlx/skin/imgs/dhxgrid_material/item_chk0.gif" alt="체크박스" style="margin-top:-3px;"><span class="red"> (가족사항 수정 시 저장버튼을 필히 눌러 주세요.)</span> * 교육비공제를 위해서는 반드시 교육비구분을 지정해주세요.</span>
+    		</div>
+    	    		
+			<div style="float: right;position:relative;bottom:-8px;">
+				<button class="btn_common01_new_red mr10 how_save_btn" type="button"><SPAN class="glyphicon glyphicon-pencil mr5"></SPAN>작성방법</button>
+				<button class="btn_common01_new" type="button">저장</button>
+				<button class="btn_common01_new" type="button">추가</button>
+				<button class="btn_common01_new" type="button">삭제</button>
+			</div>
+    	</div>
+    	
+    	<div class="detail_type024 type_bd" style="overflow:auto;height:171px;">
+			<table>
+				<caption>인적공제</caption>
+				
+				<colgroup>
+					<col style="width:8%;min-width:70px;" />
+					<col style="width:8%;min-width:70px;" />
+					<col style="width:8%;min-width:70px;" />
+					<col style="width:8%;min-width:70px;" />
+					<col style="width:8%;min-width:70px;" />
+					<col style="width:8%;min-width:70px;" />
+					<col style="width:8%;min-width:70px;" />
+					<col style="width:8%;min-width:70px;" />
+					<col style="width:8%;min-width:70px;" />
+					<col style="width:8%;min-width:70px;" />
+					<col style="width:8%;min-width:70px;" />
+					<col style="width:8%;min-width:16px" />
+				</colgroup>
+				<thead>
+					<tr>
+						<th class="ac brnavy">관계</th>
+						<th class="ac brnavy">내외국인구분</th>
+						<th class="ac brnavy">성명</th>
+						<th class="ac brnavy">주민등록번호<br>(-)제외</th>
+						<th class="ac brnavy">교육비<br>구분</th>
+						<th class="ac brnavy">기본<br>공제</th>
+						<th class="ac brnavy">부녀자</th>
+						<th class="ac brnavy">한부모</th>
+						<th class="ac brnavy">경로<br>우대</th>
+						<th class="ac brnavy">장애인</th>
+						<th class="ac brnavy">출산<br>입양</th>
+						<th class="ac brnavy">6세<br>이하</th>
+						<th class="ac" style="width:16px;"></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac"></td>
+					</tr>		
+					
+					<tr>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac"></td>
+					</tr>		
+					
+					<tr>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac"></td>
+					</tr>		
+					
+					<tr>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac"></td>
+					</tr>		
+					
+					<tr>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac"></td>
+					</tr>		
+					
+					<tr>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac"></td>
+					</tr>		
+					
+					<tr>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac"></td>
+					</tr>		
+					
+					<tr>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac"></td>
+					</tr>		
+					
+					<tr>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac"></td>
+					</tr>		
+					
+					<tr>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac">0</td>
+						<td class="ac"></td>
+					</tr>					
+				</tbody>
+				
+				</table>
+			</div>
+				
+    </div>
+    
+    
+	<div class="project_tab_div">		 
+		<ul class="project_tab">
+			<li class="active">| 인적공제</li>
+		</ul>
+		 
+	</div>
+	
+	<DIV class="tabl_box">
+		
+		<div class="detail_type024_sub" style="margin-bottom:100px;">
+			<table>
+				<caption>인적공제</caption>
+				
+				<colgroup>
+					<col style="width:15%;min-width:150px;" />
+					<col style="width:7%;min-width:60px;" />
+					<col style="width:15%;min-width:150px;" />
+					<col style="width:7%;min-width:60px;" />
+					<col style="width:auto;min-width:400px;" />
+				</colgroup>
+				<thead>
+					<tr>
+						<th colspan="2" class="ac brddd">기본공제</th>
+						<th colspan="2" class="ac brddd">추가공제</th>
+						<th class="ac brddd">설명</th>
+					</tr>
+				</thead>
+				
+				
+					
+					<tr>
+						<td class="ar">배우자공제</td>
+                		<td class="ac">해당</td>
+                		<td class="ar">경로우대</td>
+                		<td class="ac">1</td>
+                		<td class="al"></td>
+                	</tr>
+                	<tr>
+						<td class="ar">20세이하</td>
+                		<td class="ac">4</td>
+                		<td class="ar">장애인공제</td>
+                		<td class="ac">0</td>
+                		<td class="al"></td>
+                	</tr>
+                	
+                	<tr>
+						<td class="ar">60세이하</td>
+                		<td class="ac">2</td>
+                		<td class="ar">부녀자</td>
+                		<td class="ac">비해당</td>
+                		<td rowspan="2" class="al">부녀자/한부모가족공제(추가공제)는 해당여부를 직접 등록해야 합니다.<br>부녀자공제와 중복시 하나만을 선택하여 등록해야 합니다.</td>
+                	</tr>
+                	
+                	<tr>
+						<td class="ar">장애인</td>
+                		<td class="ac">0</td>
+                		<td class="ar">한부모가족</td>
+                		<td class="ac">비해당</td>
+                	</tr>
+                	<tr>
+                		<td rowspan="2" class="ar">수급자/위탁아동</td>
+                		<td rowspan="2" class="ac">0</td>
+                		<td class="ar">자녀세액공제</td>
+                		<td class="ac">3</td>
+                		<td class="al"></td>
+                	</tr>
+                	
+                	<tr>
+                		<td class="ar">자녀세액공제(출산,입양)</td>
+                		<td class="ac">0</td>
+                		<td class="al"></td>
+                	</tr>
+					<tr>
+                		<td class="ar">인적공제항목 변동여부</td>
+                		<td colspan="3" class="al">
+	                		<form>
+								<fieldset>
+									<legend>인적공제항목 변동여부</legend>
+										<input type="radio" name="a" value="same" id="same" checked><label for="same" style="margin-right:20px;"><span></span>전년과 동일</label>
+										<input type="radio" name="a" value="change" id="change"><label for="change"><span></span>변동</label>
+								</fieldset>
+							</form>
+						</td>
+                		<td class="al"></td>
+                	</tr>
+					<tr>
+                		<td class="ar">세대주여부</td>
+                		<td colspan="3" class="al">
+                			<form>
+								<fieldset>
+									<legend>인적공제항목 변동여부</legend>
+										<input type="radio" name="b" value="relevant" id="relevant" checked> <label for="relevant" style="margin-right:59px;"><span></span>해당</label>
+										<input type="radio" name="b" value="norelevant" id="norelevant"/> <label for="norelevant"><span></span>비해당</label>
+								</fieldset>
+							</form>
+						</td>
+                		<td class="al">세대주여부는 해당여부를 직접 등록해야 합니다.</td>
+                	</tr>
+					
+			</table>
+		</div><!--//baseForm-->
+	</div>
+	
+	
+	
+</BODY>
+</HTML>

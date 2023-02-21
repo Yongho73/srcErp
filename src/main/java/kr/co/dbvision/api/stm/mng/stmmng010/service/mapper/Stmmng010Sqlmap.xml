@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.stm.mng.stmmng010.service.mapper.Stmmng010Mapper">
+
+    <select id="selectStmmng010List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.stm.mng.stmmng010.service.mapper.Stmmng010Mapper.selectStmmng010List */
+        SELECT A.PROGRM_ID, 
+               A.PROGRM_NM, 
+               (SELECT SUBSTR(SUBSTR(SYS_CONNECT_BY_PATH(MENU_NM,' > '), INSTR(SYS_CONNECT_BY_PATH(MENU_NM,' > '),'>', 3)),2)
+                FROM STM_MENU
+                WHERE MENU_ID = A.PROGRM_ID
+                START WITH UPPER_MENU_ID IS NULL 
+                CONNECT BY PRIOR MENU_ID = UPPER_MENU_ID               
+               ) AS PROGRM_PATH, 
+               PROGRS_STTUS,
+               CHARGER_EMPNO, 
+               (SELECT  USER_NM    
+                FROM  STM_USERS  
+                WHERE EMPNO  = B.CHARGER_EMPNO
+               ) AS CHARGER_NM, 
+               TO_CHAR(TO_DATE(PREARNGE_BEGIN_DE),'YYYY-MM-DD') AS PREARNGE_BEGIN_DE, 
+               TO_CHAR(TO_DATE(PREARNGE_END_DE),'YYYY-MM-DD') AS PREARNGE_END_DE, 
+               TO_CHAR(TO_DATE(REAL_BEGIN_DE),'YYYY-MM-DD') AS REAL_BEGIN_DE, 
+               TO_CHAR(TO_DATE(REAL_END_DE),'YYYY-MM-DD') AS REAL_END_DE, 
+               PM_EMPNO,
+               (SELECT  USER_NM    
+                FROM  STM_USERS  
+                WHERE EMPNO  = B.PM_EMPNO
+               ) AS PM_NM,
+               TO_CHAR(TO_DATE(PM_CONFIRM_DE),'YYYY-MM-DD') AS PM_CONFIRM_DE,
+               PL_EMPNO,
+               (SELECT  USER_NM    
+                FROM  STM_USERS  
+                WHERE EMPNO  = B.PL_EMPNO
+               ) AS PL_NM,
+               TO_CHAR(TO_DATE(PL_CONFIRM_DE),'YYYY-MM-DD') AS PL_CONFIRM_DE,
+               PMO_EMPNO,
+               (SELECT  USER_NM    
+                FROM  STM_USERS  
+                WHERE EMPNO  = B.PMO_EMPNO
+               ) AS PMO_NM,
+               TO_CHAR(TO_DATE(PMO_CONFIRM_DE),'YYYY-MM-DD') AS PMO_CONFIRM_DE,
+               TFT_EMPNO,
+               (SELECT  USER_NM    
+                FROM  STM_USERS  
+                WHERE EMPNO  = B.TFT_EMPNO
+               ) AS TFT_NM ,
+               TO_CHAR(TO_DATE(TFT_CONFIRM_DE),'YYYY-MM-DD') AS TFT_CONFIRM_DE,
+               RM,
+               PL_CONFIRM_RESULT,
+               PM_CONFIRM_RESULT,
+               PMO_CONFIRM_RESULT,
+               TFT_CONFIRM_RESULT
+			   FROM STM_PROGRM A, STM_PROGRM_DEV_STAT B
+       <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND A.PROGRM_ID = B.PROGRM_ID(+)
+                AND USE_AT='1'
+            <if test="progrmId != null and progrmId != ''">
+                AND A.PROGRM_ID LIKE UPPER('%' || #{progrmId} || '%')
+            </if>
+            <if test="progrmNm != null and progrmNm != ''">
+                AND A.PROGRM_NM LIKE '%' || #{progrmNm} || '%'
+            </if>
+            <if test="chargerEmpno != null and chargerEmpno != ''">
+                AND B.CHARGER_EMPNO = #{chargerEmpno} 
+            </if>
+            <if test="sysSe != null and sysSe != ''">
+                AND SUBSTR(A.PROGRM_ID,1,3) = #{sysSe} 
+            </if>
+            <if test="progrsSttus != null and progrsSttus != ''">
+                AND PROGRS_STTUS = #{progrsSttus} 
+            </if>
+            
+        </trim>
+            ORDER BY A.PROGRM_ID
+    </select>
+
+    <select id="selectStmmng010" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.stm.mng.stmmng010.service.mapper.Stmmng010Mapper.selectStmmng010 */
+        SELECT
+               PROGRM_ID,
+               PREARNGE_BEGIN_DE,
+               PREARNGE_END_DE,
+               CHARGER_EMPNO,
+               REAL_BEGIN_DE,
+               REAL_END_DE,
+               PROGRS_STTUS,
+               PL_EMPNO,
+               PL_CONFIRM_DE,
+               PM_EMPNO,
+               PM_CONFIRM_DE,
+               PMO_EMPNO,
+               TFT_EMPNO,
+               TEST_ODR1_CONFIRM_DE,
+               TEST_ORD2_CONFIRM_DE,
+               RM,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM STM_PROGRM_DEV_STAT A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="progrmId != null and progrmId != ''">
+                AND PROGRM_ID = #{progrmId}
+            </if>
+        </trim>
+    </select>
+
+    <update id="saveStmmng010" parameterType="kr.co.dbvision.api.stm.mng.stmmng010.entity.Stmmng010">
+        /* kr.co.dbvision.api.stm.mng.stmmng010.service.mapper.Stmmng010Mapper.saveStmmng010 */
+        MERGE INTO STM_PROGRM_DEV_STAT A 
+             USING (SELECT
+                    #{progrmId} PROGRM_ID
+                    FROM DUAL) B
+                ON (
+                    A.PROGRM_ID = B.PROGRM_ID
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               PREARNGE_BEGIN_DE= REPLACE(#{prearngeBeginDe},'-',''),
+               PREARNGE_END_DE= REPLACE(#{prearngeEndDe},'-',''),
+               CHARGER_EMPNO= #{chargerEmpno},
+               REAL_BEGIN_DE= REPLACE(#{realBeginDe},'-',''),
+               REAL_END_DE= REPLACE(#{realEndDe},'-',''),
+               PROGRS_STTUS= #{progrsSttus},
+               PL_EMPNO= #{plEmpno},
+               PL_CONFIRM_DE= REPLACE(#{plConfirmDe},'-',''),
+               PM_EMPNO= #{pmEmpno},
+               PM_CONFIRM_DE= REPLACE(#{pmConfirmDe},'-',''),
+               PMO_EMPNO= #{pmoEmpno},
+               TFT_EMPNO= #{tftEmpno}, 
+               PMO_CONFIRM_DE= REPLACE(#{pmoConfirmDe},'-',''),
+               TFT_CONFIRM_DE= REPLACE(#{tftConfirmDe},'-',''),
+               PL_CONFIRM_RESULT = #{plConfirmResult},
+               PM_CONFIRM_RESULT = #{pmConfirmResult},
+               PMO_CONFIRM_RESULT = #{pmoConfirmResult},
+               TFT_CONFIRM_RESULT = #{tftConfirmResult},
+               RM= #{rm},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               PROGRM_ID,
+               PREARNGE_BEGIN_DE,
+               PREARNGE_END_DE,
+               CHARGER_EMPNO,
+               REAL_BEGIN_DE,
+               REAL_END_DE,
+               PROGRS_STTUS,
+               PL_EMPNO,
+               PL_CONFIRM_DE,
+               PM_EMPNO,
+               PM_CONFIRM_DE,
+               PMO_EMPNO,
+               TFT_EMPNO,
+               PMO_CONFIRM_DE,
+               TFT_CONFIRM_DE,
+               PL_CONFIRM_RESULT,
+               PM_CONFIRM_RESULT,
+               PMO_CONFIRM_RESULT,
+               TFT_CONFIRM_RESULT,
+               RM,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{progrmId},
+               REPLACE(#{prearngeBeginDe},'-',''),
+               REPLACE(#{prearngeEndDe},'-',''),
+               #{chargerEmpno},
+               REPLACE(#{realBeginDe},'-',''),
+               REPLACE(#{realEndDe},'-',''),
+               #{progrsSttus},
+               #{plEmpno},
+               REPLACE(#{plConfirmDe},'-',''),
+               #{pmEmpno},
+               REPLACE(#{pmConfirmDe},'-',''),
+               #{pmoEmpno},
+               #{tftEmpno},
+               REPLACE(#{pmoConfirmDe},'-',''),
+               REPLACE(#{tftConfirmDe},'-',''),
+               #{plConfirmResult},
+               #{pmConfirmResult},
+               #{pmoConfirmResult},
+               #{tftConfirmResult},
+               #{rm},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deleteStmmng010" parameterType="kr.co.dbvision.api.stm.mng.stmmng010.entity.Stmmng010">
+        /* kr.co.dbvision.api.stm.mng.stmmng010.service.mapper.Stmmng010Mapper.deleteStmmng010 */
+        DELETE FROM STM_PROGRM_DEV_STAT
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND PROGRM_ID = #{progrmId}
+        </trim>
+    </delete>
+    
+     <select id="selectStmmng010DayList" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.stm.mng.stmmng010.service.mapper.Stmmng010Mapper.selectStmmng010DayList */
+        SELECT PROGRM_ID, 
+                MENU_NM, 
+                CNT, 
+                NVL(PREARNGE_CNT, 0) AS PREARNGE_CNT, 
+		        NVL(REAL_CNT, 0) AS REAL_CNT, 
+		        NVL((REAL_CNT / PREARNGE_CNT) * 100, 0)  || '%' AS ACHIEVEMENT, 
+		        NVL((REAL_CNT / CNT) * 100, 0) || '%' AS PROGRESS, 
+		        NVL(PL_CONFIRM_CNT, 0) AS PL_CONFIRM_CNT,
+		        NVL((PL_CONFIRM_CNT / REAL_CNT) * 100, 0) || '%' AS PL_PROGRESS,
+		        NVL(PM_CONFIRM_CNT, 0) AS PM_CONFIRM_CNT,
+		        NVL((PM_CONFIRM_CNT / REAL_CNT) * 100, 0) || '%'  AS PM_PROGRESS,
+		        NVL(PMO_CONFIRM_CNT, 0) AS PMO_CONFIRM_CNT,
+		        NVL((PMO_CONFIRM_CNT / REAL_CNT) * 100, 0) || '%' AS PMO_PROGRESS,
+		        NVL(TFT_CONFIRM_CNT, 0) AS TFT_CONFIRM_CNT,
+		        NVL((TFT_CONFIRM_CNT / REAL_CNT) * 100, 0) || '%' AS TFT_PROGRESS
+        FROM (
+                SELECT SUBSTR(A.PROGRM_ID,1,3) AS PROGRM_ID, COUNT(*) AS CNT,
+                    (SELECT MENU_NM FROM STM_MENU
+                      WHERE MENU_ID = SUBSTR(A.PROGRM_ID,1,3) || 'MNG000') MENU_NM,
+                    (SELECT COUNT(*) PREARNGE_CNT FROM STM_PROGRM_DEV_STAT
+                      WHERE PREARNGE_END_DE IS NOT NULL AND SUBSTR(PROGRM_ID,1,3) = SUBSTR(A.PROGRM_ID,1,3) 
+                      GROUP BY SUBSTR(PROGRM_ID,1,3)) PREARNGE_CNT,
+                    (SELECT COUNT(*) REAL_CNT FROM STM_PROGRM_DEV_STAT
+                      WHERE REAL_END_DE IS NOT NULL AND SUBSTR(PROGRM_ID,1,3) = SUBSTR(A.PROGRM_ID,1,3) 
+                      GROUP BY SUBSTR(PROGRM_ID,1,3)) REAL_CNT,
+                      (SELECT COUNT(*) REAL_CNT FROM STM_PROGRM_DEV_STAT
+                      WHERE PL_CONFIRM_RESULT IS NOT NULL AND SUBSTR(PROGRM_ID,1,3) = SUBSTR(A.PROGRM_ID,1,3) 
+                      GROUP BY SUBSTR(PROGRM_ID,1,3))  PL_CONFIRM_CNT,
+                      (SELECT COUNT(*) REAL_CNT FROM STM_PROGRM_DEV_STAT
+                      WHERE PM_CONFIRM_RESULT IS NOT NULL AND SUBSTR(PROGRM_ID,1,3) = SUBSTR(A.PROGRM_ID,1,3) 
+                      GROUP BY SUBSTR(PROGRM_ID,1,3))  PM_CONFIRM_CNT,
+                      (SELECT COUNT(*) REAL_CNT FROM STM_PROGRM_DEV_STAT
+                      WHERE PMO_CONFIRM_RESULT IS NOT NULL AND SUBSTR(PROGRM_ID,1,3) = SUBSTR(A.PROGRM_ID,1,3) 
+                      GROUP BY SUBSTR(PROGRM_ID,1,3))  PMO_CONFIRM_CNT,
+                      (SELECT COUNT(*) REAL_CNT FROM STM_PROGRM_DEV_STAT
+                      WHERE TFT_CONFIRM_RESULT IS NOT NULL AND SUBSTR(PROGRM_ID,1,3) = SUBSTR(A.PROGRM_ID,1,3) 
+                      GROUP BY SUBSTR(PROGRM_ID,1,3))  TFT_CONFIRM_CNT
+                from STM_PROGRM A, STM_PROGRM_DEV_STAT B
+                WHERE A.PROGRM_ID = B.PROGRM_ID(+)
+                AND A.USE_AT='1'
+                GROUP BY SUBSTR(A.PROGRM_ID,1,3)
+           ) A
+            <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND MENU_NM IS NOT NULL
+            <if test="sysSe != null and sysSe != ''">
+                AND PROGRM_ID = #{sysSe} 
+            </if>
+        </trim>
+    </select>
+    
+    <select id="selectStmmng010WeekList" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.stm.mng.stmmng010.service.mapper.Stmmng010Mapper.selectStmmng010WeekList */
+        SELECT PROGRM_ID, 
+                MENU_NM, 
+                NVL(CNT, 0) AS CNT, 
+                NVL(PREARNGE_CNT, 0) AS PREARNGE_CNT, 
+                NVL(REAL_CNT, 0) AS REAL_CNT, 
+                NVL((REAL_CNT / PREARNGE_CNT) * 100, 0) || '%' AS ACHIEVEMENT, 
+                NVL((REAL_CNT / CNT) * 100, 0) || '%' AS PROGRESS,
+                NVL(WEEK_PREARNGE, 0) AS WEEK_PREARNGE,
+                NVL(WEEK_REAL, 0) AS WEEK_REAL,
+                NVL((WEEK_REAL / WEEK_PREARNGE) * 100, 0) || '%' AS WEEK_PROGRESS
+        FROM (<![CDATA[
+                SELECT SUBSTR(A.PROGRM_ID,1,3) AS PROGRM_ID, COUNT(*) AS CNT,
+                    (SELECT MENU_NM FROM STM_MENU
+                      WHERE MENU_ID = SUBSTR(A.PROGRM_ID,1,3) || 'MNG000') MENU_NM,
+                    (SELECT COUNT(*) PREARNGE_CNT FROM STM_PROGRM_DEV_STAT
+                      WHERE PREARNGE_END_DE IS NOT NULL AND SUBSTR(PROGRM_ID,1,3) = SUBSTR(A.PROGRM_ID,1,3) 
+                      GROUP BY SUBSTR(PROGRM_ID,1,3)) PREARNGE_CNT,
+                    (SELECT COUNT(*) REAL_CNT FROM STM_PROGRM_DEV_STAT
+                      WHERE REAL_END_DE IS NOT NULL AND SUBSTR(PROGRM_ID,1,3) = SUBSTR(A.PROGRM_ID,1,3) 
+                      GROUP BY SUBSTR(PROGRM_ID,1,3)) REAL_CNT,
+                    (SELECT COUNT(*) FROM STM_PROGRM_DEV_STAT
+                     WHERE PREARNGE_END_DE >= (SELECT  sysdate - TO_CHAR (sysdate, 'D') + 1 AS LAST_SUNDAY from dual) 
+                    AND PREARNGE_END_DE <= (SELECT  sysdate - TO_CHAR (sysdate, 'D') + 7 AS LAST_SUNDAY from dual)
+                    AND SUBSTR(PROGRM_ID,1,3) = SUBSTR(A.PROGRM_ID,1,3) 
+                    GROUP BY SUBSTR(PROGRM_ID,1,3)) AS WEEK_PREARNGE,
+                    (SELECT COUNT(*) FROM STM_PROGRM_DEV_STAT
+                    WHERE REAL_END_DE >= (SELECT  sysdate - TO_CHAR (sysdate, 'D') + 1 AS LAST_SUNDAY from dual) 
+                    AND REAL_END_DE <= (SELECT  sysdate - TO_CHAR (sysdate, 'D') + 7 AS LAST_SUNDAY from dual)
+                    AND SUBSTR(PROGRM_ID,1,3) = SUBSTR(A.PROGRM_ID,1,3) 
+                    GROUP BY SUBSTR(PROGRM_ID,1,3)) AS WEEK_REAL ]]>
+         
+                from STM_PROGRM A, STM_PROGRM_DEV_STAT B
+                WHERE A.PROGRM_ID = B.PROGRM_ID(+)
+                AND A.USE_AT='1'
+                GROUP BY SUBSTR(A.PROGRM_ID,1,3)
+           ) A
+            <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND MENU_NM IS NOT NULL
+            <if test="sysSe != null and sysSe != ''">
+                AND PROGRM_ID = #{sysSe} 
+            </if>
+        </trim>
+    </select>
+</mapper>

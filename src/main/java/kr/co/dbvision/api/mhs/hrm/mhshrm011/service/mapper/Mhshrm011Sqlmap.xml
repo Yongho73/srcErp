@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mhs.hrm.mhshrm011.service.mapper.Mhshrm011Mapper">
+
+    <select id="selectMhshrm011List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm011.service.mapper.Mhshrm011Mapper.selectMhshrm011List */
+        SELECT
+               GNFD_CODE,
+               GNFD_CODE_NM,
+               DEPT_CHANGE_AT,
+               CLSF_CHANGE_AT,
+               OFCPS_CHANGE_AT,
+               JSSFC_CHANGE_AT,
+               JBLN_CHANGE_AT,
+               SRCLS_CHANGE_AT,
+               RSPOFC_CHANGE_AT,
+               CNWK_PD_INCLS_AT,
+               OUTPT_ORDR,
+               USE_AT,
+               RM,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               DECODE(DEPT_CHANGE_AT, '1', '사용', '0', '미사용', '미사용') AS DEPT_CHANGE_AT_NM,
+               DECODE(CLSF_CHANGE_AT, '1', '사용', '0', '미사용', '미사용') AS CLSF_CHANGE_AT_NM,
+               DECODE(OFCPS_CHANGE_AT, '1', '사용', '0', '미사용', '미사용') AS OFCPS_CHANGE_AT_NM,
+               DECODE(JSSFC_CHANGE_AT, '1', '사용', '0', '미사용', '미사용') AS JSSFC_CHANGE_AT_NM,
+               DECODE(JBLN_CHANGE_AT, '1', '사용', '0', '미사용', '미사용') AS JBLN_CHANGE_AT_NM,
+               DECODE(SRCLS_CHANGE_AT, '1', '사용', '0', '미사용', '미사용') AS SRCLS_CHANGE_AT_NM,
+               DECODE(RSPOFC_CHANGE_AT, '1', '사용', '0', '미사용', '미사용') AS RSPOFC_CHANGE_AT_NM,
+               DECODE(CNWK_PD_INCLS_AT, '1', '산입', '0', '미산입', '미산입') AS CNWK_PD_INCLS_AT_NM,
+               DECODE(USE_AT, '1', '사용', '0', '미사용', '미사용') AS USE_AT_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_GNFD_CODE A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="gnfdCodeNm != null and gnfdCodeNm != ''">
+                AND GNFD_CODE_NM LIKE '%'||#{gnfdCodeNm}||'%'
+            </if>
+            <if test="useAt != null and useAt != ''">
+                AND USE_AT = #{useAt}
+            </if>
+            <if test="sRegDt != null and sRegDt != ''">
+                <![CDATA[
+                AND REG_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+                ]]>
+            </if>
+            <if test="eRegDt != null and eRegDt != ''">
+                <![CDATA[
+                AND REG_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+                ]]>
+             </if>
+        </trim>
+        ORDER BY OUTPT_ORDR
+    </select>
+
+    <select id="selectMhshrm011" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm011.service.mapper.Mhshrm011Mapper.selectMhshrm011 */
+        SELECT
+               GNFD_CODE,
+               GNFD_CODE_NM,
+               DEPT_CHANGE_AT,
+               CLSF_CHANGE_AT,
+               OFCPS_CHANGE_AT,
+               JSSFC_CHANGE_AT,
+               JBLN_CHANGE_AT,
+               SRCLS_CHANGE_AT,
+               RSPOFC_CHANGE_AT,
+               CNWK_PD_INCLS_AT,
+               OUTPT_ORDR,
+               USE_AT,
+               RM,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               CNWK_PD_INCLS_AT,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_GNFD_CODE A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="gnfdCode != null and gnfdCode != ''">
+                AND GNFD_CODE = #{gnfdCode}
+            </if>
+        </trim>
+    </select>
+
+    <update id="saveMhshrm011" parameterType="kr.co.dbvision.api.mhs.hrm.mhshrm011.entity.Mhshrm011">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm011.service.mapper.Mhshrm011Mapper.saveMhshrm011 */
+        MERGE INTO MHS_GNFD_CODE A
+             USING (SELECT
+                    #{gnfdCode} GNFD_CODE
+                    FROM DUAL) B
+                ON (
+                    A.GNFD_CODE = B.GNFD_CODE
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               GNFD_CODE_NM= #{gnfdCodeNm},
+               DEPT_CHANGE_AT= #{deptChangeAt},
+               CLSF_CHANGE_AT= #{clsfChangeAt},
+               OFCPS_CHANGE_AT= #{ofcpsChangeAt},
+               JSSFC_CHANGE_AT= #{jssfcChangeAt},
+               JBLN_CHANGE_AT= #{jblnChangeAt},
+               SRCLS_CHANGE_AT= #{srclsChangeAt},
+               RSPOFC_CHANGE_AT= #{rspofcChangeAt},
+               OUTPT_ORDR= #{outptOrdr},
+               USE_AT= #{useAt},
+               RM= #{rm},
+               CNWK_PD_INCLS_AT= #{cnwkPdInclsAt},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               GNFD_CODE,
+               GNFD_CODE_NM,
+               DEPT_CHANGE_AT,
+               CLSF_CHANGE_AT,
+               OFCPS_CHANGE_AT,
+               JSSFC_CHANGE_AT,
+               JBLN_CHANGE_AT,
+               SRCLS_CHANGE_AT,
+               RSPOFC_CHANGE_AT,
+               OUTPT_ORDR,
+               USE_AT,
+               RM,
+               CNWK_PD_INCLS_AT,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{gnfdCode},
+               #{gnfdCodeNm},
+               #{deptChangeAt},
+               #{clsfChangeAt},
+               #{ofcpsChangeAt},
+               #{jssfcChangeAt},
+               #{jblnChangeAt},
+               #{srclsChangeAt},
+               #{rspofcChangeAt},
+               #{outptOrdr},
+               #{useAt},
+               #{rm},
+               #{cnwkPdInclsAt},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+    
+    <select id="deleteMhshrm011UseChk" parameterType="egovMapForNull" resultType="egovMapForNull">>
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm011.service.mapper.Mhshrm011Mapper.deleteMhshrm011 */
+         SELECT COUNT(GNFD_CODE) AS CNT
+            FROM MHS_GNFD
+            <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND GNFD_CODE = #{gnfdCode}
+        </trim>
+    </select>
+
+    <delete id="deleteMhshrm011" parameterType="kr.co.dbvision.api.mhs.hrm.mhshrm011.entity.Mhshrm011">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm011.service.mapper.Mhshrm011Mapper.deleteMhshrm011 */
+        DELETE FROM MHS_GNFD_CODE
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND GNFD_CODE = #{gnfdCode}
+        </trim>
+    </delete>
+    
+    <select id="selectMhshrm011CodeCombo" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm011.service.mapper.Mhshrm011Mapper.selectMhshrm011CodeCombo */
+        SELECT
+               GNFD_CODE,
+               GNFD_CODE_NM
+          FROM MHS_GNFD_CODE A
+         WHERE USE_AT = '1'
+         ORDER BY OUTPT_ORDR, GNFD_CODE
+    </select>
+
+    <select id="useCheckMhshrm011" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm011.service.mapper.Mhshrm011Mapper.useCheckMhshrm011 */
+       SELECT * FROM
+        (SELECT EMPNO AS USE_CHECK FROM MHS_GNFD WHERE ROWNUM = '1' AND GNFD_CODE = #{gnfdCode})
+        WHERE ROWNUM = '1'
+    </select>
+</mapper>

@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mps.ern.mpsern008.service.mapper.Mpsern008Mapper">
+
+    <select id="selectMpsern008List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.ern.mpsern008.service.mapper.Mpsern008Mapper.selectMpsern008List */
+        SELECT
+               A.EVID_SN,
+               A.EARNER_NO,
+               B.EARNER_NM,
+               A.ELCTSCT_SE_SN,
+               TO_CHAR((TO_DATE(A.PYMNT_YM,'YYYY-MM')),'YYYY-MM') AS PYMNT_YM,
+               A.INCOME_KIND_CODE,
+               A.PYMNT_AMT,
+               A.NEED_RATE,
+               A.NEED_EXPENS,
+               A.INCOME_AMT,
+               A.INCMTAX_RT,
+               A.INCMTAX,
+               A.RESIDENTTAX,
+               A.REAL_PYMNT_AMT,
+               FNC_DATESTR(A.PYMNT_DE) AS PYMNT_DE,
+               A.PYMNT_RESN_CN,
+               A.ACNUT_NO,
+               A.BANK_CODE,
+               A.DPSTRNM,
+               A.CLOS_AT,
+               A.STTEMNT_AT,
+               A.ELCTSCT_STTUSCODE,
+               A.ELCTSCT_DOC_NO,
+               A.ELCTSCT_EMPNO,
+               (A.INCMTAX + A.RESIDENTTAX) AS TOTAL_TAX
+
+          FROM MFS_WHTAX_PYMNT A  , MFS_INCOME_EARNER B
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                A.EARNER_NO = B.EARNER_NO
+            <if test="incomeKindCode != null and incomeKindCode != ''">
+                AND A.INCOME_KIND_CODE = #{incomeKindCode}
+            </if>
+            <if test="earnerNm != null and earnerNm != ''">
+                AND B.EARNER_NM LIKE '%' || #{earnerNm} || '%'
+            </if>
+            <if test="applcYySt != null and applcYySt != ''">
+                <![CDATA[
+                AND A.PYMNT_YM >= REPLACE(#{applcYySt},'-','')
+                ]]>
+            </if>
+            <if test="applcYyEn != null and applcYyEn != ''">
+                <![CDATA[
+                AND A.PYMNT_YM <= REPLACE(#{applcYyEn},'-','')
+                ]]>
+             </if>
+        </trim>
+    </select>
+
+    <select id="selectMpsern008" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.ern.mpsern008.service.mapper.Mpsern008Mapper.selectMpsern008 */
+        SELECT
+               EVID_SN,
+               ELCTSCT_SE_SN,
+               EARNER_NO,
+               PYMNT_YM,
+               ATTR_NO,
+               INCOME_KIND_CODE,
+               PYMNT_AMT,
+               NEED_RATE,
+               NEED_EXPENS,
+               INCOME_AMT,
+               INCMTAX_RT,
+               INCMTAX,
+               RESIDENTTAX,
+               CPRTAX,
+               AGSPTAX,
+               REAL_PYMNT_AMT,
+               PYMNT_DE,
+               PYMNT_RESN_CN,
+               INCOME_SDT,
+               INCOME_EDT,
+               ACNUT_NO,
+               BANK_CODE,
+               DPSTRNM,
+               CLOS_AT,
+               STTEMNT_AT,
+               ELCTSCT_STTUSCODE,
+               ELCTSCT_DOC_NO,
+               ELCTSCT_EMPNO,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MFS_WHTAX_PYMNT A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="evidSn != null and evidSn != ''">
+                AND EVID_SN = #{evidSn}
+            </if>
+            <if test="elctsctSeSn != null and elctsctSeSn != ''">
+                AND ELCTSCT_SE_SN = #{elctsctSeSn}
+            </if>
+        </trim>
+    </select>
+
+    <update id="saveMpsern008" parameterType="kr.co.dbvision.api.mps.ern.mpsern008.entity.Mpsern008">
+        /* kr.co.dbvision.api.mps.ern.mpsern008.service.mapper.Mpsern008Mapper.saveMpsern008 */
+        MERGE INTO MFS_WHTAX_PYMNT A
+             USING (SELECT
+                    #{evidSn} EVID_SN,
+                    #{elctsctSeSn} ELCTSCT_SE_SN
+                    FROM DUAL) B
+                ON (
+                    A.EVID_SN = B.EVID_SN AND 
+                    A.ELCTSCT_SE_SN = B.ELCTSCT_SE_SN
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               EARNER_NO= #{earnerNo},
+               PYMNT_YM= #{pymntYm},
+               ATTR_NO= #{attrNo},
+               INCOME_KIND_CODE= #{incomeKindCode},
+               PYMNT_AMT= #{pymntAmt},
+               NEED_RATE= #{needRate},
+               NEED_EXPENS= #{needExpens},
+               INCOME_AMT= #{incomeAmt},
+               INCMTAX_RT= #{incmtaxRt},
+               INCMTAX= #{incmtax},
+               RESIDENTTAX= #{residenttax},
+               CPRTAX= #{cprtax},
+               AGSPTAX= #{agsptax},
+               REAL_PYMNT_AMT= #{realPymntAmt},
+               PYMNT_DE= REPLACE(#{pymntDe},'-',''),
+               PYMNT_RESN_CN= #{pymntResnCn},
+               INCOME_SDT= #{incomeSdt},
+               INCOME_EDT= #{incomeEdt},
+               ACNUT_NO= #{acnutNo},
+               BANK_CODE= #{bankCode},
+               DPSTRNM= #{dpstrnm},
+               CLOS_AT= #{closAt},
+               STTEMNT_AT= #{sttemntAt},
+               ELCTSCT_STTUSCODE= #{elctsctSttuscode},
+               ELCTSCT_DOC_NO= #{elctsctDocNo},
+               ELCTSCT_EMPNO= #{elctsctEmpno},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               EVID_SN,
+               ELCTSCT_SE_SN,
+               EARNER_NO,
+               PYMNT_YM,
+               ATTR_NO,
+               INCOME_KIND_CODE,
+               PYMNT_AMT,
+               NEED_RATE,
+               NEED_EXPENS,
+               INCOME_AMT,
+               INCMTAX_RT,
+               INCMTAX,
+               RESIDENTTAX,
+               CPRTAX,
+               AGSPTAX,
+               REAL_PYMNT_AMT,
+               PYMNT_DE,
+               PYMNT_RESN_CN,
+               INCOME_SDT,
+               INCOME_EDT,
+               ACNUT_NO,
+               BANK_CODE,
+               DPSTRNM,
+               CLOS_AT,
+               STTEMNT_AT,
+               ELCTSCT_STTUSCODE,
+               ELCTSCT_DOC_NO,
+               ELCTSCT_EMPNO,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{evidSn},
+               #{elctsctSeSn},
+               #{earnerNo},
+               #{pymntYm},
+               #{attrNo},
+               #{incomeKindCode},
+               #{pymntAmt},
+               #{needRate},
+               #{needExpens},
+               #{incomeAmt},
+               #{incmtaxRt},
+               #{incmtax},
+               #{residenttax},
+               #{cprtax},
+               #{agsptax},
+               #{realPymntAmt},
+               REPLACE(#{pymntDe},'-',''),
+               #{pymntResnCn},
+               #{incomeSdt},
+               #{incomeEdt},
+               #{acnutNo},
+               #{bankCode},
+               #{dpstrnm},
+               #{closAt},
+               #{sttemntAt},
+               #{elctsctSttuscode},
+               #{elctsctDocNo},
+               #{elctsctEmpno},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deleteMpsern008" parameterType="kr.co.dbvision.api.mps.ern.mpsern008.entity.Mpsern008">
+        /* kr.co.dbvision.api.mps.ern.mpsern008.service.mapper.Mpsern008Mapper.deleteMpsern008 */
+        DELETE FROM MFS_WHTAX_PYMNT
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND EVID_SN = #{evidSn}
+                AND ELCTSCT_SE_SN = #{elctsctSeSn}
+        </trim>
+    </delete>
+</mapper>

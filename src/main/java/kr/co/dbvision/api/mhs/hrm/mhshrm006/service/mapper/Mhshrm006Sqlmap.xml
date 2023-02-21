@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mhs.hrm.mhshrm006.service.mapper.Mhshrm006Mapper">
+
+    <select id="selectMhshrm006List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm006.service.mapper.Mhshrm006Mapper.selectMhshrm006List */
+        SELECT
+               FAMILY_CODE,
+               FAMILY_RELATE_NM,
+               FAMILY_ALLWNC_AMT,
+               FNC_DATESTR(USE_BEGIN_DE) AS USE_BEGIN_DE,
+               FNC_DATESTR(USE_END_DE) AS USE_END_DE,
+               USE_AT,
+               SORT_ORDR,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_FAMILYCODE A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="familyRelateNm != null and familyRelateNm != ''">
+                AND (FAMILY_CODE = #{familyRelateNm} OR FAMILY_RELATE_NM LIKE '%' || #{familyRelateNm} || '%')
+            </if>
+		    <if test="useAt != null and useAt != ''">
+		        AND USE_AT = #{useAt}
+		    </if>
+            <if test="sRegDt != null and sRegDt != ''">
+                <![CDATA[
+                AND REG_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+                ]]>
+            </if>
+            <if test="eRegDt != null and eRegDt != ''">
+                <![CDATA[
+                AND REG_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+                ]]>
+             </if>
+        </trim>
+        ORDER BY SORT_ORDR
+    </select>
+
+    <select id="selectMhshrb006CodeCombo" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm006.service.mapper.Mhshrm006Mapper.selectMhshrb006CodeCombo */
+        SELECT
+               FAMILY_CODE,
+               FAMILY_RELATE_NM
+          FROM MHS_FAMILYCODE A
+		 WHERE USE_AT = '1'
+    </select>
+
+    <select id="selectMhshrm006" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm006.service.mapper.Mhshrm006Mapper.selectMhshrm006 */
+        SELECT
+               FAMILY_CODE,
+               FAMILY_RELATE_NM,
+               FAMILY_ALLWNC_AMT,
+               USE_BEGIN_DE,
+               USE_END_DE,
+               USE_AT,
+               SORT_ORDR,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_FAMILYCODE A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="familyCode != null and familyCode != ''">
+                AND FAMILY_CODE = #{familyCode}
+            </if>
+        </trim>
+    </select>
+    
+    <select id="insertMhshrm006UseChk" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm006.service.mapper.Mhshrm006Mapper.insertMhshrm006UseChk */
+        SELECT COUNT(*) AS CNT
+          FROM MHS_FAMILYCODE
+         WHERE  FAMILY_CODE = #{familyCode}
+     </select>
+     
+    <select id="deleteMhshrm006UseChk" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm006.service.mapper.Mhshrm006Mapper.deleteMhshrm006UseChk */
+		SELECT NVL(SUM(X.CNT),0) AS CNT, MAX(X.TBL) AS TBL
+		FROM (
+	        SELECT COUNT(*) AS CNT , '가족' AS TBL
+	          FROM MHS_FAMILY
+	         WHERE FAMILY_CODE = #{familyCode}
+        ) X
+        WHERE X.CNT > 0
+     </select>
+
+    <update id="saveMhshrm006" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm006.service.mapper.Mhshrm006Mapper.saveMhshrm006 */
+        MERGE INTO MHS_FAMILYCODE A
+             USING (SELECT
+                    #{familyCode} FAMILY_CODE
+                    FROM DUAL) B
+                ON (
+                    A.FAMILY_CODE = B.FAMILY_CODE
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               FAMILY_RELATE_NM= #{familyRelateNm},
+               FAMILY_ALLWNC_AMT= #{familyAllwncAmt},
+               USE_BEGIN_DE= REPLACE(#{useBeginDe},'-',''),
+               USE_END_DE= REPLACE(#{useEndDe},'-',''),
+               USE_AT= #{useAt},
+               SORT_ORDR= #{sortOrdr},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               FAMILY_CODE,
+               FAMILY_RELATE_NM,
+               FAMILY_ALLWNC_AMT,
+               USE_BEGIN_DE,
+               USE_END_DE,
+               USE_AT,
+               SORT_ORDR,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{familyCode},
+               #{familyRelateNm},
+               #{familyAllwncAmt},
+               REPLACE(#{useBeginDe},'-',''),
+               REPLACE(#{useEndDe},'-',''),
+               #{useAt},
+               #{sortOrdr},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deleteMhshrm006" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm006.service.mapper.Mhshrm006Mapper.deleteMhshrm006 */
+        DELETE FROM MHS_FAMILYCODE
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND FAMILY_CODE = #{familyCode}
+        </trim>
+    </delete>
+    
+    
+    <!-- 가족코드사용 확인 -->
+    <select id="useCheckMhshrm006" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm006.service.mapper.Mhshrm006Mapper.useCheckMhshrm006 */
+        SELECT * FROM
+       (SELECT EMPNO AS USE_CHECK FROM MHS_FAMILY WHERE ROWNUM = '1' AND FAMILY_CODE = #{familyCode})
+       WHERE ROWNUM = '1'
+    </select>
+</mapper>

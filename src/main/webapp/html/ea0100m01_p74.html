@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html class="no-js" lang="ko">
+<HEAD>
+<META content="IE=11.0000" http-equiv="X-UA-Compatible">
+<META charset="UTF-8">
+<META http-equiv="Content-Script-Type" content="text/javascript; charet=utf-8">
+<META http-equiv="Content-Style-Type" content="text/css; charet=utf-8">
+<META name="HandheldFriendly" content="True">
+<META http-equiv="cleartype" content="on">
+<META http-equiv="X-UA-Compatible" content="IE=edge">
+<META http-equiv="Expires" content="-1">
+<META http-equiv="Pragma" content="no-cache">
+<META http-equiv="Cache-Control" content="no-cache">
+<META content="DBVision-XERP" property="og:title">
+<META name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, minimum-scale=1.0, user-scalable=yes">
+<META name="keywords" content="DBVision-XERP">
+<META name="description" content="DBVision-XERP">
+
+<LINK href="../img/icon/dbv.ico" rel="shortcut icon" type="image/x-icon">
+
+<TITLE>XERP</TITLE>
+
+<LINK href="../css/dhtmlx/skin/dhtmlx.css" rel="stylesheet" type="text/css">
+<LINK href="../glyphicons/css/bootstrap-glyphicons.css" rel="stylesheet" type="text/css">
+
+<!-- jquery -->
+<SCRIPT src="../js/jquery-1.11.1.min.js"></SCRIPT>
+<SCRIPT src="../js/jquery-ui-custom.min.js"></SCRIPT>
+ 
+<!-- css -->
+<LINK href="../css/sub.css" rel="stylesheet" type="text/css">
+
+<style>
+.left{float:left;}
+.right{float:right;}
+</style>
+</HEAD>
+
+
+<body>
+	<!--컨텐츠-->
+		<div class="path_info" style="">
+             <ul id="menu_path" style=""><li><a class="home" href="#n"></a></li><li><a href="#"> 전자결재 </a></li><li><a href="#"> 양식관리 </a></li><!--<li><a href="#"> </a></li>--></ul>
+        </div>
+        
+        <DIV class="btn" style="float:right;text-align:right; vertical-align:middle;">
+				
+				<BUTTON class="btn_common02_new" id="btnNew" type="button">
+					<SPAN class="glyphicon glyphicon-file"></SPAN> 등록
+				</BUTTON>
+				<BUTTON class="btn_common02_new" id="btnSave" type="button">
+					<SPAN class="glyphicon glyphicon-ok"></SPAN> 저장
+				</BUTTON>
+				<BUTTON class="btn_common02_new" id="btnDelete" type="button">
+					<SPAN class="glyphicon glyphicon-remove"></SPAN> 삭제
+				</BUTTON>
+				<BUTTON class="btn_common02_new" id="btnExcel" type="button">
+					<SPAN class="glyphicon glyphicon-download-alt"></SPAN> 엑셀다운로드
+				</BUTTON>
+                <BUTTON class="btn_common02_new" id="btn_help" type="button" title="도움말">
+                      <SPAN class="glyphicon glyphicon-question-sign"></SPAN>
+                </BUTTON>
+                <BUTTON class="btn_common02_new" id="btnClose" type="button" title="닫기">
+                       <SPAN class="glyphicon glyphicon-remove"></SPAN>
+                </BUTTON>
+			</DIV>
+        
+	<!-- title_box -->
+	<DIV class="title_box" style="clear:none;">
+		<DIV class="path_info">
+			<UL id="menu_path"></UL>
+			<A class="btn_help" href="../stmmng008/searchStmBtn/view#n"><SPAN class="blind">도움말</SPAN>
+			</A>
+		</DIV>
+		<!--//path_info-->
+	</DIV>
+	<!--//title_box-->
+	<!-- search_box -->
+	<DIV class="search_box" id="searchFormStmBtn" style="min-width:1438px">
+		<TABLE style="width:100%;">
+			<TBODY>
+				<TR>
+					<td style="position:relative;  vertical-align:middle;">
+						<div style="position:relative;display:inline-block;float:left; ">
+							<LABEL for="writer">문서분류</LABEL>
+							<INPUT name="btnNm" id="btnNm" type="text">&nbsp;&nbsp;<INPUT name="btnNm" id="btnNm" style="background:#dedede;"type="text" readonly>&nbsp;<button class="btn_common03" id="btnCodeSearch" type="button">
+                    		<span class="glyphicon  glyphicon glyphicon-search"> </span>
+							</button>
+						</div>
+						
+						<div style="position:relative;display:inline-block;float:left;  padding-left:80px;">
+							<LABEL for="docmT">양식명</LABEL>
+							<INPUT name="btnNm" id="btnNm" type="text">
+							</button>
+						</div>
+						
+						<div style="position:relative;display:inline-block;float:left; padding-left:80px;">
+							<LABEL for="docmT">사용여부</LABEL>
+							<select id="keeping" name="keeping" style="min-width:140px;">
+								<option value="0" selected>&nbsp;</option>
+								<option value="1">1</option>
+								<option value="2">2</option>
+								<option value="3">3</option>
+								<option value="4">4</option>
+								<option value="5">5</option>
+							</select>
+							
+						</div>
+						
+						<DIV class="btn2" style="position:relative;display:inline-block;float:right;">
+							<BUTTON id="btnSearch" type="button">
+								<SPAN class="glyphicon glyphicon-search f15"></SPAN>
+							</BUTTON>
+							<BUTTON id="btnClear" type="button">
+								<SPAN class="glyphicon glyphicon-refresh f15 mr5" style="color:#fff;margin-left:4px;"></SPAN>
+							</BUTTON>
+						</DIV>
+					</td>
+				</TR>
+			</TBODY>
+		</TABLE>
+	</DIV>
+	<!--//search_box-->
+	<!--//tabl_box-->
+<!--//tabl_box-->
+	<DIV class="all">
+	
+		<DIV class="left" style="width:40%">
+		
+		
+		
+			<DIV class="list_type01">
+				<DIV class="list_top" style="">
+					<H4 class="title03 fl">버튼&nbsp;목록</H4>
+						<div style="float:left;text-align:left;">
+							<SPAN class="view"> 총 &nbsp; <SPAN id="spanCnt">5</SPAN>건</SPAN>
+						</div>						
+					</SPAN>					
+				</DIV>
+				<!--//list_top-->
+
+				<DIV style="border:1px solid #4882b0; background:yellow;">
+					DHTML
+				</DIV>
+			</DIV>
+			<!--//list_type01-->
+		</DIV>
+		<!-- //tabl-1 -->
+		
+		<div class="right" style="width:59%;margin-left:1%;">
+		<DIV class="detail_type01"  style="margin-top:45px;">
+					
+				<FORM id="saveFormStmBtn">
+					<TABLE>
+						<CAPTION>버튼</CAPTION>
+						<COLGROUP>
+							<COL width="20">
+							<COL width="130">
+							<COL width="">
+						</COLGROUP>
+						<TBODY>
+							<TR>
+								<TH colspan="2">문서분류</TH>
+								<td>
+									<select id="keeping" name="keeping" style="min-width:209px;">
+										<option value="0" selected>선택</option>
+										<option value="1">1년</option>
+										<option value="2">2년</option>
+										<option value="3">3년</option>
+										<option value="4">4년</option>
+										<option value="5">5년</option>
+									</select>		
+								</td>
+							</TR>
+							<TR>
+								<TH colspan="2">양식명</TH>
+								<TD><INPUT name="btnId" id="btnId" style="width: 50%;"
+									required="" type="text" maxlength="20"></TD>
+							</TR>	
+							<TR>
+								<TH colspan="2">기안기 구분</TH>
+								<TD>
+									<div style="height:20px; vertical-align:middle;line-height:20px;margin:3px;">
+										<input type="radio" name="editer" value="web_modify" id="web_modify" checked> <label for="web_modify"><span></span>웹 기안기</label>&nbsp;&nbsp;&nbsp;<input type="radio" name="editer" value="hwp_modify" id="hwp_modify"/> <label for="hwp_modify"><span></span>한글 기안기</label>
+									</div>
+								</TD>
+							</TR>
+							<TR>
+								<TH colspan="2">한글양식파일첨부</TH>
+								<TD><INPUT name="btnId" id="btnId" style="width: 50%;"
+									required="" type="text" maxlength="20">
+
+									<DIV class="btn_common04 w70 checkDupBtn">
+										<SPAN class="glyphicon glyphicon-paperclip"></SPAN> <INPUT
+											class="btn_input w60" id="btnCheckDup" type="button"
+											value="파일첨부">
+									</DIV></TD>
+							</TR>
+							<TR>
+								<TH colspan="2">웹 기안 HTML</TH>
+								<TD>
+									<textarea cols="105" rows="8">
+<Html>
+   <body>
+	   <table>
+	   </table>						</body>
+</Html>
+									</textarea>
+									<DIV class="btn_common04 w70 checkDupBtn" style="vertical-align:top" onclick="var pop=window.open('doc_ex.html', '연차신청서', 'width=982, height=492px, scrollbars= 0, toolbar=0, menubar=no, location=no, status=no');">
+										<SPAN class="glyphicon glyphicon-eye-open"></SPAN> <INPUT
+											class="btn_input w60" id="btnCheckDup" type="button"
+											value="미리보기">
+									</DIV>
+								</TD>
+							</TR>
+							<TR>
+								<TH colspan="2">사용여부</TH>
+								<TD>
+									<div style="height:20px; vertical-align:middle;line-height:20px;margin:3px;">
+										<input type="radio" name="useornot" value="use" id="use"/ checked> <label for="use"><span></span>사용</label>&nbsp;&nbsp;&nbsp;<input type="radio" name="useornot" value="nouse" id="nouse"/> <label for="nouse"><span></span>미사용</label>
+									</div>
+								</TD>
+							</TR>
+							<TR>
+								<TH colspan="2">양식항목수</TH>
+								<TD>
+									<select id="keeping" name="keeping" style="min-width:209px;">
+										<option value="0">선택</option>
+										<option value="1">1</option>
+										<option value="2" selected>2</option>
+										<option value="3">3</option>
+										<option value="4">4</option>
+										<option value="5">5</option>
+									</select>
+							</TD>
+							</TR>
+							<TR>
+								<TH rowspan="4" class="ac" style="border-right:1px solid #ddd">항<br>목<br>1</TH>
+								<Th>항목명</Th>
+								<td><INPUT name="btnId" id="btnId" style="width:201px;"
+									required="" type="text" maxlength="20"></td>
+							</TR>
+							<tr>
+								<Th>항목형식</Th>
+								<td>	
+									<select id="keeping" name="keeping" style="min-width:209px;">
+										<option value="0" selected>입력박스</option>
+										<option value="1">1</option>
+										<option value="2">2</option>
+										<option value="3">3</option>
+										<option value="4">4</option>
+										<option value="5">5</option>
+									</select>
+								</td>
+							</TR>
+							<TR>
+								<Th>코드명</Th>
+								<td><INPUT name="btnId" id="btnId" style="width:201px;"
+									required="" type="text" maxlength="20"></td>
+							</TR>
+							<TR>
+								<Th>필수여부</Th>
+								<td>
+									<div style="height:20px; vertical-align:middle;line-height:20px;margin:3px;">
+										<input type="radio" name="need" value="essential" id="essential"/ checked> <label for="essential"><span></span>필수</label>&nbsp;&nbsp;&nbsp;<input type="radio" name="need" value="select" id="select"/> <label for="select"><span></span>선택</label>
+									</div>
+								</td>
+							</TR>
+							<TR>
+								<TH rowspan="4" class="ac" style="border-right:1px solid #ddd">항<br>목<br>2</TH>
+								<Th>항목명</Th>
+								<td><INPUT name="btnId" id="btnId" style="width:201px;"
+									required="" type="text" maxlength="20"></td>
+							</TR>
+							<tr>
+								<Th>항목형식</Th>
+								<td>	
+									<select id="keeping" name="keeping" style="min-width:209px;">
+										<option value="0" selected>입력박스</option>
+										<option value="1">1</option>
+										<option value="2">2</option>
+										<option value="3">3</option>
+										<option value="4">4</option>
+										<option value="5">5</option>
+									</select>
+								</td>
+							</TR>
+							<TR>
+								<Th>코드명</Th>
+								<td><INPUT name="btnId" id="btnId" style="width:201px;"
+									required="" type="text" maxlength="20"></td>
+							</TR>
+							<TR>
+								<Th>필수여부</Th>
+								<td>
+									<div style="height:20px; vertical-align:middle;line-height:20px;margin:3px;">
+										<input type="radio" name="need2" value="essential" id="essential"/ checked> <label for="essential"><span></span>필수</label>&nbsp;&nbsp;&nbsp;<input type="radio" name="need2" value="select" id="select"/> <label for="select"><span></span>선택</label>
+									</div>
+								</td>
+							</TR>
+							
+						</TBODY>
+					</TABLE>
+				</FORM>
+			</DIV>
+		</DIV>
+	</DIV>		
+</BODY>
+</HTML>

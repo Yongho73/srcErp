@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mps.cal.mpscal010.service.mapper.Mpscal010Mapper">
+
+    <select id="selectMpscal010List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.cal.mpscal010.service.mapper.Mpscal010Mapper.selectMpscal010List */
+        SELECT
+               A.WORK_YM,
+               A.EMPNO,
+               A.DEPT_CODE,
+               A.CLSF_CODE,
+               A.OVTIMEWORK_TIME,
+               A.OVTIMEWORK_ALLWNC,
+               A.LVWAGE_OVTIMEWORK_ALLWNC,
+               A.HVOF_WORK_TIME,
+               A.HVOF_ALLWNC,
+               A.LVWAGE_HVOF_ALLWNC,
+               A.NIGHT_WORK_TIME,
+               A.NIGHT_WORK_ALLWNC,
+               A.LVWAGE_NIGHT_WORK_ALLWNC,
+               A.ALT_HVOFDAY_CO,
+               A.OVTIMEWORK_ALLWNC + A.NIGHT_WORK_ALLWNC 
+               + A.HVOF_ALLWNC             AS OVTIME_TOT_AMT,
+               A.LVWAGE_OVTIMEWORK_ALLWNC + A.LVWAGE_NIGHT_WORK_ALLWNC 
+               + A.LVWAGE_HVOF_ALLWNC  AS LVWAGE_OVTIME_TOT_AMT,               
+               A.ODYSG_AMT,
+               A.LVWAGE_AMT,
+               A.APPLC_YM,
+               A.PYMNT_SN,
+               FNC_DATESTR(A.PYMNT_DE) AS PYMNT_DE,
+               A.REG_DT,
+               A.REG_ID,
+               A.UPT_DT,
+               A.UPT_ID,
+               B.KOR_NM,
+               A.ODYSG_AMT,
+               A.LVWAGE_AMT,
+               FNC_GETDEPTNM(B.DEPT_CODE) AS DEPT_NM,
+                FNC_GETCLSFNM(B.CLSF_CODE) AS CLSF_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MPS_OVTIME_ALLWNC A , MHS_EMP B
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                 A.EMPNO = B.EMPNO
+            <if test="workYm != null and workYm != ''">
+                AND A.WORK_YM = #{workYm}
+            </if>
+            <if test="empno != null and empno != ''">
+                AND A.EMPNO = #{empno}
+            </if>
+            <if test="deptCd != null and deptCd != ''">
+                AND B.DEPT_CD = #{deptCd}
+            </if>           
+            <if test="jssfcCode != null and jssfcCode != ''">
+                    AND B.JSSFC_CODE = #{jssfcCode}
+             </if>
+            <if test="kornm != null and kornm != ''">
+                AND B.KORNM = #{kornm}
+            </if>
+             <if test="applcYm != null and applcYm != ''">
+                AND A.APPLC_YM = REPLACE(#{applcYm},'-','') 
+            </if>
+             <if test="pymntSn != null and pymntSn != ''">
+                AND A.PYMNT_SN = #{pymntSn}
+            </if>
+            
+            
+        </trim>
+    </select>
+
+    <select id="selectMpscal010" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.cal.mpscal010.service.mapper.Mpscal010Mapper.selectMpscal010 */
+        SELECT
+               A.WORK_YM,
+               A.EMPNO,
+               A.DEPT_CODE,
+               A.CLSF_CODE,
+               A.OVTIMEWORK_TIME,
+               A.OVTIMEWORK_ALLWNC,
+               A.LVWAGE_OVTIMEWORK_ALLWNC,
+               A.HVOF_WORK_TIME,
+               A.HVOF_ALLWNC,
+               A.LVWAGE_HVOF_ALLWNC,
+               A.NIGHT_WORK_TIME,
+               A.NIGHT_WORK_ALLWNC,
+               A.LVWAGE_NIGHT_WORK_ALLWNC,
+               A.ALT_HVOFDAY_CO,
+               A.OVTIME_TOT_AMT,
+               A.APPLC_YM,
+               A.PYMNT_SN,
+               A.REG_DT,
+               A.REG_ID,
+               A.UPT_DT,
+               A.UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MPS_OVTIME_ALLWNC A , MHS_EMP B
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                 A.EMPNO = B.EMPNO
+          
+            <if test="workYm != null and workYm != ''">
+                AND A.WORK_YM = #{workYm}
+            </if>
+            <if test="empno != null and empno != ''">
+                AND A.EMPNO = #{empno}
+            </if>
+        </trim>
+    </select>
+
+    <update id="saveMpscal010" parameterType="kr.co.dbvision.api.mps.cal.mpscal010.entity.Mpscal010">
+        /* kr.co.dbvision.api.mps.cal.mpscal010.service.mapper.Mpscal010Mapper.saveMpscal010 */
+        MERGE INTO MPS_OVTIME_ALLWNC A
+             USING (SELECT
+                    REPLACE(#{workYm},'-','') WORK_YM,
+                    #{empno} EMPNO
+                    FROM DUAL) B
+                ON (
+                    A.WORK_YM = B.WORK_YM AND 
+                    A.EMPNO = B.EMPNO
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+               OVTIMEWORK_TIME= #{ovtimeworkTime},
+               OVTIMEWORK_ALLWNC= #{ovtimeworkAllwnc},
+               LVWAGE_OVTIMEWORK_ALLWNC= #{lvwageOvtimeworkAllwnc},
+               HVOF_WORK_TIME= #{hvofWorkTime},
+               HVOF_ALLWNC= #{hvofAllwnc},
+               LVWAGE_HVOF_ALLWNC= #{lvwageHvofAllwnc},
+               NIGHT_WORK_TIME= #{nightWorkTime},
+               NIGHT_WORK_ALLWNC= #{nightWorkAllwnc},
+               LVWAGE_NIGHT_WORK_ALLWNC= #{lvwageNightWorkAllwnc},
+               ALT_HVOFDAY_CO= #{altHvofdayCo},
+               APPLC_YM= REPLACE(#{applcYm},'-',''),
+               PYMNT_SN= #{pymntSn},
+               PYMNT_DE= REPLACE(#{pymntDe}, '-',''),
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               WORK_YM,
+               EMPNO,
+               DEPT_CODE,
+               CLSF_CODE,
+               OVTIMEWORK_TIME,
+               OVTIMEWORK_ALLWNC,
+               LVWAGE_OVTIMEWORK_ALLWNC,
+               HVOF_WORK_TIME,
+               HVOF_ALLWNC,
+               LVWAGE_HVOF_ALLWNC,
+               NIGHT_WORK_TIME,
+               NIGHT_WORK_ALLWNC,
+               LVWAGE_NIGHT_WORK_ALLWNC,
+               ALT_HVOFDAY_CO,               
+               APPLC_YM,
+               PYMNT_SN,
+               PYMNT_DE,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{workYm},
+               #{empno},
+               #{deptCode},
+               #{clsfCode},
+               #{ovtimeworkTime},
+               #{ovtimeworkAllwnc},
+               #{lvwageOvtimeworkAllwnc},
+               #{hvofWorkTime},
+               #{hvofAllwnc},
+               #{lvwageHvofAllwnc},
+               #{nightWorkTime},
+               #{nightWorkAllwnc},
+               #{lvwageNightWorkAllwnc},
+               #{altHvofdayCo},               
+               REPLACE(#{applcYm},'-',''),
+               #{pymntSn},
+               #{pymntDe},               
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deleteMpscal010" parameterType="kr.co.dbvision.api.mps.cal.mpscal010.entity.Mpscal010">
+        /* kr.co.dbvision.api.mps.cal.mpscal010.service.mapper.Mpscal010Mapper.deleteMpscal010 */
+        DELETE FROM MPS_OVTIME_ALLWNC
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND WORK_YM = #{workYm}
+                AND EMPNO = #{empno}
+        </trim>
+    </delete>
+    
+    <parameterMap id="spCalc" type="hashmap">
+        <parameter property="applcYm" javaType="String" jdbcType="VARCHAR" mode="IN"/>       
+        <parameter property="empno" javaType="String" jdbcType="VARCHAR" mode="IN"/>
+        <parameter property="regId" javaType="String" jdbcType="VARCHAR" mode="IN"/>        
+        <parameter property="asReturnString" javaType="String" jdbcType="VARCHAR" mode="OUT" />
+    </parameterMap>
+ 
+    <select id="selectMpscal010OvtimeAllwncCalc" parameterMap="spCalc" resultType="egovMapForNull" statementType="CALLABLE">
+        <![CDATA[
+            { CALL SP_MPS_OVTIME_ALLWNC_CALC(?,?,?,?) }
+        ]]>
+    </select>
+</mapper>

@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mfs.bsc.mfsbsc001.service.mapper.Mfsbsc001Mapper">
+
+    <select id="selectMfsbsc001List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mfs.bsc.mfsbsc001.service.mapper.Mfsbsc001Mapper.selectMfsbsc001List */
+        SELECT
+               ACNT_CODE,
+               ACNT_NM,
+               UPPER_ACNT_CODE,
+               BPLC_CODE,
+               ACNT_ABRV_NM,
+               OUTPT_ACNT_NM,
+               TREE_LVL,
+               BALANCE_MARKLC_SE,
+               LR_SE_CODE,
+               ACNT_SE_CODE,
+               SLIP_BALT_AT,
+               STACNT_TRGET_AT,
+               BANK_CODE,
+               MGRT_ACNUT_NO,
+               FUND_ACNT_AT,
+               LEDGR_MGRT_AT,
+               PBLNTF_ACNT_AT,
+               MINUS_AT,
+               USE_AT,
+               RM
+          FROM MFS_ACNT_TITLE A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="acntSeCode != null and acntSeCode != ''">
+                AND ACNT_SE_CODE =   #{acntSeCode}
+            </if>        
+            <if test="acntCode != null and acntCode != ''">
+                AND ACNT_CODE like #{acntCode}||'%'
+            </if>
+            <if test="acntNm != null and acntNm != ''">
+                AND ACNT_NM  like  #{acntNm}||'%'
+            </if>
+        </trim>
+        ORDER BY ACNT_CODE,TREE_LVL
+    </select>
+
+    <select id="selectMfsbsc001" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mfs.bsc.mfsbsc001.service.mapper.Mfsbsc001Mapper.selectMfsbsc001 */
+        SELECT
+               ACNT_CODE,
+               ACNT_NM,
+               UPPER_ACNT_CODE,
+               FNC_ACNT_NM(UPPER_ACNT_CODE,'1') AS UPPER_ACNT_NM,
+               BPLC_CODE,
+               ACNT_ABRV_NM,
+               OUTPT_ACNT_NM,
+               TREE_LVL,
+               BALANCE_MARKLC_SE,
+               LR_SE_CODE,
+               ACNT_SE_CODE,
+               SLIP_BALT_AT,
+               STACNT_TRGET_AT,
+               BANK_CODE,
+               MGRT_ACNUT_NO,
+               FUND_ACNT_AT,
+               LEDGR_MGRT_AT,
+               PBLNTF_ACNT_AT,
+               MINUS_AT,
+               USE_AT,
+               RM
+          FROM MFS_ACNT_TITLE A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="acntCode != null and acntCode != ''">
+                AND ACNT_CODE = #{acntCode}
+            </if>
+        </trim>
+    </select>
+
+    <update id="saveMfsbsc001" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mfs.bsc.mfsbsc001.service.mapper.Mfsbsc001Mapper.saveMfsbsc001 */
+        MERGE INTO MFS_ACNT_TITLE A
+             USING (SELECT
+                    #{acntCode} ACNT_CODE
+                    FROM DUAL) B
+                ON (
+                    A.ACNT_CODE = B.ACNT_CODE
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               ACNT_NM= #{acntNm},
+               UPPER_ACNT_CODE= #{upperAcntCode},
+               BPLC_CODE= #{bplcCode},
+               ACNT_ABRV_NM= #{acntAbrvNm},
+               OUTPT_ACNT_NM= #{outptAcntNm},
+               TREE_LVL= #{treeLvl},
+               BALANCE_MARKLC_SE= #{balanceMarklcSe},
+               LR_SE_CODE= #{lrSeCode},
+               ACNT_SE_CODE= #{acntSeCode},
+               SLIP_BALT_AT= #{slipBaltAt},
+               STACNT_TRGET_AT= #{stacntTrgetAt},
+               BANK_CODE= #{bankCode},
+               MGRT_ACNUT_NO= #{mgrtAcnutNo},
+               FUND_ACNT_AT= #{fundAcntAt},
+               LEDGR_MGRT_AT= #{ledgrMgrtAt},
+               PBLNTF_ACNT_AT= #{pblntfAcntAt},
+               MINUS_AT= #{minusAt},
+               USE_AT= #{useAt},
+               RM= #{rm},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               ACNT_CODE,
+               ACNT_NM,
+               UPPER_ACNT_CODE,
+               BPLC_CODE,
+               ACNT_ABRV_NM,
+               OUTPT_ACNT_NM,
+               TREE_LVL,
+               BALANCE_MARKLC_SE,
+               LR_SE_CODE,
+               ACNT_SE_CODE,
+               SLIP_BALT_AT,
+               STACNT_TRGET_AT,
+               BANK_CODE,
+               MGRT_ACNUT_NO,
+               FUND_ACNT_AT,
+               LEDGR_MGRT_AT,
+               PBLNTF_ACNT_AT,
+               MINUS_AT,
+               USE_AT,
+               RM,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{acntCode},
+               #{acntNm},
+               #{upperAcntCode},
+               #{bplcCode},
+               #{acntAbrvNm},
+               #{outptAcntNm},
+               #{treeLvl},
+               #{balanceMarklcSe},
+               #{lrSeCode},
+               #{acntSeCode},
+               #{slipBaltAt},
+               #{stacntTrgetAt},
+               #{bankCode},
+               #{mgrtAcnutNo},
+               #{fundAcntAt},
+               #{ledgrMgrtAt},
+               #{pblntfAcntAt},
+               #{minusAt},
+               #{useAt},
+               #{rm},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deleteMfsbsc001" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mfs.bsc.mfsbsc001.service.mapper.Mfsbsc001Mapper.deleteMfsbsc001 */
+        DELETE FROM MFS_ACNT_TITLE
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND ACNT_CODE = #{acntCode}
+        </trim>
+    </delete>
+</mapper>

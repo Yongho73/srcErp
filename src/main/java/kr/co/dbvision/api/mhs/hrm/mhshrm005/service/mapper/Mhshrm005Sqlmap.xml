@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mhs.hrm.mhshrm005.service.mapper.Mhshrm005Mapper">
+
+    <select id="selectMhshrm005List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm005.service.mapper.Mhshrm005Mapper.selectMhshrm005List */
+        SELECT
+               A.ORGNZT_CODE,
+               B.ORGNZT_NM,
+               A.DEPT_CODE,
+               C.DEPT_KOR_NM,
+               FNC_DATESTR(A.USE_BEGIN_DE) AS USE_BEGIN_DE,
+               FNC_DATESTR(A.USE_END_DE) AS USE_END_DE,
+               A.USE_AT,
+               A.SORT_ORDR,
+               A.REG_DT,
+               A.REG_ID,
+               A.UPT_DT,
+               A.UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_DEPT_ORGNZT A,
+               MHS_ORGNZT B,
+               MHS_DEPT C
+        WHERE A.ORGNZT_CODE = B.ORGNZT_CODE
+          AND A.DEPT_CODE = C.DEPT_CODE
+
+       <if test="orgnztCode != null and orgnztCode != ''">
+           AND A.ORGNZT_CODE = #{orgnztCode}
+       </if>
+       <if test="orgnztNm != null and orgnztNm != ''">
+           AND B.ORGNZT_NM LIKE '%' || #{orgnztNm} || '%'
+       </if>
+       <if test="deptCode != null and deptCode != ''">
+           AND A.DEPT_CODE = #{deptCode}
+       </if>
+       <if test="deptKorNm != null and deptKorNm != ''">
+           AND C.DEPT_KOR_NM LIKE '%' || #{deptKorNm} || '%'
+       </if>
+	    <if test="useAt != null and useAt != ''">
+	        AND A.USE_AT = #{useAt}
+	    </if>
+       <if test="sRegDt != null and sRegDt != ''">
+           <![CDATA[
+           AND A.REG_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+           ]]>
+       </if>
+       <if test="eRegDt != null and eRegDt != ''">
+           <![CDATA[
+           AND A.REG_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+           ]]>
+        </if>
+
+    </select>
+
+    <select id="selectMhshrm005" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm005.service.mapper.Mhshrm005Mapper.selectMhshrm005 */
+        SELECT
+               ORGNZT_CODE,
+               (SELECT ORGNZT_NM FROM MHS_ORGNZT WHERE ORGNZT_CODE=A.ORGNZT_CODE) AS ORGNZT_NM,
+               DEPT_CODE,
+               (SELECT DEPT_KOR_NM FROM MHS_DEPT WHERE DEPT_CODE=A.DEPT_CODE) AS DEPT_KOR_NM,
+               USE_BEGIN_DE,
+               USE_END_DE,
+               USE_AT,
+               SORT_ORDR,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_DEPT_ORGNZT A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="orgnztCode != null and orgnztCode != ''">
+                AND ORGNZT_CODE = #{orgnztCode}
+            </if>
+            <if test="deptCode != null and deptCode != ''">
+                AND DEPT_CODE = #{deptCode}
+            </if>
+        </trim>
+    </select>
+    
+    <select id="insertMhshrm005UseChk" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm005.service.mapper.Mhshrm005Mapper.insertMhshrm005UseChk */
+        SELECT COUNT(*) AS CNT
+          FROM MHS_DEPT_ORGNZT
+         WHERE  ORGNZT_CODE = TRIM(#{orgnztCode})
+           AND  DEPT_CODE = TRIM(#{deptCode})
+     </select>
+     
+     <select id="insertMhshrm005DeptUseOrgnztChk" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm005.service.mapper.Mhshrm005Mapper.insertMhshrm005UseChk */
+        SELECT NVL(SUM(A.CNT),0) AS CNT
+        FROM (
+	        SELECT CASE WHEN COUNT(*) >= 1 THEN 1 ELSE 0 END AS CNT
+	          FROM MHS_ORGNZT
+	         WHERE  ORGNZT_CODE = TRIM(#{orgnztCode})
+	         UNION ALL
+	        SELECT CASE WHEN COUNT(*) >= 1 THEN 2 ELSE 0 END AS CNT
+	          FROM MHS_DEPT
+	         WHERE  DEPT_CODE = TRIM(#{deptCode})
+         ) A
+     </select>
+     
+    <select id="deleteMhshrm005UseChk" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm005.service.mapper.Mhshrm005Mapper.deleteMhshrm005UseChk */
+		SELECT NVL(SUM(X.CNT),0) AS CNT, MAX(X.TBL) AS TBL
+		FROM (
+	        SELECT 0 AS CNT , '준비중' AS TBL
+	          FROM DUAL
+	         WHERE #{orgnztCode} = #{orgnztCode}
+	           AND #{deptCode} = #{deptCode}
+        ) X
+        WHERE X.CNT > 0
+     </select>
+     
+     
+     
+     
+     
+     
+     <select id="selectMhshrm005RspofcCodeCombo" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm005.service.mapper.Mhshrm005Mapper.selectMhshrm005RspofcCodeCombo */
+        SELECT
+               ORGNZT_CODE,
+               (SELECT ORGNZT_NM FROM MHS_ORGNZT WHERE ORGNZT_CODE=A.ORGNZT_CODE) AS ORGNZT_NM,
+               DEPT_CODE,
+               (SELECT DEPT_KOR_NM FROM MHS_DEPT WHERE DEPT_CODE=A.DEPT_CODE) AS DEPT_KOR_NM,
+               USE_BEGIN_DE,
+               USE_END_DE,
+               USE_AT,
+               SORT_ORDR,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+         FROM MHS_DEPT_ORGNZT A
+         WHERE USE_AT = '1'
+         ORDER BY SORT_ORDR, ORGNZT_CODE
+    </select>
+
+
+
+
+
+    <update id="saveMhshrm005" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm005.service.mapper.Mhshrm005Mapper.saveMhshrm005 */
+        MERGE INTO MHS_DEPT_ORGNZT A
+             USING (SELECT
+                    #{orgnztCode} ORGNZT_CODE,
+                    #{deptCode} DEPT_CODE
+                    FROM DUAL) B
+                ON (
+                    A.ORGNZT_CODE = B.ORGNZT_CODE AND 
+                    A.DEPT_CODE = B.DEPT_CODE
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               USE_BEGIN_DE= REPLACE(#{useBeginDe},'-',''),
+               USE_END_DE= REPLACE(#{useEndDe},'-',''),
+               USE_AT= #{useAt},
+               SORT_ORDR= #{sortOrdr},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               ORGNZT_CODE,
+               DEPT_CODE,
+               USE_BEGIN_DE,
+               USE_END_DE,
+               USE_AT,
+               SORT_ORDR,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{orgnztCode},
+               #{deptCode},
+               REPLACE(#{useBeginDe},'-',''),
+               REPLACE(#{useEndDe},'-',''),
+               #{useAt},
+               #{sortOrdr},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deleteMhshrm005" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm005.service.mapper.Mhshrm005Mapper.deleteMhshrm005 */
+        DELETE FROM MHS_DEPT_ORGNZT
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND ORGNZT_CODE = #{orgnztCode}
+                AND DEPT_CODE = #{deptCode}
+        </trim>
+    </delete>
+</mapper>

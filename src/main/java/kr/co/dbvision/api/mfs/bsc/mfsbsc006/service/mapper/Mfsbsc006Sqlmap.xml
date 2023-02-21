@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mfs.bsc.mfsbsc006.service.mapper.Mfsbsc006Mapper">
+
+    <sql id="searchCondition">
+    
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="mgrtItemNm != null and mgrtItemNm != ''">
+                AND MGRT_ITEM_Nm like  #{mgrtItemNm} ||'%'
+            </if>
+            <if test="useAt != null and useAt != ''">
+                AND USE_AT =  #{useAt} 
+            </if>            
+        </trim>
+        <choose>
+        <when test="sortColumId != null and sortColumId != ''">
+            <if test="sortColumId == 'mgrtItemSn'">
+            ORDER BY MGRT_ITEM_SN <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+            <if test="sortColumId == 'mgrtItemNm'">
+            ORDER BY MGRT_ITEM_NM <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+            <if test="sortColumId == 'inputSeCode'">
+            ORDER BY INPUT_SE_CODE <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+            <if test="sortColumId == 'useAt'">
+            ORDER BY USE_AT <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+            <if test="sortColumId == 'rm'">
+            ORDER BY RM <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+            <if test="sortColumId == 'regDt'">
+            ORDER BY REG_DT <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+            <if test="sortColumId == 'regId'">
+            ORDER BY REG_ID <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+            <if test="sortColumId == 'uptDt'">
+            ORDER BY UPT_DT <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+            <if test="sortColumId == 'uptId'">
+            ORDER BY UPT_ID <choose><when test="sortDirection == 'des'">DESC</when><otherwise>ASC</otherwise></choose>
+            </if>
+        </when>
+        <otherwise>
+            ORDER BY MGRT_ITEM_SN ASC
+        </otherwise>
+        </choose>
+    
+    </sql>
+
+    <select id="selectMfsbsc006TotalRecordCount" parameterType="egovMapForNull" resultType="java.lang.Integer">
+        /* kr.co.dbvision.api.mfs.bsc.mfsbsc006.service.mapper.Mfsbsc006Mapper.selectMfsbsc006TotalRecordCount */
+        SELECT COUNT(*) AS totalRecordCount
+          FROM MFS_MGRT_ITEM_CODE
+
+        <include refid="searchCondition" />
+
+    </select>
+
+    <select id="selectMfsbsc006ListAllInPage" parameterType="egovMapForNull" resultType="java.lang.Integer">
+        /* kr.co.dbvision.api.mfs.bsc.mfsbsc006.service.mapper.Mfsbsc006Mapper.selectMfsbsc006ListAllInPage */
+        SELECT CEIL(RNUM/#{pageingCnt}) PAGE FROM (SELECT ROWNUM AS RNUM, MGRT_ITEM_SN FROM (
+
+        SELECT MGRT_ITEM_SN
+          FROM MFS_MGRT_ITEM_CODE
+      ORDER BY MGRT_ITEM_SN ASC
+
+        ) A ) B WHERE MGRT_ITEM_SN = #{mgrtItemSn}
+
+    </select>
+
+    <select id="selectMfsbsc006ListPaging" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mfs.bsc.mfsbsc006.service.mapper.Mfsbsc006Mapper.selectMfsbsc006ListPaging */
+        <![CDATA[
+        SELECT * FROM ( SELECT ROWNUM RNUM, A.* FROM (
+
+        SELECT
+               MGRT_ITEM_SN,
+               MGRT_ITEM_NM,
+               INPUT_SE_CODE,
+               CODEKIND_CODE, 
+               (SELECT CODEKIND_NM FROM STM_CODEKIND WHERE CODEKIND_CODE =A.CODEKIND_CODE) AS CODEKIND_NM,
+               USE_AT,
+               RM,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID
+        FROM MFS_MGRT_ITEM_CODE A
+        ]]>
+
+        <include refid="searchCondition" />
+
+        <![CDATA[
+        ) A ) B WHERE RNUM > #{firstIndex} AND RNUM <= #{lastIndex}
+        ]]>
+    </select>
+
+    <select id="selectMfsbsc006List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mfs.bsc.mfsbsc006.service.mapper.Mfsbsc006Mapper.selectMfsbsc006List */
+        SELECT
+               MGRT_ITEM_SN,
+               MGRT_ITEM_NM,
+               INPUT_SE_CODE,
+               CODEKIND_CODE,
+               USE_AT,
+               RM,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID
+          FROM MFS_MGRT_ITEM_CODE A
+
+        <include refid="searchCondition" />
+    </select>
+
+    <select id="selectMfsbsc006" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mfs.bsc.mfsbsc006.service.mapper.Mfsbsc006Mapper.selectMfsbsc006 */
+        SELECT
+               MGRT_ITEM_SN,
+               MGRT_ITEM_NM,
+               INPUT_SE_CODE,
+               CODEKIND_CODE,
+               USE_AT,
+               RM,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID
+          FROM MFS_MGRT_ITEM_CODE A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="mgrtItemSn != null and mgrtItemSn != ''">
+                AND MGRT_ITEM_SN = #{mgrtItemSn}
+            </if>
+        </trim>
+    </select>
+
+    <update id="saveMfsbsc006" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mfs.bsc.mfsbsc006.service.mapper.Mfsbsc006Mapper.saveMfsbsc006 */
+        MERGE INTO MFS_MGRT_ITEM_CODE A
+             USING (SELECT
+                    #{mgrtItemSn} MGRT_ITEM_SN
+                    FROM DUAL) B
+                ON (
+                    A.MGRT_ITEM_SN = B.MGRT_ITEM_SN
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               MGRT_ITEM_NM= #{mgrtItemNm},
+               INPUT_SE_CODE= #{inputSeCode},
+               CODEKIND_CODE =#{codekindCode},
+               USE_AT= #{useAt},
+               RM= #{rm},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               MGRT_ITEM_SN,
+               MGRT_ITEM_NM,
+               INPUT_SE_CODE,
+               CODEKIND_CODE,
+               USE_AT,
+               RM,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               (SELECT NVL(MAX(MGRT_ITEM_SN),0) + 1 FROM MFS_MGRT_ITEM_CODE),
+               #{mgrtItemNm},
+               #{inputSeCode},
+               #{codekindCode},
+               #{useAt},
+               #{rm},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deleteMfsbsc006" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mfs.bsc.mfsbsc006.service.mapper.Mfsbsc006Mapper.deleteMfsbsc006 */
+        DELETE FROM MFS_MGRT_ITEM_CODE
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND MGRT_ITEM_SN = #{mgrtItemSn}
+        </trim>
+    </delete>
+</mapper>

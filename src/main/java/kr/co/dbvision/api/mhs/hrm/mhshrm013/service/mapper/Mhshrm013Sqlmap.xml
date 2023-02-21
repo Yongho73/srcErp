@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mhs.hrm.mhshrm013.service.mapper.Mhshrm013Mapper">
+
+    <select id="selectMhshrm013List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm013.service.mapper.Mhshrm013Mapper.selectMhshrm013List */
+        SELECT
+               DCLZCODE,
+               DCLZCODE_NM,
+               ABSENC_SE_CODE,
+               VAC_SE_CODE,
+               ENNCAMT_AT,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               USE_AT,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_DCLZ_CODE A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="dclzcode != null and dclzcode != ''">
+                AND DCLZCODE = #{dclzcode}
+            </if>
+            <if test="dclzcodeNm != null and dclzcodeNm != ''">
+                AND DCLZCODE_NM LIKE '%' ||  #{dclzcodeNm} || '%'
+            </if>
+            <if test="useAt != null and useAt != ''">
+                AND USE_AT = #{useAt}
+            </if>
+            <if test="sRegDt != null and sRegDt != ''">
+                <![CDATA[
+                AND REG_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+                ]]>
+            </if>
+            <if test="eRegDt != null and eRegDt != ''">
+                <![CDATA[
+                AND REG_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+                ]]>
+             </if>
+        </trim>
+        ORDER BY DCLZCODE
+    </select>
+    
+    <select id="searchMhshrm013ForExcel" parameterType="egovMapForNull" resultType="egovMapForNull">
+         /* kr.co.dbvision.api.mhs.hrm.mhshrm013.service.mapper.Mhshrm013Mapper.searchMhshrm013ForExcel */
+        SELECT
+               DCLZCODE,
+               DCLZCODE_NM,
+               (SELECT CODE_KOR_NM FROM STM_CODE WHERE CODEKIND_CODE = 'C167' AND CODE = ABSENC_SE_CODE) AS ABSENC_SE_CODE,
+               (SELECT CODE_KOR_NM FROM STM_CODE WHERE CODEKIND_CODE = 'C081' AND CODE = VAC_SE_CODE) AS VAC_SE_CODE,
+               DECODE(ENNCAMT_AT, '1', '무급', '0', '유급', '무급') AS ENNCAMT_AT,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               DECODE(USE_AT, '1', '사용', '0', '미사용', '미사용') AS USE_AT,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_DCLZ_CODE A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="dclzcode != null and dclzcode != ''">
+                AND DCLZCODE = #{dclzcode}
+            </if>
+            <if test="dclzcodeNm != null and dclzcodeNm != ''">
+                AND DCLZCODE_NM LIKE '%' ||  #{dclzcodeNm} || '%'
+            </if>
+            <if test="useAt != null and useAt != ''">
+                AND USE_AT = #{useAt}
+            </if>
+            <if test="sRegDt != null and sRegDt != ''">
+                <![CDATA[
+                AND REG_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+                ]]>
+            </if>
+            <if test="eRegDt != null and eRegDt != ''">
+                <![CDATA[
+                AND REG_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+                ]]>
+             </if>
+        </trim>
+        ORDER BY DCLZCODE
+    </select>
+
+    <select id="selectMhshrm013" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm013.service.mapper.Mhshrm013Mapper.selectMhshrm013 */
+        SELECT
+               DCLZCODE,
+               DCLZCODE_NM,
+               ABSENC_SE_CODE,
+               VAC_SE_CODE,
+               ENNCAMT_AT,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               USE_AT,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_DCLZ_CODE A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="dclzcode != null and dclzcode != ''">
+                AND DCLZCODE = #{dclzcode}
+            </if>
+        </trim>
+    </select>
+
+    <update id="saveMhshrm013" parameterType="kr.co.dbvision.api.mhs.hrm.mhshrm013.entity.Mhshrm013">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm013.service.mapper.Mhshrm013Mapper.saveMhshrm013 */
+        MERGE INTO MHS_DCLZ_CODE A
+             USING (SELECT
+                    #{dclzcode} DCLZCODE
+                    FROM DUAL) B
+                ON (
+                    A.DCLZCODE = B.DCLZCODE
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               DCLZCODE_NM= #{dclzcodeNm},
+               ABSENC_SE_CODE= #{absencSeCode},
+               VAC_SE_CODE= #{vacSeCode},
+               ENNCAMT_AT= #{enncamtAt},
+               USE_AT= #{useAt},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               DCLZCODE,
+               DCLZCODE_NM,
+               ABSENC_SE_CODE,
+               VAC_SE_CODE,
+               ENNCAMT_AT,
+               USE_AT,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{dclzcode},
+               #{dclzcodeNm},
+               #{absencSeCode},
+               #{vacSeCode},
+               #{enncamtAt},
+               #{useAt},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deleteMhshrm013" parameterType="kr.co.dbvision.api.mhs.hrm.mhshrm013.entity.Mhshrm013">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm013.service.mapper.Mhshrm013Mapper.deleteMhshrm013 */
+        DELETE FROM MHS_DCLZ_CODE
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND DCLZCODE = #{dclzcode}
+        </trim>
+    </delete>
+</mapper>

@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mhs.hrb.mhshrb001.service.mapper.Mhshrb001MapperTab9Crqfs">
+
+	<!-- 학력 Tab 7 -->
+	<select id="selectMhsEmpTab9Crqfs" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrb.mhshrb001.service.mapper.Mhshrb001MapperTab9Crqfs.selectMhsEmpTab9Crqfs */
+        SELECT
+               EMPNO,
+               CRQFS_SN,
+               CRQFS_CODE_NO,
+               (SELECT CRQFS_NM FROM MHS_CRQFS_CODE WHERE CRQFS_CODE_NO=A.CRQFS_CODE_NO) AS CRQFS_NM,
+               FNC_DATESTR(ACQS_DE) AS ACQS_DE,
+               FNC_DATESTR(VALID_DE) AS VALID_DE,
+               CRQFS_SE,
+               NATIONATHRI_QUALF_AT,
+               CRQFS_NO,
+               ISSU_INSTT_NM,
+               DMSTC_AT,
+               ALLWNC_PYMNT_AT,
+               QUALF_ALLWNC_AMT,
+               EVL_APPLY_AT,
+               RECOG_SCORE,
+               RM,
+               ATCHMNFLNO,
+               ATCHMNFLNO AS ATCHMNFLNO_EDIT,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_CRQFS A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="empno != null and empno != ''">
+                AND EMPNO = #{empno}
+            </if>
+            <if test="crqfsSn != null and crqfsSn != ''">
+                AND CRQFS_SN = #{crqfsSn}
+            </if>
+            <if test="sRegDt != null and sRegDt != ''">
+                <![CDATA[
+                AND REG_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+                ]]>
+            </if>
+            <if test="eRegDt != null and eRegDt != ''">
+                <![CDATA[
+                AND REG_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+                ]]>
+             </if>
+        </trim>
+        ORDER BY CRQFS_SN
+    </select>
+    
+    <select id="insertMhsEmpTab9CrqfsUseChk" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrb.mhshrb001.service.mapper.Mhshrb001MapperTab9Crqfs.insertMhsEmpTab9CrqfsUseChk */
+        SELECT COUNT(*) AS CNT
+          FROM MHS_CRQFS
+         WHERE  EMPNO = #{empno}
+           AND  CRQFS_CODE_NO = TRIM(#{crqfsCodeNo})
+     </select>
+        
+
+    <update id="saveMhsEmpTab9Crqfs" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrb.mhshrb001.service.mapper.Mhshrb001MapperTab9Crqfs.saveMhsEmpTab9Crqfs */
+        <selectKey resultType="int" keyProperty="crqfsSnNew" order="BEFORE">
+  			SELECT NVL(MAX(CRQFS_SN),0) + 1 AS crqfsSnNew
+  			FROM MHS_CRQFS
+  			WHERE EMPNO = #{empno}
+  		</selectKey>
+  		
+        MERGE INTO MHS_CRQFS A
+             USING (SELECT
+                    #{empno} EMPNO,
+                    #{crqfsSn} CRQFS_SN
+                    FROM DUAL) B
+                ON (
+                    A.EMPNO = B.EMPNO AND 
+                    A.CRQFS_SN = B.CRQFS_SN
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               CRQFS_CODE_NO= #{crqfsCodeNo},
+               ACQS_DE= REPLACE(#{acqsDe},'-',''),
+               VALID_DE= REPLACE(#{validDe},'-',''),
+               CRQFS_SE= #{crqfsSe},
+               NATIONATHRI_QUALF_AT= #{nationathriQualfAt},
+               CRQFS_NO= #{crqfsNo},
+               ISSU_INSTT_NM= #{issuInsttNm},
+               DMSTC_AT= #{dmstcAt},
+               ALLWNC_PYMNT_AT= #{allwncPymntAt},
+               QUALF_ALLWNC_AMT= #{qualfAllwncAmt},
+               EVL_APPLY_AT= #{evlApplyAt},
+               RECOG_SCORE= #{recogScore},
+               RM= #{rm},
+               ATCHMNFLNO= #{atchmnflno},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               EMPNO,
+               CRQFS_SN,
+               CRQFS_CODE_NO,
+               ACQS_DE,
+               VALID_DE,
+               CRQFS_SE,
+               NATIONATHRI_QUALF_AT,
+               CRQFS_NO,
+               ISSU_INSTT_NM,
+               DMSTC_AT,
+               ALLWNC_PYMNT_AT,
+               QUALF_ALLWNC_AMT,
+               EVL_APPLY_AT,
+               RECOG_SCORE,
+               RM,
+               ATCHMNFLNO,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{empno},
+               #{crqfsSnNew},
+               #{crqfsCodeNo},
+               REPLACE(#{acqsDe},'-',''),
+               REPLACE(#{validDe},'-',''),
+               #{crqfsSe},
+               #{nationathriQualfAt},
+               #{crqfsNo},
+               #{issuInsttNm},
+               #{dmstcAt},
+               #{allwncPymntAt},
+               #{qualfAllwncAmt},
+               #{evlApplyAt},
+               #{recogScore},
+               #{rm},
+               #{atchmnflno},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deleteMhsEmpTab9Crqfs" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrb.mhshrb001.service.mapper.Mhshrb001MapperTab9Crqfs.deleteMhsEmpTab9Crqfs */
+        DELETE FROM MHS_CRQFS
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND EMPNO = #{empno}
+                AND CRQFS_SN = #{crqfsSn}
+        </trim>
+    </delete>
+ 
+</mapper>

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.stm.sys.stmsys007.service.mapper.Stmsys007Mapper">
+
+    <select id="selectStmsys007List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.stm.sys.stmsys007.service.mapper.Stmsys007Mapper.selectStmsys007List */
+        SELECT
+               BPLC_CODE, 
+               READNG, 
+               SEAL_IMG, 
+               SIGN_MARK_WAY, 
+               REG_ID, 
+               REG_DT, 
+               UPT_ID, 
+               UPT_DT,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM SGN_ENVRN_SETTING A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="bplcCode != null and bplcCode != ''">
+                AND BPLC_CODE = #{bplcCode}
+            </if>
+            <if test="sRegDt != null and sRegDt != ''">
+                <![CDATA[
+                AND REG_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+                ]]>
+            </if>
+            <if test="eRegDt != null and eRegDt != ''">
+                <![CDATA[
+                AND REG_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+                ]]>
+             </if>
+        </trim>
+    </select>
+
+    <select id="selectStmsys007" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.stm.sys.stmsys007.service.mapper.Stmsys007Mapper.selectStmsys007 */
+        SELECT
+               BPLC_CODE, 
+               READNG, 
+               SEAL_IMG, 
+               SIGN_MARK_WAY, 
+               REG_ID, 
+               REG_DT, 
+               UPT_ID, 
+               UPT_DT,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM SGN_ENVRN_SETTING A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="bplcCode != null and bplcCode != ''">
+                AND BPLC_CODE = #{bplcCode}
+            </if>
+        </trim>
+    </select>
+
+    <update id="saveStmsys007" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.stm.sys.stmsys007.service.mapper.Stmsys007Mapper.saveStmsys007 */
+        MERGE INTO SGN_ENVRN_SETTING A
+             USING (SELECT
+                    #{bplcCode} BPLC_CODE
+                    FROM DUAL) B
+                ON (
+                    A.BPLC_CODE = B.BPLC_CODE
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               READNG = #{readng}, 
+               SEAL_IMG = #{sealImg}, 
+               SIGN_MARK_WAY = #{signMarkWay},  
+               UPT_DT = SYSDATE, 
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               BPLC_CODE,
+               READNG, 
+               SEAL_IMG, 
+               SIGN_MARK_WAY,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{bplcCode},
+               #{readng},
+               #{sealImg},
+               #{signMarkWay},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deleteStmsys007" parameterType="kr.co.dbvision.api.stm.sys.stmsys007.entity.Stmsys007">
+        /* kr.co.dbvision.api.stm.sys.stmsys007.service.mapper.Stmsys007Mapper.deleteStmsys007 */
+        DELETE FROM STM_ENV_SETTING
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND BPLC_CODE = #{bplcCode}
+        </trim>
+    </delete>
+</mapper>

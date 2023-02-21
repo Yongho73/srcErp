@@ -1,0 +1,885 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.pjt.pmg.pjtpmg001.service.mapper.Pjtpmg001Mapper">
+
+    <select id="selectPjtProjectList" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg001.service.impl.Pjtpmg001Mapper.selectPjtProjectList */
+		SELECT A.*, ROWNUM AS RNUM 
+		  FROM (
+		  
+		    SELECT  PROJECT_SN
+		   		  , PROJECT_NM
+		   		  , (SELECT BCNC_NM FROM STM_CUSTOMER WHERE BCNC_CODE = A.BCNC_CODE) AS BCNC_NM
+		   		  , PROJECT_PM_NM
+		   		  , PROJECT_BEGIN_DE
+		   		  , PROJECT_END_DE
+		   		  , FNC_DATESTR(PROJECT_BEGIN_DE)  || ' ~ ' ||  FNC_DATESTR(PROJECT_END_DE) || ' (' || ROUND(MONTHS_BETWEEN(a.PROJECT_END_DE,a.PROJECT_BEGIN_DE)) || ')' AS PROJECT_DE
+		   		  , FNC_COMCODENM('C200',PROJECT_SE) AS PROJECT_SE
+		   		  , FNC_COMCODENM('C201', COMPT_AT) AS COMPT_AT
+		   		 -- ,(SELECT COUNT(*) FROM PJT_HNF_ACMSLT  WHERE PROJECT_SN = A.PROJECT_SN AND  ACMSLT_STDR_DE = TO_CHAR(ADD_MONTHS(SYSDATE,-1),'YYYYMM') ) AS ACMSLT_CNT 
+		   		  ,PROJECT_PM_EMPNO 
+		   		  ,SIGN(PROJECT_BEGIN_DE -TO_CHAR(SYSDATE,'YYYYMMDD')) AS PRE_PROJECT
+                  ,CASE WHEN SIGN(PROJECT_BEGIN_DE - TO_CHAR(SYSDATE,'YYYYMMDD')) = 1 THEN /*예정사업은 제외 */
+                    100
+                   ELSE 
+                    (SELECT COUNT(*) FROM PJT_HNF_ACMSLT  WHERE PROJECT_SN = A.PROJECT_SN AND  ACMSLT_STDR_DE = TO_CHAR(ADD_MONTHS(SYSDATE,-1),'YYYYMM') )
+                   END ACMSLT_CNT	 /* 전월실적등록여부 체크 */	   		  
+		      FROM PJT_PROJECT A
+			<trim prefix="WHERE" prefixOverrides="AND|OR">
+			<if test="projectNm != null and projectNm != ''">
+			   AND UPPER(PROJECT_NM) LIKE '%' || UPPER(#{projectNm}) || '%'
+			</if>
+			<if test="projectSe != null and projectSe != ''">
+			   AND PROJECT_SE =  #{projectSe} 
+			</if>
+        	<if test="projectBeginDe != null and projectBeginDe != ''">
+            <![CDATA[
+                AND PROJECT_END_DE >= #{projectBeginDe}
+            ]]>
+        	</if>
+        	<if test="projectEndDe != null and projectEndDe != ''">
+            <![CDATA[
+                AND PROJECT_BEGIN_DE <= #{projectEndDe}
+            ]]>
+        	</if>
+			<if test="comptAt != null and comptAt != ''">
+				AND COMPT_AT =  #{comptAt} 
+			</if>
+			<if test="compNm != null and compNm != ''">
+				AND (SELECT BCNC_NM FROM STM_CUSTOMER WHERE BCNC_CODE = A.BCNC_CODE)   LIKE '%' || UPPER(#{compNm}) || '%'
+			</if>
+			</trim>
+	       ORDER BY PROJECT_SN DESC
+	       
+			    ) A
+	  ORDER BY RNUM
+    </select>
+    
+    <select id="selectPjtProjectApprvList" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg001.service.impl.Pjtpmg001Mapper.selectPjtProjectApprvList */
+        SELECT 
+		    PROJECT_SN,
+		    PROJECT_NM,
+		    (SELECT BCNC_NM FROM STM_CUSTOMER WHERE BCNC_CODE = A.BCNC_CODE) AS BCNC_NM,
+		    PROJECT_PM_NM,
+		    PROJECT_BEGIN_DE,
+		    PROJECT_END_DE,
+		    FNC_COMCODENM('C200',PROJECT_SE) AS PROJECT_SE,
+		    FNC_COMCODENM('C201', COMPT_AT) AS COMPT_AT,
+		    PROJECT_PM_EMPNO
+		FROM PJT_PROJECT A
+		WHERE COMPT_AT IN (4, 6)
+		AND 
+		(NEW_APPRV_EMPNO1 = #{empno}
+		OR NEW_APPRV_EMPNO2 = #{empno}
+		OR END_APPRV_EMPNO1 = #{empno}
+		OR END_APPRV_EMPNO2 = #{empno})
+		AND
+		(NEW_APPRV_EMPNO1 = #{empno}
+		AND NEW_APPRV_DE1 IS NULL)
+		OR 
+		(END_APPRV_EMPNO1 = #{empno}
+		AND END_APPRV_DE1 IS NULL)
+		OR
+		(NEW_APPRV_EMPNO2 = #{empno}
+		AND NEW_APPRV_DE1 IS NOT NULL AND NEW_APPRV_DE2 IS NULL)
+		OR
+		(END_APPRV_EMPNO2 = #{empno}
+		AND END_APPRV_DE1 IS NOT NULL AND END_APPRV_DE2 IS NULL)
+    </select>
+
+    <select id="selectPjtProject" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg001.service.impl.Pjtpmg001Mapper.selectPjtProject */
+       SELECT   
+       		  PROJECT_SN        															/*  프로젝트번호     */
+			, PROJECT_NM	 																/*  프로젝트명	*/
+			, PROJECT_CN	     															/*  프로젝트개요     */
+			, PROJECT_SCOPE	 																/*  프로젝트범위     */
+			, PROJECT_ENVRN	     														 	/*  프로젝트환경     */
+			, PROJECT_AREA	     															/*  프로젝트지역     */
+			, PROJECT_PM_EMPNO        														/*  프로젝트PM    */
+			, PROJECT_PM_NM    																/*  프로젝트PM명   */
+			, BCNC_CHARGER_CODE	    														/*  발주처담당자     */
+            , BCNC_CHARGER_NM
+            , CHARGER_CTTPC
+			, TO_CHAR(TO_DATE(PROJECT_BEGIN_DE),'YYYY-MM-DD') AS PROJECT_BEGIN_DE         
+			, TO_CHAR(TO_DATE(PROJECT_END_DE),'YYYY-MM-DD') AS PROJECT_END_DE	     		/*  계약종료일   */
+			, TO_CHAR(TO_DATE(REAL_BEGIN_DE),'YYYY-MM-DD') AS REAL_BEGIN_DE	     			/*  실제시작일   */
+			, TO_CHAR(TO_DATE(REAL_END_DE),'YYYY-MM-DD') AS REAL_END_DE	     				/*  실제완료일   */
+			, TO_CHAR(CNTRCT_AMT, '999,999,999,999,999') 	 AS CNTRCT_AMT					/*  계약금액	*/		
+			, GRTS_MNTNCE_MCNT		     	     	     	        						/*  무상유지보수개월수 */
+			, GRTS_MNTNCE_CN		     	     	     	    							/*  무상유지보수내용  */
+			, PROJECT_SE	     		     	     	     	     						/*  프로젝트구분코드  */
+			, COMPT_AT                   		     	       								/*  완료여부	      */
+			, COMPT_DE	     																/*  완료일자	      */
+			, UPT_DT	    
+			, UPT_ID
+			, PROJECT_URL	    
+			, REGIST_EMPNO	     															/*  프로젝트등록자    */
+			, (SELECT  USER_NM    
+				FROM  STM_USERS  
+				WHERE EMPNO  = A.REGIST_EMPNO) AS USER_NM                   				/*  프로젝트등록자명   */ 		
+		    ,  BCNC_CODE   /* 거래처 */		
+	        , (SELECT BCNC_NM FROM STM_CUSTOMER WHERE BCNC_CODE = A.BCNC_CODE) AS BCNC_NM   /* 거래처 */
+		    ,  CNTRCT_TY
+		    ,  ENTRPS_ID
+		    ,  ENTRPS_PASSWORD
+		    ,  NVL(ROUND((SELECT  SUM(B.PARTCPTN_MAN_MONTH)    
+				FROM     PJT_HNF_ACMSLT B    
+				WHERE    B.PROJECT_SN  = A.PROJECT_SN)
+                / (SELECT   SUM(E.PARTCPTN_MAN_MONTH)    
+				FROM     PJT_HNF_PLAN E    
+				WHERE    E.PROJECT_SN  = A.PROJECT_SN)  * 100),0) AS HNF_RATE    /* 투입인력 */
+			, 
+			   NVL(ROUND((SELECT   SUM(C.USE_AMT)    
+			    FROM     PJT_BUGT_ACMSLT C    
+			    WHERE    C.PROJECT_SN  = A.PROJECT_SN)
+                / (SELECT    SUM(C.BUGT_AMT)    
+			   FROM      PJT_BUGT_PLAN C    
+			   WHERE     C.PROJECT_SN  = A.PROJECT_SN) * 100),0)  AS BUGT_RATE  /* 예산 */
+            , 
+               NVL(TRUNC((SELECT (PROGRS_RT / DECODE(PLAN_DAYCNT, 0, '1', PLAN_DAYCNT)) * 100 
+               FROM
+                (SELECT sum(PLAN_DAYCNT) AS PLAN_DAYCNT 
+                FROM PJT_PROJECT_OUTPUT
+                    WHERE 1=1                   
+			            <if test="projectSn != null and projectSn != ''">
+			                AND PROJECT_SN = #{projectSn}
+			            </if>
+                    ) AA,
+                (SELECT SUM((PROGRS_RT/100) * PLAN_DAYCNT) AS PROGRS_RT 
+                FROM PJT_PROJECT_OUTPUT
+                    WHERE 1=1
+                        <if test="projectSn != null and projectSn != ''">
+                            AND PROJECT_SN = #{projectSn}
+                        </if>
+                    ) BB),2),0)  AS OUTPUT_RATE   /* 산출물진행률 */
+            , 
+            NEW_APPRV_EMPNO1, 
+            (SELECT  USER_NM    
+                FROM  STM_USERS  
+                WHERE EMPNO = A.NEW_APPRV_EMPNO1) AS NEW_APPRV_NM1,
+            NEW_APPRV_AT1,
+            NEW_APPRV_EMPNO2, 
+            (SELECT  USER_NM    
+                FROM  STM_USERS  
+                WHERE EMPNO = A.NEW_APPRV_EMPNO2) AS NEW_APPRV_NM2,
+            NEW_APPRV_AT2,
+            END_APPRV_EMPNO1, 
+            (SELECT  USER_NM    
+                FROM  STM_USERS  
+                WHERE EMPNO = A.END_APPRV_EMPNO1) AS END_APPRV_NM1,
+            END_APPRV_AT1,
+            END_APPRV_EMPNO2, 
+            (SELECT  USER_NM    
+                FROM  STM_USERS  
+                WHERE EMPNO = A.END_APPRV_EMPNO2) AS END_APPRV_NM2,
+            END_APPRV_AT2
+		  FROM PJT_PROJECT A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="projectSn != null and projectSn != ''">
+                AND PROJECT_SN = #{projectSn}
+            </if>
+        </trim>
+    </select>
+
+    <insert id="insertPjtProject" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg001.service.impl.Pjtpmg001Mapper.insertPjtProject */
+        INSERT INTO PJT_PROJECT
+        (
+            PROJECT_SN,
+            PROJECT_NM,
+            PROJECT_CN,
+            PROJECT_SCOPE,
+            PROJECT_ENVRN,
+            PROJECT_AREA,
+            PROJECT_PM_EMPNO,
+            PROJECT_PM_NM,
+            BCNC_CODE,
+            BCNC_CHARGER_CODE,
+            PROJECT_BEGIN_DE,
+            PROJECT_END_DE,
+            REAL_BEGIN_DE,
+            REAL_END_DE,
+            CNTRCT_AMT,
+            VAT_INCLS_AT,
+            GRTS_MNTNCE_MCNT,
+            GRTS_MNTNCE_CN,
+            PROJECT_SE,
+            COMPT_AT,
+            ENTRPS_ID,
+            ENTRPS_PASSWORD,
+            CNTRCT_TY,
+            REGIST_EMPNO,
+            REG_DT,
+            REG_ID
+            ,BCNC_CHARGER_NM
+            ,CHARGER_CTTPC
+            ,PROJECT_URL
+            
+        )
+        VALUES
+        (
+            (SELECT TO_CHAR(SYSDATE, 'YYYYMM') || '-' || NVL(LPAD(to_number(substr(max(project_sn),8,9))+1,3,'0'),'001')
+             FROM PJT_PROJECT 
+             WHERE TO_CHAR(SUBSTR(PROJECT_SN,1,6)) =  TO_CHAR(SYSDATE, 'YYYYMM')),
+            #{projectNm},
+            #{projectCn},
+            #{projectScope},
+            #{projectEnvrn},
+            #{projectArea},
+            #{projectPmEmpno},
+            #{projectPmNm},
+            #{bcncCode},
+            #{bcncChargerCode},
+            #{projectBeginDe},
+            #{projectEndDe},
+            #{realBeginDe},
+            #{realEndDe},
+            #{cntrctAmt},
+            1,
+            #{grtsMntnceMcnt},
+            #{grtsMntnceCn},
+            #{projectSe},
+            #{comptAt},
+            #{entrpsId},
+            #{entrpsPassword},
+            #{cntrctTy},
+            #{registEmpno},
+            SYSDATE,
+            #{regId}
+            ,#{bcncChargerNm}  
+            ,#{chargerCttpc}
+            ,#{projectUrl}
+        )
+    </insert>
+
+    <update id="updatePjtProject" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg001.service.impl.Pjtpmg001Mapper.updatePjtProject */
+        UPDATE PJT_PROJECT SET
+
+            	PROJECT_NM = #{projectNm},
+           		PROJECT_CN = #{projectCn},
+            	PROJECT_SCOPE = #{projectScope},
+            	PROJECT_ENVRN = #{projectEnvrn},
+            	PROJECT_AREA = #{projectArea},
+            	PROJECT_PM_EMPNO = #{projectPmEmpno},
+            	PROJECT_PM_NM = #{projectPmNm},
+            	BCNC_CODE = #{bcncCode},
+            	BCNC_CHARGER_CODE = #{bcncChargerCode},
+            	PROJECT_BEGIN_DE = #{projectBeginDe},
+            	PROJECT_END_DE = #{projectEndDe},
+            	REAL_BEGIN_DE = #{realBeginDe},
+            	REAL_END_DE = #{realEndDe},
+            	CNTRCT_AMT = #{cntrctAmt},
+            	GRTS_MNTNCE_MCNT = #{grtsMntnceMcnt},
+            	GRTS_MNTNCE_CN = #{grtsMntnceCn},
+            	PROJECT_SE = #{projectSe},
+            	COMPT_AT = #{comptAt},
+            	ENTRPS_ID = #{entrpsId},
+            	ENTRPS_PASSWORD = #{entrpsPassword},
+            	CNTRCT_TY = #{cntrctTy},
+            	REGIST_EMPNO = #{registEmpno},
+                UPT_DT = SYSDATE,
+                UPT_ID = #{uptId},
+            	BCNC_CHARGER_NM =#{bcncChargerNm},
+            	CHARGER_CTTPC =#{chargerCttpc},
+            	PROJECT_URL =#{projectUrl}
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+               AND PROJECT_SN = #{projectSn}
+        </trim>
+    </update>
+
+    <delete id="deletePjtProject" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg001.service.impl.Pjtpmg001Mapper.deletePjtProject */
+        DELETE FROM PJT_PROJECT
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND PROJECT_SN = #{projectSn}
+        </trim>
+    </delete>
+    
+    <select id="selectPjtProjectBcncList" parameterType="egovMapForNull" resultType="egovMapForNull">
+    	SELECT ROWNUM AS RNUM,
+    		   CHARGER_SN,
+    		   BCNC_CODE,
+    		   CHARGER_NM,
+    		   CHARGER_DEPT,
+    		   CHARGER_CLSF,
+    		   CHARGER_EMAIL,
+    		   CHARGER_MBTLNUM,
+    		   CHARGER_CTTPC,
+    		   RM,
+    		   REG_DT,
+    		   REG_ID,
+    		   UPT_DT,
+    		   UPT_ID
+    	FROM PJT_BCNC_CHARGER  
+    	 <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="bcncCode != null and bcncCode != ''">
+                AND BCNC_CODE = #{bcncCode}
+            </if>
+        </trim>
+    </select>
+    
+    <update id="updatePjtProjectBcncList" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg002.service.impl.Pjtpmg002Mapper.updatePjtProject */
+        UPDATE PJT_BCNC_CHARGER SET
+			   CHARGER_NM = #{chargerNm},
+			   CHARGER_DEPT = #{chargerDept},
+			   CHARGER_CLSF = #{chargerClsf},
+			   CHARGER_EMAIL = #{chargerEmail},
+			   CHARGER_MBTLNUM = #{chargerMbtlnum},
+			   CHARGER_CTTPC = #{chargerCttpc},
+
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+        	 <if test="bcncCode != null and bcncCode != ''">
+               AND BCNC_CODE = #{bcncCode}
+             </if>
+             <if test="chargerSn != null and chargerSn != ''">
+               AND CHARGER_SN = #{chargerSn}
+             </if>
+        </trim>
+    </update>
+    
+    <insert id="insertPjtProjectBcncList" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg002.service.impl.Pjtpmg002Mapper.insertPjtProject */
+        INSERT INTO PJT_BCNC_CHARGER
+        (
+            CHARGER_SN,
+            BCNC_CODE,
+            CHARGER_NM,
+            CHARGER_DEPT,
+            CHARGER_CLSF,
+            CHARGER_EMAIL,
+            CHARGER_MBTLNUM,
+            CHARGER_CTTPC,
+            REG_DT,
+            REG_ID
+        )
+        VALUES
+        (
+            (SELECT * FROM (SELECT NVL(MAX(TO_NUMBER(CHARGER_SN)),0)+1 FROM PJT_BCNC_CHARGER)),
+            #{bcncCode},
+            #{chargerNm},
+            #{chargerDept},
+            #{chargerClsf},
+            #{chargerEmail},
+            #{chargerMbtlnum},
+            #{chargerCttpc},
+            SYSDATE,
+            #{regId}
+        )
+    </insert>
+    
+    <delete id="deletePjtProjectBcncList" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg002.service.impl.Pjtpmg002Mapper.deletePjtProject */
+        DELETE FROM PJT_BCNC_CHARGER
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+               AND BCNC_CODE = #{bcncCode}
+               AND CHARGER_SN = #{chargerSn}
+        </trim>
+    </delete>
+    
+    <select id="selectPjtProjectCustomerList" parameterType="egovMapForNull" resultType="egovMapForNull">
+     /* kr.co.dbvision.api.pjt.pmg.pjtpmg001.service.impl.Pjtpmg001Mapper.selectPjtProjectCustomerList */
+    
+    SELECT ROWNUM + #{firstIndex} AS NUM, Z.*
+		FROM (
+		    SELECT *
+		    FROM (
+		        SELECT *
+		        FROM (
+			        SELECT ROWNUM AS NUMS, X.*
+			        FROM (
+				        SELECT
+				        	BCNC_CODE, 
+				            BPLC_CODE, 
+				            BIZRNO, 
+				            BCNC_NM, 
+				            FNC_COMCODENM ('C004',BCNC_SE) AS BCNC_SE ,
+				            CPR_SE, 
+				            INDUTY, 
+				            BIZCND, 
+				            REPRSNT_NM, 
+				            NLTY_CODE, 
+				            AREA_NM, POST_CODE, ADRES, ADDR2, 
+				            TELNO, FAX_NO, 
+				            BANK_CODE, 
+				            ACNUT_NO, 
+				            DPSTR_NM, 
+				            HOMEPAGE, 
+				            PURCHS_AT, SALEOFFIC_AT, 
+				            BCNCSCALE_SE, TAXT_SE, BCNC_CN, 
+				            FOND_DE, CAPITAL_AMT, YY_SALE_AMT, 
+				            EMPL_CO, TRADE_NO, CRNCY_CODE, 
+				            USE_AT
+							,CHARGER_NM
+							,CHARGER_TELNO
+							,CHARGER_EMAIL
+							,CHARGER_DEPT
+							,CHARGER_OFCPS				            
+				          FROM STM_CUSTOMER AA
+						<trim prefix="WHERE" prefixOverrides="AND|OR">
+						
+				       		<if test="bcncCode != null and bcncCode != ''">
+				           		AND AA.BCNC_CODE = #{bcncCode}
+				       		</if>
+				            <if test="bcncNm != null and bcncNm != ''">
+				                AND AA.BCNC_NM LIKE '%' || #{bcncNm} || '%'
+				            </if>
+				            <if test="bizrNo != null and bizrNo != ''">
+				                AND AA.BIZRNO LIKE '%' || #{bizrNo} || '%'
+				            </if>
+				            <if test="useAt != null and useAt != ''">
+				                AND AA.USE_AT = #{useAt}
+				            </if>
+				       		<if test="bplcCode != null and bplcCode != ''">
+				           		AND AA.BPLC_CODE = #{bplcCode}
+				       		</if>
+				       		<if test="bcncSe != null and bcncSe != ''">
+				           		AND AA.BCNC_SE = #{bcncSe}
+				       		</if>
+						 </trim>
+					  ORDER BY BCNC_NM
+		            ) X
+		        ) B
+		        WHERE NUMS &gt; #{firstIndex}
+		          AND NUMS &lt;= #{lastIndex}
+		    ) Y
+            <choose>
+            <when test="sortColumId != null and sortColumId != ''">
+                <if test="sortColumId == 'bcncNm'">
+                ORDER BY BCNC_NM <choose><when test="sortDirection == 'desc'">DESC</when><otherwise>ASC</otherwise></choose>
+                </if>
+                <if test="sortColumId == 'bizrno'">
+                ORDER BY BIZRNO   <choose><when test="sortDirection == 'desc'">DESC</when><otherwise>ASC</otherwise></choose>
+                </if>
+                <if test="sortColumId == 'induty'">
+                ORDER BY INDUTY <choose><when test="sortDirection == 'desc'">DESC</when><otherwise>ASC</otherwise></choose>
+                </if>
+                <if test="sortColumId == 'bizcnd'">
+                ORDER BY BIZCND <choose><when test="sortDirection == 'desc'">DESC</when><otherwise>ASC</otherwise></choose>
+                </if>
+                <if test="sortColumId == 'bankNm'">
+                ORDER BY BANK_NM <choose><when test="sortDirection == 'desc'">DESC</when><otherwise>ASC</otherwise></choose>
+                </if>
+                <if test="sortColumId == 'acnutNo'">
+                ORDER BY ACNUT_NO <choose><when test="sortDirection == 'desc'">DESC</when><otherwise>ASC</otherwise></choose>
+                </if>
+                <if test="sortColumId == 'dpstrNm'">
+                ORDER BY DPSTR_NM <choose><when test="sortDirection == 'desc'">DESC</when><otherwise>ASC</otherwise></choose>
+                </if>
+            </when>
+            <otherwise>
+                ORDER BY BPLC_CODE, BCNC_CODE
+            </otherwise>
+            </choose>
+		) Z
+		</select>
+		
+		<select id="selectPjtProjectBaseCustomerList" parameterType="egovMapForNull" resultType="egovMapForNull">
+		/* selectPjtProjectBaseCustomerList */
+		    SELECT *
+		    FROM (
+		        SELECT *
+		        FROM (
+			        SELECT ROWNUM AS NUMS, X.*
+			        FROM (
+				        SELECT
+				        	BCNC_CODE, 
+				            BPLC_CODE, 
+				            (SELECT BPLC_KOR_NM FROM STM_BIZPLC WHERE BPLC_CODE=AA.BPLC_CODE) AS BPLC_NM,
+				            BIZRNO, 
+				            BCNC_NM, 
+				            BCNC_SE, 
+				            CPR_SE, 
+				            INDUTY, 
+				            BIZCND, 
+				            -- CEO_NM, 
+				            NLTY_CODE, 
+				            AREA_NM, POST_CODE, ADRES, ADDR2, 
+				            TELNO, FAX_NO, 
+				            BANK_CODE, 
+				            (SELECT CODE_KOR_NM FROM STM_CODE WHERE CODEKIND_CODE = 'C010' AND CODE = AA.BANK_CODE) AS BANK_NM, 
+				            ACNUT_NO, 
+				            DPSTR_NM, 
+				            HOMEPAGE, 
+				            PURCHS_AT, SALEOFFIC_AT, 
+				            BCNCSCALE_SE, TAXT_SE, BCNC_CN, 
+				            FOND_DE, CAPITAL_AMT, YY_SALE_AMT, 
+				            EMPL_CO, TRADE_NO, CRNCY_CODE, 
+				            USE_AT, 
+				            DSRPR_AT, WOMAN_AT, FOREIGN_AT, SERHANDICAP_AT, SOCIALENTRPRS_AT, DSPSN_STD_AT, GREEN_AT, TECHNOLOGY_AT
+				          FROM STM_CUSTOMER AA
+						<trim prefix="WHERE" prefixOverrides="AND|OR">
+				       		<if test="bcncCode != null and bcncCode != ''">
+				           		AND AA.BCNC_CODE = #{bcncCode}
+				       		</if>
+				            <if test="bcncNm != null and bcncNm != ''">
+				                AND AA.BCNC_NM LIKE '%' || #{bcncNm} || '%'
+				            </if>
+				            <if test="bizrNo != null and bizrNo != ''">
+				                AND AA.BIZRNO LIKE '%' || #{bizrNo} || '%'
+				            </if>
+				            <if test="useAt != null and useAt != ''">
+				                AND AA.USE_AT = #{useAt}
+				            </if>
+				       		<if test="bplcCode != null and bplcCode != ''">
+				           		AND AA.BPLC_CODE = #{bplcCode}
+				       		</if>
+				       		<if test="bcncSe != null and bcncSe != ''">
+				           		AND AA.BCNC_SE = #{bcncSe}
+				       		</if>
+						 </trim>
+					  ORDER BY BPLC_CODE, BCNC_CODE
+		            ) X
+		        ) B
+		    ) Y
+            <choose>
+            <when test="sortColumId != null and sortColumId != ''">
+                <if test="sortColumId == 'bcncNm'">
+                ORDER BY BCNC_NM <choose><when test="sortDirection == 'desc'">DESC</when><otherwise>ASC</otherwise></choose>
+                </if>
+                <if test="sortColumId == 'bizrno'">
+                ORDER BY BIZRNO   <choose><when test="sortDirection == 'desc'">DESC</when><otherwise>ASC</otherwise></choose>
+                </if>
+                <if test="sortColumId == 'ceoNm'">
+                ORDER BY CEO_NM <choose><when test="sortDirection == 'desc'">DESC</when><otherwise>ASC</otherwise></choose>
+                </if>
+                <if test="sortColumId == 'induty'">
+                ORDER BY INDUTY <choose><when test="sortDirection == 'desc'">DESC</when><otherwise>ASC</otherwise></choose>
+                </if>
+                <if test="sortColumId == 'bizcnd'">
+                ORDER BY BIZCND <choose><when test="sortDirection == 'desc'">DESC</when><otherwise>ASC</otherwise></choose>
+                </if>
+                <if test="sortColumId == 'bankNm'">
+                ORDER BY BANK_NM <choose><when test="sortDirection == 'desc'">DESC</when><otherwise>ASC</otherwise></choose>
+                </if>
+                <if test="sortColumId == 'acnutNo'">
+                ORDER BY ACNUT_NO <choose><when test="sortDirection == 'desc'">DESC</when><otherwise>ASC</otherwise></choose>
+                </if>
+                <if test="sortColumId == 'dpstrNm'">
+                ORDER BY DPSTR_NM <choose><when test="sortDirection == 'desc'">DESC</when><otherwise>ASC</otherwise></choose>
+                </if>
+            </when>
+            <otherwise>
+                ORDER BY BPLC_CODE, BCNC_CODE
+            </otherwise>
+            </choose>
+		</select>
+		
+		<select id="selectPjtCompAllCnt" parameterType="egovMapForNull" resultType="java.lang.Integer">
+        SELECT COUNT(*) AS totalRecordCount
+          FROM STM_CUSTOMER AA
+		<trim prefix="WHERE" prefixOverrides="AND|OR">
+       		<if test="bcncCode != null and bcncCode != ''">
+           		AND AA.BCNC_CODE = #{bcncCode}
+       		</if>
+            <if test="bcncNm != null and bcncNm != ''">
+                AND AA.BCNC_NM LIKE '%' || #{bcncNm} || '%'
+            </if>
+            <if test="bizrNo != null and bizrNo != ''">
+                AND AA.BIZRNO LIKE '%' || #{bizrNo} || '%'
+            </if>
+            <if test="useAt != null and useAt != ''">
+                AND AA.USE_AT = #{useAt}
+            </if>
+       		<if test="bplcCode != null and bplcCode != ''">
+           		AND AA.BPLC_CODE = #{bplcCode}
+       		</if>
+       		<if test="bcncSe != null and bcncSe != ''">
+           		AND AA.BCNC_SE = #{bcncSe}
+       		</if>
+		 </trim>
+    </select>
+    
+    <select id="selectJobDay" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg001.service.impl.Pjtpmg001Mapper.selectJobDay */
+        SELECT (TO_DATE(PROJECT_END_DE) - TO_DATE(PROJECT_BEGIN_DE)) - (SELECT COUNT(*) FROM STM_JOB_DAY
+                 WHERE HVOF_AT='1' AND (TO_DATE(JOB_DE) BETWEEN TO_DATE(#{projectBeginDe}) AND TO_DATE(#{projectEndDe}))) AS JOB_DE 
+        FROM PJT_PROJECT
+        WHERE PROJECT_SN = #{projectSn}
+    </select>
+    
+    <update id="insertPjtProjectNewApprov" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg001.service.impl.Pjtpmg001Mapper.insertPjtProjectNewApprov */
+        UPDATE PJT_PROJECT SET
+                    NEW_APPRV_EMPNO1 = #{newApprvEmpno1}
+                <if test="newApprvEmpno2 != null and newApprvEmpno2 != ''">
+                ,NEW_APPRV_EMPNO2 = #{newApprvEmpno2}
+                </if>
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+               AND PROJECT_SN = #{projectSn}
+        </trim>
+    </update>
+    
+    <update id="insertPjtProjectEndApprov" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg001.service.impl.Pjtpmg001Mapper.insertPjtProjectEndApprov */
+        UPDATE PJT_PROJECT SET
+                    END_APPRV_EMPNO1 = #{endApprvEmpno1}
+                <if test="endApprvEmpno2 != null and endApprvEmpno2 != ''">
+                ,END_APPRV_EMPNO2 = #{endApprvEmpno2}
+                </if>
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+               AND PROJECT_SN = #{projectSn}
+        </trim>
+    </update>
+    
+    <select id="selectNewApprov" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg001.service.impl.Pjtpmg001Mapper.selectNewApprov */
+        SELECT 
+            NEW_APPRV_EMPNO1, 
+            (SELECT  USER_NM    
+                FROM  STM_USERS  
+                WHERE EMPNO = A.NEW_APPRV_EMPNO1) AS NEW_APPRV_NM1,
+            (SELECT  FNC_GETRSPOFCNM(RSPOFC_CODE)    
+                FROM  MHS_EMP  
+                WHERE EMPNO = A.NEW_APPRV_EMPNO1) AS NEW_APPRV_RSPOFC1,
+            (SELECT  EMAIL
+                FROM  MHS_EMP  
+                WHERE EMPNO = A.NEW_APPRV_EMPNO1) AS NEW_APPRV_MAIL1,
+            NEW_APPRV_DE1, 
+            NEW_APPRV_AT1,
+            NEW_APPRV_EMPNO2, 
+            (SELECT  USER_NM    
+                FROM  STM_USERS  
+                WHERE EMPNO = A.NEW_APPRV_EMPNO2) AS NEW_APPRV_NM2,
+            (SELECT  FNC_GETRSPOFCNM(RSPOFC_CODE)    
+                FROM  MHS_EMP  
+                WHERE EMPNO = A.NEW_APPRV_EMPNO2) AS NEW_APPRV_RSPOFC2,
+             (SELECT  EMAIL
+                FROM  MHS_EMP  
+                WHERE EMPNO = A.NEW_APPRV_EMPNO2) AS NEW_APPRV_MAIL2,
+            NEW_APPRV_DE2,
+            NEW_APPRV_AT2,
+            END_APPRV_EMPNO1,
+            (SELECT  USER_NM    
+                FROM  STM_USERS  
+                WHERE EMPNO = A.END_APPRV_EMPNO1) AS END_APPRV_NM1,
+            (SELECT  FNC_GETRSPOFCNM(RSPOFC_CODE)    
+                FROM  MHS_EMP  
+                WHERE EMPNO = A.END_APPRV_EMPNO1) AS END_APPRV_RSPOFC1,
+             (SELECT  EMAIL
+                FROM  MHS_EMP  
+                WHERE EMPNO = A.END_APPRV_EMPNO1) AS END_APPRV_MAIL1,
+            END_APPRV_DE1, 
+            END_APPRV_AT1,
+            END_APPRV_EMPNO2, 
+            (SELECT  USER_NM    
+                FROM  STM_USERS  
+                WHERE EMPNO = A.END_APPRV_EMPNO2) AS END_APPRV_NM2, 
+            (SELECT  FNC_GETRSPOFCNM(RSPOFC_CODE)    
+                FROM  MHS_EMP  
+                WHERE EMPNO = A.END_APPRV_EMPNO2) AS END_APPRV_RSPOFC2,
+            (SELECT  EMAIL
+                FROM  MHS_EMP  
+                WHERE EMPNO = A.END_APPRV_EMPNO2) AS END_APPRV_MAIL2,
+            END_APPRV_DE2,
+            END_APPRV_AT2
+        FROM PJT_PROJECT A
+        WHERE PROJECT_SN = #{projectSn}
+    </select>
+    
+    <update id="insertPjtProjectNewApprovDe" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg001.service.impl.Pjtpmg001Mapper.insertPjtProjectNewApprovDe */
+        UPDATE PJT_PROJECT SET
+            <if test="newApprvDe1 != null and newApprvDe1 != ''">
+                NEW_APPRV_DE1 = TO_CHAR(SYSDATE, 'YYYYMMDD'),
+            </if>
+            <if test="newApprvAt1 != null and newApprvAt1 != ''">
+                NEW_APPRV_AT1 = #{newApprvAt1}
+            </if>
+            <if test="newApprvDe2 != null and newApprvDe2 != ''">
+                NEW_APPRV_DE2 = TO_CHAR(SYSDATE, 'YYYYMMDD'),
+            </if>
+            <if test="newApprvAt2 != null and newApprvAt2 != ''">
+                NEW_APPRV_AT2 = #{newApprvAt2}
+            </if>
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+               AND PROJECT_SN = #{projectSn}
+        </trim>
+    </update>
+    
+    <update id="updatePjtProjectNewApprovAt" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg001.service.impl.Pjtpmg001Mapper.updatePjtProjectNewApprovAt */
+        UPDATE PJT_PROJECT SET
+        <if test="comptAt != null and comptAt != ''">
+                COMPT_AT = #{comptAt}
+        </if>
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+               AND PROJECT_SN = #{projectSn}
+        </trim>
+    </update>
+    
+    <insert id="insertPjtProjectEnd" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg001.service.impl.Pjtpmg001Mapper.insertPjtProjectEnd */
+        INSERT INTO PJT_COMPLETE
+        (   
+            PROJECT_SN,
+            COMPLETE_CN1,
+            COMPLETE_CN2,
+            COMPLETE_CN3,
+            COMPLETE_CN4
+        )
+        VALUES
+        (
+            #{projectSn},
+            #{completeCn1},
+            #{completeCn2},
+            #{completeCn3},
+            #{completeCn4}
+        )
+    </insert>
+    
+    <update id="updatePjtProjectEnd" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg001.service.impl.Pjtpmg001Mapper.updatePjtProjectEnd */
+        UPDATE PJT_COMPLETE SET
+                COMPLETE_CN1 = #{completeCn1},
+                COMPLETE_CN2 = #{completeCn2},
+                COMPLETE_CN3 = #{completeCn3},
+                COMPLETE_CN4 = #{completeCn4},
+                APPRVER_CN1 = #{apprverCn1},
+                APPRVER_CN2 = #{apprverCn2}
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+               AND PROJECT_SN = #{projectSn}
+        </trim>    
+    </update>
+    
+    <select id="selectPjtProjectEnd" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg001.service.impl.Pjtpmg001Mapper.selectPjtProjectEnd */
+        SELECT COMPLETE_CN1, COMPLETE_CN2, COMPLETE_CN3, COMPLETE_CN4, PROJECT_SN, APPRVER_CN1, APPRVER_CN2
+        FROM PJT_COMPLETE
+        WHERE PROJECT_SN = #{projectSn}
+    </select>
+    
+    <update id="insertPjtProjectEndApprovDe" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg001.service.impl.Pjtpmg001Mapper.insertPjtProjectEndApprovDe */
+        UPDATE PJT_PROJECT SET
+            <if test="endApprvDe1 != null and endApprvDe1 != ''">
+                END_APPRV_DE1 = TO_CHAR(SYSDATE, 'YYYYMMDD')
+            </if>
+            <if test="endApprvAt1 != null and endApprvAt1 != ''">
+                ,END_APPRV_AT1 = #{endApprvAt1}
+            </if>
+            <if test="endApprvDe2 != null and endApprvDe2 != ''">
+                END_APPRV_DE2 = TO_CHAR(SYSDATE, 'YYYYMMDD')
+            </if>
+            <if test="endApprvAt2 != null and endApprvAt2 != ''">
+                ,END_APPRV_AT2 = #{endApprvAt2}
+            </if>
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+               AND PROJECT_SN = #{projectSn}
+        </trim>
+    </update>
+    
+    <select id="selectPjtProjectPlanAcmsltCnt" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg001.service.impl.Pjtpmg001Mapper.selectPjtProjectPlanAcmsltCnt */
+        SELECT HNF_PLAN_CNT, BUGT_PLAN_CNT, OUTPUT_CNT, HNF_ACMSLT_CNT, BUGT_ACMSLT_CNT
+      FROM 
+        (SELECT 
+            (SELECT COUNT(*) FROM PJT_HNF_PLAN  WHERE PROJECT_SN = A.PROJECT_SN) AS HNF_PLAN_CNT,
+            (SELECT COUNT(*) FROM PJT_BUGT_PLAN  WHERE PROJECT_SN = A.PROJECT_SN) AS BUGT_PLAN_CNT,
+            (SELECT COUNT(*) FROM PJT_HNF_ACMSLT  WHERE PROJECT_SN = A.PROJECT_SN) AS HNF_ACMSLT_CNT,
+            (SELECT COUNT(*) FROM PJT_BUGT_ACMSLT  WHERE PROJECT_SN = A.PROJECT_SN) AS BUGT_ACMSLT_CNT,
+            (SELECT COUNT(*) FROM PJT_PROJECT_OUTPUT WHERE PROJECT_SN = A.PROJECT_SN) AS OUTPUT_CNT
+         FROM PJT_PROJECT A
+         WHERE PROJECT_SN = #{projectSn})
+    </select>
+    
+    <update id="savePjtRepair" parameterType="EgovMapForNull"> 
+        MERGE INTO PJT_REPAIR A
+             USING (SELECT
+                    #{repairSn} REPAIR_SN,
+                    #{projectSnRepair} PROJECT_SN
+                    FROM DUAL) B
+                ON (
+                    A.REPAIR_SN = B.REPAIR_SN AND 
+                    A.PROJECT_SN = B.PROJECT_SN
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+               REPAIR_SE= #{repairSe},
+               REPAIR_IEM= #{repairIem},
+               REPAIR_CN= #{repairCn},
+               REPAIR_BEGIN_DE= REPLACE(#{repairBeginDe},'-',''),
+               REPAIR_END_DE= REPLACE(#{repairEndDe},'-',''),
+               REPAIR_PSITN= #{repairPsitn},
+               REPAIR_CHARGER_NM= #{repairChargerNm},
+               REPAIR_CHARGER_CTTPC= #{repairChargerCttpc}
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               REPAIR_SN,
+               PROJECT_SN,
+               REPAIR_SE,
+               REPAIR_IEM,
+               REPAIR_CN,
+               REPAIR_BEGIN_DE,
+               REPAIR_END_DE,
+               REPAIR_PSITN,
+               REPAIR_CHARGER_NM,
+               REPAIR_CHARGER_CTTPC
+               
+        ) VALUES (
+
+               (SELECT COUNT(1)+1 FROM PJT_REPAIR WHERE PROJECT_SN = #{projectSnRepair}),
+               #{projectSnRepair}, 
+               #{repairSe},
+               #{repairIem},   
+               #{repairCn},
+               REPLACE(#{repairBeginDe},'-',''),
+               REPLACE(#{repairEndDe},'-',''),
+               #{repairPsitn},
+               #{repairChargerNm},
+               #{repairChargerCttpc}
+        )
+    </update>
+    
+    <select id="selectPjtRepair" parameterType="egovMapForNull" resultType="egovMapForNull">
+        SELECT PROJECT_SN,
+               REPAIR_SN,
+               REPAIR_SE,
+               REPAIR_IEM,
+               REPAIR_CN,
+               REPAIR_BEGIN_DE,
+               REPAIR_END_DE,
+               REPAIR_PSITN,
+               REPAIR_CHARGER_NM,
+               REPAIR_CHARGER_CTTPC
+        FROM PJT_REPAIR
+        WHERE PROJECT_SN = #{projectSnRepair}
+        AND REPAIR_SN = #{repairSn}
+    </select>
+    
+    <select id="selectPjtProjectRepairList" parameterType="egovMapForNull" resultType="egovMapForNull">
+        SELECT A.*, ROWNUM RNUM FROM (
+            SELECT REPAIR_SN,
+                   PROJECT_SN,
+                   REPAIR_SE,
+                   TO_CHAR(TO_DATE(REPAIR_BEGIN_DE), 'YYYY-MM-DD') || ' ~ ' || TO_CHAR(TO_DATE(REPAIR_END_DE), 'YYYY-MM-DD') AS REPAIR_DE,
+                   REPAIR_PSITN,
+                   NVL(REPAIR_CHARGER_NM, ' ') AS REPAIR_CHARGER_NM,
+                   NVL(REPAIR_CHARGER_CTTPC, ' ') AS REPAIR_CHARGER_CTTPC
+            FROM PJT_REPAIR
+            WHERE PROJECT_SN = #{projectSn}
+            ORDER BY REPAIR_SN DESC
+        ) A
+    </select>
+    
+    <delete id="deletePjtRepair" parameterType="EgovMapForNull">
+        DELETE FROM PJT_REPAIR
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND PROJECT_SN = #{projectSn}
+                AND REPAIR_SN = #{repairSn}
+        </trim>
+    </delete>
+
+</mapper>

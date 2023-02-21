@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE form-validation PUBLIC
+    "-//Apache Software Foundation//DTD Commons Validator Rules Configuration 1.1//EN"
+    "http://jakarta.apache.org/commons/dtds/validator_1_1.dtd">
+
+<form-validation>
+
+    <formset>
+        <form name="Yndyta001">
+            <field property="empno" depends="required">
+                <arg0 key="직원의 개인번호를 관리하기위한 항목는"/>
+            </field>
+            <field property="belongYy" depends="required">
+                <arg0 key="귀속년도는"/>
+            </field>
+            <field property="calcYm" depends="required">
+                <arg0 key="정산년월 13월이면 연말정산이고, 그외 월은 중도퇴사 연말정산는"/>
+            </field>
+        </form>
+    </formset>
+
+</form-validation>

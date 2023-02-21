@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.stm.sys.stmsys001.service.mapper.Stmsys001Mapper">
+
+    <select id="searchCheck" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.pub.usr.pubusr001.service.mapper.Stmsys001Mapper.searchCheck */
+        SELECT CODE AS KEY,
+               CODE_KOR_NM AS VALUE
+          FROM STM_CODE
+         WHERE CODEKIND_CODE = 'C001'
+           AND USE_AT = '1'
+           ORDER BY ORDR, CODE_KOR_NM
+    </select>
+
+    <select id="selectStmsys001List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.stm.sys.stmsys001.service.mapper.Stmsys001Mapper.selectStmsys001List */
+         SELECT
+               BPLC_CODE,
+               PRDUCT_USE_ITEM,
+               MODULE_USE_ITEM,
+               SKN_SE_CODE,
+               PGNG_UNIT,
+               MASK_MTH_CODE,
+               EMPNO_ENT_MTH,
+               LANG_SE_CODE,
+               MULTI_LOGIN_PERM_AT,
+               DCMLPOINT_PROCESS_MTH,
+               PASSWORD_SETTING_MTH,
+               SEARCH_PD_SETTING_CODE,
+               SELF_AUTH_MTH,
+               PASSWORD_CHANGE_CYCLE,
+               NEXT_CHANGE_AT,
+               SALARY_DCMLPOINT_PROCESS_MTH,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM STM_ENV_SETTING A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="bplcCode != null and bplcCode != ''">
+                AND BPLC_CODE = #{bplcCode}
+            </if>
+            <if test="sRegDt != null and sRegDt != ''">
+                <![CDATA[
+                AND REG_DT >= CONVERT(DATETIME, #{sRegDt} + ' 00:00:00') 
+                ]]>
+            </if>
+            <if test="eRegDt != null and eRegDt != ''">
+                <![CDATA[
+                AND REG_DT <= CONVERT(DATETIME, #{eRegDt} + ' 23:59:59')
+                ]]>
+             </if>
+        </trim>
+    </select>
+
+    <select id="selectStmsys001" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.stm.sys.stmsys001.service.mapper.Stmsys001Mapper.selectStmsys001 */
+        SELECT
+               BPLC_CODE,
+               PRDUCT_USE_ITEM,
+               MODULE_USE_ITEM,
+               SKN_SE_CODE,
+               PGNG_UNIT,
+               MASK_MTH_CODE,
+               EMPNO_ENT_MTH,
+               LANG_SE_CODE,
+               MULTI_LOGIN_PERM_AT,
+               DCMLPOINT_PROCESS_MTH,
+               PASSWORD_SETTING_MTH,
+               SEARCH_PD_SETTING_CODE,
+               SELF_AUTH_MTH,
+               PASSWORD_CHANGE_CYCLE,
+               NEXT_CHANGE_AT,
+               SALARY_DCMLPOINT_PROCESS_MTH,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM STM_ENV_SETTING A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="bplcCode != null and bplcCode != ''">
+                AND BPLC_CODE = #{bplcCode}
+            </if>
+        </trim>
+    </select>
+
+    <update id="saveStmsys001" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.stm.sys.stmsys001.service.mapper.Stmsys001Mapper.saveStmsys001 */
+        MERGE INTO STM_ENV_SETTING A
+             USING (SELECT
+                    #{bplcCode} BPLC_CODE
+                    FROM DUAL) B
+                ON (
+                    A.BPLC_CODE = B.BPLC_CODE
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               PRDUCT_USE_ITEM= #{prductUseItem},
+               MODULE_USE_ITEM= #{moduleUseItem},
+               SKN_SE_CODE= #{sknSeCode},
+               PGNG_UNIT= #{pgngUnit},
+               MASK_MTH_CODE= #{maskMthCode},
+               EMPNO_ENT_MTH= #{empnoEntMth},
+               LANG_SE_CODE= #{langSeCode},
+               MULTI_LOGIN_PERM_AT= #{multiLoginPermAt},
+               DCMLPOINT_PROCESS_MTH= #{dcmlpointProcessMth},
+               PASSWORD_SETTING_MTH= #{passwordSettingMth},
+               SEARCH_PD_SETTING_CODE= #{searchPdSettingCode},
+               SELF_AUTH_MTH= #{selfAuthMth},
+               PASSWORD_CHANGE_CYCLE= #{passwordChangeCycle},
+               NEXT_CHANGE_AT= #{nextChangeAt},
+               SALARY_DCMLPOINT_PROCESS_MTH= #{salaryDcmlpointProcessMth},
+               UPT_DT = GETDATE(),
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               BPLC_CODE,
+               PRDUCT_USE_ITEM,
+               MODULE_USE_ITEM,
+               SKN_SE_CODE,
+               PGNG_UNIT,
+               MASK_MTH_CODE,
+               EMPNO_ENT_MTH,
+               LANG_SE_CODE,
+               MULTI_LOGIN_PERM_AT,
+               DCMLPOINT_PROCESS_MTH,
+               PASSWORD_SETTING_MTH,
+               SEARCH_PD_SETTING_CODE,
+               SELF_AUTH_MTH,
+               PASSWORD_CHANGE_CYCLE,
+               NEXT_CHANGE_AT,
+               SALARY_DCMLPOINT_PROCESS_MTH,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{bplcCode},
+               #{prductUseItem},
+               #{moduleUseItem},
+               #{sknSeCode},
+               #{pgngUnit},
+               #{maskMthCode},
+               #{empnoEntMth},
+               #{langSeCode},
+               #{multiLoginPermAt},
+               #{dcmlpointProcessMth},
+               #{passwordSettingMth},
+               #{searchPdSettingCode},
+               #{selfAuthMth},
+               #{passwordChangeCycle},
+               #{nextChangeAt},
+               #{salaryDcmlpointProcessMth},
+               GETDATE(),
+               #{regId}
+
+        )
+    </update>
+    
+    <select id="selectEtsStmsys001" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.stm.sys.stmsys001.service.mapper.Stmsys001Mapper.selectEtsStmsys001 */
+        SELECT
+               BPLC_CODE, 
+               READNG, 
+               SEAL_IMG, 
+               SIGN_MARK_WAY, 
+               REG_ID, 
+               REG_DT, 
+               UPT_ID, 
+               UPT_DT,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM SGN_ENVRN_SETTING A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="bplcCode != null and bplcCode != ''">
+                AND BPLC_CODE = #{bplcCode}
+            </if>
+        </trim>
+    </select>
+
+    <update id="saveEtsStmsys001" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.stm.sys.stmsys001.service.mapper.Stmsys001Mapper.saveEtsStmsys001 */
+        MERGE INTO SGN_ENVRN_SETTING A
+             USING (SELECT
+                    #{bplcCode} BPLC_CODE
+                    FROM DUAL) B
+                ON (
+                    A.BPLC_CODE = B.BPLC_CODE
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               READNG = #{readng},
+               SEAL_IMG = #{sealImg},
+               SIGN_MARK_WAY = #{signMarkWay},               
+               UPT_DT = GETDATE(),
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               BPLC_CODE, 
+               READNG, 
+               SEAL_IMG, 
+               SIGN_MARK_WAY,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{bplcCode},
+               #{readng},
+               #{sealImg},      
+               #{signMarkWay},                
+               GETDATE(),
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deleteStmsys001" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.stm.sys.stmsys001.service.mapper.Stmsys001Mapper.deleteStmsys001 */
+        DELETE FROM STM_ENV_SETTING
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND BPLC_CODE = #{bplcCode}
+        </trim>
+    </delete>
+</mapper>

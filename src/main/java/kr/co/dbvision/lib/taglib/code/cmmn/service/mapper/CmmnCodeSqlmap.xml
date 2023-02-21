@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.lib.taglib.code.cmmn.service.mapper.CmmnCodeMapper">
+    <select id="selectStmCode" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.lib.taglib.code.cmmn.service.impl.CmmnCodeMapper.selectLocaleCode */
+        SELECT CODEKIND_CODE,
+               CODE AS CODE,
+               ORDR, 
+               CODE_KOR_NM AS CODE_NM,
+               CODE_ENG_NM AS CODE_ENG_NM,
+               CODE_THIRD_NM AS CODE_THIRD_NM
+               ,FACTOR
+               ,REFER1_DC 
+               ,REFER2_DC 
+               ,REFER3_DC 
+               ,REFER4_DC                   
+          FROM STM_CODE
+         WHERE USE_AT = '1'
+    </select>
+</mapper>

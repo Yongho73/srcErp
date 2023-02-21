@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mtx.evd.mtxevd003.service.mapper.Mtxevd003Mapper">
+
+    <select id="selectMtxevd003List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mtx.evd.mtxevd003.service.mapper.Mtxevd003Mapper.selectMtxevd003List */
+         SELECT * FROM ( SELECT ROWNUM RNUM, 
+                               A.*                 
+                          FROM (     
+        SELECT
+               CARD_EVID_NO,
+               CARD_NO,
+               FNC_CARDNO_DASH(CARD_NO) AS DASH_CARD_NO,
+               USE_CONFM_NO,
+               BPLC_CODE,
+               (SELECT BPLC_KOR_NM FROM STM_BIZPLC WHERE BPLC_CODE=A.BPLC_CODE) AS BPLC_CODE_NM,
+               USER_DEPT_CODE,
+               USER_EMPNO,
+               FNC_DATESTR(USE_DE) AS USE_DE,
+               USE_AMT,
+               SLIP_ISU_AMT,
+               DSCNT_AMT,
+               CONFM_AMT,
+               SUPPLY_AMT,
+               VAT_AMT,
+               FNC_DATESTR(CONFM_DE) AS CONFM_DE,
+               CONFM_TM,
+               BSNM_SE_CODE,
+               BCNC_NM,
+               BIZCND,
+               INDUTY,
+               USE_DTLS,
+               ANACT_NO,
+               PROPER_EVID_AT,
+               WRITE_SE_CODE,
+               ATCHMNFL_NO,
+               RM,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MFS_CARD_EVID A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="bplcCode != null and bplcCode != ''">
+                AND BPLC_CODE = #{bplcCode}
+            </if>
+            <if test="cardEvidNo != null and cardEvidNo != ''">
+                AND CARD_EVID_NO = #{cardEvidNo}
+            </if>
+            <if test="properEvidAt != null and properEvidAt != ''">
+                AND PROPER_EVID_AT = #{properEvidAt}
+            </if>
+            <if test="cardNo != null and cardNo != ''">
+                AND CARD_NO LIKE '%'|| #{cardNo} || '%'
+            </if>
+            <if test="deptKorNm != null and deptKorNm != ''">
+                AND USER_DEPT_CODE LIKE '%' || UPPER(#{deptKorNm}) || '%'
+            </if>
+            <if test="stDate != null and stDate != ''">
+                <![CDATA[
+                AND USE_DE >= TO_DATE(#{stDate} || '000000','YYYY-MM-DDHH24MISS')
+                ]]>
+            </if>
+            <if test="edDate != null and edDate != ''">
+                <![CDATA[
+                AND USE_DE <= TO_DATE(#{edDate} || '235959','YYYY-MM-DDHH24MISS')
+                ]]>
+             </if>
+        </trim>
+        ORDER  BY CARD_EVID_NO 
+                               ) A 
+                      ) B 
+                WHERE RNUM  <![CDATA[ >  ]]>  #{firstIndex}
+                  AND RNUM  <![CDATA[ <= ]]> #{lastIndex}  
+    </select>
+    
+    <select id="selectMtxevd003ListCnt" parameterType="egovMapForNull" resultType="java.lang.Integer">
+        /* kr.co.dbvision.api.mtx.evd.mtxevd003.service.mapper.Mtxevd003Mapper.selectMtxevd003ListCnt */
+        SELECT COUNT(*) AS totalRecordCount
+          FROM MFS_CARD_EVID
+    </select>
+
+    <select id="selectMtxevd003" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mtx.evd.mtxevd003.service.mapper.Mtxevd003Mapper.selectMtxevd003 */
+        SELECT
+               CARD_EVID_NO,
+               CARD_NO,
+               FNC_CARDNO_DASH(CARD_NO) AS DASH_CARD_NO,
+               USE_CONFM_NO,
+               BPLC_CODE,
+               (SELECT BPLC_KOR_NM FROM STM_BIZPLC WHERE BPLC_CODE=A.BPLC_CODE) AS BPLC_CODE_NM,
+               USER_DEPT_CODE,
+               USER_EMPNO,
+               USE_DE,
+               USE_AMT,
+               SLIP_ISU_AMT,
+               DSCNT_AMT,
+               CONFM_AMT,
+               SUPPLY_AMT,
+               VAT_AMT,
+               CONFM_DE,
+               CONFM_TM,
+               BSNM_SE_CODE,
+               BCNC_NM,
+               BIZCND,
+               INDUTY,
+               USE_DTLS,
+               ANACT_NO,
+               PROPER_EVID_AT,
+               WRITE_SE_CODE,
+               ATCHMNFL_NO,
+               RM,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MFS_CARD_EVID A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="cardEvidNo != null and cardEvidNo != ''">
+                AND CARD_EVID_NO = #{cardEvidNo}
+            </if>
+        </trim>
+    </select>
+
+    <update id="saveMtxevd003" parameterType="kr.co.dbvision.api.mtx.evd.mtxevd003.entity.Mtxevd003">
+        /* kr.co.dbvision.api.mtx.evd.mtxevd003.service.mapper.Mtxevd003Mapper.saveMtxevd003 */
+        MERGE INTO MFS_CARD_EVID A
+             USING (SELECT
+                    #{cardEvidNo} CARD_EVID_NO
+                    FROM DUAL) B
+                ON (
+                    A.CARD_EVID_NO = B.CARD_EVID_NO
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+               CARD_NO= REPLACE(#{cardNo},'-',''),
+               USE_CONFM_NO= #{useConfmNo},
+               BPLC_CODE= #{bplcCode},
+               USER_DEPT_CODE= #{userDeptCode},
+               USER_EMPNO= #{userEmpno},
+               USE_DE= REPLACE(#{useDe},'-',''),
+               USE_AMT= #{useAmt},
+               SLIP_ISU_AMT= #{slipIsuAmt},
+               DSCNT_AMT= #{dscntAmt},
+               CONFM_AMT= #{confmAmt},
+               SUPPLY_AMT= #{supplyAmt},
+               VAT_AMT= #{vatAmt},
+               CONFM_DE= #{confmDe},
+               CONFM_TM= #{confmTm},
+               BSNM_SE_CODE= #{bsnmSeCode},
+               BCNC_NM= #{bcncNm},
+               BIZCND= #{bizcnd},
+               INDUTY= #{induty},
+               USE_DTLS= #{useDtls},
+               ANACT_NO= #{anactNo},
+               PROPER_EVID_AT= #{properEvidAt},
+               WRITE_SE_CODE= #{writeSeCode},
+               ATCHMNFL_NO= #{atchmnflNo},
+               RM= #{rm},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               CARD_EVID_NO,
+               CARD_NO,
+               USE_CONFM_NO,
+               BPLC_CODE,
+               USER_DEPT_CODE,
+               USER_EMPNO,
+               USE_DE,
+               USE_AMT,
+               SLIP_ISU_AMT,
+               DSCNT_AMT,
+               CONFM_AMT,
+               SUPPLY_AMT,
+               VAT_AMT,
+               CONFM_DE,
+               CONFM_TM,
+               BSNM_SE_CODE,
+               BCNC_NM,
+               BIZCND,
+               INDUTY,
+               USE_DTLS,
+               ANACT_NO,
+               PROPER_EVID_AT,
+               WRITE_SE_CODE,
+               ATCHMNFL_NO,
+               RM,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{cardEvidNo},
+               REPLACE(#{cardNo},'-',''),
+               #{useConfmNo},
+               #{bplcCode},
+               #{userDeptCode},
+               #{userEmpno},
+               REPLACE(#{useDe},'-',''),
+               #{useAmt},
+               #{slipIsuAmt},
+               #{dscntAmt},
+               #{confmAmt},
+               #{supplyAmt},
+               #{vatAmt},
+               #{confmDe},
+               #{confmTm},
+               #{bsnmSeCode},
+               #{bcncNm},
+               #{bizcnd},
+               #{induty},
+               #{useDtls},
+               #{anactNo},
+               #{properEvidAt},
+               #{writeSeCode},
+               #{atchmnflNo},
+               #{rm},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deleteMtxevd003" parameterType="kr.co.dbvision.api.mtx.evd.mtxevd003.entity.Mtxevd003">
+        /* kr.co.dbvision.api.mtx.evd.mtxevd003.service.mapper.Mtxevd003Mapper.deleteMtxevd003 */
+        DELETE FROM MFS_CARD_EVID
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND CARD_EVID_NO = #{cardEvidNo}
+        </trim>
+    </delete>
+</mapper>

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mps.mng.mpsmng001.service.mapper.Mpsmng001Mapper">
+
+	<select id="selectMpsSalaryCdList" parameterType="egovMapForNull" resultType="egovMapForNull">	
+		/* Mpsmng001.selectMpsSalaryCdList */ 
+	 SELECT  
+           	 SALARY_CD			/*급여항목코드*/
+            ,SALARY_NM			/*급여항목명*/
+            ,PAYMENTDDT_CLS		/*지급공제구분*/
+            ,SALARY_DESC		/*급여코드설명*/
+            ,F_GETDATESTRING(USE_SDT) AS USE_SDT	/*사용시작일자*/
+            , F_GETCOMMONCODENM(PAYMENTDDT_CLS, 'C064') AS PAYMENTDDT_CLS_NM
+            ,DSP_ODR			/*정렬순서*/
+            ,USE_YN				/*사용여부*/
+            ,BASEWAGEINCLS_YN	/*통상임금포함여부*/
+            ,AVEWAGEINCLS_YN	/*평균임금포함여부*/
+            ,OJTAPPLY_YN		/*수습적용 여부*/
+            ,DHALF_CALC_YN		/*일할계산 여부*/
+            ,RETIREAMTOBJ_YN	/*퇴직금대상 여부*/
+            ,ACCOUNT_NO         /* 계좌번호*/
+            ,BUGT_MK_YN         /* 예산배정대상여부*/
+        FROM C_SALARYCD
+     
+	 
+		  <trim prefix="WHERE" prefixOverrides="AND|OR">
+			<if test="salaryCd != null and salaryCd != ''">
+		       	AND SALARY_CD LIKE '%'||#{salaryCd}||'%'
+			</if>
+			<if test="salaryNm != null and salaryNm != ''">
+		       	AND SALARY_NM LIKE '%'||#{salaryNm}||'%'
+			</if>
+			<if test="paymentddtCls != null and paymentddtCls != ''">
+		       	AND PAYMENTDDT_CLS = #{paymentddtCls}
+			</if>
+			<if test="useYn != null and useYn != ''">
+		       	AND USE_YN = #{useYn}
+			</if>
+			<if test="sRegDt != null and sRegDt != ''">
+				<![CDATA[
+		      	AND REG_DT >= TO_DATE(#{sRegDt} || '000000','YYYYMMDDHH24MISS')
+				]]>
+			</if>
+			<if test="eRegDt != null and eRegDt != ''">
+				<![CDATA[
+		       	AND REG_DT <= TO_DATE(#{eRegDt} || '235959','YYYYMMDDHH24MISS')
+		    	]]>
+			</if>
+		  </trim>
+		 ORDER BY SALARY_CD
+	</select>
+
+	<select id="selectMpsSalaryCd" parameterType="egovMapForNull" resultType="egovMapForNull">
+		/* Mpsmng001.selectMpsSalaryCd */ 
+		 SELECT
+              SALARY_CD			/*급여항목코드*/
+            , SALARY_NM			/*급여항목명*/
+            , PAYMENTDDT_CLS		/*지급공제구분*/
+            , SALARY_DESC		/*급여코드설명*/
+            , F_GETDATESTRING(USE_SDT) AS USE_SDT	/*사용시작일자*/
+            , F_GETCOMMONCODENM(PAYMENTDDT_CLS, 'C064') AS PAYMENTDDT_CLS_NM
+            , DSP_ODR			/*정렬순서*/
+            , USE_YN				/*사용여부*/
+            , BASEWAGEINCLS_YN	/*통상임금포함여부*/
+            , AVEWAGEINCLS_YN	/*평균임금포함여부*/
+            , OJTAPPLY_YN		/*수습적용 여부*/
+            , DHALF_CALC_YN		/*일할계산 여부*/
+            , RETIREAMTOBJ_YN	/*퇴직금대상 여부*/
+            , ACCOUNT_NO         /* 계좌번호*/
+            , BUGT_MK_YN         /* 예산배정대상여부*/
+        FROM C_SALARYCD
+       WHERE SALARY_CD = #{salaryCd}	 
+	</select>
+	
+	<update id="updateMpsSalaryCd" parameterType="EgovMapForNull">
+		/* Mpsmng001.updateMpsSalaryCd */ 
+		UPDATE C_SALARYCD
+		   SET 
+		   	 SALARY_NM	      	=   #{salaryNm},         
+ 			 PAYMENTDDT_CLS   	=   #{paymentddtCls},    
+			 SALARY_DESC	  	=   #{salaryDesc},       
+			 USE_SDT	       	=   #{useSdt},           
+			 DSP_ODR	       	=   #{dspOdr},           
+			 USE_YN	       		=   #{useYn},            
+			 BASEWAGEINCLS_YN   =   #{basewageinclsYn},  
+			 AVEWAGEINCLS_YN    =   #{avewageinclsYn},   
+			 OJTAPPLY_YN	    =   #{ojtapplyYn},       
+			 DHALF_CALC_YN      =   #{dhalfCalcYn},      
+			 RETIREAMTOBJ_YN    =   #{retireamtobjYn},   
+			 ACCOUNT_NO         =   #{accountNo},        
+			 BUGT_MK_YN         =   #{bugtMkYn},         
+		     UPT_DATE           =   SYSDATE,
+		     UPT_ID             =   #{uptId}
+		WHERE SALARY_CD = #{salaryCd}
+    </update>
+    
+      <insert id="insertMpsSalaryCd" parameterType="EgovMapForNull">
+		/* Mpsmng001.insertMpsSalaryCd */ 
+		INSERT INTO C_SALARYCD (
+			  SALARY_CD				/*급여항목코드*/
+            , SALARY_NM				/*급여항목명*/
+            , PAYMENTDDT_CLS		/*지급공제구분*/
+            , SALARY_DESC			/*급여코드설명*/
+            , USE_SDT           	/*사용시작일자*/
+            , DSP_ODR				/*정렬순서*/
+            , USE_YN				/*사용여부*/
+            , BASEWAGEINCLS_YN		/*통상임금포함여부*/
+            , AVEWAGEINCLS_YN		/*평균임금포함여부*/
+            , OJTAPPLY_YN			/*수습적용 여부*/
+            , DHALF_CALC_YN			/*일할계산 여부*/
+            , RETIREAMTOBJ_YN		/*퇴직금대상 여부*/
+            , ACCOUNT_NO       		/* 계좌번호*/
+            , BUGT_MK_YN         	/* 예산배정대상여부*/
+            , REG_DATE              /* 등록일 */
+			, REG_ID                /* 수정일 */
+          )
+		VALUES
+		  ( #{salaryCd},  		#{salaryNm},  	#{paymentddtCls}, #{salaryDesc},       
+			#{useSdt},    		#{dspOdr},    	#{useYn},         #{basewageinclsYn},  
+      		#{avewageinclsYn},  #{ojtapplyYn},  #{dhalfCalcYn},   #{retireamtobjYn},   
+      		#{accountNo},       #{bugtMkYn},    SYSDATE,  		  #{regId} )
+    </insert>
+    <delete id="deleteMpsSalaryCd" parameterType="EgovMapForNull">
+        /* Mpsmng001.deleteMpsSalaryCd */ 
+        DELETE FROM C_SALARYCD
+         WHERE SALARY_CD = #{salaryCd}
+    </delete>
+</mapper>

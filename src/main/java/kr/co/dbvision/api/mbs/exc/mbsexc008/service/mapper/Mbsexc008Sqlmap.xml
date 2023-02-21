@@ -1,0 +1,409 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mbs.exc.mbsexc008.service.impl.Mbsexc008Mapper">
+
+    <select id="selectMbsBugtcdList" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mbs.exc.mbsexc008.service.impl.Mbsexc008Mapper.selectMbsBugtcdList */
+       <![CDATA[
+		SELECT X.BUGT_CD
+        , X.LV
+        , X.ARTICLE_NM
+        , X.ITEM_NM
+        , X.SUBITEM_NM
+        , X.SECTION_NM
+        , X.SUBSECTION_NM
+        , TO_CHAR(X.MAKEUP_AMT,'FM999,999,999,999,999,999') AS MAKEUP_AMT
+        , TO_CHAR(X.ASSIGN_AMT,'FM999,999,999,999,999,999') AS ASSIGN_AMT 
+        , TO_CHAR(X.CAUSE_AMT,'FM999,999,999,999,999,999') AS CAUSE_AMT
+        , TO_CHAR(X.EXECUTE_AMT,'FM999,999,999,999,999,999') AS EXECUTE_AMT 
+        , TO_CHAR(X.SUM_CAUSE_AMT,'FM999,999,999,999,999,999') AS SUM_CAUSE_AMT
+        , TO_CHAR(X.SUM_EXECUTE_AMT,'FM999,999,999,999,999,999') AS SUM_EXECUTE_AMT
+        , (CASE WHEN  X.PRE_AMT > 0 AND X.PRE_AMT < 1 THEN TO_CHAR (X.PRE_AMT ,'fm990.99')
+            ELSE TO_CHAR(X.PRE_AMT) END ) || '%' AS PRE_AMT
+    FROM (SELECT DISTINCT SUBSTR(A.BUGT_CD,1,5)||'00000000' AS BUGT_CD
+        , '1' AS LV
+        , A.ARTICLE_NM
+        , '' AS ITEM_NM
+        , '' AS SUBITEM_NM
+        , '' AS SECTION_NM
+        , '' AS SUBSECTION_NM
+        , SUM(NVL(C.MAKEUP_AMT, 0)) AS MAKEUP_AMT
+        , SUM(NVL(B.ASSIGN_AMT, 0)) AS ASSIGN_AMT
+        , SUM(NVL(B.CAUSE_AMT, 0)) AS CAUSE_AMT
+        , SUM(NVL(B.EXECUTE_AMT, 0)) AS EXECUTE_AMT
+        , SUM(TO_NUMBER(NVL(B.ASSIGN_AMT, 0)) - TO_NUMBER(NVL(B.CAUSE_AMT, 0))) AS SUM_CAUSE_AMT
+        , SUM(TO_NUMBER(NVL(B.ASSIGN_AMT, 0)) - TO_NUMBER(NVL(B.EXECUTE_AMT, 0))) AS SUM_EXECUTE_AMT
+        , CASE 
+            WHEN NVL(SUM(B.ASSIGN_AMT), 0) = 0 THEN 0
+            ELSE ROUND((SUM(B.EXECUTE_AMT) / SUM(B.ASSIGN_AMT))*100,1)
+            END AS PRE_AMT
+        FROM MBS_BUGTCD A,
+        MBS_REGISTER B,
+        MBS_BUGTMAKEUP C
+        ]]>
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+        AND A.CORP_CD = B.CORP_CD
+        AND A.BUGT_YY = B.BUGT_YY
+        AND A.BUGT_CLS = B.BUGT_CLS
+        AND A.BUGT_CD = B.BUGT_CD(+)
+        AND A.CORP_CD = C.CORP_CD
+        AND A.BUGT_YY = C.BUGT_YY
+        AND A.BUGT_CLS = C.BUGT_CLS
+        AND A.BUGT_CD = C.BUGT_CD(+)
+        AND A.BUGT_CLS = '1'
+        <if test="bugtYy != null and bugtYy != ''">
+		AND	A.BUGT_YY = #{bugtYy}
+		</if>
+		<if test="corpCd != null and corpCd != ''">
+		AND	A.CORP_CD = #{corpCd}
+		</if>
+		</trim>
+		<![CDATA[
+        GROUP BY SUBSTR(A.BUGT_CD,1,5),A.ARTICLE_NM
+UNION ALL
+SELECT DISTINCT SUBSTR(A.BUGT_CD,1,7)||'000000' AS BUGT_CD
+        , '2' AS LV
+        , A.ARTICLE_NM
+        , A.ITEM_NM
+        , '' AS SUBITEM_NM
+        , '' AS SECTION_NM
+        , '' AS SUBSECTION_NM
+        , SUM(NVL(C.MAKEUP_AMT, 0)) AS MAKEUP_AMT
+        , SUM(NVL(B.ASSIGN_AMT, 0)) AS ASSIGN_AMT
+        , SUM(NVL(B.CAUSE_AMT, 0)) AS CAUSE_AMT
+        , SUM(NVL(B.EXECUTE_AMT, 0)) AS EXECUTE_AMT
+        , SUM(TO_NUMBER(NVL(B.ASSIGN_AMT, 0)) - TO_NUMBER(NVL(B.CAUSE_AMT, 0))) AS SUM_CAUSE_AMT
+        , SUM(TO_NUMBER(NVL(B.ASSIGN_AMT, 0)) - TO_NUMBER(NVL(B.EXECUTE_AMT, 0))) AS SUM_EXECUTE_AMT
+        , CASE 
+            WHEN NVL(SUM(B.ASSIGN_AMT), 0) = 0 THEN 0
+            ELSE ROUND((SUM(B.EXECUTE_AMT) / SUM(B.ASSIGN_AMT))*100,1)
+            END AS PRE_AMT
+        FROM MBS_BUGTCD A,
+        MBS_REGISTER B,
+        MBS_BUGTMAKEUP C
+         ]]>
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+        AND A.CORP_CD = B.CORP_CD
+        AND A.BUGT_YY = B.BUGT_YY
+        AND A.BUGT_CLS = B.BUGT_CLS
+        AND A.BUGT_CD = B.BUGT_CD(+)
+        AND A.CORP_CD = C.CORP_CD
+        AND A.BUGT_YY = C.BUGT_YY
+        AND A.BUGT_CLS = C.BUGT_CLS
+        AND A.BUGT_CD = C.BUGT_CD(+)
+        AND A.BUGT_CLS = '1'
+	 	<if test="bugtYy != null and bugtYy != ''">
+		AND	A.BUGT_YY = #{bugtYy}
+		</if>
+		<if test="corpCd != null and corpCd != ''">
+		AND	A.CORP_CD = #{corpCd}
+		</if>
+		</trim>
+		<![CDATA[
+        GROUP BY SUBSTR(A.BUGT_CD,1,7),A.ARTICLE_NM, A.ITEM_NM
+UNION ALL
+SELECT DISTINCT SUBSTR(A.BUGT_CD,1,8)||'00000' AS BUGT_CD
+        , '3' AS LV
+        , A.ARTICLE_NM
+        , A.ITEM_NM
+        , A.SUBITEM_NM
+        , '' AS SECTION_NM
+        , '' AS SUBSECTION_NM
+        , SUM(NVL(C.MAKEUP_AMT, 0)) AS MAKEUP_AMT
+        , SUM(NVL(B.ASSIGN_AMT, 0)) AS ASSIGN_AMT
+        , SUM(NVL(B.CAUSE_AMT, 0)) AS CAUSE_AMT
+        , SUM(NVL(B.EXECUTE_AMT, 0)) AS EXECUTE_AMT
+        , SUM(TO_NUMBER(NVL(B.ASSIGN_AMT, 0)) - TO_NUMBER(NVL(B.CAUSE_AMT, 0))) AS SUM_CAUSE_AMT
+        , SUM(TO_NUMBER(NVL(B.ASSIGN_AMT, 0)) - TO_NUMBER(NVL(B.EXECUTE_AMT, 0))) AS SUM_EXECUTE_AMT
+        , CASE 
+            WHEN NVL(SUM(B.ASSIGN_AMT), 0) = 0 THEN 0
+            ELSE ROUND((SUM(B.EXECUTE_AMT) / SUM(B.ASSIGN_AMT))*100,1)
+            END AS PRE_AMT
+        FROM MBS_BUGTCD A,
+        MBS_REGISTER B,
+        MBS_BUGTMAKEUP C
+    	 ]]>
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+        AND A.CORP_CD = B.CORP_CD
+        AND A.BUGT_YY = B.BUGT_YY
+        AND A.BUGT_CLS = B.BUGT_CLS
+        AND A.BUGT_CD = B.BUGT_CD(+)
+        AND A.CORP_CD = C.CORP_CD
+        AND A.BUGT_YY = C.BUGT_YY
+        AND A.BUGT_CLS = C.BUGT_CLS
+        AND A.BUGT_CD = C.BUGT_CD(+)
+        AND A.BUGT_CLS = '1'
+        <if test="bugtYy != null and bugtYy != ''">
+		AND	A.BUGT_YY = #{bugtYy}
+		</if>
+		<if test="corpCd != null and corpCd != ''">
+		AND	A.CORP_CD = #{corpCd}
+		</if>
+		</trim>
+		<![CDATA[
+        GROUP BY SUBSTR(A.BUGT_CD,1,8),A.ARTICLE_NM, A.ITEM_NM,A.SUBITEM_NM
+UNION ALL
+SELECT DISTINCT SUBSTR(A.BUGT_CD,1,10)||'000' AS BUGT_CD 
+        , '4' AS LV
+        , A.ARTICLE_NM
+        , A.ITEM_NM
+        , A.SUBITEM_NM
+        , A.SECTION_NM
+        , '' AS SUBSECTION_NM
+        , SUM(NVL(C.MAKEUP_AMT, 0)) AS MAKEUP_AMT
+        , SUM(NVL(B.ASSIGN_AMT, 0)) AS ASSIGN_AMT
+        , SUM(NVL(B.CAUSE_AMT, 0)) AS CAUSE_AMT
+        , SUM(NVL(B.EXECUTE_AMT, 0)) AS EXECUTE_AMT
+        , SUM(TO_NUMBER(NVL(B.ASSIGN_AMT, 0)) - TO_NUMBER(NVL(B.CAUSE_AMT, 0))) AS SUM_CAUSE_AMT
+        , SUM(TO_NUMBER(NVL(B.ASSIGN_AMT, 0)) - TO_NUMBER(NVL(B.EXECUTE_AMT, 0))) AS SUM_EXECUTE_AMT
+        , CASE 
+            WHEN NVL(SUM(B.ASSIGN_AMT), 0) = 0 THEN 0
+            ELSE ROUND((SUM(B.EXECUTE_AMT) / SUM(B.ASSIGN_AMT))*100,1)
+            END AS PRE_AMT
+        FROM MBS_BUGTCD A,
+        MBS_REGISTER B,
+        MBS_BUGTMAKEUP C
+         ]]>
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+        AND A.CORP_CD = B.CORP_CD
+        AND A.BUGT_YY = B.BUGT_YY
+        AND A.BUGT_CLS = B.BUGT_CLS
+        AND A.BUGT_CD = B.BUGT_CD(+)
+        AND A.CORP_CD = C.CORP_CD
+        AND A.BUGT_YY = C.BUGT_YY
+        AND A.BUGT_CLS = C.BUGT_CLS
+        AND A.BUGT_CD = C.BUGT_CD(+)
+        AND A.BUGT_CLS = '1'
+       <if test="bugtYy != null and bugtYy != ''">
+		AND	A.BUGT_YY = #{bugtYy}
+		</if>
+		<if test="corpCd != null and corpCd != ''">
+		AND	A.CORP_CD = #{corpCd}
+		</if>
+		</trim>
+		<![CDATA[
+        GROUP BY SUBSTR(A.BUGT_CD,1,10),A.ARTICLE_NM, A.ITEM_NM,A.SUBITEM_NM,A.SECTION_NM
+UNION ALL
+SELECT DISTINCT  A.BUGT_CD
+        , '5' AS LV
+        , A.ARTICLE_NM
+        , A.ITEM_NM
+        , A.SUBITEM_NM
+        , A.SECTION_NM
+        , A.SUBSECTION_NM
+        , NVL(C.MAKEUP_AMT, 0) AS MAKEUP_AMT
+        , NVL(B.ASSIGN_AMT, 0) AS ASSIGN_AMT
+        , NVL(B.CAUSE_AMT, 0) AS CAUSE_AMT
+        , NVL(B.EXECUTE_AMT, 0) AS EXECUTE_AMT
+        , TO_NUMBER(NVL(B.ASSIGN_AMT, 0)) - TO_NUMBER(NVL(B.CAUSE_AMT, 0)) AS SUM_CAUSE_AMT
+        , TO_NUMBER(NVL(B.ASSIGN_AMT, 0)) - TO_NUMBER(NVL(B.EXECUTE_AMT, 0)) AS SUM_EXECUTE_AMT
+        , CASE 
+            WHEN NVL(B.ASSIGN_AMT, 0) = 0 THEN 0
+            ELSE ROUND((B.EXECUTE_AMT / B.ASSIGN_AMT)*100,1)
+            END AS PRE_AMT
+        FROM MBS_BUGTCD A,
+        MBS_REGISTER B,
+        MBS_BUGTMAKEUP C
+ 		]]>
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+        AND A.CORP_CD = B.CORP_CD
+        AND A.BUGT_YY = B.BUGT_YY
+        AND A.BUGT_CLS = B.BUGT_CLS
+        AND A.BUGT_CD = B.BUGT_CD(+)
+        AND A.CORP_CD = C.CORP_CD
+        AND A.BUGT_YY = C.BUGT_YY
+        AND A.BUGT_CLS = C.BUGT_CLS
+        AND A.BUGT_CD = C.BUGT_CD(+)
+        AND A.BUGT_CLS = '1'
+        <if test="bugtYy != null and bugtYy != ''">
+		AND	A.BUGT_YY = #{bugtYy}
+		</if>
+		<if test="corpCd != null and corpCd != ''">
+		AND	A.CORP_CD = #{corpCd}
+		</if>
+        AND A.SUBSECTION_NM IS NOT NULL) X
+        </trim>
+        <![CDATA[
+        WHERE 1=1
+          ]]>
+         <if test="bugtLv != null and bugtLv != ''">
+        AND 	X.LV <![CDATA[<=]]> #{bugtLv}
+        </if>
+		<![CDATA[
+        ORDER BY BUGT_CD,LV
+		]]>
+    </select>
+
+    <select id="selectMbsBugtcd" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mbs.exc.mbsexc008.service.impl.Mbsexc008Mapper.selectMbsBugtcd */
+        SELECT
+               BUGT_YY,
+               BUGT_CD,
+               CORP_CD,
+               BUGT_CLS,
+               ACC_CLS,
+               BUGT_NM,
+               ARTICLE_NM,
+               ITEM_NM,
+               SUBITEM_NM,
+               SECTION_NM,
+               SUBSECTION_NM,
+               SUBSUBSECTION_NM,
+               BUGTMARK_YN,
+               BUGTCTRL_YN,
+               UPBUGT_CD,
+               USE_YN,
+               OFFOSITION_ACCT_CD,
+               MAPPING_CD,
+               ACCT_CD,
+               OLD_BUGT_CD,
+               SMTN_YN,
+               START_DT,
+               END_DT,
+               MAKEUP_STD,
+               REG_DATE,
+               REG_ID,
+               UPT_DATE,
+               UPT_ID,
+               GUKGO,
+               PRINT_BUGT_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MBS_BUGTCD A
+
+       <!--  <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="bugtYy != null and bugtYy != ''">
+                AND BUGT_YY = #{bugtYy}
+            </if>
+            <if test="bugtCd != null and bugtCd != ''">
+                AND BUGT_CD = #{bugtCd}
+            </if>
+            <if test="corpCd != null and corpCd != ''">
+                AND CORP_CD = #{corpCd}
+            </if>
+        </trim> -->
+    </select>
+
+    <insert id="insertMbsBugtcd" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mbs.exc.mbsexc008.service.impl.Mbsexc008Mapper.insertMbsBugtcd */
+        INSERT INTO MBS_BUGTCD
+        (
+            BUGT_YY,
+            BUGT_CD,
+            CORP_CD,
+            BUGT_CLS,
+            ACC_CLS,
+            BUGT_NM,
+            ARTICLE_NM,
+            ITEM_NM,
+            SUBITEM_NM,
+            SECTION_NM,
+            SUBSECTION_NM,
+            SUBSUBSECTION_NM,
+            BUGTMARK_YN,
+            BUGTCTRL_YN,
+            UPBUGT_CD,
+            USE_YN,
+            OFFOSITION_ACCT_CD,
+            MAPPING_CD,
+            ACCT_CD,
+            OLD_BUGT_CD,
+            SMTN_YN,
+            START_DT,
+            END_DT,
+            MAKEUP_STD,
+            REG_DATE,
+            UPT_DATE,
+            GUKGO,
+            PRINT_BUGT_NM,
+            REG_DT,
+            REG_ID
+        )
+        VALUES
+        (
+            #{bugtYy},
+            #{bugtCd},
+            #{corpCd},
+            #{bugtCls},
+            #{accCls},
+            #{bugtNm},
+            #{articleNm},
+            #{itemNm},
+            #{subitemNm},
+            #{sectionNm},
+            #{subsectionNm},
+            #{subsubsectionNm},
+            #{bugtmarkYn},
+            #{bugtctrlYn},
+            #{upbugtCd},
+            #{useYn},
+            #{offositionAcctCd},
+            #{mappingCd},
+            #{acctCd},
+            #{oldBugtCd},
+            #{smtnYn},
+            #{startDt},
+            #{endDt},
+            #{makeupStd},
+            #{regDate},
+            #{uptDate},
+            #{gukgo},
+            #{printBugtNm},
+            SYSDATE,
+            #{regId}
+        )
+    </insert>
+
+    <update id="updateMbsBugtcd" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mbs.exc.mbsexc008.service.impl.Mbsexc008Mapper.updateMbsBugtcd */
+        UPDATE MBS_BUGTCD SET
+
+               BUGT_CLS= #{bugtCls},
+               ACC_CLS= #{accCls},
+               BUGT_NM= #{bugtNm},
+               ARTICLE_NM= #{articleNm},
+               ITEM_NM= #{itemNm},
+               SUBITEM_NM= #{subitemNm},
+               SECTION_NM= #{sectionNm},
+               SUBSECTION_NM= #{subsectionNm},
+               SUBSUBSECTION_NM= #{subsubsectionNm},
+               BUGTMARK_YN= #{bugtmarkYn},
+               BUGTCTRL_YN= #{bugtctrlYn},
+               UPBUGT_CD= #{upbugtCd},
+               USE_YN= #{useYn},
+               OFFOSITION_ACCT_CD= #{offositionAcctCd},
+               MAPPING_CD= #{mappingCd},
+               ACCT_CD= #{acctCd},
+               OLD_BUGT_CD= #{oldBugtCd},
+               SMTN_YN= #{smtnYn},
+               START_DT= #{startDt},
+               END_DT= #{endDt},
+               MAKEUP_STD= #{makeupStd},
+               REG_DATE= #{regDate},
+               UPT_DATE= #{uptDate},
+               GUKGO= #{gukgo},
+               PRINT_BUGT_NM= #{printBugtNm},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+               AND BUGT_YY = #{bugtYy}
+               AND BUGT_CD = #{bugtCd}
+               AND CORP_CD = #{corpCd}
+        </trim>
+    </update>
+
+    <delete id="deleteMbsBugtcd" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mbs.exc.mbsexc008.service.impl.Mbsexc008Mapper.deleteMbsBugtcd */
+        DELETE FROM MBS_BUGTCD
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND BUGT_YY = #{bugtYy}
+                AND BUGT_CD = #{bugtCd}
+                AND CORP_CD = #{corpCd}
+        </trim>
+    </delete>
+</mapper>

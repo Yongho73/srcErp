@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mps.ins.mpsins001.service.mapper.Mpsins001Mapper">
+
+    <select id="selectMpsins001List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.ins.mpsins001.service.mapper.Mpsins001Mapper.selectMpsins001List */
+        SELECT
+               FNC_DATESTR(A.APPLC_YM) AS APPLC_YM,
+               A.EMPNO,
+               FNC_DATESTR(A.DDC_DE) AS DDC_DE,
+               A.NPN_AMT,
+               A.HLTHINS_AMT,
+               A.HLTHINS_EXCCLC_AMT,
+               A.LTCI_AMT,
+               A.LTCI_EXCCLC_AMT,
+               A.EPIS_AMT,
+               A.IACI_AMT,
+               A.REG_DT,
+               A.REG_ID,
+               A.UPT_DT,
+               A.UPT_ID,
+               A.BEYEAR_HLTHINS_EXCCLC_AMT,
+               A.BEYEAR_LTCI_EXCCLC_AMT,
+               A.EPIS_EXCCLC_AMT,
+               A.BEYEAR_EPIS_EXCCLC_AMT,
+               B.KOR_NM,
+               B.HFFS_SE,
+               DECODE(B.IHIDNUM,NULL,'',SUBSTR(B.IHIDNUM,1,6)||'-*******') AS IHIDNUM,
+               FNC_GETCLSFNM(B.CLSF_CODE) AS CLSF_CODE_NM,
+               B.DEPT_CODE,
+               FNC_GETDEPTNM(B.DEPT_CODE) AS DEPT_CODE_NM  
+
+          FROM MPS_MT_SNLRCCHRGE A , MHS_EMP B
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                    A.EMPNO = B.EMPNO
+            <if test="empno != null and empno != ''">
+                AND A.EMPNO = #{empno}
+            </if>
+            <if test="korNm != null and korNm != ''">
+                AND B.EMPNO = #{korNm}
+            </if>
+            <if test="deptCode != null and deptCode != ''">
+                AND B.DEPT_CODE = #{deptCode}
+            </if>
+            <if test="deptCodeNm != null and deptCodeNm != ''">
+                AND FNC_GETDEPTNM(B.DEPT_CODE) = #{deptCodeNm}
+            </if>
+            <if test="hffsSe != null and hffsSe != ''">
+                AND B.HFFS_SE = #{hffsSe}
+            </if>
+            <if test="applcYySt != null and applcYySt != ''">
+                <![CDATA[
+                AND A.APPLC_YM >= REPLACE(#{applcYySt},'-','')
+                ]]>
+            </if>
+            <if test="applcYyEn != null and applcYyEn != ''">
+                <![CDATA[
+                AND A.APPLC_YM <= REPLACE(#{applcYyEn},'-','')
+                ]]>
+             </if>
+             <if test="stDate != null and stDate != ''">
+                <![CDATA[
+                AND A.DDC_DE >= TO_DATE(#{stDate} || '000000','YYYY-MM-DDHH24MISS')
+                ]]>
+            </if>
+            <if test="edDate != null and edDate != ''">
+                <![CDATA[
+                AND A.DDC_DE <= TO_DATE(#{edDate} || '000000','YYYY-MM-DDHH24MISS')
+                ]]>
+             </if>
+        </trim>
+<!--         ORDER BY A.EMPNO -->
+    </select>
+
+    <select id="selectMpsins001" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.ins.mpsins001.service.mapper.Mpsins001Mapper.selectMpsins001 */
+        SELECT
+               APPLC_YM,
+               EMPNO,
+               DDC_DE,
+               NPN_AMT,
+               HLTHINS_AMT,
+               HLTHINS_EXCCLC_AMT,
+               LTCI_AMT,
+               LTCI_EXCCLC_AMT,
+               EPIS_AMT,
+               IACI_AMT,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               BEYEAR_HLTHINS_EXCCLC_AMT,
+               BEYEAR_LTCI_EXCCLC_AMT,
+               EPIS_EXCCLC_AMT,
+               BEYEAR_EPIS_EXCCLC_AMT,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MPS_MT_SNLRCCHRGE A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="applcYm != null and applcYm != ''">
+                AND APPLC_YM = REPLACE(#{applcYm},'-','')
+            </if>
+            <if test="empno != null and empno != ''">
+                AND EMPNO = #{empno}
+            </if>
+        </trim>
+    </select>
+
+    <update id="saveMpsins001" parameterType="kr.co.dbvision.api.mps.ins.mpsins001.entity.Mpsins001">
+        /* kr.co.dbvision.api.mps.ins.mpsins001.service.mapper.Mpsins001Mapper.saveMpsins001 */
+        MERGE INTO MPS_MT_SNLRCCHRGE A
+             USING (SELECT
+                    REPLACE(#{applcYm},'-','') APPLC_YM,
+                    #{empno} EMPNO
+                    FROM DUAL) B
+                ON (
+                    A.APPLC_YM = B.APPLC_YM AND 
+                    A.EMPNO = B.EMPNO
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               DDC_DE= REPLACE(#{ddcDe},'-',''),
+               NPN_AMT= #{npnAmt},
+               HLTHINS_AMT= #{hlthinsAmt},
+               HLTHINS_EXCCLC_AMT= #{hlthinsExcclcAmt},
+               LTCI_AMT= #{ltciAmt},
+               LTCI_EXCCLC_AMT= #{ltciExcclcAmt},
+               EPIS_AMT= #{episAmt},
+               IACI_AMT= #{iaciAmt},
+               BEYEAR_HLTHINS_EXCCLC_AMT= #{beyearHlthinsExcclcAmt},
+               BEYEAR_LTCI_EXCCLC_AMT= #{beyearLtciExcclcAmt},
+               EPIS_EXCCLC_AMT= #{episExcclcAmt},
+               BEYEAR_EPIS_EXCCLC_AMT= #{beyearEpisExcclcAmt},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               APPLC_YM,
+               EMPNO,
+               DDC_DE,
+               NPN_AMT,
+               HLTHINS_AMT,
+               HLTHINS_EXCCLC_AMT,
+               LTCI_AMT,
+               LTCI_EXCCLC_AMT,
+               EPIS_AMT,
+               IACI_AMT,
+               BEYEAR_HLTHINS_EXCCLC_AMT,
+               BEYEAR_LTCI_EXCCLC_AMT,
+               EPIS_EXCCLC_AMT,
+               BEYEAR_EPIS_EXCCLC_AMT,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               REPLACE(#{applcYm},'-',''),
+               #{empno},
+               REPLACE(#{ddcDe},'-',''),
+               #{npnAmt},
+               #{hlthinsAmt},
+               #{hlthinsExcclcAmt},
+               #{ltciAmt},
+               #{ltciExcclcAmt},
+               #{episAmt},
+               #{iaciAmt},
+               #{beyearHlthinsExcclcAmt},
+               #{beyearLtciExcclcAmt},
+               #{episExcclcAmt},
+               #{beyearEpisExcclcAmt},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deleteMpsins001" parameterType="kr.co.dbvision.api.mps.ins.mpsins001.entity.Mpsins001">
+        /* kr.co.dbvision.api.mps.ins.mpsins001.service.mapper.Mpsins001Mapper.deleteMpsins001 */
+        DELETE FROM MPS_MT_SNLRCCHRGE
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND APPLC_YM = REPLACE(#{applcYm},'-','')
+                AND EMPNO = #{empno}
+        </trim>
+    </delete>
+    
+    <select id="checkDataMpsins001" parameterType="egovMapForNull" resultType="egovMapForNull">
+       /* kr.co.dbvision.api.mps.ins.mpsins001.service.mapper.Mpsins001Mapper.checkDataMpsins001 */
+       <trim>
+           SELECT '1' AS CHK1, TO_CHAR(APPLC_YM) FROM MPS_MT_SNLRCCHRGE WHERE APPLC_YM = REGEXP_REPLACE(#{applcYm}, '[^0-9]+')
+            <if test="ddcDe != null and ddcDe != ''">
+               UNION ALL
+               SELECT '2' AS CHK1, TO_CHAR(DDC_DE) FROM MPS_MT_SNLRCCHRGE WHERE DDC_DE = REGEXP_REPLACE(#{ddcDe}, '[^0-9]+')
+           </if>
+           <if test="empno != null and empno != ''">
+               UNION ALL
+               SELECT '3' AS CHK1, EMPNO FROM MPS_MT_SNLRCCHRGE WHERE EMPNO = REGEXP_REPLACE(#{empno}, '[^0-9]+')
+           </if>
+           <if test="npnAmt != null and npnAmt != ''">
+               UNION ALL
+               SELECT '4' AS CHK1, TO_CHAR(NPN_AMT) FROM MPS_MT_SNLRCCHRGE WHERE NPN_AMT = REGEXP_REPLACE(#{npnAmt}, '[^0-9]+')
+           </if>
+           <if test="hlthinsAmt != null and hlthinsAmt != ''">
+               UNION ALL
+               SELECT '5' AS CHK1, TO_CHAR(HLTHINS_AMT) FROM MPS_MT_SNLRCCHRGE WHERE HLTHINS_AMT = REGEXP_REPLACE(#{hlthinsAmt}, '[^0-9]+')
+           </if>
+           <if test="hlthinsExcclcAmt != null and hlthinsExcclcAmt != ''">
+                UNION ALL
+                SELECT '6' AS CHK1, TO_CHAR(HLTHINS_EXCCLC_AMT) FROM MPS_MT_SNLRCCHRGE WHERE HLTHINS_EXCCLC_AMT = REGEXP_REPLACE(#{hlthinsExcclcAmt}, '[^0-9]+')
+           </if>
+           <if test="beyearHlthinsExcclcAmt != null and beyearHlthinsExcclcAmt != ''">
+                UNION ALL
+                SELECT '7' AS CHK1, TO_CHAR(BEYEAR_HLTHINS_EXCCLC_AMT) FROM MPS_MT_SNLRCCHRGE WHERE BEYEAR_HLTHINS_EXCCLC_AMT = REGEXP_REPLACE(#{beyearHlthinsExcclcAmt}, '[^0-9]+')
+           </if>
+           <if test="episAmt != null and episAmt != ''">
+                UNION ALL
+                SELECT '8' AS CHK1, TO_CHAR(EPIS_AMT) FROM MPS_MT_SNLRCCHRGE WHERE EPIS_AMT = REGEXP_REPLACE(#{episAmt}, '[^0-9]+')
+           </if>
+           <if test="episExcclcAmt != null and episExcclcAmt != ''">
+                UNION ALL
+                SELECT '9' AS CHK1, TO_CHAR(EPIS_EXCCLC_AMT) FROM MPS_MT_SNLRCCHRGE WHERE EPIS_EXCCLC_AMT = REGEXP_REPLACE(#{episExcclcAmt}, '[^0-9]+')
+           </if>
+           <if test="beyearEpisExcclcAmt != null and beyearEpisExcclcAmt != ''">
+                UNION ALL
+                SELECT '10' AS CHK1, TO_CHAR(BEYEAR_EPIS_EXCCLC_AMT) FROM MPS_MT_SNLRCCHRGE WHERE BEYEAR_EPIS_EXCCLC_AMT = REGEXP_REPLACE(#{beyearEpisExcclcAmt}, '[^0-9]+')
+           </if>
+           <if test="ltciAmt != null and ltciAmt != ''">
+                UNION ALL
+                SELECT '11' AS CHK1, TO_CHAR(LTCI_AMT) FROM MPS_MT_SNLRCCHRGE WHERE LTCI_AMT = REGEXP_REPLACE(#{ltciAmt}, '[^0-9]+')
+           </if>
+           <if test="ltciExcclcAmt != null and ltciExcclcAmt != ''">
+                UNION ALL
+                SELECT '12' AS CHK1, TO_CHAR(LTCI_EXCCLC_AMT) FROM MPS_MT_SNLRCCHRGE WHERE LTCI_EXCCLC_AMT = REGEXP_REPLACE(#{ltciExcclcAmt}, '[^0-9]+')
+           </if>
+           <if test="beyearLtciExcclcAmt != null and beyearLtciExcclcAmt != ''">
+                UNION ALL
+                SELECT '13' AS CHK1, TO_CHAR(BEYEAR_LTCI_EXCCLC_AMT) FROM MPS_MT_SNLRCCHRGE WHERE LTCI_EXCCLC_AMT = REGEXP_REPLACE(#{beyearLtciExcclcAmt}, '[^0-9]+')
+           </if>
+           <if test="iaciAmt != null and iaciAmt != ''">
+                UNION ALL
+                SELECT '14' AS CHK1, TO_CHAR(IACI_AMT) FROM MPS_MT_SNLRCCHRGE WHERE IACI_AMT = REGEXP_REPLACE(#{iaciAmt}, '[^0-9]+')
+           </if>                                                                                                                                                                                                                                
+       </trim>
+    </select>
+    
+</mapper>

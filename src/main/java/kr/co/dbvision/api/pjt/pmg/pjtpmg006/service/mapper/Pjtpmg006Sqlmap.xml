@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.pjt.pmg.pjtpmg006.service.mapper.Pjtpmg006Mapper">
+
+    <select id="selectPjtpmg006List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg006.service.mapper.Pjtpmg006Mapper.selectPjtpmg006List */
+        SELECT PROJECT_NM, BCNC_NM, PROJECT_DE,
+		    SUM(B.BUGT_AMT) AS BUGT_AMT, SUM(C.USE_AMT) AS USE_AMT,
+		    BUGT_RATE
+		FROM 
+		(SELECT 
+		    PROJECT_SN,
+		    PROJECT_NM, COMPT_AT,
+		    (SELECT BCNC_NM FROM STM_CUSTOMER WHERE BCNC_CODE = AA.BCNC_CODE) AS BCNC_NM,
+		    PROJECT_BEGIN_DE,
+		    PROJECT_END_DE,
+		    TO_CHAR(TO_DATE(PROJECT_BEGIN_DE),'YYYY.MM.DD') || ' ~ ' || TO_CHAR(TO_DATE(PROJECT_END_DE),'YYYY.MM.DD') AS PROJECT_DE,
+		    NVL(ROUND((SELECT   SUM(C.USE_AMT)    
+					    FROM     PJT_BUGT_ACMSLT C    
+					    WHERE    C.PROJECT_SN  = AA.PROJECT_SN)
+		                / (SELECT    SUM(C.BUGT_AMT)    
+					   FROM      PJT_BUGT_PLAN C    
+					   WHERE     C.PROJECT_SN  = AA.PROJECT_SN) * 100),0) || '%' AS BUGT_RATE
+		FROM PJT_PROJECT AA) A,
+		PJT_BUGT_PLAN B,
+		PJT_BUGT_ACMSLT C
+		WHERE A.PROJECT_SN = B.PROJECT_SN
+		AND A.PROJECT_SN = C.PROJECT_SN
+		<if test="comptAt != null and comptAt != ''">
+           AND COMPT_AT = #{comptAt}
+       </if>
+       <if test="applcYy != null and applcYy != ''">
+            <![CDATA[
+                AND TO_CHAR(TO_DATE(A.PROJECT_BEGIN_DE),'YYYY') <= #{applcYy}
+            ]]>
+            </if>
+            <if test="applcYy != null and applcYy != ''">
+            <![CDATA[
+                AND TO_CHAR(TO_DATE(A.PROJECT_END_DE),'YYYY') >= #{applcYy}
+            ]]>
+        </if>  		
+        <if test="projectSn != null and projectSn != ''">
+           	AND A.PROJECT_SN = #{projectSn}
+        </if>
+		GROUP BY PROJECT_NM, BCNC_NM, PROJECT_DE, BUGT_RATE
+    </select>
+
+    <select id="selectPjtpmg006" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg006.service.mapper.Pjtpmg006Mapper.selectPjtpmg006 */
+        SELECT
+               PROJECT_SN,
+               BUGT_ACMSLT_SN,
+               ACNT_CODE,
+               PRMPC_TY,
+               BUGT_TIT,
+               USE_AMT,
+               USE_SUMMARY,
+               BUGT_USEDT,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM PJT_BUGT_ACMSLT A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="projectSn != null and projectSn != ''">
+                AND PROJECT_SN = #{projectSn}
+            </if>
+            <if test="bugtAcmsltSn != null and bugtAcmsltSn != ''">
+                AND BUGT_ACMSLT_SN = #{bugtAcmsltSn}
+            </if>
+        </trim>
+    </select>
+
+    <update id="savePjtpmg006" parameterType="kr.co.dbvision.api.pjt.pmg.pjtpmg006.entity.Pjtpmg006">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg006.service.mapper.Pjtpmg006Mapper.savePjtpmg006 */
+        MERGE INTO PJT_BUGT_ACMSLT A
+             USING (SELECT
+                    #{projectSn} PROJECT_SN,
+                    #{bugtAcmsltSn} BUGT_ACMSLT_SN
+                    FROM DUAL) B
+                ON (
+                    A.PROJECT_SN = B.PROJECT_SN AND 
+                    A.BUGT_ACMSLT_SN = B.BUGT_ACMSLT_SN
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               ACNT_CODE= #{acntCode},
+               PRMPC_TY= #{prmpcTy},
+               BUGT_TIT= #{bugtTit},
+               USE_AMT= #{useAmt},
+               USE_SUMMARY= #{useSummary},
+               BUGT_USEDT= #{bugtUsedt},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               PROJECT_SN,
+               BUGT_ACMSLT_SN,
+               ACNT_CODE,
+               PRMPC_TY,
+               BUGT_TIT,
+               USE_AMT,
+               USE_SUMMARY,
+               BUGT_USEDT,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{projectSn},
+               #{bugtAcmsltSn},
+               #{acntCode},
+               #{prmpcTy},
+               #{bugtTit},
+               #{useAmt},
+               #{useSummary},
+               #{bugtUsedt},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deletePjtpmg006" parameterType="kr.co.dbvision.api.pjt.pmg.pjtpmg006.entity.Pjtpmg006">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg006.service.mapper.Pjtpmg006Mapper.deletePjtpmg006 */
+        DELETE FROM PJT_BUGT_ACMSLT
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND PROJECT_SN = #{projectSn}
+                AND BUGT_ACMSLT_SN = #{bugtAcmsltSn}
+        </trim>
+    </delete>
+</mapper>

@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mps.cal.mpscal016.service.mapper.Mpscal016Mapper">
+
+     <select id="selectMpscal016List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.cal.mpscal016.service.mapper.Mpscal016Mapper.selectMpscal016List */
+        SELECT
+               A.EMPNO,
+               (SELECT KOR_NM FROM MHS_EMP B WHERE A.EMPNO = B.EMPNO) AS KOR_NM,
+               (SELECT HFFS_SE FROM MHS_EMP B WHERE A.EMPNO = B.EMPNO) AS HFFS_SE,
+               (SELECT CLSF_CODE FROM MHS_EMP B WHERE A.EMPNO = B.EMPNO) AS CLSF_CODE,
+               (SELECT FNC_GETCLSFNM(CLSF_CODE) FROM MHS_EMP B WHERE A.EMPNO = B.EMPNO) AS CLSF_CODE_NM,
+               (SELECT FNC_GETDEPTNM(DEPT_CODE) FROM MHS_EMP B WHERE A.EMPNO = B.EMPNO) AS DEPT_CODE_NM,               
+               FNC_COMCODENM('C062', A.SALARYTY_CODE) AS SALARYTY_CODE,
+               A.SALARYITEM_CODE,
+               (SELECT SALARYITEM_NM FROM MPS_SALARYITEM B WHERE A.SALARYITEM_CODE = B.SALARYITEM_CODE ) AS SALARYITEM_NM,
+               A.APPLC_YM,
+               (SELECT TO_CHAR((TO_DATE(PYMNT_DE,'YYYY-MM-DD')),'YYYY-MM-DD') FROM MPS_PYMNTDE B WHERE A.APPLC_YM = B.APPLC_YM AND A.PYMNT_SN = B.PYMNT_SN) AS PYMNT_DE,
+               A.PYMNT_SN,
+               A.PYMNT_AMT,
+               A.RM,
+               A.APPLC_AT
+
+          FROM MPS_SALARY_BNDE_REGIST A , MHS_EMP B
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                A.EMPNO = B.EMPNO
+            <if test="empno != null and empno != ''">
+                AND A.EMPNO = #{empno}
+            </if>
+            <if test="deptCode != null and deptCode != ''">
+                AND FNC_GETDEPTNM(B.DEPT_CODE) LIKE  '%' || #{deptCode} || '%'
+            </if>
+            <if test="pymntSn != null and pymntSn != ''">
+                AND A.PYMNT_SN = #{pymntSn}
+            </if>
+            <if test="hffsSe != null and hffsSe != ''">
+                AND B.HFFS_SE = #{hffsSe}
+            </if>
+        </trim>
+    </select>
+
+    <select id="selectMpscal016" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.cal.mpscal016.service.mapper.Mpscal016Mapper.selectMpscal016 */
+        SELECT
+               A.EMPNO,
+               (SELECT KOR_NM FROM MHS_EMP B WHERE A.EMPNO = B.EMPNO) AS KOR_NM,
+               (SELECT HFFS_SE FROM MHS_EMP B WHERE A.EMPNO = B.EMPNO) AS HFFS_SE,
+               (SELECT CLSF_CODE FROM MHS_EMP B WHERE A.EMPNO = B.EMPNO) AS CLSF_CODE,
+               (SELECT FNC_GETCLSFNM(CLSF_CODE) FROM MHS_EMP B WHERE A.EMPNO = B.EMPNO) AS CLSF_CODE_NM,
+               (SELECT FNC_GETDEPTNM(DEPT_CODE) FROM MHS_EMP B WHERE A.EMPNO = B.EMPNO) AS DEPT_CODE_NM,               
+               A.SALARYTY_CODE,
+               A.SALARYITEM_CODE,
+               (SELECT SALARYITEM_NM FROM MPS_SALARYITEM B WHERE A.SALARYITEM_CODE = B.SALARYITEM_CODE ) AS SALARYITEM_NM,
+               A.APPLC_YM,
+               (SELECT TO_CHAR((TO_DATE(PYMNT_DE,'YYYY-MM-DD')),'YYYY-MM-DD') FROM MPS_PYMNTDE B WHERE A.APPLC_YM = B.APPLC_YM AND A.PYMNT_SN = B.PYMNT_SN) AS PYMNT_DE,
+               A.PYMNT_SN,
+               A.PYMNT_AMT,
+               A.RM,
+               A.APPLC_AT
+
+          FROM MPS_SALARY_BNDE_REGIST A
+                    <!-- 급여일괄등록 A , 급여지급일자 B, 인사기본정보 C , 급여 항목  D  -->
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="empno != null and empno != ''">
+                AND A.EMPNO = #{empno}
+            </if>
+            <if test="deptCode != null and deptCode != ''">
+                AND A.DEPT_CODE LIKE  '%' || #{deptCode} || '%'
+            </if>
+            <if test="pymntSn != null and pymntSn != ''">
+                AND A.PYMNT_SN = #{pymntSn}
+            </if>
+            <if test="hffsSe != null and hffsSe != ''">
+                AND A.HFFS_SE = #{hffsSe}
+            </if>
+        </trim>
+    </select>
+
+    <update id="saveMpscal016" parameterType="kr.co.dbvision.api.mps.cal.mpscal016.entity.Mpscal016">
+        /* kr.co.dbvision.api.mps.cal.mpscal016.service.mapper.Mpscal016Mapper.saveMpscal016 */
+        MERGE INTO MPS_SALARY_BNDE_REGIST A
+             USING (SELECT
+                    #{empno} EMPNO,
+                    #{salarytyCode} SALARYTY_CODE,
+                    #{salaryitemCode} SALARYITEM_CODE,
+                    REPLACE(#{applcYm}, '-', '') APPLC_YM,
+                    #{pymntSn} PYMNT_SN
+                    FROM DUAL) B
+                ON (
+                    A.EMPNO = B.EMPNO AND 
+                    A.SALARYTY_CODE = B.SALARYTY_CODE AND 
+                    A.SALARYITEM_CODE = B.SALARYITEM_CODE AND 
+                    A.APPLC_YM = B.APPLC_YM AND 
+                    A.PYMNT_SN = B.PYMNT_SN
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               PYMNT_AMT= #{pymntAmt},
+               RM= #{rm},
+               APPLC_AT= #{applcAt},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               EMPNO,
+               SALARYTY_CODE,
+               SALARYITEM_CODE,
+               APPLC_YM,
+               PYMNT_SN,
+               PYMNT_AMT,
+               RM,
+               APPLC_AT,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{empno},
+               #{salarytyCode},
+               #{salaryitemCode},
+               REPLACE(#{applcYm}, '-', ''),
+               #{pymntSn},
+               #{pymntAmt},
+               #{rm},
+               #{applcAt},
+               SYSDATE,
+               #{regId}
+        )
+    </update>
+
+    <delete id="deleteMpscal016" parameterType="kr.co.dbvision.api.mps.cal.mpscal016.entity.Mpscal016">
+        /* kr.co.dbvision.api.mps.cal.mpscal016.service.mapper.Mpscal016Mapper.deleteMpscal016 */
+        DELETE FROM MPS_SALARY_BNDE_REGIST
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND EMPNO = #{empno}
+                AND SALARYTY_CODE = #{salarytyCode}
+                AND SALARYITEM_CODE = #{salaryitemCode}
+                AND APPLC_YM = REPLACE(#{applcYm}, '-', '')
+                AND PYMNT_SN = #{pymntSn}
+        </trim>
+    </delete>
+    
+    <select id="selectpopMpscal016" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.cal.mpscal016.service.mapper.Mpscal016Mapper.selectpopMpscal016 */
+        
+        SELECT 
+              A.SALARYITEM_CODE
+             ,A.SALARYITEM_NM 
+             ,FNC_COMCODENM('C064', A.PYMNTDDC_SE) AS PYMNTDDC_SE_NM
+             ,A.OUTPT_ORDR
+             ,B.SALARYTY_CODE
+             ,FNC_COMCODENM('C062', B.SALARYTY_CODE) AS SALARYTY_CODE_NM
+             ,'1' PYMNT_AT 
+        FROM MPS_SALARYITEM A ,MPS_ITEM_STDR B       
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                A.SALARYITEM_CODE = B.SALARYITEM_CODE
+            <if test="salaryitemCode != null and salaryitemCode != ''">
+                AND A.SALARYITEM_CODE = #{salaryitemCode}
+            </if>
+            <if test="salaryitemNm != null and salaryitemNm != ''">
+                AND A.SALARYITEM_NM LIKE  '%' || #{salaryitemNm} || '%' 
+            </if>
+        </trim> 
+     </select> 
+     
+     <select id="checkDataMpscal016" parameterType="egovMapForNull" resultType="egovMapForNull">
+       /* kr.co.dbvision.api.mps.cal.mpscal016.service.mapper.Mpscal016Mapper.checkDataMpscal016 */
+       <trim>
+           SELECT '1' AS CHK1, TO_CHAR(PYMNT_SN) AS PYMNT_SN FROM MPS_PYMNTDE WHERE PYMNT_SN = REGEXP_REPLACE(#{pymntSn}, '[^0-9]+')
+            <if test="applcYm != null and applcYm != ''">
+               UNION ALL
+               SELECT '2' AS CHK1, APPLC_YM AS APPLC_YM FROM MPS_PYMNTDE WHERE APPLC_YM = REGEXP_REPLACE(#{applcYm}, '[^0-9]+')
+           </if>
+           <if test="salarytyCode != null and salarytyCode != ''">
+               UNION ALL
+               SELECT '3' AS CHK1, SALARYTY_CODE AS NM FROM MPS_SALARY_BNDE_REGIST WHERE SALARYTY_CODE = REGEXP_REPLACE(#{salarytyCode}, '[^0-9]+')
+           </if>
+           <if test="salaryitemCode != null and salaryitemCode != ''">
+               UNION ALL
+               SELECT '4' AS CHK1, SALARYITEM_CODE AS NM FROM MPS_SALARY_BNDE_REGIST WHERE SALARYITEM_CODE = REGEXP_REPLACE(#{salaryitemCode}, '[^0-9]+')
+           </if>
+           <if test="empno != null and empno != ''">
+               UNION ALL
+               SELECT '5' AS CHK1, EMPNO AS NM FROM MHS_EMP WHERE EMPNO = REGEXP_REPLACE(#{empno}, '[^0-9]+')
+           </if>
+           <if test="empno != null and empno != ''">
+               UNION ALL
+               SELECT '6' AS CHK1, KOR_NM AS NM FROM MHS_EMP WHERE EMPNO = REGEXP_REPLACE(#{empno}, '[^0-9]+')
+           </if>
+           <if test="pymntAmt != null and pymntAmt != ''">
+               UNION ALL
+               SELECT '7' AS CHK1, TO_CHAR(PYMNT_AMT) AS NM FROM MPS_SALARY_BNDE_REGIST WHERE PYMNT_AMT = REGEXP_REPLACE(#{pymntAmt}, '[^0-9]+')
+           </if>
+           <if test="rm != null and rm != ''">
+               UNION ALL
+               SELECT '8' AS CHK1, RM AS NM FROM MPS_SALARY_BNDE_REGIST WHERE RM = REGEXP_REPLACE(#{rm}, '[^0-9]+')
+           </if>           
+       </trim>
+    </select>
+</mapper>

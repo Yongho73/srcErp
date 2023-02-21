@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE form-validation PUBLIC
+    "-//Apache Software Foundation//DTD Commons Validator Rules Configuration 1.1//EN"
+    "http://jakarta.apache.org/commons/dtds/validator_1_1.dtd">
+
+<form-validation>
+
+    <formset>
+        <form name="Mhshrc001">
+            <field property="issuno" depends="required">
+                <arg0 key="발급번호 : 증명서신청번호 자동 체번 사용는"/>
+            </field>
+            <field property="elctsctSeSn" depends="required">
+                <arg0 key="전자결재 구분 순번는"/>
+            </field>
+        </form>
+    </formset>
+
+</form-validation>

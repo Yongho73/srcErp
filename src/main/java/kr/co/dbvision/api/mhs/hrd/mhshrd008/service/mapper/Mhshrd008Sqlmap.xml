@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mhs.hrd.mhshrd008.service.mapper.Mhshrd008Mapper">
+
+    <select id="selectMhshrd008List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrd.mhshrd008.service.mapper.Mhshrd008Mapper.selectMhshrd008List */
+        SELECT
+               LABOR_TIME_SE_CODE,
+               SN,
+               SUBSTR(A.BEGIN_TIME, 1, 2) AS BEGIN_HOUR,
+               SUBSTR(A.BEGIN_TIME, 3, 2) AS BEGIN_MINUTE,
+               SUBSTR(A.END_TIME, 1, 2) AS END_HOUR,
+               SUBSTR(A.END_TIME, 3, 2) AS END_MINUTE,
+               BEGIN_TIME,
+               END_TIME,
+               USE_AT,
+               RM,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_DCLZTIMESE A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="laborTimeSeCode != null and laborTimeSeCode != ''">
+                AND LABOR_TIME_SE_CODE = #{laborTimeSeCode}
+            </if>
+            <if test="useAt != null and useAt != ''">
+                AND USE_AT = #{useAt}
+            </if>
+            <if test="sRegDt != null and sRegDt != ''">
+                <![CDATA[
+                AND REG_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+                ]]>
+            </if>
+            <if test="eRegDt != null and eRegDt != ''">
+                <![CDATA[
+                AND REG_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+                ]]>
+             </if>
+        </trim>
+        ORDER BY SN DESC
+    </select>
+
+    <select id="selectMhshrd008" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrd.mhshrd008.service.mapper.Mhshrd008Mapper.selectMhshrd008 */
+        SELECT
+               LABOR_TIME_SE_CODE,
+               SN,
+               BEGIN_TIME,
+               END_TIME,
+               USE_AT,
+               RM,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_DCLZTIMESE A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="laborTimeSeCode != null and laborTimeSeCode != ''">
+                AND LABOR_TIME_SE_CODE = #{laborTimeSeCode}
+            </if>
+            <if test="sn != null and sn != ''">
+                AND SN = #{sn}
+            </if>
+        </trim>
+    </select>
+
+    <update id="saveMhshrd008" parameterType="kr.co.dbvision.api.mhs.hrd.mhshrd008.entity.Mhshrd008">
+        /* kr.co.dbvision.api.mhs.hrd.mhshrd008.service.mapper.Mhshrd008Mapper.saveMhshrd008 */
+        MERGE INTO MHS_DCLZTIMESE A
+             USING (SELECT
+                    #{laborTimeSeCode} LABOR_TIME_SE_CODE,
+                    #{sn} SN
+                    FROM DUAL) B
+                ON (
+                    A.LABOR_TIME_SE_CODE = B.LABOR_TIME_SE_CODE AND 
+                    A.SN = B.SN
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               BEGIN_TIME= #{beginHour}||#{beginMinute},
+               END_TIME= #{endHour}||#{endMinute},
+               USE_AT= #{useAt},
+               RM= #{rm},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               LABOR_TIME_SE_CODE,
+               SN,
+               BEGIN_TIME,
+               END_TIME,
+               USE_AT,
+               RM,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{laborTimeSeCode},
+<!--           (SELECT NVL(MAX(SN)+1,0) FROM MHS_DCLZTIMESE), -->
+               #{sn},
+               #{beginHour}||#{beginMinute},
+               #{endHour}||#{endMinute},
+               #{useAt},
+               #{rm},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deleteMhshrd008" parameterType="kr.co.dbvision.api.mhs.hrd.mhshrd008.entity.Mhshrd008">
+        /* kr.co.dbvision.api.mhs.hrd.mhshrd008.service.mapper.Mhshrd008Mapper.deleteMhshrd008 */
+        DELETE FROM MHS_DCLZTIMESE
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND LABOR_TIME_SE_CODE = #{laborTimeSeCode}
+                AND BEGIN_TIME = #{beginHour}||#{beginMinute}
+                AND END_TIME = #{endHour}||#{endMinute}
+        </trim>
+    </delete>
+    
+    <select id="searchMhshrd008List" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrd.mhshrd008.service.mapper.Mhshrd008Mapper.searchMhshrd008List */
+        SELECT LABOR_TIME_SE_CODE, SN, BEGIN_TIME, END_TIME
+        FROM  MHS_DCLZTIMESE
+        WHERE USE_AT = '1'
+        ORDER BY LABOR_TIME_SE_CODE,SN
+    </select>
+    
+    <select id="selectMhshrd008Count" parameterType="egovMapForNull" resultType="java.lang.Integer">
+        /* kr.co.dbvision.api.mhs.hrd.mhshrd008.service.mapper.Mhshrd008Mapper.selectMhshrd008Count */
+        SELECT COUNT(*)
+        FROM MHS_DCLZTIMESE
+       
+        WHERE USE_AT = '1'
+             AND SN != #{sn}
+            <if test="laborTimeSeCode == '001' or laborTimeSeCode == '002' or laborTimeSeCode == '003'">
+                AND LABOR_TIME_SE_CODE IN ('001','002','003')
+            </if>
+            <if test="laborTimeSeCode != '001' and laborTimeSeCode != '002' and laborTimeSeCode != '003'">
+                AND LABOR_TIME_SE_CODE = #{laborTimeSeCode} -- ('기타 하나씩')
+            </if>
+            
+            <![CDATA[
+            AND BEGIN_TIME < #{endTime}  -- 시작시간 < 비교용_종료시간
+            AND END_TIME > #{beginTime}   -- 종료시간 > 비교용_시작시간
+            ]]>
+    </select>
+    
+    <delete id="deleteMhshrd008All" parameterType="kr.co.dbvision.api.mhs.hrd.mhshrd008.entity.Mhshrd008">
+        /* kr.co.dbvision.api.mhs.hrd.mhshrd008.service.mapper.Mhshrd008Mapper.deleteMhshrd008All */
+        DELETE FROM MHS_DCLZTIMESE
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND LABOR_TIME_SE_CODE = #{laborTimeSeCode}
+                AND BEGIN_TIME = #{beginHour}||#{beginMinute}
+                AND END_TIME = #{endHour}||#{endMinute}
+        </trim>
+    </delete>
+</mapper>

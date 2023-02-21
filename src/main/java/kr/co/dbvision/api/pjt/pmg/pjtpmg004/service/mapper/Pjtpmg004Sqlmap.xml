@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.pjt.pmg.pjtpmg004.service.impl.Pjtpmg004Mapper">
+
+    <select id="selectPjtHnfAcmsltList" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg004.service.impl.Pjtpmg004Mapper.selectPjtHnfAcmsltList */
+       SELECT  
+       ROWNUM AS RNUM,
+       PROJECT_PM_NM, 
+       			A.PROJECT_NM,  
+		        TO_CHAR(TO_DATE(A.PROJECT_BEGIN_DE),'YYYY.MM.DD') AS PROJECT_BEGIN_DE,  
+		        TO_CHAR(TO_DATE(A.PROJECT_END_DE),'YYYY.MM.DD') AS PROJECT_END_DE ,
+		        TO_CHAR(TO_DATE(A.PROJECT_BEGIN_DE),'YYYY.MM.DD') || ' ~ ' || TO_CHAR(TO_DATE(A.PROJECT_END_DE),'YYYY.MM.DD') AS PROJECT_DE,
+		        (SELECT TO_CHAR(NVL(SUM(C.PARTCPTN_MAN_MONTH),0),'FM9990.00')   
+		         FROM   PJT_HNF_ACMSLT C    
+		         WHERE  C.PROJECT_SN = A.PROJECT_SN ) || ' / ' || 
+		         (SELECT TO_CHAR(SUM(C.PARTCPTN_MAN_MONTH),'FM9990.00')      
+		         FROM   PJT_HNF_PLAN C    
+		         WHERE  C.PROJECT_SN = A.PROJECT_SN )
+		          AS PARTCPTN_MAN_MONTH ,   
+		        (SELECT TO_CHAR(SUM(D.PARTCPTN_MAN_MONTH),'FM9990.00')       
+            	FROM PJT_HNF_ACMSLT D    
+		         WHERE  D.PROJECT_SN = A.PROJECT_SN    
+		         AND    TO_NUMBER(SUBSTR(ACMSLT_STDR_DE,1,4)) = (TO_NUMBER(#{baseYear}) -1) ) AS PSUM,   
+		         (SELECT TO_CHAR(SUM(D.PARTCPTN_MAN_MONTH),'FM9990.00')    
+		         FROM  PJT_HNF_ACMSLT D    
+		         WHERE  D.PROJECT_SN = A.PROJECT_SN    
+		         AND  D.ACMSLT_STDR_DE = #{baseYear} || '01'  ) AS C1,    
+		        (SELECT  TO_CHAR(SUM(D.PARTCPTN_MAN_MONTH),'FM9990.00')    
+		        FROM  PJT_HNF_ACMSLT D    
+		        WHERE  D.PROJECT_SN = A.PROJECT_SN    
+		        AND  D.ACMSLT_STDR_DE = #{baseYear} || '02'  ) AS C2,    
+               (SELECT   TO_CHAR(SUM(D.PARTCPTN_MAN_MONTH),'FM9990.00')    
+		        FROM  PJT_HNF_ACMSLT D    
+		        WHERE D.PROJECT_SN = A.PROJECT_SN    
+		        AND  D.ACMSLT_STDR_DE =  #{baseYear} || '03'   ) AS C3,    
+	         (SELECT   TO_CHAR(SUM(D.PARTCPTN_MAN_MONTH),'FM9990.00')    
+		         FROM  PJT_HNF_ACMSLT D    
+		         WHERE D.PROJECT_SN = A.PROJECT_SN    
+		         AND  D.ACMSLT_STDR_DE =  #{baseYear} || '04'   ) AS C4,    
+		        (SELECT   TO_CHAR(SUM(D.PARTCPTN_MAN_MONTH),'FM9990.00')    
+		         FROM  PJT_HNF_ACMSLT D    
+		        WHERE D.PROJECT_SN = A.PROJECT_SN    
+		        AND  D.ACMSLT_STDR_DE =  #{baseYear} || '05'   ) AS C5,    
+		         (SELECT   TO_CHAR(SUM(D.PARTCPTN_MAN_MONTH),'FM9990.00')    
+		         FROM  PJT_HNF_ACMSLT D    
+		        WHERE D.PROJECT_SN = A.PROJECT_SN    
+		        AND  D.ACMSLT_STDR_DE =  #{baseYear} || '06'  ) AS C6,    
+		        (SELECT   TO_CHAR(SUM(D.PARTCPTN_MAN_MONTH),'FM9990.00')    
+		        FROM  PJT_HNF_ACMSLT D    
+		        WHERE D.PROJECT_SN = A.PROJECT_SN    
+		        AND  D.ACMSLT_STDR_DE =  #{baseYear} || '07'   ) AS C7,    
+		        (SELECT   TO_CHAR(SUM(D.PARTCPTN_MAN_MONTH),'FM9990.00')    
+		        FROM  PJT_HNF_ACMSLT D    
+		         WHERE D.PROJECT_SN = A.PROJECT_SN    
+		         AND  D.ACMSLT_STDR_DE =  #{baseYear} || '08'   ) AS C8,    
+		        (SELECT   TO_CHAR(SUM(D.PARTCPTN_MAN_MONTH),'FM9990.00')    
+		        FROM  PJT_HNF_ACMSLT D    
+		        WHERE D.PROJECT_SN = A.PROJECT_SN    
+		        AND  D.ACMSLT_STDR_DE =  #{baseYear} || '09'   ) AS C9,    
+		        (SELECT   TO_CHAR(SUM(D.PARTCPTN_MAN_MONTH),'FM9990.00')    
+		        FROM  PJT_HNF_ACMSLT D    
+		         WHERE D.PROJECT_SN = A.PROJECT_SN    
+		        AND  D.ACMSLT_STDR_DE =  #{baseYear} || '10'   ) AS C10,    
+		         (SELECT   TO_CHAR(SUM(D.PARTCPTN_MAN_MONTH),'FM9990.00')    
+  	            FROM  PJT_HNF_ACMSLT D    
+		        WHERE D.PROJECT_SN = A.PROJECT_SN    
+		        AND  D.ACMSLT_STDR_DE =  #{baseYear} || '11'   ) AS C11,    
+		         (SELECT   TO_CHAR(SUM(D.PARTCPTN_MAN_MONTH),'FM9990.00')    
+		         FROM  PJT_HNF_ACMSLT D    
+		        WHERE D.PROJECT_SN = A.PROJECT_SN    
+		        AND  D.ACMSLT_STDR_DE =  #{baseYear} || '12'   ) AS C12,
+		        NVL(ROUND((SELECT  SUM(B.PARTCPTN_MAN_MONTH)    
+				FROM     PJT_HNF_ACMSLT B    
+				WHERE    B.PROJECT_SN  = A.PROJECT_SN)
+                / (SELECT   SUM(E.PARTCPTN_MAN_MONTH)    
+				FROM     PJT_HNF_PLAN E    
+				WHERE    E.PROJECT_SN  = A.PROJECT_SN)  * 100),0) || '%' AS HNF_RATE    /* 투입인력 */
+			FROM  PJT_PROJECT A   
+			WHERE  1=1
+			
+			<if test="comptAt != null and comptAt != ''">
+			AND  A.COMPT_AT =  #{comptAt} 
+			</if>
+			<if test="projectSn != null and projectSn != ''">
+           	AND A.PROJECT_SN = #{projectSn}
+        	</if>
+			<if test="baseYear != null and baseYear != ''">
+            <![CDATA[
+                AND TO_CHAR(TO_DATE(A.PROJECT_BEGIN_DE),'YYYY') <= #{baseYear}
+            ]]>
+            </if>
+            <if test="baseYear != null and baseYear != ''">
+            <![CDATA[
+                AND TO_CHAR(TO_DATE(A.PROJECT_END_DE),'YYYY') >= #{baseYear}
+            ]]>
+            </if>  		
+            	
+			ORDER BY A.PROJECT_SN DESC    
+    </select> 
+
+    <select id="selectPjtHnfAcmslt" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg004.service.impl.Pjtpmg004Mapper.selectPjtHnfAcmslt */
+        SELECT
+               HNF_ACMSLT_SN,
+               FNC_DATESTR(ACMSLT_STDR_DE) AS ACMSLT_STDR_DE,
+               PARTCPTN_MAN_MONTH,
+               TCHNLGY_GRAD,
+               PRTCPNT_NM,
+               ROLE_CODE,
+               EXTRL_SERVC_AT,
+               PARTCPTN_EMPNO,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               OUTPUT_SN,
+               PROJECT_SN,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM PJT_HNF_ACMSLT A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="hnfAcmsltSn != null and hnfAcmsltSn != ''">
+                AND HNF_ACMSLT_SN = #{hnfAcmsltSn}
+            </if>
+        </trim>
+    </select>
+
+    <insert id="insertPjtHnfAcmslt" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg004.service.impl.Pjtpmg004Mapper.insertPjtHnfAcmslt */
+        INSERT INTO PJT_HNF_ACMSLT
+        (
+            HNF_ACMSLT_SN,
+            ACMSLT_STDR_DE,
+            PARTCPTN_MAN_MONTH,
+            TCHNLGY_GRAD,
+            PRTCPNT_NM,
+            ROLE_CODE,
+            EXTRL_SERVC_AT,
+            PARTCPTN_EMPNO,
+            OUTPUT_SN,
+            PROJECT_SN,
+            REG_DT,
+            REG_ID
+        )
+        VALUES
+        (
+            #{hnfAcmsltSn},
+            #{acmsltStdrDe},
+            #{partcptnManMonth},
+            #{tchnlgyGrad},
+            #{prtcpntNm},
+            #{roleCode},
+            #{extrlServcAt},
+            #{partcptnEmpno},
+            #{outputSn},
+            #{projectSn},
+            SYSDATE,
+            #{regId}
+        )
+    </insert>
+
+    <update id="updatePjtHnfAcmslt" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg004.service.impl.Pjtpmg004Mapper.updatePjtHnfAcmslt */
+        UPDATE PJT_HNF_ACMSLT SET
+
+               ACMSLT_STDR_DE= #{acmsltStdrDe},
+               PARTCPTN_MAN_MONTH= #{partcptnManMonth},
+               TCHNLGY_GRAD= #{tchnlgyGrad},
+               PRTCPNT_NM= #{prtcpntNm},
+               ROLE_CODE= #{roleCode},
+               EXTRL_SERVC_AT= #{extrlServcAt},
+               PARTCPTN_EMPNO= #{partcptnEmpno},
+               OUTPUT_SN= #{outputSn},
+               PROJECT_SN= #{projectSn},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+               AND HNF_ACMSLT_SN = #{hnfAcmsltSn}
+        </trim>
+    </update>
+
+    <delete id="deletePjtHnfAcmslt" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.pjt.pmg.pjtpmg004.service.impl.Pjtpmg004Mapper.deletePjtHnfAcmslt */
+        DELETE FROM PJT_HNF_ACMSLT
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND HNF_ACMSLT_SN = #{hnfAcmsltSn}
+        </trim>
+    </delete>
+</mapper>

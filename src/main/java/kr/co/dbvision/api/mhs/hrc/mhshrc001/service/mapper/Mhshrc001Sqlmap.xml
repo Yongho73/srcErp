@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mhs.hrc.mhshrc001.service.mapper.Mhshrc001Mapper">
+
+    <select id="selectMhshrc001List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrc.mhshrc001.service.mapper.Mhshrc001Mapper.selectMhshrc001List */
+        SELECT
+               A.ISSUNO,
+               A.ELCTSCT_SE_SN,
+               A.EMPNO,
+               FNC_GETKORNM(A.EMPNO) AS EMPNM,
+               A.TTM_DEPT_NM,
+               A.TTM_CLSF_NM,
+               A.CRTF_KIND_CODE,
+               FNC_COMCODENM('C083' , A.CRTF_KIND_CODE) AS CRTF_KIND_CODE_NM, 
+               FNC_DATESTR(A.ISSU_REQST_DE) AS ISSU_REQST_DE,
+               FNC_DATESTR(A.ISSU_DE) AS ISSU_DE,
+               A.ISSU_CNT,
+               A.ISSU_USEPRPS_SE_CODE,
+               FNC_COMCODENM('C178' , A.ISSU_USEPRPS_SE_CODE) AS ISSU_USEPRPS_SE_CODE_NM,
+               A.ISSU_USEPRPS_CN,
+               A.SUBMIT_LC,
+               A.NOW_ADRES,
+               A.IHIDNUM_MASK_AT,
+               A.CAREER_INCLS_AT,
+               A.REQST_STTUS_CODE,
+               A.OUTPT_CNT,
+               A.OUTPT_PERM_CNT,
+               FNC_DATESTR(OUTPT_PERM_DE) AS OUTPT_PERM_DE,
+               A.ELCTSCT_DOC_NO,
+               A.ELCTSCT_STTUS_CODE,
+               FNC_COMCODENM('EA004' , A.ELCTSCT_STTUS_CODE) AS ELCTSCT_STTUS_CODE_NM,
+               A.ELCTSCT_EMPNO,
+               FNC_GETKORNM(A.ELCTSCT_EMPNO) AS ELCTSCT_EMPNM,
+               A.REG_DT,
+               A.REG_ID,
+               A.UPT_DT,
+               A.UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_PROOF_ISSU A LEFT OUTER JOIN MHS_EMP B
+            ON A.EMPNO = B.EMPNO
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="empno != null and empno != ''">
+                AND A.EMPNO = #{empno}
+            </if>
+            <if test="elctsctSttusCode != null and elctsctSttusCode != ''">
+                AND A.ELCTSCT_STTUS_CODE = #{elctsctSttusCode}
+            </if>
+            <if test="crtfKindCode != null and crtfKindCode != ''">
+                AND A.CRTF_KIND_CODE = #{crtfKindCode}
+            </if>
+            <if test="sRegDt != null and sRegDt != ''">
+                <![CDATA[
+                AND A.ISSU_REQST_DE >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+                ]]>
+            </if>
+            <if test="eRegDt != null and eRegDt != ''">
+                <![CDATA[
+                AND A.ISSU_REQST_DE <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+                ]]>
+             </if>
+        </trim>
+    </select>
+
+    <select id="selectMhshrc001" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrc.mhshrc001.service.mapper.Mhshrc001Mapper.selectMhshrc001 */
+        SELECT
+               ISSUNO,
+               ELCTSCT_SE_SN,
+               EMPNO,
+               TTM_DEPT_NM,
+               TTM_CLSF_NM,
+               CRTF_KIND_CODE,
+               ISSU_REQST_DE,
+               ISSU_DE,
+               ISSU_CNT,
+               ISSU_USEPRPS_SE_CODE,
+               ISSU_USEPRPS_CN,
+               SUBMIT_LC,
+               NOW_ADRES,
+               IHIDNUM_MASK_AT,
+               CAREER_INCLS_AT,
+               REQST_STTUS_CODE,
+               OUTPT_CNT,
+               OUTPT_PERM_CNT,
+               OUTPT_PERM_DE,
+               ELCTSCT_DOC_NO,
+               ELCTSCT_STTUS_CODE,
+               ELCTSCT_EMPNO,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_PROOF_ISSU A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="issuno != null and issuno != ''">
+                AND ISSUNO = #{issuno}
+            </if>
+            <if test="elctsctSeSn != null and elctsctSeSn != ''">
+                AND ELCTSCT_SE_SN = #{elctsctSeSn}
+            </if>
+        </trim>
+    </select>
+
+    <update id="saveMhshrc001" parameterType="kr.co.dbvision.api.mhs.hrc.mhshrc001.entity.Mhshrc001">
+        /* kr.co.dbvision.api.mhs.hrc.mhshrc001.service.mapper.Mhshrc001Mapper.saveMhshrc001 */
+        MERGE INTO MHS_PROOF_ISSU A
+             USING (SELECT
+                    #{issuno} ISSUNO,
+                    #{elctsctSeSn} ELCTSCT_SE_SN
+                    FROM DUAL) B
+                ON (
+                    A.ISSUNO = B.ISSUNO AND 
+                    A.ELCTSCT_SE_SN = B.ELCTSCT_SE_SN
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               EMPNO= #{empno},
+               TTM_DEPT_NM= REPLACE(#{ttmDeptNm},'-',''),
+               TTM_CLSF_NM= #{ttmClsfNm},
+               CRTF_KIND_CODE= #{crtfKindCode},
+               ISSU_REQST_DE= REPLACE(#{issuReqstDe},'-',''),
+               ISSU_DE= REPLACE(#{issuDe},'-',''),
+               ISSU_CNT= #{issuCnt},
+               ISSU_USEPRPS_SE_CODE= #{issuUseprpsSeCode},
+               ISSU_USEPRPS_CN= #{issuUseprpsCn},
+               SUBMIT_LC= #{submitLc},
+               NOW_ADRES= #{nowAdres},
+               IHIDNUM_MASK_AT= #{ihidnumMaskAt},
+               CAREER_INCLS_AT= #{careerInclsAt},
+               REQST_STTUS_CODE= #{reqstSttusCode},
+               OUTPT_CNT= #{outptCnt},
+               OUTPT_PERM_CNT= #{outptPermCnt},
+               OUTPT_PERM_DE= REPLACE(#{outptPermDe},'-',''),
+               ELCTSCT_DOC_NO= #{elctsctDocNo},
+               ELCTSCT_STTUS_CODE= #{elctsctSttusCode},
+               ELCTSCT_EMPNO= #{elctsctEmpno},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               ISSUNO,
+               ELCTSCT_SE_SN,
+               EMPNO,
+               TTM_DEPT_NM,
+               TTM_CLSF_NM,
+               CRTF_KIND_CODE,
+               ISSU_REQST_DE,
+               ISSU_DE,
+               ISSU_CNT,
+               ISSU_USEPRPS_SE_CODE,
+               ISSU_USEPRPS_CN,
+               SUBMIT_LC,
+               NOW_ADRES,
+               IHIDNUM_MASK_AT,
+               CAREER_INCLS_AT,
+               REQST_STTUS_CODE,
+               OUTPT_CNT,
+               OUTPT_PERM_CNT,
+               OUTPT_PERM_DE,
+               ELCTSCT_DOC_NO,
+               ELCTSCT_STTUS_CODE,
+               ELCTSCT_EMPNO,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{issuno},
+               (SELECT NVL(MAX(ELCTSCT_SE_SN), 0) + 1
+                FROM MHS_PROOF_ISSU
+                WHERE ISSUNO = #{issuno}),
+               #{empno},
+               REPLACE(#{ttmDeptNm},'-',''),
+               #{ttmClsfNm},
+               #{crtfKindCode},
+               REPLACE(#{issuReqstDe},'-',''),
+               REPLACE(#{issuDe},'-',''),
+               #{issuCnt},
+               #{issuUseprpsSeCode},
+               #{issuUseprpsCn},
+               #{submitLc},
+               #{nowAdres},
+               #{ihidnumMaskAt},
+               #{careerInclsAt},
+               #{reqstSttusCode},
+               #{outptCnt},
+               #{outptPermCnt},
+               REPLACE(#{outptPermDe},'-',''),
+               #{elctsctDocNo},
+               #{elctsctSttusCode},
+               #{elctsctEmpno},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deleteMhshrc001" parameterType="kr.co.dbvision.api.mhs.hrc.mhshrc001.entity.Mhshrc001">
+        /* kr.co.dbvision.api.mhs.hrc.mhshrc001.service.mapper.Mhshrc001Mapper.deleteMhshrc001 */
+        DELETE FROM MHS_PROOF_ISSU
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND ISSUNO = #{issuno}
+                AND ELCTSCT_SE_SN = #{elctsctSeSn}
+        </trim>
+    </delete>
+</mapper>

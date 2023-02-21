@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mfs.bsc.mfsbsc007.service.mapper.Mfsbsc007Mapper">
+
+    <select id="selectMfsbsc007List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mfs.bsc.mfsbsc007.service.mapper.Mfsbsc007Mapper.selectMfsbsc007List */
+	    SELECT A.MGRT_ITEM_SN,
+		       ACNT_CODE,
+		       DRCR_SE_CODE,
+		       MUST_AT,
+		       SORT_ORDR,
+		       A.USE_AT,
+		       A.RM
+		       ,B.MGRT_ITEM_NM
+		       ,B.INPUT_SE_CODE
+		FROM MFS_ACNT_MGRT_ITEM A, MFS_MGRT_ITEM_CODE B
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND A.MGRT_ITEM_SN = B.MGRT_ITEM_SN
+            <if test="acntCode != null and acntCode != ''">
+                AND ACNT_CODE = #{acntCode}
+            </if>
+           ORDER BY DRCR_SE_CODE , SORT_ORDR
+        </trim>
+    </select>
+
+    <select id="selectMfsbsc007" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mfs.bsc.mfsbsc007.service.mapper.Mfsbsc007Mapper.selectMfsbsc007 */
+        SELECT
+               MGRT_ITEM_SN,
+               ACNT_CODE,
+               DRCR_SE_CODE,
+               MUST_AT,
+               SORT_ORDR,
+               USE_AT,
+               RM,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MFS_ACNT_MGRT_ITEM A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="mgrtItemSn != null and mgrtItemSn != ''">
+                AND MGRT_ITEM_SN = #{mgrtItemSn}
+            </if>
+            <if test="acntCode != null and acntCode != ''">
+                AND ACNT_CODE = #{acntCode}
+            </if>
+            <if test="drcrSeCode != null and drcrSeCode != ''">
+                AND DRCR_SE_CODE = #{drcrSeCode}
+            </if>
+        </trim>
+    </select>
+
+    <update id="saveMfsbsc007" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mfs.bsc.mfsbsc007.service.mapper.Mfsbsc007Mapper.saveMfsbsc007 */
+        MERGE INTO MFS_ACNT_MGRT_ITEM A
+             USING (SELECT
+                    #{mgrtItemSn} MGRT_ITEM_SN,
+                    #{acntCode} ACNT_CODE,
+                    #{drcrSeCode} DRCR_SE_CODE
+                    FROM DUAL) B
+                ON (
+                    A.MGRT_ITEM_SN = B.MGRT_ITEM_SN AND 
+                    A.ACNT_CODE = B.ACNT_CODE AND 
+                    A.DRCR_SE_CODE = B.DRCR_SE_CODE
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               MUST_AT= #{mustAt},
+               SORT_ORDR= #{sortOrdr},
+               USE_AT= #{useAt},
+               RM= #{rm},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               MGRT_ITEM_SN,
+               ACNT_CODE,
+               DRCR_SE_CODE,
+               MUST_AT,
+               SORT_ORDR,
+               USE_AT,
+               RM,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{mgrtItemSn},
+               #{acntCode},
+               #{drcrSeCode},
+               #{mustAt},
+               #{sortOrdr},
+               #{useAt},
+               #{rm},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deleteMfsbsc007" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mfs.bsc.mfsbsc007.service.mapper.Mfsbsc007Mapper.deleteMfsbsc007 */
+        DELETE FROM MFS_ACNT_MGRT_ITEM
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND MGRT_ITEM_SN = #{mgrtItemSn}
+                AND ACNT_CODE = #{acntCode}
+                AND DRCR_SE_CODE = #{drcrSeCode}
+        </trim>
+    </delete>
+</mapper>

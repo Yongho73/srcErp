@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.pjt.mta.pjtmta003.service.mapper.Pjtmta003Mapper">
+    
+    <select id="selectPjtmta003ProjectList" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.pjt.mta.pjtmta003.service.mapper.Pjtmta003Mapper.selectPjtmta003ProjectList */
+        SELECT (SELECT BCNC_NM FROM STM_CUSTOMER WHERE BCNC_CODE = A.BCNC_CODE) AS BCNC_NM,
+                PROJECT_NM,
+                DECODE(COMPT_AT, '1', '완료', '0', '진행', '2', '보류') AS COMPT_AT,
+                PROJECT_SN,
+                BCNC_CHARGER_NM,
+                CHARGER_CTTPC,
+                NVL2((SELECT MAX(REPORT_YM) FROM PJT_MNTNCE_REPORT WHERE PROJECT_SN = A.PROJECT_SN), 
+                	(SELECT SUBSTR(MAX(REPORT_YM)+1,1,4)||'-'||SUBSTR(MAX(REPORT_YM)+1,5,2) FROM PJT_MNTNCE_REPORT WHERE PROJECT_SN = A.PROJECT_SN)
+                	,'') AS NEXT_REPORT_YM
+        FROM PJT_PROJECT A
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND PROJECT_SE = '200' 
+                AND CNTRCT_TY != '400'
+            <if test="projectSn != null and projectSn != ''">
+                AND PROJECT_SN = #{projectSn}
+            </if>
+            <if test="requstSn != null and requstSn != ''">
+                AND REQUST_SN = #{requstSn}
+            </if>
+            <if test="bcncNm != null and bcncNm != ''">
+                AND (SELECT BCNC_NM FROM STM_CUSTOMER WHERE BCNC_CODE = A.BCNC_CODE) LIKE '%' || #{bcncNm} || '%'
+            </if>
+            <if test="comptAt != null and comptAt != ''">
+                AND COMPT_AT = #{comptAt}
+            </if>
+            <if test="projectNm != null and projectNm != ''">
+                AND PROJECT_NM LIKE '%'|| #{projectNm} ||'%'
+            </if>
+        </trim>
+    </select>
+    
+    <select id="selectPjtmta003List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.pjt.mta.pjtmta003.service.mapper.Pjtmta003Mapper.selectPjtmta003List */
+        SELECT
+        	   PROJECT_SN,
+        	   (SELECT PROJECT_NM FROM PJT_PROJECT WHERE PROJECT_SN = A.PROJECT_SN) AS PROJECT_NM,
+               (SELECT BCNC_CODE FROM PJT_PROJECT WHERE PROJECT_SN = A.PROJECT_SN) AS BCNC_CODE,
+               (SELECT BCNC_NM FROM STM_CUSTOMER WHERE BCNC_CODE = (SELECT BCNC_CODE FROM PJT_PROJECT WHERE PROJECT_SN = A.PROJECT_SN)) AS BCNC_NM,
+               FNC_DATESTR(REPORT_YM) AS REPORT_YM,
+               FNC_DATESTR(REPORT_STR_DT) AS REPORT_STR_DT,
+               FNC_DATESTR(REPORT_END_DT) AS REPORT_END_DT,
+               NEXT_MT_REPORT,
+               (SELECT KOR_NM FROM MHS_EMP WHERE EMPNO = WRITER) AS EMP_NM,
+               WRITER AS EMPNO,
+               WRITE_DT,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID
+
+          FROM PJT_MNTNCE_REPORT A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="projectSn != null and projectSn != ''">
+                AND PROJECT_SN = #{projectSn}
+            </if>
+            <if test="projectNm != null and projectNm != ''">
+                AND PROJECT_SN IN (SELECT PROJECT_SN FROM PJT_PROJECT WHERE PROJECT_NM = #{projectNm})
+            </if>
+            <if test="bcncCode != null and bcncCode != ''">
+                AND PROJECT_SN IN (SELECT PROJECT_SN FROM PJT_PROJECT WHERE BCNC_CODE = #{bcncCode}) 
+            </if>
+            <if test="bcncNm != null and bcncNm != ''">
+                AND PROJECT_SN IN (SELECT PROJECT_SN FROM PJT_PROJECT WHERE BCNC_CODE IN (SELECT BCNC_CODE FROM STM_CUSTOMER WHERE BCNC_NM = #{bcncNm}))
+            </if>
+        </trim>
+        ORDER BY REPORT_YM DESC
+    </select>
+    
+    <select id="searchPjtmta003Request" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.pjt.mta.pjtmta003.service.mapper.Pjtmta003Mapper.searchPjtmta003Request */
+        SELECT
+               PROJECT_SN,
+               REQUST_SN,
+               REQUST_MENU,
+               REQUST_CN,
+               TO_CHAR(REQUST_DT, 'YYYY-MM-DD') AS REQUST_DT,
+               TO_CHAR(A.COMPT_DE, 'YYYY-MM-DD') AS COMPT_DE,
+               
+               PRINT_CHK,
+               FNC_DATESTR(PRINT_YM) AS PRINT_YM,
+               (CASE COMPT_CONFM_AT WHEN '1' THEN '승인' ELSE '미승인' END) AS COMPT_CONFM_AT
+
+          FROM PJT_MNTNCE_REQUST A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+        	
+            <if test="projectSn != null and projectSn != ''">
+                AND PROJECT_SN = #{projectSn}
+            </if>
+            <if test="reportStrDt != null and reportStrDt != ''">
+                AND TO_CHAR(COMPT_DE, 'YYYYMMDD') >= REPLACE(#{reportStrDt},'-','')
+            </if>
+            <if test="reportEndDt != null and reportEndDt != ''">
+	            <![CDATA[
+	            AND TO_CHAR(COMPT_DE, 'YYYYMMDD') <= REPLACE(#{reportEndDt},'-','')
+	            ]]>
+            </if>
+            <if test="bgnRequstDe != null and bgnRequstDe != ''">
+                AND TO_CHAR(COMPT_DE, 'YYYYMMDD') >= REPLACE(#{bgnRequstDe},'-','')
+            </if>
+            <if test="endRequstDe != null and endRequstDe != ''">
+	            <![CDATA[
+	            AND TO_CHAR(COMPT_DE, 'YYYYMMDD') <= REPLACE(#{endRequstDe},'-','')
+	            ]]>
+            </if>
+            <if test="comptConfmAt != null and comptConfmAt != ''">
+            	<if test="comptConfmAt == 1">
+                AND COMPT_CONFM_AT = #{comptConfmAt}
+                </if>
+                <if test="comptConfmAt == 0">
+                AND (COMPT_CONFM_AT !='1' OR COMPT_CONFM_AT IS NULL)
+                </if>
+            </if>
+            <if test="requstCn != null and requstCn != ''">
+                AND REQUST_CN LIKE '%'|| #{requstCn} ||'%'
+            </if>
+        </trim>
+        ORDER BY REQUST_DT
+    </select>
+
+    <update id="savePjtmta003" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrm.mhshrm006.service.mapper.Mhshrm006Mapper.savePjtmta003 */
+        UPDATE PJT_MNTNCE_REQUST
+        SET PRINT_CHK = #{printChk},
+        	PRINT_YM = REPLACE(#{printYm},'-',''),
+        	UPT_ID = #{uptId},
+        	UPT_DT = SYSDATE
+        WHERE PROJECT_SN = #{projectSn} AND REQUST_SN = #{requstSn}
+    </update>
+    
+    <select id="popupPjtmta003" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.pjt.mta.pjtmta003.service.mapper.Pjtmta003Mapper.popupPjtmta003 */
+			SELECT  PROJECT_SN,
+			        PROJECT_NM,
+			        BCNC_CODE,
+			        (SELECT BCNC_NM FROM STM_CUSTOMER WHERE BCNC_CODE = A.BCNC_CODE) AS BCNC_NM,
+			        FNC_DATESTR((SELECT MAX(REPORT_YM) FROM PJT_MNTNCE_REPORT WHERE PROJECT_SN = A.PROJECT_SN GROUP BY PROJECT_SN)+1) AS REPORT_YM
+			    FROM PJT_PROJECT A
+			    WHERE ROWNUM=1
+			    <if test="projectSn != null and projectSn != ''">
+					AND A.PROJECT_SN = #{projectSn}
+		        </if>
+			    GROUP BY PROJECT_SN, PROJECT_NM, BCNC_CODE
+				ORDER BY REPORT_YM DESC
+    </select>
+    
+    <select id="selectPjtmta003" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.pjt.mta.pjtmta003.service.mapper.Pjtmta003Mapper.selectPjtmta003 */
+        SELECT 
+        	   B.PROJECT_SN,
+        	   FNC_DATESTR(REPORT_YM) as REPORT_YM,
+        	   FNC_DATESTR(REPORT_STR_DT) AS REPORT_STR_DT,
+        	   FNC_DATESTR(REPORT_END_DT) AS REPORT_END_DT,
+        	   (SELECT BCNC_NM FROM STM_CUSTOMER WHERE BCNC_CODE = B.BCNC_CODE) AS BCNC_NM,
+        	   B.PROJECT_NM,
+               (SELECT KOR_NM FROM MHS_EMP WHERE EMPNO = WRITER) AS EMP_NM,
+               WRITER AS EMPNO,
+        	   A.NEXT_MT_REPORT,
+               A.REG_DT,
+               A.REG_ID,
+               A.UPT_DT,
+               A.UPT_ID,
+               ISSUE_DESC,
+               NONSOLUT_DESC,
+               FNC_DATESTR(WRITE_DT) as WRITE_DT
+         FROM PJT_PROJECT B JOIN PJT_MNTNCE_REPORT A ON A.PROJECT_SN(+) = B.PROJECT_SN					
+										            <if test="reportYm != null and reportYm != ''">
+										                AND REPORT_YM(+) = REPLACE(#{reportYm},'-','')
+										            </if>
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="projectSn != null and projectSn != ''">
+                AND B.PROJECT_SN = #{projectSn}
+            </if>
+        </trim>
+    </select>
+    
+    <select id="findPjtmta003Report" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.pjt.mta.pjtmta003.service.mapper.Pjtmta003Mapper.findPjtmta003Report */
+        SELECT 
+        	   B.PROJECT_SN,
+        	   (SELECT BCNC_NM FROM STM_CUSTOMER WHERE BCNC_CODE = B.BCNC_CODE) AS BCNC_NM,
+        	   B.PROJECT_NM,
+               (SELECT KOR_NM FROM MHS_EMP WHERE EMPNO = WRITER) AS EMP_NM,
+               WRITER AS EMPNO,
+        	   A.NEXT_MT_REPORT,
+        	   A.ISSUE_DESC,
+        	   A.NONSOLUT_DESC,
+               A.REG_DT,
+               A.REG_ID,
+               A.UPT_DT,
+               A.UPT_ID
+         FROM PJT_PROJECT B JOIN PJT_MNTNCE_REPORT A ON A.PROJECT_SN(+) = B.PROJECT_SN					
+										            <if test="reportYm != null and reportYm != ''">
+										                AND REPORT_YM = REPLACE(#{reportYm},'-','')
+										            </if>
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="projectSn != null and projectSn != ''">
+                AND B.PROJECT_SN = #{projectSn}
+            </if>
+        </trim>
+    </select>
+    
+    <update id="insertPjtMtaReport" parameterType="kr.co.dbvision.api.pjt.mta.pjtmta003.entity.Pjtmta003">
+        /* kr.co.dbvision.api.pjt.mta.pjtmta003.service.mapper.Pjtmta003Mapper.insertPjtMtaReport */
+        MERGE INTO PJT_MNTNCE_REPORT A
+        	USING ( SELECT 
+        			#{projectSn} PROJECT_SN,
+        			REPLACE(#{reportYm},'-','') REPORT_YM
+        		   FROM DUAL) B
+        	   ON (
+        	        A.PROJECT_SN = B.PROJECT_SN
+        	        AND A.REPORT_YM = B.REPORT_YM
+        	      )
+        WHEN MATCHED THEN
+        UPDATE SET
+        	   
+               WRITER = #{writer},
+        	   NEXT_MT_REPORT = #{nextMtReport},
+        	   WRITE_DT = REPLACE(#{writeDt}, '-', ''),
+        	   REPORT_STR_DT = REPLACE(#{reportStrDt}, '-', ''),
+        	   REPORT_END_DT = REPLACE(#{reportEndDt}, '-', ''),
+               ISSUE_DESC = #{issueDesc},
+               NONSOLUT_DESC = #{nonsolutDesc},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+               
+        WHEN NOT MATCHED THEN
+        INSERT(
+        	   PROJECT_SN,
+        	   REPORT_YM,
+        	   WRITE_DT,
+        	   REPORT_STR_DT,
+        	   REPORT_END_DT,
+        	   WRITER,
+        	   NEXT_MT_REPORT,
+               ISSUE_DESC,
+               NONSOLUT_DESC,
+        	   REG_DT,
+        	   REG_ID
+        ) VALUES (
+        	   #{projectSn},
+        	   REPLACE(#{reportYm},'-',''),
+        	   REPLACE(#{writeDt},'-',''),
+        	   REPLACE(#{reportStrDt}, '-', ''),
+        	   REPLACE(#{reportEndDt}, '-', ''),
+        	   #{writer},
+        	   #{nextMtReport},
+        	   #{issueDesc},
+        	   #{nonsolutDesc},
+        	   SYSDATE,
+        	   #{regId}
+        )
+    </update>
+    
+    <update id="updatePjtMtaPrint" parameterType="kr.co.dbvision.api.pjt.mta.pjtmta003.entity.Pjtmta003">
+        /* kr.co.dbvision.api.pjt.mta.pjtmta003.service.mapper.Pjtmta003Mapper.updatePjtMtaPrint */
+        UPDATE PJT_MNTNCE_REQUST 
+        SET PRINT_CHK = '1',
+        	PRINT_YM = REPLACE(#{reportYm},'-','')
+        WHERE PROJECT_SN = #{projectSn}
+        	  AND TO_CHAR(COMPT_DE, 'YYYYMMDD') >= REPLACE(#{reportStrDt},'-','')
+        	  <![CDATA[
+        	  AND COMPT_DE <= REPLACE(#{reportEndDt},'-','')
+        	  ]]>
+        	  AND COMPT_CONFM_AT = '1'
+              AND (PRINT_CHK IS NULL OR PRINT_CHK = '0')
+    </update>
+    
+    <select id="searchPjtmta003Requst" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.pjt.mta.pjtmta003.service.mapper.Pjtmta003Mapper.searchPjtmta003Requst */
+        SELECT
+               COUNT(REQUST_SN) AS REQUST_COUNT
+
+        FROM PJT_MNTNCE_REQUST A
+        WHERE REQUST_STEP IN ('100', '200', '400')
+	        <if test="projectSn != null and projectSn != ''">
+	            AND PROJECT_SN = #{projectSn}
+	        </if>
+	        <if test="reportYm != null and reportYm != ''">
+	            AND TO_CHAR(REQUST_DT, 'YYYYMM') = REPLACE(#{reportYm},'-','')
+	        </if>
+    </select>
+
+</mapper>

@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mhs.hrb.mhshrb001.service.mapper.Mhshrb001MapperTab3Family">
+
+    <!-- 가족 Tab 3 -->
+    <select id="selectMhsEmpFamily" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrb.mhshrb001.service.impl.Mhshrb001MapperTab3Family.selectMhsEmpFamily */
+        SELECT
+               EMPNO,
+               FAMILY_SN,
+               FAMILY_CODE,
+               YNDEXCCLC_RELATE_CODE,
+               YNDEXCCLC_TRGET_AT,
+               FAMILY_NM,
+               IHIDNUM AS IHIDNUM_OL,
+               DECODE(A.IHIDNUM,NULL,'',SUBSTR(A.IHIDNUM,1,6)||'-*******') AS IHIDNUM,
+               BRTHDY,
+               LIVTGT_AT,
+               SUPORT_AT,
+               ALLWNC_TRGET_AT,
+               LSCHOL_SE_CODE,
+               OCCP_NM,
+               OFCPS_NM,
+               MBTLNUM,
+               DSPSN_AT,
+               DSPSN_NO,
+               DSPSN_SE_CODE,
+               SRSILL_AT,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               WRC_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_FAMILY A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="empno != null and empno != ''">
+                AND EMPNO = #{empno}
+            </if>
+            <if test="familySn != null and familySn != ''">
+                AND FAMILY_SN = #{familySn}
+            </if>
+        </trim>
+    </select>
+    
+    <update id="saveMhsEmpFamily" parameterType="kr.co.dbvision.api.mhs.hrb.mhshrb001.entity.Mhshrb001_TAB3">
+        /* kr.co.dbvision.api.mhs.hrb.mhshrb001.service.impl.Mhshrb001MapperTab3Family.saveMhsEmpFamily */
+        <selectKey resultType="int" keyProperty="familySnNew" order="BEFORE">
+  			SELECT NVL(MAX(FAMILY_SN),0) + 1 AS familySnNew
+  			FROM MHS_FAMILY
+  			WHERE EMPNO = #{empno}
+  		</selectKey>
+  
+        MERGE INTO MHS_FAMILY A
+             USING (SELECT
+                    #{empno} EMPNO,
+                    #{familySn} FAMILY_SN
+                    FROM DUAL) B
+                ON (
+                    A.EMPNO = B.EMPNO AND 
+                    A.FAMILY_SN = B.FAMILY_SN
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               FAMILY_CODE= #{familyCode},
+               YNDEXCCLC_RELATE_CODE= #{yndexcclcRelateCode},
+               YNDEXCCLC_TRGET_AT= #{yndexcclcTrgetAt},
+               FAMILY_NM= #{familyNm},
+               IHIDNUM= decode(instr(#{ihidnum},'*',1,1),0,replace(#{ihidnum},'-',''),IHIDNUM),
+               LIVTGT_AT= #{livtgtAt},
+               SUPORT_AT= #{suportAt},
+               ALLWNC_TRGET_AT= #{allwncTrgetAt},
+               OCCP_NM= #{occpNm},
+               OFCPS_NM= #{ofcpsNm},
+               MBTLNUM= #{mbtlnum},
+               DSPSN_AT= #{dspsnAt},
+               DSPSN_SE_CODE= #{dspsnSeCode},
+               WRC_NM= #{wrcNm},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               EMPNO,
+               FAMILY_SN,
+               FAMILY_CODE,
+               YNDEXCCLC_RELATE_CODE,
+               YNDEXCCLC_TRGET_AT,
+               FAMILY_NM,
+               IHIDNUM,
+               LIVTGT_AT,
+               SUPORT_AT,
+               ALLWNC_TRGET_AT,
+               OCCP_NM,
+               OFCPS_NM,
+               MBTLNUM,
+               DSPSN_AT,
+               DSPSN_SE_CODE,
+               WRC_NM,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{empno},
+               #{familySnNew},
+               #{familyCode},
+               #{yndexcclcRelateCode},
+               #{yndexcclcTrgetAt},
+               #{familyNm},
+               decode(instr(#{ihidnum},'*',1,1),0,replace(#{ihidnum},'-',''),null),
+               #{livtgtAt},
+               #{suportAt},
+               #{allwncTrgetAt},
+               #{occpNm},
+               #{ofcpsNm},
+               #{mbtlnum},
+               #{dspsnAt},
+               #{dspsnSeCode},
+               #{wrcNm},
+               SYSDATE,
+               #{regId}
+        )
+    </update>    
+    
+    <update id="saveMhsEmpFamily_ol" parameterType="kr.co.dbvision.api.mhs.hrb.mhshrb001.entity.Mhshrb001_TAB3">
+        /* kr.co.dbvision.api.mhs.hrb.mhshrb001.service.impl.Mhshrb001MapperTab3Family.saveMhsEmpFamily */
+        <selectKey resultType="int" keyProperty="familySnNew" order="BEFORE">
+  			SELECT NVL(MAX(FAMILY_SN),0) + 1 AS familySnNew
+  			FROM MHS_FAMILY
+  			WHERE EMPNO = #{empno}
+  		</selectKey>
+  
+        MERGE INTO MHS_FAMILY A
+             USING (SELECT
+                    #{empno} EMPNO,
+                    #{familySn} FAMILY_SN
+                    FROM DUAL) B
+                ON (
+                    A.EMPNO = B.EMPNO AND 
+                    A.FAMILY_SN = B.FAMILY_SN
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               FAMILY_CODE= #{familyCode},
+               YNDEXCCLC_RELATE_CODE= #{yndexcclcRelateCode},
+               YNDEXCCLC_TRGET_AT= #{yndexcclcTrgetAt},
+               FAMILY_NM= #{familyNm},
+               IHIDNUM= decode(instr(#{ihidnum},'*',1,1),0,replace(#{ihidnum},'-',''),IHIDNUM),
+               /*BRTHDY= #{brthdy},*/
+               LIVTGT_AT= #{livtgtAt},
+               SUPORT_AT= #{suportAt},
+               ALLWNC_TRGET_AT= #{allwncTrgetAt},
+               /*LSCHOL_SE_CODE= #{lscholSeCode},*/
+               OCCP_NM= #{occpNm},
+               OFCPS_NM= #{ofcpsNm},
+               MBTLNUM= #{mbtlnum},
+               DSPSN_AT= #{dspsnAt},
+               /*DSPSN_NO= #{dspsnNo},*/
+               DSPSN_SE_CODE= #{dspsnSeCode},
+               /*SRSILL_AT= #{srsillAt},*/
+               WRC_NM= #{wrcNm},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               EMPNO,
+               FAMILY_SN,
+               FAMILY_CODE,
+               YNDEXCCLC_RELATE_CODE,
+               YNDEXCCLC_TRGET_AT,
+               FAMILY_NM,
+               IHIDNUM,
+               /*BRTHDY,*/
+               LIVTGT_AT,
+               SUPORT_AT,
+               ALLWNC_TRGET_AT,
+               /*LSCHOL_SE_CODE,*/
+               OCCP_NM,
+               OFCPS_NM,
+               MBTLNUM,
+               DSPSN_AT,
+               /*DSPSN_NO,*/
+               DSPSN_SE_CODE,
+               /*SRSILL_AT,*/
+               WRC_NM,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{empno},
+               #{familySnNew},
+               #{familyCode},
+               #{yndexcclcRelateCode},
+               #{yndexcclcTrgetAt},
+               #{familyNm},
+               replace(#{ihidnum},'-',''),
+               /*#{brthdy},*/
+               #{livtgtAt},
+               #{suportAt},
+               #{allwncTrgetAt},
+               /*#{lscholSeCode},*/
+               #{occpNm},
+               #{ofcpsNm},
+               #{mbtlnum},
+               #{dspsnAt},
+               /*#{dspsnNo},*/
+               #{dspsnSeCode},
+               /*#{srsillAt},*/
+               #{wrcNm},
+               SYSDATE,
+               #{regId}
+        )
+    </update>
+    
+    
+    <delete id="deleteMhsEmpFamily" parameterType="kr.co.dbvision.api.mhs.hrb.mhshrb001.entity.Mhshrb001_TAB3">
+        /* kr.co.dbvision.api.mhs.hrb.mhshrb999.service.mapper.Mhshrb001MapperTab3Family.deleteMhsEmpFamily */
+        DELETE FROM MHS_FAMILY
+         WHERE EMPNO = #{empno}
+           AND FAMILY_SN = #{familySn}
+    </delete>
+ 
+</mapper>

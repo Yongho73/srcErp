@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.ets.bst.etsbst001.service.mapper.Etsbst001Mapper">
+	
+	<select id="searchSanctnLvl" parameterType="egovMapForNull" resultType="egovMapForNull">
+		/* kr.co.dbvision.api.ets.bst.etsbst001.service.mapper.Etsbst001Mapper.searchSanctnLvl */
+		SELECT
+               CODE AS KEY,
+               CODE_KOR_NM AS VALUE
+          FROM STM_CODE A
+         WHERE  CODEKIND_CODE = 'EA012' 
+        ORDER BY ORDR
+	</select>
+
+    <select id="selectEtsbst001List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.ets.bst.etsbst001.service.mapper.Etsbst001Mapper.selectEtsbst001List */
+        SELECT
+               DCRB_NO,
+               JOBNM,
+               SANCTN_LVL,
+               (SELECT CODE_KOR_NM FROM STM_CODE WHERE CODEkIND_CODE = 'EA012' AND CODE = A.SANCTN_LVL) AS SANCTN_LVL_NM,
+               JOB_DC,
+               REGLTN_ARTCL,
+               DETAIL_UNIT_ASSGMNT,
+               USE_AT,
+               (CASE A.USE_AT WHEN '1' THEN '사용' ELSE '미사용' END) AS USE_AT_NM,
+               REG_ID,
+               REG_DT,
+               UPT_ID,
+               UPT_DT,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM SGN_DCRB_REGLTN A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="jobnm != null and jobnm != ''">
+                AND JOBNM LIKE  '%'||#{jobnm}||'%'
+            </if>
+            <if test="jobDc != null and jobDc != ''">
+                AND JOB_DC LIKE  '%'||#{jobDc}||'%'
+            </if>
+            <if test="useAt != null and useAt != ''">
+                AND USE_AT =  #{useAt}
+            </if>
+            <if test="sRegDt != null and sRegDt != ''">
+                <![CDATA[
+                AND REG_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+                ]]>
+            </if>
+            <if test="eRegDt != null and eRegDt != ''">
+                <![CDATA[
+                AND REG_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+                ]]>
+             </if>
+        </trim>
+        ORDER BY DCRB_NO DESC
+    </select>
+
+    <select id="selectEtsbst001" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.ets.bst.etsbst001.service.mapper.Etsbst001Mapper.selectEtsbst001 */
+        SELECT
+               DCRB_NO,
+               JOBNM,
+               SANCTN_LVL,
+               JOB_DC,
+               REGLTN_ARTCL,
+               DETAIL_UNIT_ASSGMNT,
+               USE_AT,
+               REG_ID,
+               REG_DT,
+               UPT_ID,
+               UPT_DT,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM SGN_DCRB_REGLTN A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="jobnm != null and jobnm != ''">
+                AND JOBNM = #{jobnm}
+            </if>
+        </trim>
+    </select>
+
+    <update id="saveEtsbst001" parameterType="kr.co.dbvision.api.ets.bst.etsbst001.entity.Etsbst001">
+        /* kr.co.dbvision.api.ets.bst.etsbst001.service.mapper.Etsbst001Mapper.saveEtsbst001 */
+        MERGE INTO SGN_DCRB_REGLTN A
+             USING (SELECT
+                    #{dcrbNo} DCRB_NO
+                    FROM DUAL) B
+                ON (
+                    A.DCRB_NO = B.DCRB_NO
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               JOBNM= #{jobnm},
+               SANCTN_LVL= #{sanctnLvl},
+               JOB_DC= #{jobDc},
+               REGLTN_ARTCL= #{regltnArtcl},
+               DETAIL_UNIT_ASSGMNT= #{detailUnitAssgmnt},
+               USE_AT= #{useAt},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               DCRB_NO,
+               JOBNM,
+               SANCTN_LVL,
+               JOB_DC,
+               REGLTN_ARTCL,
+               DETAIL_UNIT_ASSGMNT,
+               USE_AT,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               (SELECT NVL(MAX(DCRB_NO),'0') + 1
+                FROM SGN_DCRB_REGLTN),
+               #{jobnm},
+               #{sanctnLvl},
+               #{jobDc},
+               #{regltnArtcl},
+               #{detailUnitAssgmnt},
+               #{useAt},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deleteEtsbst001" parameterType="kr.co.dbvision.api.ets.bst.etsbst001.entity.Etsbst001">
+        /* kr.co.dbvision.api.ets.bst.etsbst001.service.mapper.Etsbst001Mapper.deleteEtsbst001 */
+        DELETE FROM SGN_DCRB_REGLTN
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND DCRB_NO = #{dcrbNo}
+        </trim>
+    </delete>
+</mapper>

@@ -1,0 +1,439 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mfs.bsc.mfsbsc002.service.mapper.Mfsbsc002Mapper">
+
+
+    <select id="selectMfsbsc002ListCnt" parameterType="egovMapForNull" resultType="java.lang.Integer">
+        /* kr.co.dbvision.api.mfs.bsc.mfsbsc002.service.mapper.Mfsbsc002Mapper.selectMfsbsc002ListCnt */
+        SELECT COUNT(*) AS totalRecordCount
+          FROM STM_CUSTOMER
+		
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="bcncNm != null and bcncNm != ''">
+                AND BCNC_NM LIKE  #{bcncNm} ||'%'
+            </if>
+            <if test="bizrno != null and bizrno != ''">
+                AND BIZRNO LIKE  #{bizrno} ||'%'
+            </if>            
+             <if test="bcncSe != null and bcncSe != ''">
+                AND BCNC_SE = #{bcncSe}
+            </if>
+            <if test="cprSe != null and cprSe != ''">
+                AND CPR_SE = #{cprSe}
+            </if>
+            <if test="useAt != null and useAt != ''">
+                AND USE_AT = #{useAt}
+            </if>                                   
+
+        </trim>
+
+    </select>
+
+    <select id="selectMfsbsc002List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mfs.bsc.mfsbsc002.service.mapper.Mfsbsc002Mapper.selectMfsbsc002List */
+       
+        SELECT * FROM ( SELECT ROWNUM RNUM, 
+                               A.*                 
+                          FROM (         
+						        SELECT
+						               BCNC_CODE,
+						               BPLC_CODE,
+						               FNC_BIZRNO(BIZRNO)  AS BIZRNO,
+						               BCNC_NM,
+						               BCNC_SE,
+						               CPR_SE,
+						               INDUTY,
+						               BIZCND,
+						               REPRSNT_NM,
+						               NLTY_CODE,
+						               AREA_NM,
+						               POST_CODE,
+						               ADRES,
+						               ADDR2,
+						               TELNO,
+						               FAX_NO,
+						               BANK_CODE,
+						               ACNUT_NO,
+						               DPSTR_NM,
+						               HOMEPAGE,
+						               PURCHS_AT,
+						               SALEOFFIC_AT,
+						               BCNCSCALE_SE,
+						               TAXT_SE,
+						               BCNC_CN,
+						               FOND_DE,
+						               CAPITAL_AMT,
+						               YY_SALE_AMT,
+						               EMPL_CO,
+						               TRADE_NO,
+						               CRNCY_CODE,
+						               NVL(USE_AT,'0') AS USE_AT,
+						               NVL(DSRPR_AT,'0') AS DSRPR_AT,
+						               NVL(WOMAN_AT,'0') AS WOMAN_AT,
+						               NVL(FOREIGN_AT,'0') AS FOREIGN_AT,
+						               NVL(SERHANDICAP_AT,'0') AS SERHANDICAP_AT,
+						               NVL(SOCIALENTRPRS_AT,'0') AS SOCIALENTRPRS_AT,
+						               NVL(DSPSN_STD_AT,'0') AS DSPSN_STD_AT,
+						               NVL(GREEN_AT,'0') AS GREEN_AT,
+						               NVL(TECHNOLOGY_AT,'0') AS TECHNOLOGY_AT,
+						               TO_CHAR(REG_DT,'YYYY-MM-DD HH24:MI:SS') AS REG_DT,
+						               REG_ID,
+						               TO_CHAR(UPT_DT,'YYYY-MM-DD HH24:MI:SS') AS UPT_DT,
+						               UPT_ID,
+						               AREA_CODE,
+						               FNC_COMCODENM('C079',AREA_CODE) as AREA_CODE_NM,
+						               CHARGER_NM,
+						               CHARGER_EMAIL,
+						               CHARGER_TELNO,
+						               CHARGER_DEPT,
+						               CHARGER_OFCPS,
+						               ATCHMNFL_NO
+						          FROM STM_CUSTOMER A
+						
+						        <trim prefix="WHERE" prefixOverrides="AND|OR">
+						            <if test="bcncNm != null and bcncNm != ''">
+						                AND BCNC_NM LIKE  '%' || #{bcncNm} ||'%'
+						            </if>
+						            <if test="bizrno != null and bizrno != ''">
+						                AND BIZRNO LIKE  #{bizrno} ||'%'
+						            </if>            
+						             <if test="bcncSe != null and bcncSe != ''">
+						                AND BCNC_SE = #{bcncSe}
+						            </if>
+						            <if test="cprSe != null and cprSe != ''">
+						                AND CPR_SE = #{cprSe}
+						            </if>
+						            <if test="useAt != null and useAt != ''">
+						                AND USE_AT = #{useAt}
+						            </if>                                   
+								
+						        </trim>
+						        ORDER  BY BCNC_NM 
+                               ) A 
+                      ) B 
+                WHERE RNUM  <![CDATA[ >  ]]>  #{firstIndex}
+                  AND RNUM  <![CDATA[ <= ]]> #{lastIndex}    						        
+    </select>
+    
+    
+
+    <select id="selectMfsbsc002" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mfs.bsc.mfsbsc002.service.mapper.Mfsbsc002Mapper.selectMfsbsc002 */
+        SELECT
+               BCNC_CODE,
+               BPLC_CODE,
+               FNC_BIZRNO(BIZRNO)  AS BIZRNO,
+               BCNC_NM,
+               BCNC_SE,
+               CPR_SE,
+               INDUTY,
+               BIZCND,
+               REPRSNT_NM,
+               NLTY_CODE,
+               AREA_NM,
+               POST_CODE,
+               ADRES,
+               ADDR2,
+               TELNO,
+               FAX_NO,
+               BANK_CODE,
+               ACNUT_NO,
+               DPSTR_NM,
+               HOMEPAGE,
+               PURCHS_AT,
+               SALEOFFIC_AT,
+               BCNCSCALE_SE,
+               TAXT_SE,
+               BCNC_CN,
+               FOND_DE,
+               CAPITAL_AMT,
+               YY_SALE_AMT,
+               EMPL_CO,
+               TRADE_NO,
+               CRNCY_CODE,
+               USE_AT,
+               DSRPR_AT,
+               WOMAN_AT,
+               FOREIGN_AT,
+               SERHANDICAP_AT,
+               SOCIALENTRPRS_AT,
+               DSPSN_STD_AT,
+               GREEN_AT,
+               TECHNOLOGY_AT,
+               TO_CHAR(REG_DT,'YYYY-MM-DD HH24:MI:SS') AS REG_DT,
+               REG_ID,
+               TO_CHAR(UPT_DT,'YYYY-MM-DD HH24:MI:SS') AS UPT_DT,
+               UPT_ID,
+               AREA_CODE,
+               CHARGER_NM,
+               CHARGER_EMAIL,
+               CHARGER_TELNO,
+               CHARGER_DEPT,
+               CHARGER_OFCPS,
+               ATCHMNFL_NO
+          FROM STM_CUSTOMER A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="bcncCode != null and bcncCode != ''">
+                AND BCNC_CODE = #{bcncCode}
+            </if>
+        </trim>
+    </select>
+
+    <update id="saveMfsbsc002" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mfs.bsc.mfsbsc002.service.mapper.Mfsbsc002Mapper.saveMfsbsc002 */
+        MERGE INTO STM_CUSTOMER A
+             USING (SELECT
+                    #{bcncCode} BCNC_CODE
+                    FROM DUAL) B
+                ON (
+                    A.BCNC_CODE = B.BCNC_CODE
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               BPLC_CODE= #{bplcCode},
+               BIZRNO= REPLACE(#{bizrno},'-',''),
+               BCNC_NM= #{bcncNm},
+               BCNC_SE= #{bcncSe},
+               CPR_SE= #{cprSe},
+               INDUTY= #{induty},
+               BIZCND= #{bizcnd},
+               REPRSNT_NM= #{reprsntNm},
+               NLTY_CODE= #{nltyCode},
+               AREA_NM= #{areaNm},
+               POST_CODE= #{postCode},
+               ADRES= #{adres},
+               ADDR2= #{addr2},
+               TELNO= #{telno},
+               FAX_NO= #{faxNo},
+               BANK_CODE= #{bankCode},
+               ACNUT_NO= #{acnutNo},
+               DPSTR_NM= #{dpstrNm},
+               HOMEPAGE= #{homepage},
+               PURCHS_AT= #{purchsAt},
+               SALEOFFIC_AT= #{saleofficAt},
+               BCNCSCALE_SE= #{bcncscaleSe},
+               TAXT_SE= #{taxtSe},
+               BCNC_CN= #{bcncCn},
+               FOND_DE= #{fondDe},
+               CAPITAL_AMT= #{capitalAmt},
+               YY_SALE_AMT= #{yySaleAmt},
+               EMPL_CO= #{emplCo},
+               TRADE_NO= #{tradeNo},
+               CRNCY_CODE= #{crncyCode},
+               USE_AT= #{useAt},
+               DSRPR_AT= #{dsrprAt},
+               WOMAN_AT= #{womanAt},
+               FOREIGN_AT= #{foreignAt},
+               SERHANDICAP_AT= #{serhandicapAt},
+               SOCIALENTRPRS_AT= #{socialentrprsAt},
+               DSPSN_STD_AT= #{dspsnStdAt},
+               GREEN_AT= #{greenAt},
+               TECHNOLOGY_AT= #{technologyAt},
+               AREA_CODE= #{areaCode},
+               CHARGER_NM= #{chargerNm},
+               CHARGER_EMAIL= #{chargerEmail},
+               CHARGER_TELNO= #{chargerTelno},
+               CHARGER_DEPT= #{chargerDept},
+               CHARGER_OFCPS= #{chargerOfcps},
+               ATCHMNFL_NO= #{atchmnflNo},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               BCNC_CODE,
+               BPLC_CODE,
+               BIZRNO,
+               BCNC_NM,
+               BCNC_SE,
+               CPR_SE,
+               INDUTY,
+               BIZCND,
+               REPRSNT_NM,
+               NLTY_CODE,
+               AREA_NM,
+               POST_CODE,
+               ADRES,
+               ADDR2,
+               TELNO,
+               FAX_NO,
+               BANK_CODE,
+               ACNUT_NO,
+               DPSTR_NM,
+               HOMEPAGE,
+               PURCHS_AT,
+               SALEOFFIC_AT,
+               BCNCSCALE_SE,
+               TAXT_SE,
+               BCNC_CN,
+               FOND_DE,
+               CAPITAL_AMT,
+               YY_SALE_AMT,
+               EMPL_CO,
+               TRADE_NO,
+               CRNCY_CODE,
+               USE_AT,
+               DSRPR_AT,
+               WOMAN_AT,
+               FOREIGN_AT,
+               SERHANDICAP_AT,
+               SOCIALENTRPRS_AT,
+               DSPSN_STD_AT,
+               GREEN_AT,
+               TECHNOLOGY_AT,
+               AREA_CODE,
+               CHARGER_NM,
+               CHARGER_EMAIL,
+               CHARGER_TELNO,
+               CHARGER_DEPT,
+               CHARGER_OFCPS,
+               ATCHMNFL_NO,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{bcncCode},
+               #{bplcCode},
+               REPLACE(#{bizrno},'-',''),
+               #{bcncNm},
+               #{bcncSe},
+               #{cprSe},
+               #{induty},
+               #{bizcnd},
+               #{reprsntNm},
+               #{nltyCode},
+               #{areaNm},
+               #{postCode},
+               #{adres},
+               #{addr2},
+               #{telno},
+               #{faxNo},
+               #{bankCode},
+               #{acnutNo},
+               #{dpstrNm},
+               #{homepage},
+               #{purchsAt},
+               #{saleofficAt},
+               #{bcncscaleSe},
+               #{taxtSe},
+               #{bcncCn},
+               #{fondDe},
+               #{capitalAmt},
+               #{yySaleAmt},
+               #{emplCo},
+               #{tradeNo},
+               #{crncyCode},
+               #{useAt},
+               #{dsrprAt},
+               #{womanAt},
+               #{foreignAt},
+               #{serhandicapAt},
+               #{socialentrprsAt},
+               #{dspsnStdAt},
+               #{greenAt},
+               #{technologyAt},
+               #{areaCode},
+               #{chargerNm},
+               #{chargerEmail},
+               #{chargerTelno},
+               #{chargerDept},
+               #{chargerOfcps},
+               #{atchmnflNo},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deleteMfsbsc002" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mfs.bsc.mfsbsc002.service.mapper.Mfsbsc002Mapper.deleteMfsbsc002 */
+        DELETE FROM STM_CUSTOMER
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND BCNC_CODE = #{bcncCode}
+        </trim>
+    </delete>
+    
+    <select id="selectExcelMfsbsc002" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mfs.bsc.mfsbsc002.service.mapper.Mfsbsc002Mapper.selectExcelMfsbsc002 */
+    
+					SELECT
+		               BCNC_CODE,
+		               BPLC_CODE,
+		               FNC_BIZRNO(BIZRNO)  AS BIZRNO,
+		               BCNC_NM,
+		               FNC_COMCODENM('C004',BCNC_SE) as BCNC_SE,
+		               FNC_COMCODENM('C060', CPR_SE) as CPR_SE,
+		               INDUTY,
+		               BIZCND,
+		               REPRSNT_NM,
+		               NLTY_CODE,
+		               AREA_NM,
+		               POST_CODE,
+		               ADRES,
+		               ADDR2,
+		               TELNO,
+		               FAX_NO,
+		               FNC_COMCODENM('C010',BANK_CODE ) as BANK_CODE, 
+		               ACNUT_NO,
+		               DPSTR_NM,
+		               HOMEPAGE,
+		               PURCHS_AT,
+		               SALEOFFIC_AT,
+		               BCNCSCALE_SE,
+		               FNC_COMCODENM('C009',TAXT_SE) as TAXT_SE,
+		               BCNC_CN,
+		               FOND_DE,
+		               CAPITAL_AMT,
+		               YY_SALE_AMT,
+		               EMPL_CO,
+		               TRADE_NO,
+		               FNC_COMCODENM('C126',CRNCY_CODE)  CRNCY_CODE,
+		               USE_AT,
+		               DSRPR_AT,
+		               WOMAN_AT,
+		               FOREIGN_AT,
+		               SERHANDICAP_AT,
+		               SOCIALENTRPRS_AT,
+		               DSPSN_STD_AT,
+		               GREEN_AT,
+		               TECHNOLOGY_AT,
+		               FNC_COMCODENM('C079',AREA_CODE) as AREA_CODE,
+		               CHARGER_NM,
+		               CHARGER_EMAIL,
+		               CHARGER_TELNO,
+		               CHARGER_DEPT,
+		               CHARGER_OFCPS,
+		               ATCHMNFL_NO
+		          FROM STM_CUSTOMER A
+		
+		        <trim prefix="WHERE" prefixOverrides="AND|OR">
+		            <if test="bcncNm != null and bcncNm != ''">
+		                AND BCNC_NM LIKE  #{bcncNm} ||'%'
+		            </if>
+		            <if test="bizrno != null and bizrno != ''">
+		                AND BIZRNO LIKE  #{bizrno} ||'%'
+		            </if>            
+		             <if test="bcncSe != null and bcncSe != ''">
+		                AND BCNC_SE = #{bcncSe}
+		            </if>
+		            <if test="cprSe != null and cprSe != ''">
+		                AND CPR_SE = #{cprSe}
+		            </if>
+		            <if test="useAt != null and useAt != ''">
+		                AND USE_AT = #{useAt}
+		            </if>                                   
+				
+		        </trim>
+		        ORDER  BY BCNC_NM 
+						        
+    	</select>
+    	
+    	
+</mapper>

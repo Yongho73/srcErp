@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.stm.bsc.stmbsc004.service.mapper.Stmbsc004Mapper">
+
+    <select id="selectStmbsc004List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        SELECT
+               TO_CHAR(TO_DATE(JOB_DE),'DD') AS JOB_DE_DAY,
+               FNC_DATESTR(JOB_DE) AS JOB_DE,
+               DE_SE_CODE,
+               FNC_COMCODENM('C127',DE_SE_CODE) AS DE_SE_NM,
+               HVOF_AT,
+               RM,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM STM_JOB_DAY A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="calenderDt != null and calenderDt != ''">
+                AND TO_CHAR(TO_DATE(JOB_DE),'YYYYMM') = #{calenderDt}
+            </if>
+            <if test="sRegDt != null and sRegDt != ''">
+                <![CDATA[
+                AND REG_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+                ]]>
+            </if>
+            <if test="eRegDt != null and eRegDt != ''">
+                <![CDATA[
+                AND REG_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+                ]]>
+             </if>
+        </trim>
+        ORDER BY JOB_DE
+    </select>
+    
+    <select id="selectStmbsc004" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.stm.bsc.stmbsc004.service.mapper.Stmbsc004Mapper.selectStmbsc004 */
+        SELECT
+               JOB_DE,
+               DE_SE_CODE,
+               HVOF_AT,
+               RM,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM STM_JOB_DAY A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="jobDe != null and jobDe != ''">
+                AND JOB_DE = #{jobDe}
+            </if>
+        </trim>
+    </select>
+
+    <update id="updateStmbsc004" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.stm.bsc.stmbsc004.service.mapper.Stmbsc004Mapper.updateStmbsc004 */
+        UPDATE STM_JOB_DAY SET
+               HVOF_AT= #{hvofAt},
+               RM= #{rm},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{regId} 
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+               AND JOB_DE = REPLACE(#{jobDe}, '-', '')
+        </trim>
+    </update>
+
+    <delete id="deleteStmbsc004" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.stm.bsc.stmbsc004.service.mapper.Stmbsc004Mapper.deleteStmbsc004 */
+        DELETE FROM STM_JOB_DAY
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND SUBSTR(JOB_DE,0,4) = #{calenderDt}
+        </trim>
+    </delete>
+    
+    <insert id="insertStmbsc004" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.stm.bsc.stmbsc004.service.mapper.Stmbsc004Mapper.insertStmbsc004 */
+        <![CDATA[
+        INSERT INTO STM_JOB_DAY (JOB_DE, HVOF_AT, DE_SE_CODE, REG_ID, REG_DT)
+        SELECT YMD
+              ,CASE WHEN
+                    SUBSTR(YMD,5,4) IN ('0101','0301','0505','0606','0815','1003','1009','1225')
+                    THEN
+                    '1'
+                    ELSE DECODE(TO_CHAR(TO_DATE(YMD,'YYYYMMDD'),'D'),'1','1','7','1','0') END AS EDAY
+              ,DECODE(TO_CHAR(TO_DATE(YMD,'YYYYMMDD'),'D'),'1','0','2','1','3','2','4','3','5','4','6','5','7','6','오류') AS WEEK
+              ,'000000',SYSDATE
+        FROM (SELECT TO_CHAR(TO_DATE(#{calenderDt}||'0101', 'YYYYMMDD')+LEVEL-1, 'YYYYMMDD') AS YMD
+                  FROM DUAL
+                CONNECT BY LEVEL <= (TO_DATE(#{calenderDt}||'1231', 'YYYYMMDD')-TO_DATE(#{calenderDt}||'0101', 'YYYYMMDD')+1))
+        ]]>
+    </insert>
+</mapper>

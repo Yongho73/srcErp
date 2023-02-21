@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mhs.hrb.mhshrb001.service.mapper.Mhshrb001MapperTab2IndvdlInfo">
+
+    <!-- 신상정보 Tab 2 -->
+    <select id="selectMhsEmpIndvdlInfo" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrb.mhshrb001.service.impl.Mhshrb001MapperTab2IndvdlInfo.selectMhsEmpIndvdlInfo */
+        SELECT
+        	X.EMPNO,
+        	MAX(X.HEIGHT) AS HEIGHT,
+        	MAX(X.WEIGHT) AS WEIGHT,
+        	MAX(X.BLOOD) AS BLOOD,
+        	MAX(X.RELGN) AS RELGN,
+        	MAX(X.HOBBY) AS HOBBY,
+        	MAX(X.VEHICLE_NO) AS VEHICLE_NO,
+        	MAX(X.SOCWKERCODE) AS SOCWKERCODE,
+        	MAX(X.ENST_DE) AS ENST_DE,
+        	MAX(X.DMBLZ_DE) AS DMBLZ_DE,
+        	MAX(X.DMBLZ_SE_CODE) AS DMBLZ_SE_CODE,
+        	MAX(X.MSCL_SE_CODE) AS MSCL_SE_CODE,
+        	MAX(X.BNCTR_SE_CODE) AS BNCTR_SE_CODE,
+        	MAX(X.CLSS_TY_CODE) AS CLSS_TY_CODE,
+        	MAX(X.SSN) AS SSN,
+        	MAX(X.SRVDDT_TY) AS SRVDDT_TY,
+        	MAX(X.INCMP_RESN_SE_CODE) AS INCMP_RESN_SE_CODE,
+        	MAX(X.RWDMRT_TRGTER_AT) AS RWDMRT_TRGTER_AT,
+        	MAX(X.RWDMRT_SE_CODE) AS RWDMRT_SE_CODE,
+        	MAX(X.FAMILYRELATE_SE) AS FAMILYRELATE_SE,
+        	MAX(X.RWDMRT_GRAD) AS RWDMRT_GRAD,
+        	MAX(X.RWDMRT_NO) AS RWDMRT_NO,
+        	MAX(X.DSPSN_AT) AS DSPSN_AT,
+        	MAX(X.DSPSN_SE) AS DSPSN_SE,
+        	MAX(X.TROBL_GRAD_SE) AS TROBL_GRAD_SE,
+        	MAX(X.TROBL_TY_CODE) AS TROBL_TY_CODE
+        FROM (
+	        SELECT
+	               A.EMPNO,
+	               A.HEIGHT,
+	               A.WEIGHT,
+	               A.BLOOD,
+	               A.RELGN,
+	               A.HOBBY,
+	               A.VEHICLE_NO,
+	               A.SOCWKERCODE,
+	               NULL AS ENST_DE,
+	               NULL AS DMBLZ_DE,
+	               '' AS DMBLZ_SE_CODE,
+	               '' AS MSCL_SE_CODE,
+	               '' AS BNCTR_SE_CODE,
+	               '' AS CLSS_TY_CODE,
+	               '' AS SSN,
+	               '' AS SRVDDT_TY,
+	               '' AS INCMP_RESN_SE_CODE,
+	               A.RWDMRT_TRGTER_AT,
+	               A.RWDMRT_SE_CODE,
+	               A.FAMILYRELATE_SE,
+	               A.RWDMRT_GRAD,
+	               A.RWDMRT_NO,
+	               A.DSPSN_AT,
+	               A.DSPSN_SE,
+	               A.TROBL_GRAD_SE,
+	               A.TROBL_TY_CODE
+	          FROM MHS_INDVDLINFO A
+	         WHERE A.EMPNO = #{empno}
+	         UNION ALL
+	        SELECT
+	               A.EMPNO,
+	               '' AS HEIGHT,
+	               '' AS WEIGHT,
+	               '' AS BLOOD,
+	               '' AS RELGN,
+	               '' AS HOBBY,
+	               '' AS VEHICLE_NO,
+	               '' AS SOCWKERCODE,
+	               FNC_DATESTR(A.ENST_DE) AS ENST_DE,
+	               FNC_DATESTR(A.DMBLZ_DE) AS DMBLZ_DE,
+	               A.DMBLZ_SE_CODE,
+	               A.MSCL_SE_CODE,
+	               A.BNCTR_SE_CODE,
+	               A.CLSS_TY_CODE,
+	               A.SSN,
+	               A.SRVDDT_TY,
+	               A.INCMP_RESN_SE_CODE,
+	               '' AS RWDMRT_TRGTER_AT,
+	               '' AS RWDMRT_SE_CODE,
+	               '' AS FAMILYRELATE_SE,
+	               '' AS RWDMRT_GRAD,
+	               '' AS RWDMRT_NO,
+	               '' AS DSPSN_AT,
+	               '' AS DSPSN_SE,
+	               '' AS TROBL_GRAD_SE,
+	               '' AS TROBL_TY_CODE
+	          FROM MHS_MLTPWR A
+	         WHERE A.EMPNO = #{empno}
+		) X
+		GROUP BY X.EMPNO
+    </select>
+    
+    <update id="saveMhsEmpIndvdlInfo" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrb.mhshrb001.service.impl.Mhshrb001MapperTab2IndvdlInfo.saveMhsEmpIndvdlInfo */
+        MERGE INTO MHS_INDVDLINFO
+        USING DUAL ON (  
+                  EMPNO= #{empno}
+        ) 
+		WHEN MATCHED THEN 
+	        UPDATE 
+	        SET
+               HEIGHT = #{height},
+               WEIGHT = #{weight},
+               BLOOD = #{blood},
+               RELGN = #{relgn},
+               HOBBY = #{hobby},
+               VEHICLE_NO = #{vehicleNo},
+               SOCWKERCODE = #{socwkercode},
+               
+               RWDMRT_TRGTER_AT = #{rwdmrtTrgterAt},
+               RWDMRT_SE_CODE = #{rwdmrtSeCode},
+               FAMILYRELATE_SE = #{familyrelateSe},
+               RWDMRT_GRAD = #{rwdmrtGrad},
+               RWDMRT_NO = #{rwdmrtNo},
+               
+               DSPSN_AT = #{dspsnAt},
+               DSPSN_SE = #{dspsnSe},
+               TROBL_GRAD_SE = #{troblGradSe},
+               TROBL_TY_CODE = #{troblTyCode},
+
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+        WHEN NOT MATCHED THEN 
+	         INSERT
+	        (
+	            EMPNO,
+	            
+				HEIGHT,
+                WEIGHT,
+                BLOOD,
+                RELGN,
+                HOBBY,
+                VEHICLE_NO,
+                SOCWKERCODE,
+               
+                RWDMRT_TRGTER_AT,
+                RWDMRT_SE_CODE,
+                FAMILYRELATE_SE,
+                RWDMRT_GRAD,
+                RWDMRT_NO,
+               
+                DSPSN_AT,
+                DSPSN_SE,
+                TROBL_GRAD_SE,
+                TROBL_TY_CODE,
+				
+				REG_DT,
+				REG_ID,
+				UPT_DT,
+				UPT_ID
+	        )
+	        VALUES
+	        (
+	            #{empno},
+	            
+	            #{height},
+	            #{weight},
+	            #{blood},
+	            #{relgn},
+	            #{hobby},
+	            #{vehicleNo},
+	            #{socwkercode},
+	            
+	            #{rwdmrtTrgterAt},
+	            #{rwdmrtSeCode},
+	            #{familyrelateSe},
+	            #{rwdmrtGrad},
+	            #{rwdmrtNo},
+	            
+	            #{dspsnAt},
+	            #{dspsnSe},
+	            #{troblGradSe},
+	            #{troblTyCode},
+	            
+	            SYSDATE,
+	            #{regId},
+	            SYSDATE,
+	            #{uptId}
+	        )
+    </update>
+    
+    <update id="saveMhsEmpMltpwr" parameterType="EgovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrb.mhshrb001.service.impl.Mhshrb001MapperTab2IndvdlInfo.saveMhsEmpMltpwr */
+        MERGE INTO MHS_MLTPWR
+        USING DUAL ON (  
+                  EMPNO= #{empno}
+        ) 
+		WHEN MATCHED THEN 
+	        UPDATE 
+	        SET
+	               ENST_DE= #{enstDe},
+	               DMBLZ_DE= #{dmblzDe},
+	               DMBLZ_SE_CODE= #{dmblzSeCode},
+	               MSCL_SE_CODE= #{msclSeCode},
+	               BNCTR_SE_CODE= #{bnctrSeCode},
+	               CLSS_TY_CODE= #{clssTyCode},
+	               SSN= #{ssn},
+	               SRVDDT_TY= #{srvddtTy},
+	               INCMP_RESN_SE_CODE= #{incmpResnSeCode},
+	               UPT_DT = SYSDATE,
+	               UPT_ID = #{uptId}
+        WHEN NOT MATCHED THEN 
+	         INSERT
+	        (
+	            EMPNO,
+	            
+				ENST_DE,
+	            DMBLZ_DE,
+	            DMBLZ_SE_CODE,
+	            MSCL_SE_CODE,
+	            BNCTR_SE_CODE,
+	            CLSS_TY_CODE,
+	            SSN,
+	            SRVDDT_TY,
+	            INCMP_RESN_SE_CODE,
+				
+				REG_DT,
+				REG_ID,
+				UPT_DT,
+				UPT_ID
+	        )
+	        VALUES
+	        (
+	            #{empno},
+	            
+	            #{enstDe},
+	            #{dmblzDe},
+	            #{dmblzSeCode},
+	            #{msclSeCode},
+	            #{bnctrSeCode},
+	            #{clssTyCode},
+	            #{ssn},
+	            #{srvddtTy},
+	            #{incmpResnSeCode},
+	            
+	            SYSDATE,
+	            #{regId},
+	            SYSDATE,
+	            #{uptId}
+	        )
+    </update>
+ 
+</mapper>

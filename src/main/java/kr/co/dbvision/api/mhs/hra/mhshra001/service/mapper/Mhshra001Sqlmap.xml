@@ -1,0 +1,388 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mhs.hra.mhshra001.service.mapper.Mhshra001Mapper">
+
+    <select id="gnfdCodeData" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hra.mhshra001.service.mapper.Mhshra001Mapper.gnfdCodeData */
+        SELECT 
+                GNFD_CODE,
+                DEPT_CHANGE_AT,
+                CLSF_CHANGE_AT,
+                OFCPS_CHANGE_AT,
+                JSSFC_CHANGE_AT,
+                SRCLS_CHANGE_AT,
+                RSPOFC_CHANGE_AT
+        FROM MHS_GNFD_CODE
+        WHERE USE_AT = '1'
+    </select>
+
+    <select id="selectMhshra001List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hra.mhshra001.service.mapper.Mhshra001Mapper.selectMhshra001List */
+        SELECT
+               GNFD_NO,
+               ELCTSCT_SE_SN,
+               EMPNO,
+               (SELECT B.KOR_NM FROM MHS_EMP B WHERE B.EMPNO=A.EMPNO) AS EMP_NM,
+               GNFD_CODE,
+               (SELECT GNFD_CODE_NM FROM MHS_GNFD_CODE B WHERE A.GNFD_CODE = B.GNFD_CODE) AS GNFD_CODE_NM,
+               SUBSTR(FNC_DATESTR(A.GNFD_DE), 1, 4)||'-'||SUBSTR(FNC_DATESTR(A.GNFD_DE), 6, 2)||'-'||SUBSTR(FNC_DATESTR(A.GNFD_DE), 9, 2) AS GNFD_DE,
+               SUBSTR(FNC_DATESTR(A.GNFD_BEGIN_DE), 1, 4)||'-'||SUBSTR(FNC_DATESTR(A.GNFD_BEGIN_DE), 6, 2)||'-'||SUBSTR(FNC_DATESTR(A.GNFD_BEGIN_DE), 9, 2) AS GNFD_BEGIN_DE,
+               SUBSTR(FNC_DATESTR(A.GNFD_END_DE), 1, 4)||'-'||SUBSTR(FNC_DATESTR(A.GNFD_END_DE), 6, 2)||'-'||SUBSTR(FNC_DATESTR(A.GNFD_END_DE), 9, 2) AS GNFD_END_DE,
+               PROCESS_AT,
+               FNC_DATESTR(BFCHG_DEPT_CODE) AS BFCHG_DEPT_CODE,
+               (SELECT DEPT_KOR_NM FROM MHS_DEPT B WHERE A.BFCHG_DEPT_CODE = B.DEPT_CODE) AS BFCHG_DEPT_CODE_NM,
+               BFCHG_CLSF_CODE,
+               BFCHG_OFCPS_CODE,
+               BFCHG_JSSFC_CODE,
+               BFCHG_JBLN_CODE,
+               BFCHG_SRCLS_CODE,
+               FNC_DATESTR(AFCHG_DEPT_CODE) AS AFCHG_DEPT_CODE,
+               (SELECT DEPT_KOR_NM FROM MHS_DEPT B WHERE A.AFCHG_DEPT_CODE = B.DEPT_CODE) AS AFCHG_DEPT_CODE_NM,
+               AFCHG_CLSF_CODE,
+               AFCHG_OFCPS_CODE,
+               AFCHG_JSSFC_CODE,
+               AFCHG_JBLN_CODE,
+               AFCHG_SRCLS_CODE,
+               BFCHG_RSPOFC_CODE,
+               AFCHG_RSPOFC_CODE,
+               FNC_DATESTR(HDADPT_DEPT_CODE) AS HDADPT_DEPT_CODE,
+               HDADPT_AT,
+               GNFD_DTLS,
+               GNFD_DTLS,
+               ELCTSCT_DOC_NO,
+               ELCTSCT_STTUS_CODE,
+               (SELECT B.CODE_KOR_NM FROM STM_CODE B WHERE B.CODEKIND_CODE = 'EA004' AND B.CODE = A.ELCTSCT_STTUS_CODE) AS ELCTSCT_STTUS_CODE_NM,
+               ELCTSCT_EMPNO,
+               (SELECT B.DEPT_CHANGE_AT FROM MHS_GNFD_CODE B WHERE B.GNFD_CODE = A.GNFD_CODE) AS DEPT_CHANGE_AT,
+               (SELECT B.CLSF_CHANGE_AT FROM MHS_GNFD_CODE B WHERE B.GNFD_CODE = A.GNFD_CODE) AS CLSF_CHANGE_AT,
+               (SELECT B.OFCPS_CHANGE_AT FROM MHS_GNFD_CODE B WHERE B.GNFD_CODE = A.GNFD_CODE) AS OFCPS_CHANGE_AT,
+               (SELECT B.JSSFC_CHANGE_AT FROM MHS_GNFD_CODE B WHERE B.GNFD_CODE = A.GNFD_CODE) AS JSSFC_CHANGE_AT,
+               (SELECT B.SRCLS_CHANGE_AT FROM MHS_GNFD_CODE B WHERE B.GNFD_CODE = A.GNFD_CODE) AS SRCLS_CHANGE_AT,
+               (SELECT B.RSPOFC_CHANGE_AT FROM MHS_GNFD_CODE B WHERE B.GNFD_CODE = A.GNFD_CODE) AS RSPOFC_CHANGE_AT,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_GNFD A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="gnfdCode != null and gnfdCode != ''">
+                AND GNFD_CODE = #{gnfdCode}
+            </if>
+            <if test="clsfCode != null and clsfCode != ''">
+                AND (BFCHG_CLSF_CODE = #{clsfCode} OR AFCHG_CLSF_CODE = #{clsfCode})
+            </if>
+            <if test="empno != null and empno != ''">
+                AND EMPNO = #{empno}
+            </if>
+            <if test="empNm != null and empNm != ''">
+                AND EMPNO = (SELECT EMPNO FROM MHS_EMP WHERE KOR_NM = #{empNm})
+            </if>
+            <if test="gnfdBeginDe != null and gnfdBeginDe != '' and gnfEndDe != null and gnfEndDe != ''">
+                <![CDATA[
+                AND ((GNFD_BEGIN_DE >= REPLACE(#{gnfdBeginDe},'-','') OR GNFD_END_DE >= REPLACE(#{gnfdBeginDe},'-',''))
+                AND (GNFD_END_DE <= REPLACE(#{gnfEndDe},'-','') OR GNFD_BEGIN_DE <= REPLACE(#{gnfEndDe},'-','')))
+                ]]>
+            </if>
+            <if test="elctsctSttusCode != null and elctsctSttusCode != ''">
+                AND ELCTSCT_STTUS_CODE = #{elctsctSttusCode}
+            </if>
+        </trim>
+    </select>
+
+    <select id="selectMhshra001" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hra.mhshra001.service.mapper.Mhshra001Mapper.selectMhshra001 */
+        SELECT
+               GNFD_NO,
+               ELCTSCT_SE_SN,
+               EMPNO,
+               GNFD_CODE,
+               GNFD_DE,
+               GNFD_BEGIN_DE,
+               GNFD_END_DE,
+               PROCESS_AT,
+               BFCHG_DEPT_CODE,
+               BFCHG_CLSF_CODE,
+               BFCHG_OFCPS_CODE,
+               BFCHG_JSSFC_CODE,
+               BFCHG_JBLN_CODE,
+               BFCHG_SRCLS_CODE,
+               AFCHG_DEPT_CODE,
+               AFCHG_CLSF_CODE,
+               AFCHG_OFCPS_CODE,
+               AFCHG_JSSFC_CODE,
+               AFCHG_JBLN_CODE,
+               AFCHG_SRCLS_CODE,
+               BFCHG_RSPOFC_CODE,
+               AFCHG_RSPOFC_CODE,
+               HDADPT_DEPT_CODE,
+               HDADPT_AT,
+               GNFD_DTLS,
+               ELCTSCT_DOC_NO,
+               ELCTSCT_STTUS_CODE,
+               ELCTSCT_EMPNO,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_GNFD A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="gnfdNo != null and gnfdNo != ''">
+                AND GNFD_NO = #{gnfdNo}
+            </if>
+            <if test="elctsctSeSn != null and elctsctSeSn != ''">
+                AND ELCTSCT_SE_SN = #{elctsctSeSn}
+            </if>
+            <if test="empno != null and empno != ''">
+                AND EMPNO = #{empno}
+            </if>
+            <if test="gnfdCode != null and gnfdCode != ''">
+                AND GNFD_CODE = #{gnfdCode}
+            </if>
+        </trim>
+    </select>
+    
+    
+    <select id="searchAdvanEmpMhshra001" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hra.mhshra001.service.mapper.Mhshra001Mapper.searchAdvanEmpMhshra001 */
+        SELECT
+               (SELECT GNFD_CODE FROM MHS_GNFD_CODE WHERE GNFD_CODE_NM = '호봉승급') AS GNFD_CODE,
+               (SELECT GNFD_CODE_NM FROM MHS_GNFD_CODE WHERE GNFD_CODE_NM = '호봉승급') AS GNFD_CODE_NM,
+               (SELECT DEPT_KOR_NM FROM MHS_DEPT B WHERE B.DEPT_CODE=A.DEPT_CODE) AS DEPT_NM,
+               EMPNO,
+               SUBSTR(FNC_DATESTR(A.NXTTRM_PROMT_DE), 1, 4)||'-'||SUBSTR(FNC_DATESTR(A.NXTTRM_PROMT_DE), 6, 2)||'-'||SUBSTR(FNC_DATESTR(A.NXTTRM_PROMT_DE), 9, 2) AS NXTTRM_PROMT_DE,
+               KOR_NM,
+               FNC_COMCODENM('C285',A.SRCLS_CODE) AS SRCLS_CODE_NM,
+               SUBSTR(FNC_DATESTR(A.ECNY_DE), 1, 4)||'-'||SUBSTR(FNC_DATESTR(A.ECNY_DE), 6, 2)||'-'||SUBSTR(FNC_DATESTR(A.ECNY_DE), 9, 2) AS ECNY_DE,
+               CLSF_CODE,
+               SRCLS_CODE,
+               OFCPS_CODE,
+               JSSFC_CODE,
+               RSPOFC_CODE,
+               DEPT_CODE,
+               JBLN_CODE
+        FROM MHS_EMP A
+
+          <trim prefix="WHERE" prefixOverrides="AND|OR">
+            NXTTRM_PROMT_DE IS NOT NULL
+            <if test="beginPromtDe != null and beginPromtDe != ''">
+                AND NXTTRM_PROMT_DE >= REPLACE(#{beginPromtDe},'-','')
+            </if>
+            <if test="endPromtDe != null and endPromtDe != ''">
+                <![CDATA[
+                AND NXTTRM_PROMT_DE <= REPLACE(#{endPromtDe},'-','')
+                ]]>
+            </if>
+            <if test="hffsSe != null and hffsSe != ''">
+                AND HFFS_SE = #{hffsSe}
+            </if>
+        </trim>
+        ORDER BY ECNY_DE
+    </select>
+
+    <update id="saveMhshra001" parameterType="kr.co.dbvision.api.mhs.hra.mhshra001.entity.Mhshra001">
+        /* kr.co.dbvision.api.mhs.hra.mhshra001.service.mapper.Mhshra001Mapper.saveMhshra001 */
+        MERGE INTO MHS_GNFD A
+             USING (SELECT
+                    #{gnfdNo} GNFD_NO,
+                    #{elctsctSeSn} ELCTSCT_SE_SN,
+                    #{empno} EMPNO,
+                    #{gnfdCode} GNFD_CODE
+                    FROM DUAL) B
+                ON (
+                    A.GNFD_NO = B.GNFD_NO AND 
+                    A.ELCTSCT_SE_SN = B.ELCTSCT_SE_SN AND 
+                    A.EMPNO = B.EMPNO AND 
+                    A.GNFD_CODE = B.GNFD_CODE
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               GNFD_DE= REPLACE(#{gnfdDe},'-',''),
+               GNFD_BEGIN_DE= REPLACE(#{gnfdBeginDe},'-',''),
+               GNFD_END_DE= REPLACE(#{gnfdEndDe},'-',''),
+               PROCESS_AT= #{processAt},
+               BFCHG_DEPT_CODE= REPLACE(#{bfchgDeptCode},'-',''),
+               BFCHG_CLSF_CODE= #{bfchgClsfCode},
+               BFCHG_OFCPS_CODE= #{bfchgOfcpsCode},
+               BFCHG_JSSFC_CODE= #{bfchgJssfcCode},
+               BFCHG_JBLN_CODE= #{bfchgJblnCode},
+               BFCHG_SRCLS_CODE= #{bfchgSrclsCode},
+               AFCHG_DEPT_CODE= REPLACE(#{afchgDeptCode},'-',''),
+               AFCHG_CLSF_CODE= #{afchgClsfCode},
+               AFCHG_OFCPS_CODE= #{afchgOfcpsCode},
+               AFCHG_JSSFC_CODE= #{afchgJssfcCode},
+               AFCHG_JBLN_CODE= #{afchgJblnCode},
+               AFCHG_SRCLS_CODE= #{afchgSrclsCode},
+               BFCHG_RSPOFC_CODE= #{bfchgRspofcCode},
+               AFCHG_RSPOFC_CODE= #{afchgRspofcCode},
+               HDADPT_DEPT_CODE= REPLACE(#{hdadptDeptCode},'-',''),
+               HDADPT_AT= #{hdadptAt},
+               GNFD_DTLS= #{gnfdDtls},
+               ELCTSCT_DOC_NO= #{elctsctDocNo},
+               ELCTSCT_STTUS_CODE= #{elctsctSttusCode},
+               ELCTSCT_EMPNO= #{elctsctEmpno},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               GNFD_NO,
+               ELCTSCT_SE_SN,
+               EMPNO,
+               GNFD_CODE,
+               GNFD_DE,
+               GNFD_BEGIN_DE,
+               GNFD_END_DE,
+               PROCESS_AT,
+               BFCHG_DEPT_CODE,
+               BFCHG_CLSF_CODE,
+               BFCHG_OFCPS_CODE,
+               BFCHG_JSSFC_CODE,
+               BFCHG_JBLN_CODE,
+               BFCHG_SRCLS_CODE,
+               AFCHG_DEPT_CODE,
+               AFCHG_CLSF_CODE,
+               AFCHG_OFCPS_CODE,
+               AFCHG_JSSFC_CODE,
+               AFCHG_JBLN_CODE,
+               AFCHG_SRCLS_CODE,
+               BFCHG_RSPOFC_CODE,
+               AFCHG_RSPOFC_CODE,
+               HDADPT_DEPT_CODE,
+               HDADPT_AT,
+               GNFD_DTLS,
+               ELCTSCT_DOC_NO,
+               ELCTSCT_STTUS_CODE,
+               ELCTSCT_EMPNO,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{gnfdNo},
+               '1',
+               #{empno},
+               #{gnfdCode},
+               REPLACE(#{gnfdDe},'-',''),
+               REPLACE(#{gnfdBeginDe},'-',''),
+               REPLACE(#{gnfdEndDe},'-',''),
+               #{processAt},
+               REPLACE(#{bfchgDeptCode},'-',''),
+               #{bfchgClsfCode},
+               #{bfchgOfcpsCode},
+               #{bfchgJssfcCode},
+               #{bfchgJblnCode},
+               #{bfchgSrclsCode},
+               REPLACE(#{afchgDeptCode},'-',''),
+               #{afchgClsfCode},
+               #{afchgOfcpsCode},
+               #{afchgJssfcCode},
+               #{afchgJblnCode},
+               #{afchgSrclsCode},
+               #{bfchgRspofcCode},
+               #{afchgRspofcCode},
+               REPLACE(#{hdadptDeptCode},'-',''),
+               #{hdadptAt},
+               #{gnfdDtls},
+               #{elctsctDocNo},
+               #{elctsctSttusCode},
+               #{elctsctEmpno},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deleteMhshra001" parameterType="kr.co.dbvision.api.mhs.hra.mhshra001.entity.Mhshra001">
+        /* kr.co.dbvision.api.mhs.hra.mhshra001.service.mapper.Mhshra001Mapper.deleteMhshra001 */
+        DELETE FROM MHS_GNFD
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND GNFD_NO = #{gnfdNo}
+                AND ELCTSCT_SE_SN = #{elctsctSeSn}
+                AND EMPNO = #{empno}
+                AND GNFD_CODE = #{gnfdCode}
+        </trim>
+    </delete>
+    
+    <select id="checkDataMhshra001" parameterType="egovMapForNull" resultType="egovMapForNull">
+	   /* kr.co.dbvision.api.mhs.hra.mhshra001.service.mapper.Mhshra001Mapper.checkDataMhshra001 */
+	   <trim>
+	       SELECT '1' AS CHK1, A.KOR_NM AS NM FROM MHS_EMP A WHERE A.EMPNO = REGEXP_REPLACE(#{empno}, '[^0-9]+')
+            <if test="gnfdCode != null and gnfdCode != ''">
+	           UNION ALL
+	           SELECT '2' AS CHK1, GNFD_CODE_NM AS NM FROM MHS_GNFD_CODE WHERE GNFD_CODE = REGEXP_REPLACE(#{gnfdCode}, '[^0-9]+')
+	       </if>
+	       <if test="afchgClsfCode != null and afchgClsfCode != ''">
+               UNION ALL
+               SELECT '3' AS CHK1, CLSF_NM AS NM FROM MHS_CLSF_CODE WHERE CLSF_CODE = REGEXP_REPLACE(#{afchgClsfCode}, '[^0-9]+')
+           </if>
+           <if test="afchgOfcpsCode != null and afchgOfcpsCode != ''">
+               UNION ALL
+               SELECT '4' AS CHK1, OFCPS_NM AS NM FROM MHS_OFCPS_CODE WHERE OFCPS_CODE = REGEXP_REPLACE(#{afchgOfcpsCode}, '[^0-9]+')
+           </if>
+           <if test="afchgRspofcCode != null and afchgRspofcCode != ''">
+               UNION ALL
+               SELECT '5' AS CHK1, RSPOFC_NM AS NM FROM MHS_RSPOFC_CODE WHERE RSPOFC_CODE= REGEXP_REPLACE(#{afchgRspofcCode}, '[^0-9]+')
+           </if>
+           <if test="afchgDeptCode != null and afchgDeptCode != ''">
+               UNION ALL
+               SELECT '6' AS CHK1, DEPT_KOR_NM AS NM FROM MHS_DEPT WHERE DEPT_CODE= REGEXP_REPLACE(#{afchgDeptCode}, '[^0-9]+')
+           </if>
+           <if test="afchgSrclsCode != null and afchgSrclsCode != ''">
+               UNION ALL
+               SELECT '7' AS CHK1, CODE_KOR_NM AS NM FROM STM_CODE WHERE CODEKIND_CODE = 'C285' AND CODE = REGEXP_REPLACE(#{afchgSrclsCode}, '[^0-9]+')
+           </if>
+           <if test="afchgJssfcCode != null and afchgJssfcCode != ''">
+               UNION ALL
+               SELECT '8' AS CHK1, CODE_KOR_NM AS NM FROM STM_CODE WHERE CODEKIND_CODE = 'C148' AND CODE = REGEXP_REPLACE(#{afchgJssfcCode}, '[^0-9]+')
+           </if>
+           <if test="afchgJblnCode != null and afchgJblnCode != ''">
+               UNION ALL
+               SELECT '9' AS CHK1, CODE_KOR_NM AS NM FROM STM_CODE WHERE CODEKIND_CODE = 'C090' AND CODE = REGEXP_REPLACE(#{afchgJblnCode}, '[^0-9]+')
+           </if>
+           <if test="empno != null and empno != ''">
+               UNION ALL
+               SELECT '10' AS CHK1, CLSF_CODE AS NM FROM MHS_EMP WHERE EMPNO = REGEXP_REPLACE(#{empno}, '[^0-9]+') AND CLSF_CODE IS NOT NULL
+               UNION ALL
+               SELECT '11' AS CHK1, SRCLS_CODE AS NM FROM MHS_EMP WHERE EMPNO = REGEXP_REPLACE(#{empno}, '[^0-9]+') AND SRCLS_CODE IS NOT NULL
+               UNION ALL
+               SELECT '12' AS CHK1, OFCPS_CODE AS NM FROM MHS_EMP WHERE EMPNO = REGEXP_REPLACE(#{empno}, '[^0-9]+') AND OFCPS_CODE IS NOT NULL
+               UNION ALL
+               SELECT '13' AS CHK1, JSSFC_CODE AS NM FROM MHS_EMP WHERE EMPNO = REGEXP_REPLACE(#{empno}, '[^0-9]+') AND JSSFC_CODE IS NOT NULL
+               UNION ALL
+               SELECT '14' AS CHK1, RSPOFC_CODE AS NM FROM MHS_EMP WHERE EMPNO = REGEXP_REPLACE(#{empno}, '[^0-9]+') AND RSPOFC_CODE IS NOT NULL
+               UNION ALL
+               SELECT '15' AS CHK1, DEPT_CODE AS NM FROM MHS_EMP WHERE EMPNO = REGEXP_REPLACE(#{empno}, '[^0-9]+') AND DEPT_CODE IS NOT NULL
+               UNION ALL
+               SELECT '16' AS CHK1, (SELECT B.DEPT_KOR_NM FROM MHS_DEPT B WHERE B.DEPT_CODE = A.DEPT_CODE) AS NM FROM MHS_EMP A WHERE EMPNO = REGEXP_REPLACE(#{empno}, '[^0-9]+') AND DEPT_CODE IS NOT NULL
+           </if>
+	   </trim>
+    </select>
+    <select id="checkTargetDataMhshra001" parameterType="egovMapForNull" resultType="egovMapForNull">
+       /* kr.co.dbvision.api.mhs.hra.mhshra001.service.mapper.Mhshra001Mapper.checkTargetDataMhshra001 */
+       SELECT
+            CLSF_CODE,
+            SRCLS_CODE,
+            OFCPS_CODE,
+            JSSFC_CODE,
+            RSPOFC_CODE,
+            DEPT_CODE,
+            (SELECT B.DEPT_KOR_NM FROM MHS_DEPT B WHERE B.DEPT_CODE = A.DEPT_CODE) AS DEPT_KOR_NM
+       FROM MHS_EMP A
+       <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND EMPNO = #{empno}
+        </trim>
+    </select>
+</mapper>

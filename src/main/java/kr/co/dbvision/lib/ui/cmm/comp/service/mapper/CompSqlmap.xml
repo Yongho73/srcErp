@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.lib.ui.cmm.comp.service.mapper.CompMapper">
+
+    <select id="selectMtaCompAllCnt" parameterType="egovMapForNull" resultType="java.lang.Integer">
+        /* kr.co.dbvision.lib.ui.cmm.comp.service.mapper.selectMtaCompAllCnt */
+        SELECT COUNT(*) AS totalRecordCount
+          FROM STM_CUSTOMER AA
+		<trim prefix="WHERE" prefixOverrides="AND|OR">
+       		<if test="bcncCode != null and bcncCode != ''">
+           		AND AA.BCNC_CODE = #{bcncCode}
+       		</if>
+            <if test="bcncNm != null and bcncNm != ''">
+                AND AA.BCNC_NM LIKE '%' || #{bcncNm} || '%'
+            </if>
+            <if test="bizrNo != null and bizrNo != ''">
+                AND AA.BIZRNO LIKE '%' || #{bizrNo} || '%'
+            </if>
+            <if test="useAt != null and useAt != ''">
+                AND AA.USE_AT = #{useAt}
+            </if>
+       		<if test="bplcCode != null and bplcCode != ''">
+           		AND AA.BPLC_CODE = #{bplcCode}
+       		</if>
+		 </trim>
+    </select>
+    
+	<select id="selectMtaCompList" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.lib.ui.cmm.comp.service.mapper.selectMtaCompList */
+		SELECT ROWNUM + #{firstIndex} AS NUM, Z.*
+		FROM (
+		    SELECT *
+		    FROM (
+		        SELECT *
+		        FROM (
+			        SELECT ROWNUM AS NUMS, X.*
+			        FROM (
+				        SELECT
+				        	BCNC_CODE, 
+				            BPLC_CODE, 
+				            (SELECT BPLC_KOR_NM FROM STM_BIZPLC WHERE BPLC_CODE=AA.BPLC_CODE) AS BPLC_NM,
+				            BIZRNO, 
+				            BCNC_NM, 
+				            BCNC_SE, 
+				            CPR_SE, 
+				            INDUTY, 
+				            BIZCND,
+				            REPRSNT_NM,
+				            CHARGER_NM,
+				            CHARGER_EMAIL,
+				            CHARGER_TELNO,
+				            <!-- CEO_NM, -->
+				            NLTY_CODE, 
+				            AREA_NM, POST_CODE, ADRES, ADDR2, 
+				            TELNO, FAX_NO, 
+				            BANK_CODE, 
+				            (SELECT CODE_KOR_NM FROM STM_CODE WHERE CODEKIND_CODE = 'C010' AND CODE = AA.BANK_CODE) AS BANK_NM, 
+				            ACNUT_NO, 
+				            DPSTR_NM, 
+				            HOMEPAGE, 
+				            PURCHS_AT, SALEOFFIC_AT, 
+				            BCNCSCALE_SE, TAXT_SE, BCNC_CN, 
+				            FOND_DE, CAPITAL_AMT, YY_SALE_AMT, 
+				            EMPL_CO, TRADE_NO, CRNCY_CODE, 
+				            USE_AT, 
+				            DSRPR_AT, WOMAN_AT, FOREIGN_AT, SERHANDICAP_AT, SOCIALENTRPRS_AT, DSPSN_STD_AT, GREEN_AT, TECHNOLOGY_AT
+				          FROM STM_CUSTOMER AA
+						<trim prefix="WHERE" prefixOverrides="AND|OR">
+				       		<if test="bcncCode != null and bcncCode != ''">
+				           		AND AA.BCNC_CODE = #{bcncCode}
+				       		</if>
+				            <if test="bcncNm != null and bcncNm != ''">
+				                AND AA.BCNC_NM LIKE '%' || #{bcncNm} || '%'
+				            </if>
+				            <if test="bizrNo != null and bizrNo != ''">
+				                AND AA.BIZRNO LIKE '%' || #{bizrNo} || '%'
+				            </if>
+				            <if test="useAt != null and useAt != ''">
+				                AND AA.USE_AT = #{useAt}
+				            </if>
+				       		<if test="bplcCode != null and bplcCode != ''">
+				           		AND AA.BPLC_CODE = #{bplcCode}
+				       		</if>
+						 </trim>
+					  ORDER BY BPLC_CODE, BCNC_CODE
+		            ) X
+		        ) B
+		        WHERE NUMS &gt; #{firstIndex}
+		          AND NUMS &lt;= #{lastIndex}
+		    ) Y
+            <choose>
+            <when test="sortColumId != null and sortColumId != ''">
+                <if test="sortColumId == 'bcncNm'">
+                ORDER BY BCNC_NM <choose><when test="sortDirection == 'desc'">DESC</when><otherwise>ASC</otherwise></choose>
+                </if>
+                <if test="sortColumId == 'bizrno'">
+                ORDER BY BIZRNO   <choose><when test="sortDirection == 'desc'">DESC</when><otherwise>ASC</otherwise></choose>
+                </if>
+                <if test="sortColumId == 'reprsntNm'">
+                ORDER BY REPRSNT_NM <choose><when test="sortDirection == 'desc'">DESC</when><otherwise>ASC</otherwise></choose>
+                </if>
+                <if test="sortColumId == 'induty'">
+                ORDER BY INDUTY <choose><when test="sortDirection == 'desc'">DESC</when><otherwise>ASC</otherwise></choose>
+                </if>
+                <if test="sortColumId == 'bizcnd'">
+                ORDER BY BIZCND <choose><when test="sortDirection == 'desc'">DESC</when><otherwise>ASC</otherwise></choose>
+                </if>
+                <if test="sortColumId == 'bankNm'">
+                ORDER BY BANK_NM <choose><when test="sortDirection == 'desc'">DESC</when><otherwise>ASC</otherwise></choose>
+                </if>
+                <if test="sortColumId == 'acnutNo'">
+                ORDER BY ACNUT_NO <choose><when test="sortDirection == 'desc'">DESC</when><otherwise>ASC</otherwise></choose>
+                </if>
+                <if test="sortColumId == 'dpstrNm'">
+                ORDER BY DPSTR_NM <choose><when test="sortDirection == 'desc'">DESC</when><otherwise>ASC</otherwise></choose>
+                </if>
+            </when>
+            <otherwise>
+                ORDER BY BPLC_CODE, BCNC_CODE
+            </otherwise>
+            </choose>
+		) Z
+    </select>
+    
+    <select id="selectMtaCompList_Old" parameterType="egovMapForNull" resultType="egovMapForNull">
+        SELECT A.PROJ_NO AS PROJECT_NO, 
+               B.COMP_CD AS COMP_CD, 
+               COMP_NM, 
+               PROJ_SDT 
+          FROM DBVISION_INTRA.X_PROJECT A, DBVISION_INTRA.X_COMPANY B, MTA_REQUST C
+		 WHERE 'DBV'||A.COMPANY_CD = B.COMP_CD 
+		   AND A.PROJ_NO = C.PROJECT_NO(+)
+		   AND PROJ_CD = 2
+		  <if test="compNm != null and compNm != ''">
+	                AND COMP_NM LIKE '%' || #{compNm} || '%'
+	      </if>
+	  GROUP BY A.PROJ_NO, B.COMP_CD, COMP_NM, PROJ_SDT
+	  ORDER BY PROJ_SDT DESC
+    </select>
+    
+</mapper>

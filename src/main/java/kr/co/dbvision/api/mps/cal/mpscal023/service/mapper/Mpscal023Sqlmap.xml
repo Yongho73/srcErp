@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mps.cal.mpscal023.service.mapper.Mpscal023Mapper">
+
+    <select id="selectMpscal023List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.cal.mpscal023.service.mapper.Mpscal023Mapper.selectMpscal023List */
+        
+        SELECT
+               APPLC_YY,
+               EMPNO,
+               FNC_GETKORNM(EMPNO) AS KOR_NM,
+               FNC_GET_EMP_DEPT_NM(EMPNO) AS DEPT_NM,  
+               FNC_DATESTR(APPLC_BEGIN_DE) AS APPLC_BEGIN_DE,
+               FNC_DATESTR(APPLC_END_DE) AS APPLC_END_DE,               
+               WRYC_DAYCNT,
+               USE_DAYCNT,
+               REMAINDER_DAYCNT,
+               RECMND_DAYCNT,
+               EXCCLC_DAYCNT,
+               NWMB_OCCRRNC_DAYCNT,
+               NWMB_USE_DAYCNT,
+               NWMB_REMAINDER_DAYCNT,
+               NWMB_EXCCLC_DAYCNT,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               ADSBTR_DAYCNT,
+               ADSBTR_RESN,
+               CNWK_YCNT,
+               CNWK_MCNT,
+               CNWK_DCNT,
+               ONYRBF_WRYC_USE_DAYCNT,
+               TWYRBF_WRYC_USE_DAYCNT,
+               APPLC_YM,
+			   PYMNT_SN,
+			   FNC_DATESTR(PYMNT_DE) AS PYMNT_DE,
+			   WRYC_ALLWNC_AMT,
+			   ODYSG_AMT,
+			   DECODE(ODYSG_AMT, NULL, NULL, TRUNC(ODYSG_AMT* 1 / 209 * 8 , -1)) AS DAY_ODYSG_AMT,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_WRYC_DAYCNT A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="applcYy != null and applcYy != ''">
+                AND APPLC_YY = #{applcYy}
+            </if>
+            <if test="empno != null and empno != ''">
+                AND EMPNO = #{empno}
+            </if>
+             <if test="deptCode != null and deptCode != ''">
+                    AND FNC_GET_EMP_DEPT_CD(EMPNO) = #{deptCode}
+             </if>
+               <if test="jssfcCode != null and jssfcCode != ''">
+                    AND FNC_GET_EMP_JSSFC_CD(EMPNO) = #{jssfcCode}
+             </if>
+            <if test="sRegDt != null and sRegDt != ''">
+                <![CDATA[
+                AND REG_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+                ]]>
+            </if>
+            <if test="eRegDt != null and eRegDt != ''">
+                <![CDATA[
+                AND REG_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+                ]]>
+             </if>
+              <if test="payGubun == 'payed'">
+               AND PYMNT_SN  IS NOT NULL
+               </if>
+               <if test="payGubun != 'payed'">
+               AND PYMNT_SN  IS NULL
+               </if>
+               <if test="pymntSn != null and pymntSn != ''">
+               AND PYMNT_SN   = #{pymntSn}
+               </if>
+               <if test="payApplcYm != null and payApplcYm != ''">
+               AND APPLC_YM   = #{payApplcYm}
+               </if>
+        </trim>
+    </select>
+
+    <select id="selectMpscal023" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.cal.mpscal023.service.mapper.Mpscal023Mapper.selectMpscal023 */
+        SELECT
+               APPLC_YY,
+               EMPNO,
+               APPLC_BEGIN_DE,
+               APPLC_END_DE,
+               WRYC_DAYCNT,
+               USE_DAYCNT,
+               REMAINDER_DAYCNT,
+               RECMND_DAYCNT,
+               EXCCLC_DAYCNT,
+               NWMB_OCCRRNC_DAYCNT,
+               NWMB_USE_DAYCNT,
+               NWMB_REMAINDER_DAYCNT,
+               NWMB_EXCCLC_DAYCNT,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               ADSBTR_DAYCNT,
+               ADSBTR_RESN,
+               CNWK_YCNT,
+               CNWK_MCNT,
+               CNWK_DCNT,
+               ONYRBF_WRYC_USE_DAYCNT,
+               TWYRBF_WRYC_USE_DAYCNT,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_WRYC_DAYCNT A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="applcYy != null and applcYy != ''">
+                AND APPLC_YY = #{applcYy}
+            </if>
+            <if test="empno != null and empno != ''">
+                AND EMPNO = #{empno}
+            </if>
+        </trim>
+    </select>
+
+    <update id="saveMpscal023" parameterType="kr.co.dbvision.api.mps.cal.mpscal023.entity.Mpscal023">
+        /* kr.co.dbvision.api.mps.cal.mpscal023.service.mapper.Mpscal023Mapper.saveMpscal023 */
+        MERGE INTO MHS_WRYC_DAYCNT A
+             USING (SELECT
+                    #{applcYy} APPLC_YY,
+                    #{empno} EMPNO
+                    FROM DUAL) B
+                ON (
+                    A.APPLC_YY = B.APPLC_YY AND 
+                    A.EMPNO = B.EMPNO
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+               EXCCLC_DAYCNT= #{excclcDaycnt},
+               WRYC_ALLWNC_AMT= #{wrycAllwncAmt},
+               ODYSG_AMT= #{odysgAmt},
+               APPLC_YM =  REPLACE(#{applcYm},'-',''),
+			   PYMNT_SN = #{pymntSn},
+			   PYMNT_DE = REPLACE(#{pymntDe}, '-',''),
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               APPLC_YY,
+               EMPNO,
+               APPLC_BEGIN_DE,
+               APPLC_END_DE,
+               WRYC_DAYCNT,
+               USE_DAYCNT,
+               REMAINDER_DAYCNT,
+               RECMND_DAYCNT,
+               EXCCLC_DAYCNT,
+               NWMB_OCCRRNC_DAYCNT,
+               NWMB_USE_DAYCNT,
+               NWMB_REMAINDER_DAYCNT,
+               NWMB_EXCCLC_DAYCNT,
+               ADSBTR_DAYCNT,
+               ADSBTR_RESN,
+               CNWK_YCNT,
+               CNWK_MCNT,
+               CNWK_DCNT,
+               ONYRBF_WRYC_USE_DAYCNT,
+               TWYRBF_WRYC_USE_DAYCNT,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{applcYy},
+               #{empno},
+               REPLACE(#{applcBeginDe},'-',''),
+               REPLACE(#{applcEndDe},'-',''),
+               #{wrycDaycnt},
+               #{useDaycnt},
+               #{remainderDaycnt},
+               #{recmndDaycnt},
+               #{excclcDaycnt},
+               #{nwmbOccrrncDaycnt},
+               #{nwmbUseDaycnt},
+               #{nwmbRemainderDaycnt},
+               #{nwmbExcclcDaycnt},
+               #{adsbtrDaycnt},
+               #{adsbtrResn},
+               #{cnwkYcnt},
+               #{cnwkMcnt},
+               #{cnwkDcnt},
+               #{onyrbfWrycUseDaycnt},
+               #{twyrbfWrycUseDaycnt},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deleteMpscal023" parameterType="kr.co.dbvision.api.mps.cal.mpscal023.entity.Mpscal023">
+        /* kr.co.dbvision.api.mps.cal.mpscal023.service.mapper.Mpscal023Mapper.deleteMpscal023 */
+        DELETE FROM MHS_WRYC_DAYCNT
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND APPLC_YY = #{applcYy}
+                AND EMPNO = #{empno}
+        </trim>
+    </delete>
+    
+     <select id="selectMpscal023ReCalcList" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.cal.mpscal023.service.mapper.Mpscal023Mapper.selectMpscal023ReCalcList */
+        
+        SELECT
+               APPLC_YY,
+               EMPNO,
+               FNC_GETKORNM(EMPNO) AS KOR_NM,
+               FNC_GET_EMP_DEPT_NM(EMPNO) AS DEPT_NM,  
+               FNC_DATESTR(APPLC_BEGIN_DE) AS APPLC_BEGIN_DE,
+               FNC_DATESTR(APPLC_END_DE) AS APPLC_END_DE,               
+               WRYC_DAYCNT,
+               USE_DAYCNT,
+               REMAINDER_DAYCNT,
+               RECMND_DAYCNT,
+               REMAINDER_DAYCNT AS EXCCLC_DAYCNT,
+               NWMB_OCCRRNC_DAYCNT,
+               NWMB_USE_DAYCNT,
+               NWMB_REMAINDER_DAYCNT,
+               NWMB_EXCCLC_DAYCNT,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               ADSBTR_DAYCNT,
+               ADSBTR_RESN,
+               CNWK_YCNT,
+               CNWK_MCNT,
+               CNWK_DCNT,
+               ONYRBF_WRYC_USE_DAYCNT,
+               TWYRBF_WRYC_USE_DAYCNT,
+               FNC_DATESTR(PYMNT_DE) AS PYMNT_DE,               
+               TRUNC(FNC_GET_MTODYSG(A.EMPNO,#{applcYm} ) * 1 / 209 * 8 , -1) AS  DAY_ODYSG_AMT,
+               TRUNC(FNC_GET_MTODYSG(A.EMPNO,#{applcYm} ) * 1 / 209 * 8 , -1)  * REMAINDER_DAYCNT AS  WRYC_ALLWNC_AMT,
+               FNC_GET_MTODYSG(A.EMPNO,#{applcYm} ) ODYSG_AMT,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_WRYC_DAYCNT A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="applcYy != null and applcYy != ''">
+                AND APPLC_YY = #{applcYy}
+            </if>
+            <if test="empno != null and empno != ''">
+                AND EMPNO = #{empno}
+            </if>
+            <if test="deptCode != null and deptCode != ''">
+                    AND FNC_GET_EMP_DEPT_CD(EMPNO) = #{deptCode}
+             </if>
+             <if test="jssfcCode != null and jssfcCode != ''">
+                    AND FNC_GET_EMP_JSSFC_CD(EMPNO) = #{jssfcCode}
+             </if>
+             
+            <if test="sRegDt != null and sRegDt != ''">
+                <![CDATA[
+                AND REG_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+                ]]>
+            </if>
+            <if test="eRegDt != null and eRegDt != ''">
+                <![CDATA[
+                AND REG_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+                ]]>
+             </if>
+               AND PYMNT_SN IS NULL
+        </trim>                
+    </select>
+    
+    
+    
+    
+</mapper>

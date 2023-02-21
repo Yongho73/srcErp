@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mhs.hrd.mhshrd007.service.mapper.Mhshrd007Mapper">
+
+    <select id="selectMhshrd007List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrd.mhshrd007.service.mapper.Mhshrd007Mapper.selectMhshrd007List */
+        SELECT
+               A.LABOR_SE,
+               A.SALARY_SE,
+               A.RVERS_SE,
+               A.WORK_TY_CODE,
+               FNC_DATESTR(A.BEGIN_DE) AS BEGIN_DE,
+               A.REG_DT,
+               A.REG_ID,
+               A.UPT_DT,
+               A.UPT_ID,
+               A.USE_AT,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_DCLZBASSSETTING A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="useAt != null and useAt != ''">
+                AND USE_AT = #{useAt}
+            </if>
+            <if test="sRegDt != null and sRegDt != ''">
+                <![CDATA[
+                AND REG_DT >= TO_DATE(#{sRegDt} || '000000','YYYY-MM-DDHH24MISS')
+                ]]>
+            </if>
+            <if test="eRegDt != null and eRegDt != ''">
+                <![CDATA[
+                AND REG_DT <= TO_DATE(#{eRegDt} || '235959','YYYY-MM-DDHH24MISS')
+                ]]>
+             </if>
+        </trim>
+        ORDER BY LABOR_SE, SALARY_SE
+    </select>
+    
+    <select id="selectStandardMhshrd007List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrd.mhshrd007.service.mapper.Mhshrd007Mapper.selectStandardMhshrd007List */
+        SELECT
+               
+               B.SN,
+               B.STDR_NM,
+               B.ITEM_CODE,
+               B.SPLIT_ITEM,
+               B.RM,
+               B.REG_DT,
+               B.REG_ID,
+               B.UPT_DT,
+               B.UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = B.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = B.UPT_ID) AS UPT_NM
+
+          FROM MHS_DCLZBASSSETTING A, MHS_DCLZOCCRRNCSTDR B
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            A.LABOR_SE=B.LABOR_SE AND A.SALARY_SE=B.SALARY_SE
+            <if test="laborSe != null and laborSe != ''">
+                AND B.LABOR_SE = #{laborSe}
+            </if>
+            <if test="salarySe != null and salarySe != ''">
+                AND B.SALARY_SE = #{salarySe}
+            </if>
+        </trim>
+        ORDER BY SN
+    </select>
+
+    <select id="selectMhshrd007" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mhs.hrd.mhshrd007.service.mapper.Mhshrd007Mapper.selectMhshrd007 */
+        SELECT
+               LABOR_SE,
+               SALARY_SE,
+               RVERS_SE,
+               WORK_TY_CODE,
+               BEGIN_DE,
+               REG_DT,
+               REG_ID,
+               UPT_DT,
+               UPT_ID,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM
+
+          FROM MHS_DCLZBASSSETTING A
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="laborSe != null and laborSe != ''">
+                AND LABOR_SE = #{laborSe}
+            </if>
+            <if test="salarySe != null and salarySe != ''">
+                AND SALARY_SE = #{salarySe}
+            </if>
+        </trim>
+    </select>
+    
+    <!-- 직급콤보용  -->
+    <select id="selectMhshrd007WorkTyCode" parameterType="egovMapForNull" resultType="egovMapForNull">
+     /* kr.co.dbvision.api.mhs.hrb.mhshrm004.service.mapper.Mhshrd007Mapper.selectMhshrd007WorkTyCode */
+     SELECT 
+            WORK_TY_CODE,
+            WORK_TY_CODE_NM
+     FROM MHS_WORKTY A
+     WHERE USE_AT = '1'
+    ORDER BY WORK_TY_CODE ASC
+    </select>
+
+    <update id="saveMhshrd007" parameterType="kr.co.dbvision.api.mhs.hrd.mhshrd007.entity.Mhshrd007">
+        /* kr.co.dbvision.api.mhs.hrd.mhshrd007.service.mapper.Mhshrd007Mapper.saveMhshrd007 */        
+        MERGE INTO MHS_DCLZBASSSETTING A
+             USING (SELECT
+                    #{laborSe} LABOR_SE,
+                    #{salarySe} SALARY_SE
+                    FROM DUAL) B
+                ON (
+                    A.LABOR_SE = B.LABOR_SE AND
+                    A.SALARY_SE = B.SALARY_SE
+                    )
+        WHEN MATCHED THEN
+            UPDATE SET 
+                RVERS_SE = #{rversSe},
+                WORK_TY_CODE = #{workTyCode},
+                BEGIN_DE = #{beginDe},
+                UPT_DT = SYSDATE,
+                UPT_ID = #{regId},
+                USE_AT = #{useAt}
+                
+        WHEN NOT MATCHED THEN
+            INSERT (
+                    LABOR_SE,
+                    SALARY_SE,
+                    RVERS_SE,
+                    WORK_TY_CODE,
+                    BEGIN_DE,
+                    REG_DT,
+                    REG_ID
+            ) VALUES (
+                      #{laborSe},
+                      #{salarySe},
+                      #{rversSe},
+                      #{workTyCode},
+                      #{beginDe},
+                      SYSDATE,
+                      #{regId}
+        )
+    </update>
+    <update id="saveAddStandardMhshrd007" parameterType="kr.co.dbvision.api.mhs.hrd.mhshrd007.entity.Mhshrd007">
+        /* kr.co.dbvision.api.mhs.hrd.mhshrd007.service.mapper.Mhshrd007Mapper.saveAddStandardMhshrd007 */
+        INSERT INTO MHS_DCLZOCCRRNCSTDR (
+                LABOR_SE, 
+                SALARY_SE, 
+                SN, 
+                STDR_NM, 
+                ITEM_CODE, 
+                SPLIT_ITEM, 
+                RM,
+                REG_DT,
+                REG_ID)
+        SELECT 
+                #{laborSe},
+                #{salarySe},
+                SN,
+                STDR_NM,
+                DECODE(ITEM_CODE, NULL, NULL, '1'),
+                DECODE(SPLIT_ITEM, NULL, NULL, '1'),
+                RM,
+                SYSDATE,
+                #{regId}
+            FROM MHS_DCLZOCCRRNCSTDR
+            WHERE LABOR_SE = '001' AND
+                  SALARY_SE = 'Y'         
+    </update>
+    
+    <update id="saveStandardMhshrd007" parameterType="kr.co.dbvision.api.mhs.hrd.mhshrd007.entity.Mhshrd007">
+        /* kr.co.dbvision.api.mhs.hrd.mhshrd007.service.mapper.Mhshrd007Mapper.saveStandardMhshrd007 */
+        <!-- BEGIN
+            FOR I IN 0 .. 5
+            LOOP
+                UPDATE MHS_DCLZOCCRRNCSTDR
+                SET
+                    ITEM_CODE = #{itemCode},
+                    SPLIT_ITEM = #{splitItem},
+                    RM = #{rm}
+                WHERE SN =#{sn}
+            END LOOP;
+        END;-->
+        UPDATE MHS_DCLZOCCRRNCSTDR
+                SET
+                    ITEM_CODE = #{itemCode},
+                    SPLIT_ITEM = #{splitItem},
+                    RM = #{rm}
+                WHERE SN =#{sn} AND LABOR_SE = #{laborSe} and SALARY_SE = #{salarySe}      
+                
+    </update>
+
+    <delete id="deleteMhshrd007" parameterType="kr.co.dbvision.api.mhs.hrd.mhshrd007.entity.Mhshrd007">
+        /* kr.co.dbvision.api.mhs.hrd.mhshrd007.service.mapper.Mhshrd007Mapper.deleteMhshrd007 */
+        DELETE FROM MHS_DCLZBASSSETTING
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND LABOR_SE = #{laborSe}
+                AND SALARY_SE = #{salarySe}
+        </trim>
+    </delete>
+</mapper>

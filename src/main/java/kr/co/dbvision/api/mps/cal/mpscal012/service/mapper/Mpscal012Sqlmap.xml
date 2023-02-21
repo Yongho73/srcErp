@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.dbvision.api.mps.cal.mpscal012.service.mapper.Mpscal012Mapper">
+
+    <select id="selectMpscal012List" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.cal.mpscal012.service.mapper.Mpscal012Mapper.selectMpscal012List */
+        SELECT
+               A.REQST_NO,
+               A.EMPNO,
+               A.OCCRRNC_YY,
+               A.QU,
+               A.CHLDRN_NM,
+               A.SCHUL_NM,
+               A.GRADE,
+               A.TUTFEE_AMT,
+               A.OPER_SPORT_AMT,
+               FNC_DATESTR(A.REQST_DE) AS REQST_DE,
+               FNC_DATESTR(A.PYMNT_DE) AS PYMNT_DE,
+               A.SLIP_NO,
+               A.ATCHMNFL_NO,
+               A.ELCTSCT_DOC_NO,
+               A.ELCTSCT_STTUS_CODE,
+               A.ELCTSCT_EMPNO,
+               A.RM,
+               A.REG_DT,
+               A.REG_ID,
+               A.UPT_DT,
+               A.UPT_ID,
+               A.ELCTSCT_SE_SN,
+               A.PYMNT_SN,
+               A.APPLC_YM,
+               FNC_COMCODENM('C197', A.CONFM_STTUS_CODE) AS CONFM_STTUS_CODE,
+               A.CONFM_DE,
+               A.CONFMER_EMPNO,
+               A.RETURN_RESN,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM,
+               B.KOR_NM,
+               FNC_GETDEPTNM(B.DEPT_CODE) AS DEPT_CODE_NM,
+               B.DEPT_CODE
+
+          FROM MHS_SCHXPN_REQST A , MHS_EMP B
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                    A.EMPNO = B.EMPNO
+                AND A.CONFM_STTUS_CODE = 002
+            <if test="empno != null and empno != ''">
+                AND A.EMPNO = #{empno}
+            </if>
+            <if test="deptCode != null and deptCode != ''">
+                AND B.DEPT_CODE = #{deptCode}
+            </if>
+        </trim>
+        ORDER BY A.REQST_NO
+    </select>
+
+    <select id="selectMpscal012" parameterType="egovMapForNull" resultType="egovMapForNull">
+        /* kr.co.dbvision.api.mps.cal.mpscal012.service.mapper.Mpscal012Mapper.selectMpscal012 */
+       SELECT
+               A.REQST_NO,
+               A.EMPNO,
+               A.OCCRRNC_YY,
+               A.QU,
+               A.CHLDRN_NM,
+               A.SCHUL_NM,
+               A.GRADE,
+               A.TUTFEE_AMT,
+               A.OPER_SPORT_AMT,
+               FNC_DATESTR(A.REQST_DE) AS REQST_DE,
+               FNC_DATESTR(A.PYMNT_DE) AS PYMNT_DE,
+               A.SLIP_NO,
+               A.ATCHMNFL_NO,
+               A.ELCTSCT_DOC_NO,
+               A.ELCTSCT_STTUS_CODE,
+               A.ELCTSCT_EMPNO,
+               A.RM,
+               A.REG_DT,
+               A.REG_ID,
+               A.UPT_DT,
+               A.UPT_ID,
+               A.ELCTSCT_SE_SN,
+               A.PYMNT_SN,
+               A.APPLC_YM,
+               A.CONFM_STTUS_CODE,
+               A.CONFM_DE,
+               A.CONFMER_EMPNO,
+               A.RETURN_RESN,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.REG_ID) AS REG_NM,
+               (SELECT USER_NM FROM STM_USERS WHERE USER_ID = A.UPT_ID) AS UPT_NM,
+               B.KOR_NM,
+               FNC_GETDEPTNM(B.DEPT_CODE) AS DEPT_CODE_NM,
+               B.DEPT_CODE
+
+          FROM MHS_SCHXPN_REQST A , MHS_EMP B
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="reqstNo != null and reqstNo != ''">
+                AND REQST_NO = #{reqstNo}
+            </if>
+            <if test="empno != null and empno != ''">
+                AND EMPNO = #{empno}
+            </if>
+        </trim>
+    </select>
+
+    <update id="saveMpscal012" parameterType="kr.co.dbvision.api.mps.cal.mpscal012.entity.Mpscal012">
+        /* kr.co.dbvision.api.mps.cal.mpscal012.service.mapper.Mpscal012Mapper.saveMpscal012 */
+        MERGE INTO MHS_SCHXPN_REQST A
+             USING (SELECT
+                    #{reqstNo} REQST_NO,
+                    #{empno} EMPNO
+                    FROM DUAL) B
+                ON (
+                    A.REQST_NO = B.REQST_NO AND 
+                    A.EMPNO = B.EMPNO
+                   )
+        WHEN MATCHED THEN
+        UPDATE SET
+
+               OCCRRNC_YY= #{occrrncYy},
+               QU= #{qu},
+               CHLDRN_NM= #{chldrnNm},
+               SCHUL_NM= #{schulNm},
+               GRADE= #{grade},
+               TUTFEE_AMT= #{tutfeeAmt},
+               OPER_SPORT_AMT= #{operSportAmt},
+               REQST_DE= REPLACE(#{reqstDe},'-',''),
+               PYMNT_DE= REPLACE(#{pymntDe},'-',''),
+               SLIP_NO= #{slipNo},
+               ATCHMNFL_NO= #{atchmnflNo},
+               ELCTSCT_DOC_NO= #{elctsctDocNo},
+               ELCTSCT_STTUS_CODE= #{elctsctSttusCode},
+               ELCTSCT_EMPNO= #{elctsctEmpno},
+               RM= #{rm},
+               ELCTSCT_SE_SN= 1,
+               PYMNT_SN= #{pymntSn},
+               APPLC_YM= REPLACE(#{applcYm},'-',''),
+               CONFM_STTUS_CODE = #{confmSttusCode},
+               CONFM_DE = #{confmDe},
+               CONFMER_EMPNO = #{confmerEmpno},
+               RETURN_RESN = #{returnResn},
+               UPT_DT = SYSDATE,
+               UPT_ID = #{uptId}
+
+        WHEN NOT MATCHED THEN
+        INSERT (
+
+               REQST_NO,
+               EMPNO,
+               OCCRRNC_YY,
+               QU,
+               CHLDRN_NM,
+               SCHUL_NM,
+               GRADE,
+               TUTFEE_AMT,
+               OPER_SPORT_AMT,
+               REQST_DE,
+               PYMNT_DE,
+               SLIP_NO,
+               ATCHMNFL_NO,
+               ELCTSCT_DOC_NO,
+               ELCTSCT_STTUS_CODE,
+               ELCTSCT_EMPNO,
+               RM,
+               ELCTSCT_SE_SN,
+               PYMNT_SN,
+               APPLC_YM,
+               CONFM_STTUS_CODE,
+               CONFM_DE,
+               CONFMER_EMPNO,
+               RETURN_RESN,
+               REG_DT,
+               REG_ID
+
+        ) VALUES (
+
+               #{reqstNo},
+               #{empno},
+               #{occrrncYy},
+               #{qu},
+               #{chldrnNm},
+               #{schulNm},
+               #{grade},
+               #{tutfeeAmt},
+               #{operSportAmt},
+               REPLACE(#{reqstDe},'-',''),
+               REPLACE(#{pymntDe},'-',''),
+               #{slipNo},
+               #{atchmnflNo},
+               #{elctsctDocNo},
+               #{elctsctSttusCode},
+               #{elctsctEmpno},
+               #{rm},
+               1,
+               #{pymntSn},
+               REPLACE(#{applcYm},'-',''),
+               #{confmSttusCode},
+               #{confmDe},
+               #{confmerEmpno},
+               #{returnResn},
+               SYSDATE,
+               #{regId}
+
+        )
+    </update>
+
+    <delete id="deleteMpscal012" parameterType="kr.co.dbvision.api.mps.cal.mpscal012.entity.Mpscal012">
+        /* kr.co.dbvision.api.mps.cal.mpscal012.service.mapper.Mpscal012Mapper.deleteMpscal012 */
+        DELETE FROM MHS_SCHXPN_REQST
+
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                AND REQST_NO = #{reqstNo}
+                AND EMPNO = #{empno}
+        </trim>
+    </delete>
+</mapper>

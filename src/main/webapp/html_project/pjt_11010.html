@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html class="no-js" lang="ko">
+<HEAD>
+<meta charset="utf-8">
+<LINK href="../img/icon/dbv.ico" rel="shortcut icon" type="image/x-icon">
+
+<TITLE>XERP</TITLE>
+
+<LINK href="../css/dhtmlx/skin/dhtmlx.css" rel="stylesheet" type="text/css">
+<LINK href="../glyphicons/css/bootstrap-glyphicons.css" rel="stylesheet" type="text/css">
+
+<!-- jquery -->
+<SCRIPT src="../js/jquery-1.11.1.min.js"></SCRIPT>
+<SCRIPT src="../js/jquery-ui-custom.min.js"></SCRIPT>
+ 
+<!-- css -->
+<LINK href="../css/default.css" rel="stylesheet" type="text/css">
+
+</HEAD>
+
+
+<body>
+	<!--컨텐츠-->
+		<div class="path_info" style="">
+            <ul id="menu_path" style=""><li><a class="home" href="#n"></a></li><li><a href="#"> 프로젝트관리 </a></li><li><a href="#"> 프로젝트현황</a></li></ul>
+        </div>
+        
+        <DIV class="btn" style="float:right;text-align:right; vertical-align:middle;" title="삭제">
+				<BUTTON class="btn_common02_new" id="btnDelete" type="button">
+					<SPAN class="glyphicon glyphicon-trash"></SPAN> 삭제
+				</BUTTON>
+				<BUTTON class="btn_common02_new" id="btn_help" type="button" title="도움말">
+                      <SPAN class="glyphicon glyphicon-question-sign"></SPAN>
+                </BUTTON>
+                <BUTTON class="btn_common02_new" id="btnClose" type="button" title="닫기">
+                       <SPAN class="glyphicon glyphicon-remove"></SPAN>
+                </BUTTON>
+			</DIV>
+        
+
+	<!-- search_box -->
+	<DIV class="search_box" style="width:100%; overflow:hidden;">
+		<TABLE style="width:100%;">
+			<TBODY>
+				<TR>
+					<td style="position:relative; vertical-align:middle;">
+					    
+						<div style="position:relative;display:inline-block;float:left;">
+							<label>기간</LABEL>
+							 <input name="searchSregDt" class="input_calen" id="searchSregDt" onkeyup="gf_AutoDate(event, this)" onkeypress="gf_AutoDate(event, this)" type="text" style="width: 60px;" maxlength="8"> ~ 
+							 <input name="searchEregDt" class="input_calen" id="searchEregDt" onkeyup="gf_AutoDate(event, this)" onkeypress="gf_AutoDate(event, this)" type="text" style="width: 60px;" maxlength="8">
+						</div>
+						<div style="position:relative;display:inline-block;float:left; padding-left:80px; ">
+							<label class="label">구분</LABEL>
+							<select name="keeping" style="min-width: 120px;">
+								<option value="0" selected="">전체</option>
+								<option value="1">1년</option>
+								<option value="2">2년</option>
+								<option value="3">3년</option>
+								<option value="4">4년</option>
+								<option value="5">5년</option>
+							</select>
+						</div>	
+						<div style="position:relative;display:inline-block;float:left; padding-left:80px; ">
+							<label class="label">상태</LABEL>
+							<select name="keeping" style="min-width: 120px;">
+								<option value="0" selected="">전체</option>
+								<option value="1">1년</option>
+								<option value="2">2년</option>
+								<option value="3">3년</option>
+								<option value="4">4년</option>
+								<option value="5">5년</option>
+							</select>
+						</div>	
+						<div style="position:relative;display:inline-block;float:left; padding-left:80px; ">
+							<label class="label">발주처</LABEL>
+							 <input name="empNm" type="text" style="width:180px;"><button class="btn_common03" id="btnEmpSearch" type="button"><span class="glyphicon  glyphicon glyphicon-search"> </span></button>
+						</div>	
+						<div style="position:relative;display:inline-block;float:left; padding-left:80px; ">
+							<label class="label">프로젝트명</LABEL>
+							 <input name="empNm" type="text" style="width:180px;">
+						</div>	
+						<DIV class="btn2" style="position:relative;display:inline-block;float:right;">
+							<BUTTON id="btnSearch" type="button">
+								<SPAN class="glyphicon glyphicon-search f15"></SPAN>
+							</BUTTON>
+							<BUTTON id="btnClear" type="button">
+								<SPAN class="glyphicon glyphicon-refresh f15 mr5" style="color:#fff;margin-left:4px;"></SPAN>
+							</BUTTON>
+						</DIV>
+					</td>
+				</TR>
+			</TBODY>
+		</TABLE>
+	</DIV>
+	<!--//search_box-->
+	<!--//tabl_box-->
+	
+	<DIV class="tabl_box">
+		<!-- //tabl-1 -->
+		<!-- <DIV class="tdl-1"> -->
+		<div class="list_type01 mt20">
+			<table>
+			<caption>프로젝트 현황 리스트</caption>
+				<colgroup>
+					<col style="width:60px" />
+					<col style="width:80px" />
+					<col style="width:auto" />
+					<col style="width:auto" />
+					<col style="width:80px" />
+					<col style="width:auto" />
+					<col style="width:90px" />
+					<col style="width:90px" />
+					<col style="width:auto" />
+					<col style="width:70px" />
+				</colgroup>
+				<thead>
+				<tr>
+						<th scope="col">번호</th>
+						<th scope="col">구분</th>
+						<th scope="col">발주처</th>
+						<th scope="col">프로젝트명</th>
+						<th scope="col">총괄PM</th>
+						<th scope="col">계약기간/<br /><span class="true">실투입기간</span></th>
+						<th scope="col">인력<br /><span class="true">진행률(%)</span></th>
+						<th scope="col">예산<br /><span class="true">진행률(%)</span></th>
+						<th scope="col">산출물<br /><span class="true">진행률(%)</span></th>
+						<th scope="col">상태</th>
+				</tr>
+				</thead>
+				<tbody>
+				
+				<tr>
+						<td>01</td>
+						<td>개발</td>
+						<td>한국건강증진개발원</td>
+						<td class="al EllipsText">경영정보 및 성과관리 시스템 구축사업</td>
+						<td>홍길동</td>
+						<td>2020.01.01~2020.12.31<br />
+							<span class="true">2020.01.05~2020.01.02</span>
+						</td>
+						<td>
+							77<br />
+							<span class="true">78.52</span>
+						</td>
+						<td>
+							77<br />
+							<span class="true">78.52</span>
+						</td>
+						<td>
+							9,400,000<br />
+							<span class="true">29,686,080</span>
+						</td>
+						<td><span class="go">진행</span></td>
+					</tr>
+					
+					<tr>
+						<td>02</td>
+						<td>유지보수</td>
+						<td>한국지역진흥재단</td>
+						<td class="al EllipsText">R&D 경영혁신 정보시스템 구축</td>
+						<td>홍길동2</td>
+						<td>2020.01.01~2020.12.31<br />
+							<span class="true">2020.01.05~2020.01.02</span>
+						</td>
+						<td>
+							77<br />
+							<span class="true">78.52</span>
+						</td>
+						<td>
+							77<br />
+							<span class="true">78.52</span>
+						</td>
+						<td>
+							9,400,000<br />
+							<span class="true">29,686,080</span>
+						</td>
+						<td>완료</td>
+					</tr>
+					
+				<tr>
+						<td>03</td>
+						<td>개발</td>
+						<td>한국건강증진개발원</td>
+						<td class="al EllipsText">경영정보 및 성과관리 시스템 구축사업</td>
+						<td>홍길동</td>
+						<td>2020.01.01~2020.12.31<br />
+							<span class="true">2020.01.05~2020.01.02</span>
+						</td>
+						<td>
+							77<br />
+							<span class="true">78.52</span>
+						</td>
+						<td>
+							77<br />
+							<span class="true">78.52</span>
+						</td>
+						<td>
+							9,400,000<br />
+							<span class="true">29,686,080</span>
+						</td>
+						<td><span class="go">진행</span></td>
+					</tr>
+					
+					<tr>
+						<td>04</td>
+						<td>유지보수</td>
+						<td>한국지역진흥재단</td>
+						<td class="al EllipsText">R&D 경영혁신 정보시스템 구축</td>
+						<td>홍길동2</td>
+						<td>2020.01.01~2020.12.31<br />
+							<span class="true">2020.01.05~2020.01.02</span>
+						</td>
+						<td>
+							77<br />
+							<span class="true">78.52</span>
+						</td>
+						<td>
+							77<br />
+							<span class="true">78.52</span>
+						</td>
+						<td>
+							9,400,000<br />
+							<span class="true">29,686,080</span>
+						</td>
+						<td>완료</td>
+					</tr>
+					
+				<tr>
+						<td>05</td>
+						<td>개발</td>
+						<td>한국건강증진개발원</td>
+						<td class="al EllipsText">경영정보 및 성과관리 시스템 구축사업</td>
+						<td>홍길동</td>
+						<td>2020.01.01~2020.12.31<br />
+							<span class="true">2020.01.05~2020.01.02</span>
+						</td>
+						<td>
+							77<br />
+							<span class="true">78.52</span>
+						</td>
+						<td>
+							77<br />
+							<span class="true">78.52</span>
+						</td>
+						<td>
+							9,400,000<br />
+							<span class="true">29,686,080</span>
+						</td>
+						<td><span class="go">진행</span></td>
+					</tr>
+					
+					<tr>
+						<td>06</td>
+						<td>유지보수</td>
+						<td>한국지역진흥재단</td>
+						<td class="al EllipsText">R&D 경영혁신 정보시스템 구축</td>
+						<td>홍길동2</td>
+						<td>2020.01.01~2020.12.31<br />
+							<span class="true">2020.01.05~2020.01.02</span>
+						</td>
+						<td>
+							77<br />
+							<span class="true">78.52</span>
+						</td>
+						<td>
+							77<br />
+							<span class="true">78.52</span>
+						</td>
+						<td>
+							9,400,000<br />
+							<span class="true">29,686,080</span>
+						</td>
+						<td>완료</td>
+					</tr>
+					
+				<tr>
+						<td>07</td>
+						<td>개발</td>
+						<td>한국건강증진개발원</td>
+						<td class="al EllipsText">경영정보 및 성과관리 시스템 구축사업</td>
+						<td>홍길동</td>
+						<td>2020.01.01~2020.12.31<br />
+							<span class="true">2020.01.05~2020.01.02</span>
+						</td>
+						<td>
+							77<br />
+							<span class="true">78.52</span>
+						</td>
+						<td>
+							77<br />
+							<span class="true">78.52</span>
+						</td>
+						<td>
+							9,400,000<br />
+							<span class="true">29,686,080</span>
+						</td>
+						<td><span class="go">진행</span></td>
+					</tr>
+					
+					<tr>
+						<td>08</td>
+						<td>유지보수</td>
+						<td>한국지역진흥재단</td>
+						<td class="al EllipsText">R&D 경영혁신 정보시스템 구축</td>
+						<td>홍길동2</td>
+						<td>2020.01.01~2020.12.31<br />
+							<span class="true">2020.01.05~2020.01.02</span>
+						</td>
+						<td>
+							77<br />
+							<span class="true">78.52</span>
+						</td>
+						<td>
+							77<br />
+							<span class="true">78.52</span>
+						</td>
+						<td>
+							9,400,000<br />
+							<span class="true">29,686,080</span>
+						</td>
+						<td>완료</td>
+					</tr>
+					
+				<tr>
+						<td>09</td>
+						<td>개발</td>
+						<td>한국건강증진개발원</td>
+						<td class="al EllipsText">경영정보 및 성과관리 시스템 구축사업</td>
+						<td>홍길동</td>
+						<td>2020.01.01~2020.12.31<br />
+							<span class="true">2020.01.05~2020.01.02</span>
+						</td>
+						<td>
+							77<br />
+							<span class="true">78.52</span>
+						</td>
+						<td>
+							77<br />
+							<span class="true">78.52</span>
+						</td>
+						<td>
+							9,400,000<br />
+							<span class="true">29,686,080</span>
+						</td>
+						<td><span class="go">진행</span></td>
+					</tr>
+					
+					<tr>
+						<td>10</td>
+						<td>유지보수</td>
+						<td>한국지역진흥재단</td>
+						<td class="al EllipsText">R&D 경영혁신 정보시스템 구축</td>
+						<td>홍길동2</td>
+						<td>2020.01.01~2020.12.31<br />
+							<span class="true">2020.01.05~2020.01.02</span>
+						</td>
+						<td>
+							77<br />
+							<span class="true">78.52</span>
+						</td>
+						<td>
+							77<br />
+							<span class="true">78.52</span>
+						</td>
+						<td>
+							9,400,000<br />
+							<span class="true">29,686,080</span>
+						</td>
+						<td>완료</td>
+					</tr>
+					
+					
+				</tbody>
+			</table>
+		</div>
+	</div>
+</BODY>
+</HTML>

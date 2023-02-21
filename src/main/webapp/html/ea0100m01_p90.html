@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html class="no-js" lang="ko">
+<HEAD>
+<META content="IE=11.0000" http-equiv="X-UA-Compatible">
+<META charset="UTF-8">
+<META http-equiv="Content-Script-Type" content="text/javascript; charet=utf-8">
+<META http-equiv="Content-Style-Type" content="text/css; charet=utf-8">
+<META name="HandheldFriendly" content="True">
+<META http-equiv="cleartype" content="on">
+<META http-equiv="X-UA-Compatible" content="IE=edge">
+<META http-equiv="Expires" content="-1">
+<META http-equiv="Pragma" content="no-cache">
+<META http-equiv="Cache-Control" content="no-cache">
+<META content="DBVision-XERP" property="og:title">
+<META name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, minimum-scale=1.0, user-scalable=yes">
+<META name="keywords" content="DBVision-XERP">
+<META name="description" content="DBVision-XERP">
+
+<LINK href="../img/icon/dbv.ico" rel="shortcut icon" type="image/x-icon">
+
+<TITLE>XERP</TITLE>
+
+<LINK href="../css/dhtmlx/skin/dhtmlx.css" rel="stylesheet" type="text/css">
+<LINK href="../glyphicons/css/bootstrap-glyphicons.css" rel="stylesheet" type="text/css">
+
+<!-- jquery -->
+<SCRIPT src="../js/jquery-1.11.1.min.js"></SCRIPT>
+<SCRIPT src="../js/jquery-ui-custom.min.js"></SCRIPT>
+ 
+<!-- css -->
+<LINK href="../css/sub.css" rel="stylesheet" type="text/css">
+
+</HEAD>
+
+
+<body>
+	<!--컨텐츠-->
+		<div class="path_info" style="">
+             <ul id="menu_path" style=""><li><a class="home" href="#n"></a></li><li><a href="#"> 전자결재 </a></li><li><a href="#"> 기본설정 </a></li><li><a href="#">문서번호관리</a></li></ul>
+        </div>
+        
+        <DIV class="btn" style="float:right;text-align:right; vertical-align:middle;">
+				
+				<BUTTON class="btn_common02_new" id="btnNew" type="button">
+					<SPAN class="glyphicon glyphicon-file"></SPAN> 등록
+				</BUTTON>
+				<BUTTON class="btn_common02_new" id="btnSave" type="button">
+					<SPAN class="glyphicon glyphicon-ok"></SPAN> 저장
+				</BUTTON>
+				<BUTTON class="btn_common02_new" id="btnDelete" type="button">
+					<SPAN class="glyphicon glyphicon-remove"></SPAN> 삭제
+				</BUTTON>
+				<BUTTON class="btn_common02_new" id="btn_help" type="button">
+					<SPAN class="glyphicon glyphicon-question-sign"></SPAN> 도움말
+				</BUTTON>
+				<BUTTON class="btn_common02_new" id="btnRemove" type="button">
+					<SPAN class="glyphicon glyphicon-remove"></SPAN> 닫기
+				</BUTTON>
+			</DIV>
+        
+	<!--//tabl_box-->
+	<DIV class="tabl_box">
+		<!-- //tabl-1 -->
+		<!-- <DIV class="tdl-1"> -->
+		
+		<DIV class="tabl_box">
+		<!-- //tabl-1 -->
+		<DIV class="tdl-2" id="saveForm" style="width:37%;float:left;margin-right:20px;">
+		
+		
+		
+			<DIV class="list_type01">
+				<DIV class="list_top" style="width:615px;">
+					<H4 class="title03 fl">버튼&nbsp;목록</H4>
+						<div style="float:left;text-align:left;">
+							<SPAN class="view"> 총 &nbsp; <SPAN id="spanCnt">5</SPAN>건</SPAN>
+						</div>
+						<div style="float:right;text-align:right;">
+							<BUTTON class="btn_common01_new" id="" type="button">항목추가</BUTTON>
+							<BUTTON class="btn_common01_new" id="" type="button">항목삭제</BUTTON>
+						</div>
+					</SPAN>					
+				</DIV>
+				<!--//list_top-->
+
+				<DIV style="border:1px solid #4882b0; background:yellow;">
+					DHTML
+				</DIV>
+			</DIV>
+			<!--//list_type01-->
+		</DIV>
+		<!-- //tabl-1 -->
+		<!-- //tdl-2 -->
+		<DIV class="tdl-1">
+			<DIV class="list_top02">
+				<H4 class="title03" id="h4_pr_title">버튼&nbsp;등록</H4>
+			</DIV>
+					
+			<DIV class="detail_type01"  style="margin-top:45px;">
+					
+				<FORM id="saveFormStmBtn">
+					<TABLE>
+						<CAPTION>버튼</CAPTION>
+						<COLGROUP>
+							<COL width="20">
+							<COL width="130">
+							<COL width="">
+						</COLGROUP>
+						<TBODY>
+							<TR>
+								<TH colspan="2" class="al">제목</TH>
+								<TD><INPUT name="btnId" id="btnId" style="width: 50%;"
+									required="" type="text" maxlength="20"></TD>
+							</TR>	
+							<TR>
+								<TH colspan="2" class="al">적용년도</TH>
+								<td>
+									<select id="keeping" name="keeping" style="min-width:209px;">
+										<option value="0" selected>선택</option>
+										<option value="1">1년</option>
+										<option value="2">2년</option>
+										<option value="3">3년</option>
+										<option value="4">4년</option>
+										<option value="5">5년</option>
+									</select><br>
+									* 적용년도는 문서채번규칙을 적용하는 시작년도
+								</td>
+							</TR>
+							
+							<TR>
+								<TH colspan="2" class="al">사용여부</TH>
+								<TD>
+									<div style="height:20px; vertical-align:middle;line-height:20px;margin:3px;">
+										<input type="radio" name="editer" value="web_modify" id="web_modify" checked> <label for="web_modify"><span></span>사용</label>&nbsp;&nbsp;&nbsp;<input type="radio" name="editer" value="hwp_modify" id="hwp_modify"/> <label for="hwp_modify"><span></span>미사용</label>
+									</div>
+								</TD>
+							</TR>
+							<tr>
+								<TH colspan="2" class="al">항목명</Th>
+								<td>	
+									<select id="keeping" name="keeping" style="min-width:209px;">
+										<option value="0" selected>직접입력</option>
+										<option value="1">1</option>
+										<option value="2">2</option>
+										<option value="3">3</option>
+										<option value="4">4</option>
+										<option value="5">5</option>
+									</select>&nbsp;<INPUT name="btnId" id="btnId" style="width: 30%;"
+									required="" type="text" maxlength="20">
+								</td>
+							</TR>
+							<tr>
+								<TH colspan="2" class="al">항목명</Th>
+								<td>	
+									<select id="keeping" name="keeping" style="min-width:209px;">
+										<option value="0" selected>순차번호</option>
+										<option value="1">1</option>
+										<option value="2">2</option>
+										<option value="3">3</option>
+										<option value="4">4</option>
+										<option value="5">5</option>
+									</select>
+								</td>
+							</TR>
+							
+						</TBODY>
+					</TABLE>
+				</FORM>
+			</DIV>
+			<!--//detail_type01-->
+
+		</DIV>
+		<!-- //tabl-2 -->
+		
+		
+</BODY>
+</HTML>

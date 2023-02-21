@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE form-validation PUBLIC
+    "-//Apache Software Foundation//DTD Commons Validator Rules Configuration 1.1//EN"
+    "http://jakarta.apache.org/commons/dtds/validator_1_1.dtd">
+
+<form-validation>
+
+    <formset>
+        <form name="Mpsbsc003">
+            <field property="salarytyCode" depends="required">
+                <arg0 key="급여유형 코드는"/>
+            </field>
+            <field property="salaryitemCode" depends="required">
+                <arg0 key="급여항목 코드는"/>
+            </field>
+            <field property="applcYm" depends="required">
+                <arg0 key="적용 년월는"/>
+            </field>
+        </form>
+    </formset>
+
+</form-validation>
